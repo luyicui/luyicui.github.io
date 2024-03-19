@@ -202,6 +202,1365 @@
           </div>
           <div id="js-content" class="content-ll">
             
+<!-- 
+  
+    <article id="post-STL/队组pair" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/06/%5Bobject%20Object%5D/STL/%E9%98%9F%E7%BB%84pair/" target="_blank">对组pair</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/06/%5Bobject%20Object%5D/STL/%E9%98%9F%E7%BB%84pair/" class="archive-article-date">
+        <time datetime="2023-10-06T05:29:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="对组pair">对组pair</h1>
+<h2 id="应用">应用</h2>
+<p>pair是将2个数据组合成一组数据，当需要这样的需求时就可以使用pair，如stl中的map就是将key和value放在一起来保存。另一个应用是，当一个函数需要返回2个数据的时候，可以选择pair。
+pair的实现是一个结构体，主要的两个成员变量是first second
+因为是使用struct不是class，所以可以直接使用pair的成员变量。</p>
+<p>其标准库类型--pair类型定义在<code>#include &lt;utility&gt;</code>头文件中，定义如下：</p>
+<ul>
+<li><p>类模板：template&lt;class T1,class T2&gt; struct pair</p></li>
+<li><p>参数：T1是第一个值的数据类型，T2是第二个值的数据类型。</p></li>
+<li><p>功能：<strong>pair将一对值(T1类型和T2类型)组合成一个值</strong></p>
+<ul>
+<li>这一对值可以具有不同的数据类型（T1和T2）</li>
+<li>两个值可以分别用<font color='red'><strong>pair的两个公有成员变量first和second访问</strong></font></li>
+</ul></li>
+<li><p>定义(构造函数)：</p></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pair&lt;T1, T2&gt; p1;         <span class="comment">// 创建一个空的pair对象（使用默认构造），它的两个元素分别是T1和T2类型，采用值初始化。</span></span><br><span class="line"><span class="function">pair&lt;T1, T2&gt; <span class="title">p1</span><span class="params">(v1, v2)</span></span>; <span class="comment">// 创建一个pair对象，它的两个元素分别是T1和T2类型，其中first成员初始化为v1，second成员初始化为v2。</span></span><br><span class="line"><span class="built_in">make_pair</span>(v1, v2);       <span class="comment">// 以v1和v2的值创建一个新的pair对象，其元素类型分别是v1和v2的类型。</span></span><br><span class="line">p1 &lt; p2;                 <span class="comment">// 两个pair对象间的小于运算，其定义遵循字典次序：如 p1.first &lt; p2.first 或者 !(p2.first &lt; p1.first) &amp;&amp; (p1.second &lt; p2.second) 则返回true。</span></span><br><span class="line">p1 == p;                 <span class="comment">// 如果两个对象的first和second依次相等，则这两个对象相等；该运算使用元素的==操作符。</span></span><br><span class="line">p1.first;                <span class="comment">// 返回对象p1中名为first的公有数据成员</span></span><br><span class="line">p1.second;               <span class="comment">// 返回对象p1中名为second的公有数据成员</span></span><br></pre></td></tr></table></figure>
+<h2 id="定义">定义</h2>
+<ul>
+<li><p>pair包含两个数值，与容器一样，pair也是一种模板类型。但是又与之前介绍的容器不同；</p></li>
+<li><p>在创建pair对象时，<font color='red'><strong>必须提供两个类型名，两个对应的类型名的类型不必相同</strong></font></p></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pair&lt;string, string&gt; anon;        <span class="comment">// 创建一个空对象anon，两个元素类型都是string</span></span><br><span class="line">pair&lt;string, <span class="type">int</span>&gt; word_count;     <span class="comment">// 创建一个空对象 word_count, 两个元素类型分别是string和int类型</span></span><br><span class="line">pair&lt;string, vector&lt;<span class="type">int</span>&gt; &gt; line;  <span class="comment">// 创建一个空对象line，两个元素类型分别是string和vector类型</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>当然也可以在定义时进行成员初始化：</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">pair&lt;string, string&gt; <span class="title">author</span><span class="params">(<span class="string">&quot;James&quot;</span>,<span class="string">&quot;Joy&quot;</span>)</span></span>;    <span class="comment">// 创建一个author对象，两个元素类型分别为string类型，并默认初始值为James和Joy。</span></span><br><span class="line"><span class="function">pair&lt;string, <span class="type">int</span>&gt; <span class="title">name_age</span><span class="params">(<span class="string">&quot;Tom&quot;</span>, <span class="number">18</span>)</span></span>;</span><br><span class="line"><span class="function">pair&lt;string, <span class="type">int</span>&gt; <span class="title">name_age2</span><span class="params">(name_age)</span></span>;    <span class="comment">// 拷贝构造初始化</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>pair类型的使用相当的繁琐，如果定义多个相同的pair类型对象，可以使用typedef简化声明：</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> pair&lt;string,string&gt; Author;</span><br><span class="line"><span class="function">Author <span class="title">proust</span><span class="params">(<span class="string">&quot;March&quot;</span>,<span class="string">&quot;Proust&quot;</span>)</span></span>;</span><br><span class="line"><span class="function">Author <span class="title">Joy</span><span class="params">(<span class="string">&quot;James&quot;</span>,<span class="string">&quot;Joy&quot;</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>变量间赋值：</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">pair&lt;<span class="type">int</span>, <span class="type">double</span>&gt; <span class="title">p1</span><span class="params">(<span class="number">1</span>, <span class="number">1.2</span>)</span></span>;</span><br><span class="line">pair&lt;<span class="type">int</span>, <span class="type">double</span>&gt; p2 = p1;     <span class="comment">// copy construction to initialize object</span></span><br><span class="line">pair&lt;<span class="type">int</span>, <span class="type">double</span>&gt; p3；</span><br><span class="line">p3 = p1;    <span class="comment">// operator =</span></span><br></pre></td></tr></table></figure>
+<h2 id="操作">操作</h2>
+<ul>
+<li>访问两个元素操作可以通过<code>first</code>和<code>second</code>访问：</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">pair&lt;<span class="type">int</span>, <span class="type">double</span>&gt; p1;</span><br><span class="line"></span><br><span class="line">p1.first = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">p1.second = <span class="number">2.5</span>;</span><br><span class="line"></span><br><span class="line">cout &lt;&lt; p1.first &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; p1.second &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：1 2.5</span></span><br><span class="line"></span><br><span class="line">string firstBook;</span><br><span class="line"><span class="keyword">if</span> (author.first == <span class="string">&quot;James&quot;</span> &amp;&amp; author.second == <span class="string">&quot;Joy&quot;</span>)</span><br><span class="line">    firstBook = <span class="string">&quot;Stephen Hero&quot;</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以利用<code>make_pair</code>创建新的 pair 对象：</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pair&lt;<span class="type">int</span>, <span class="type">double</span>&gt; p1;</span><br><span class="line">p1 = <span class="built_in">make_pair</span>(<span class="number">1</span>, <span class="number">1.2</span>);</span><br><span class="line"></span><br><span class="line">cout &lt;&lt; p1.first &lt;&lt; p1.second &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output: 1 1.2</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">string m = <span class="string">&quot;James&quot;</span>;</span><br><span class="line"></span><br><span class="line">pair&lt;<span class="type">int</span>, string&gt; newone;</span><br><span class="line"></span><br><span class="line">newone = <span class="built_in">make_pair</span>(a, m);</span><br><span class="line">cout &lt;&lt; newone.first &lt;&lt; newone.second &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output: 8 James</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>通过 <code>tie</code> 获取 pair 元素值：在某些清况函数会以 pair
+对象作为返回值时，可以直接通过<code>std::tie</code>进行接收。比如：</p>
+<blockquote>
+<blockquote>
+<p>注意使用tie要引入<code>#include &lt;tuple&gt;</code></p>
+</blockquote>
+</blockquote></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function">pair&lt;string, <span class="type">int</span>&gt; <span class="title">getPreson</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">make_pair</span>(<span class="string">&quot;Sven&quot;</span>, <span class="number">25</span>);</span><br><span class="line">    <span class="comment">/* C++ 11支持下面操作 */</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;Sven&quot;</span>, <span class="number">25</span>&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> ages;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">tie</span>(name, ages) = <span class="built_in">getPreson</span>();</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;name: &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&quot;, ages: &quot;</span> &lt;&lt; ages &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">STL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/06/%5Bobject%20Object%5D/STL/%E9%98%9F%E7%BB%84pair/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-STL/迭代器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/05/%5Bobject%20Object%5D/STL/%E8%BF%AD%E4%BB%A3%E5%99%A8/" target="_blank">迭代器</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/05/%5Bobject%20Object%5D/STL/%E8%BF%AD%E4%BB%A3%E5%99%A8/" class="archive-article-date">
+        <time datetime="2023-10-05T05:29:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="迭代器">迭代器</h1>
+<p>遍历<strong><font color='blue'>容器</font></strong><code>vector</code>、<code>set</code>、<code>map</code>要使用<strong><font color='red'>迭代器/反向迭代器</font></strong>访问</p>
+<ul>
+<li><p><strong><code>c.begin()</code></strong>是一个指针，指向容器的<strong><font color='purple'>第一个元素</font></strong></p></li>
+<li><p><strong><code>c.end()</code></strong>是一个指针，指向容器==<strong><font color='red'>最后一个元素的后一个位置</font></strong>==</p></li>
+<li><p><strong><code>c.rbegin()</code></strong>是一个指针，指向容器的<font color='purple'><strong>最后一个元素</strong></font></p></li>
+<li><p><strong><code>c.rend()</code></strong>是一个指针，指向容器的==<font color='red'><strong>第一个元素的前一个位置</strong></font>==</p></li>
+</ul>
+<p>所以<strong><font color='blue'>迭代器指针it</font></strong>的for循环判断条
+件是 <strong><code>it != c.end()</code></strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> it = c.<span class="built_in">begin</span>(); it != c.<span class="built_in">end</span>(); it++)  	<span class="comment">// 使用迭代器的方式访问vector </span></span><br><span class="line">    cout &lt;&lt; *it &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">cout &lt;&lt; endl;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> it = c.<span class="built_in">rbegin</span>(); it != c.<span class="built_in">rend</span>(); it--)  	<span class="comment">// 使用反向迭代器的方式访问vector </span></span><br><span class="line">    cout &lt;&lt; *it &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202402221222424.jpeg"
+alt="e5b86169c82b93bbe409229eb505976" />
+<figcaption
+aria-hidden="true">e5b86169c82b93bbe409229eb505976</figcaption>
+</figure>
+<p>运行结果</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">10</span> <span class="number">11</span> <span class="number">12</span></span><br><span class="line"><span class="number">12</span> <span class="number">11</span> <span class="number">10</span> <span class="number">9</span> <span class="number">8</span> <span class="number">7</span> <span class="number">6</span> <span class="number">5</span> <span class="number">4</span> <span class="number">3</span> <span class="number">2</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">STL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/05/%5Bobject%20Object%5D/STL/%E8%BF%AD%E4%BB%A3%E5%99%A8/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/Reference/" target="_blank">Reference</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/Reference/" class="archive-article-date">
+        <time datetime="2023-10-03T07:27:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>==<a target="_blank" rel="noopener" href="https://www.hello-algo.com/">Hello 算法
+(hello-algo.com)</a>==</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/Reference/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/【字符串】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%91/" target="_blank">【字符串】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%91/" class="archive-article-date">
+        <time datetime="2023-10-03T07:27:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="例题">例题</h1>
+<h2 id="最长回文子串"><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/longest-palindromic-substring/">最长回文子串</a></h2>
+<p>​ 给你一个字符串 <code>s</code>，找到 <code>s</code>
+中最长的回文子串。如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;babad&quot;</span><br><span class="line">输出：&quot;bab&quot;</span><br><span class="line">解释：&quot;aba&quot; 同样是符合题意的答案。</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;cbbd&quot;</span><br><span class="line">输出：&quot;bb&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>分析：</strong></p>
+<p>​
+<strong>中心扩展算法</strong>：遍历字符串，对于每个元素都<font color='red'><strong>从中间向两边寻找是否有回文子串</strong></font>，返回这个子串，将它的长度与result比较，如果比result长就更新result～
+<strong>要分为奇数还是偶数</strong>考虑，奇数就左右都是i，偶数就是左边是<code>i</code>，右边是<code>i+1</code>，然后扩展～</p>
+<p><strong>代码：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">longestPalindrome</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        string ans = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="comment">/* 情况1：子串长度为奇数 */</span></span><br><span class="line">            <span class="type">int</span> l = i - <span class="number">1</span>, r = i + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (l &gt;= <span class="number">0</span> &amp;&amp; r &lt; s.<span class="built_in">length</span>() &amp;&amp; s[l] == s[r])</span><br><span class="line">                l--, r++;</span><br><span class="line">            <span class="keyword">if</span> (ans.<span class="built_in">length</span>() &lt; r - l - <span class="number">1</span>)</span><br><span class="line">                ans = s.<span class="built_in">substr</span>(l + <span class="number">1</span>, r - l - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* 情况2：子串长度为偶数 */</span></span><br><span class="line">            l = i, r = i + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (l &gt;= <span class="number">0</span> &amp;&amp; r &lt; s.<span class="built_in">length</span>() &amp;&amp; s[l] == s[r])</span><br><span class="line">                l--, r++;</span><br><span class="line">            <span class="keyword">if</span> (ans.<span class="built_in">length</span>() &lt; r - l - <span class="number">1</span>)</span><br><span class="line">                ans = s.<span class="built_in">substr</span>(l + <span class="number">1</span>, r - l - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1UZ4y1U7tt/?spm_id_from=333.788&amp;vd_source=783e918d3ef4b11b94236a4cd8a51f23">【LeetCode
+每日一题】5. 最长回文子串 | 手写图解版思路 +
+代码讲解_哔哩哔哩_bilibili</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/【栈】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%A0%88%E3%80%91/" target="_blank">【栈】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%A0%88%E3%80%91/" class="archive-article-date">
+        <time datetime="2023-10-03T07:27:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="例题">例题</h1>
+<h2 id="有效的括号"><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-parentheses/">有效的括号</a></h2>
+<p>​ 给定一个只包括
+<code>'('</code>，<code>')'</code>，<code>'&#123;'</code>，<code>'&#125;'</code>，<code>'['</code>，<code>']'</code>
+的字符串 <code>s</code> ，判断字符串是否有效。有效字符串需满足：</p>
+<ol type="1">
+<li>左括号必须用相同类型的右括号闭合。</li>
+<li>左括号必须以正确的顺序闭合。</li>
+<li>每个右括号都有一个对应的相同类型的左括号。</li>
+</ol>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;()&quot;</span><br><span class="line">输出：true</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;()[]&#123;&#125;&quot;</span><br><span class="line">输出：true</span><br></pre></td></tr></table></figure>
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;(]&quot;</span><br><span class="line">输出：false</span><br></pre></td></tr></table></figure>
+<p><strong>代码：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isValid</span><span class="params">(string s)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        stack&lt;<span class="type">char</span>&gt; t;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">length</span>(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[i] == <span class="string">&#x27;(&#x27;</span> || s[i] == <span class="string">&#x27;&#123;&#x27;</span> || s[i] == <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">                t.<span class="built_in">push</span>(s[i]);</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">&#x27;)&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (t.<span class="built_in">empty</span>() || t.<span class="built_in">top</span>() != <span class="string">&#x27;(&#x27;</span>)</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                t.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">&#x27;&#125;&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (t.<span class="built_in">empty</span>() || t.<span class="built_in">top</span>() != <span class="string">&#x27;&#123;&#x27;</span>)</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                t.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">&#x27;]&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (t.<span class="built_in">empty</span>() || t.<span class="built_in">top</span>() != <span class="string">&#x27;[&#x27;</span>)</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                t.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="最小栈"><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/min-stack/">最小栈</a></h2>
+<p>设计一个支持 <code>push</code> ，<code>pop</code> ，<code>top</code>
+操作，并能在常数时间内检索到最小元素的栈。</p>
+<p>实现 <code>MinStack</code> 类:</p>
+<ul>
+<li><code>MinStack()</code> 初始化堆栈对象。</li>
+<li><code>void push(int val)</code> 将元素val推入堆栈。</li>
+<li><code>void pop()</code> 删除堆栈顶部的元素。</li>
+<li><code>int top()</code> 获取堆栈顶部的元素。</li>
+<li><code>int getMin()</code> 获取堆栈中的最小元素。</li>
+</ul>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">输入：</span><br><span class="line">[&quot;MinStack&quot;,&quot;push&quot;,&quot;push&quot;,&quot;push&quot;,&quot;getMin&quot;,&quot;pop&quot;,&quot;top&quot;,&quot;getMin&quot;]</span><br><span class="line">[[],[-2],[0],[-3],[],[],[],[]]</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">[null,null,null,null,-3,null,0,-2]</span><br><span class="line"></span><br><span class="line">解释：</span><br><span class="line">MinStack minStack = new MinStack();</span><br><span class="line">minStack.push(-2);</span><br><span class="line">minStack.push(0);</span><br><span class="line">minStack.push(-3);</span><br><span class="line">minStack.getMin();   --&gt; 返回 -3.</span><br><span class="line">minStack.pop();</span><br><span class="line">minStack.top();      --&gt; 返回 0.</span><br><span class="line">minStack.getMin();   --&gt; 返回 -2.</span><br></pre></td></tr></table></figure>
+<p><strong>分析：</strong></p>
+<ul>
+<li><p>这道题的关键其实是实现「<strong>得到最小值这个功能</strong>」，所以为了代码简洁些，我们就直接使用C++自带的
+stack 容器</p></li>
+<li><p>这道题最直接的解法就是我们可以用两个栈</p>
+<ol type="1">
+<li>一个栈去保存正常的入栈出栈的值</li>
+<li>另一个栈去存最小值，也就是用栈顶保存当前所有元素的最小值</li>
+</ol></li>
+<li><p>存最小值的栈的具体操作流程如下：</p>
+<ol type="1">
+<li><p>将第一个元素入栈。</p></li>
+<li><p>新加入的元素</p>
+<ol type="1">
+<li><p>如果大于栈顶元素，那么新加入的元素就不处理</p></li>
+<li><p>如果小于等于栈顶元素，那么就将新元素入栈</p></li>
+</ol></li>
+<li><p>出栈元素</p>
+<ol type="1">
+<li>不等于栈顶元素，不操作</li>
+<li>出栈元素等于栈顶元素，那么就将栈顶元素出栈</li>
+</ol></li>
+</ol></li>
+</ul>
+<p>举个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">入栈 3 </span><br><span class="line">|   |    |   |</span><br><span class="line">|   |    |   |</span><br><span class="line">|_3_|    |_3_|</span><br><span class="line">stack  minStack</span><br><span class="line"></span><br><span class="line">入栈 5 ， 5 大于 minStack 栈顶，不处理</span><br><span class="line">|   |    |   |</span><br><span class="line">| 5 |    |   |</span><br><span class="line">|_3_|    |_3_|</span><br><span class="line">stack  minStack</span><br><span class="line"></span><br><span class="line">入栈 2 ，此时右边的 minStack 栈顶就保存了当前最小值 2 </span><br><span class="line">| 2 |    |   |</span><br><span class="line">| 5 |    | 2 |</span><br><span class="line">|_3_|    |_3_|</span><br><span class="line">stack  minStack</span><br><span class="line"></span><br><span class="line">出栈 2，此时右边的 minStack 栈顶就保存了当前最小值 3</span><br><span class="line">|   |    |   |</span><br><span class="line">| 5 |    |   |</span><br><span class="line">|_3_|    |_3_|</span><br><span class="line">stack  minStack</span><br><span class="line"></span><br><span class="line">出栈 5，右边 minStack 不处理</span><br><span class="line">|   |    |   |</span><br><span class="line">|   |    |   |</span><br><span class="line">|_3_|    |_3_|</span><br><span class="line">stack  minStack</span><br><span class="line"></span><br><span class="line">出栈 3</span><br><span class="line">|   |    |   |</span><br><span class="line">|   |    |   |</span><br><span class="line">|_ _|    |_ _|</span><br><span class="line">stack  minStack</span><br></pre></td></tr></table></figure>
+<p><strong>代码：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MinStack</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    stack&lt;<span class="type">int</span>&gt; s, min;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MinStack</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(<span class="type">int</span> val)</span> </span>&#123;</span><br><span class="line">        s.<span class="built_in">push</span>(val);</span><br><span class="line">        <span class="keyword">if</span> (min.<span class="built_in">empty</span>() || val &lt;= min.<span class="built_in">top</span>())</span><br><span class="line">            min.<span class="built_in">push</span>(val);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        这里 if 语句里面是 &gt;= 的原因是：</span></span><br><span class="line"><span class="comment">        假设有两个相同的最小值8，如果只存一个（只填 &gt; ）</span></span><br><span class="line"><span class="comment">        假如两个stack 同时pop了一个8，那么其实最小值还有8</span></span><br><span class="line"><span class="comment">        但是已经被 pop 掉了</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">top</span>() == min.<span class="built_in">top</span>())</span><br><span class="line">            min.<span class="built_in">pop</span>();</span><br><span class="line">        s.<span class="built_in">pop</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">top</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> s.<span class="built_in">top</span>(); &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getMin</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> min.<span class="built_in">top</span>(); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Your MinStack object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * MinStack* obj = new MinStack();</span></span><br><span class="line"><span class="comment"> * obj-&gt;push(val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;pop();</span></span><br><span class="line"><span class="comment"> * int param_3 = obj-&gt;top();</span></span><br><span class="line"><span class="comment"> * int param_4 = obj-&gt;getMin();</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<h2 id="字符串解码"><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/decode-string/">字符串解码</a></h2>
+<p>给定一个经过编码的字符串，返回它解码后的字符串。编码规则为:
+<code>k[encoded_string]</code>，表示其中方括号内部的
+<code>encoded_string</code> 正好重复 <code>k</code> 次。注意
+<code>k</code>
+保证为正整数。你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数
+<code>k</code> ，例如不会出现像 <code>3a</code> 或 <code>2[4]</code>
+的输入。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;3[a]2[bc]&quot;</span><br><span class="line">输出：&quot;aaabcbc&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;3[a2[c]]&quot;</span><br><span class="line">输出：&quot;accaccacc&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;2[abc]3[cd]ef&quot;</span><br><span class="line">输出：&quot;abcabccdcdcdef&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>示例 4：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = &quot;abc3[cd]xyz&quot;</span><br><span class="line">输出：&quot;abccdcdcdxyz&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>分析：</strong>
+本题难点在于<strong>括号内嵌套括号</strong>，需要<strong>从内向外生成与拼接字符串</strong>，这与<strong>栈的先入后出</strong>特性对应。构建辅助栈
+<code>stack</code>， 遍历字符串 <code>s</code> 中每个字符
+<code>c</code>；</p>
+<ul>
+<li>当 <code>c</code> 为数字时，将数字字符转化为数字
+<code>multi</code>，用于后续倍数计算；</li>
+<li>当 <code>c</code> 为字母时，在 <code>res</code> 尾部添加
+<code>c</code>；</li>
+<li>当 <code>c</code> 为 <code>[</code> 时，将当前 <code>multi</code> 和
+<code>res</code> 入栈，并分别置空置 0：
+<ul>
+<li>记录此 <code>[</code> 前的临时结果 <code>res</code>
+至栈，用于发现对应 <code>]</code> 后的拼接操作；</li>
+<li>记录此 <code>[</code> 前的倍数 <code>multi</code> 至栈，用于发现对应
+<code>]</code> 后，获取 <code>multi × [...]</code> 字符串。</li>
+<li>进入到新 <code>[</code> 后，<code>res</code> 和 <code>multi</code>
+重新记录。</li>
+</ul></li>
+<li>当 <code>c</code> 为 <code>]</code> 时，<code>stack</code>
+出栈，拼接字符串 <code>res = last_res + cur_multi * res</code>，其中:
+<ul>
+<li><code>last_res</code>是上个 <code>[</code> 到当前 <code>[</code>
+的字符串，例如 <code>"3[a2[c]]"</code> 中的 <code>a</code>；</li>
+<li><code>cur_multi</code>是当前 <code>[</code> 到 <code>]</code>
+内字符串的重复倍数，例如 <code>"3[a2[c]]"</code> 中的
+<code>2</code>。</li>
+</ul></li>
+</ul>
+<p>返回字符串 res。</p>
+<blockquote>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/decode-string/solutions/19447/decode-string-fu-zhu-zhan-fa-di-gui-fa-by-jyd/?envType=study-plan-v2&amp;envId=top-100-liked">394.
+字符串解码 - 力扣（LeetCode）-算法可视化</a></p>
+</blockquote>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">decodeString</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        stack&lt;pair&lt;<span class="type">int</span>, string&gt;&gt; stack;</span><br><span class="line">        <span class="type">int</span> multi = <span class="number">0</span>;</span><br><span class="line">        string res = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[i] &gt;= <span class="string">&#x27;0&#x27;</span> &amp;&amp; s[i] &lt;= <span class="string">&#x27;9&#x27;</span>)</span><br><span class="line">                multi = multi * <span class="number">10</span> + s[i] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">&#x27;[&#x27;</span>) &#123;</span><br><span class="line">                stack.<span class="built_in">push</span>(<span class="built_in">make_pair</span>(multi, res));</span><br><span class="line">                multi = <span class="number">0</span>;</span><br><span class="line">                res = <span class="string">&quot;&quot;</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s[i] == <span class="string">&#x27;]&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> cur_multi = stack.<span class="built_in">top</span>().first;</span><br><span class="line">                string last_res = stack.<span class="built_in">top</span>().second;</span><br><span class="line">                stack.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="comment">// res = last_res + cur_multi * res</span></span><br><span class="line">                string t = last_res;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; cur_multi; i++)</span><br><span class="line">                    t += res;</span><br><span class="line">                res = t;</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">                res += s[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="每日温度"><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/daily-temperatures/">每日温度</a></h2>
+<p>给定一个整数数组 <code>temperatures</code>
+，表示每天的温度，返回一个数组 <code>answer</code> ，其中
+<code>answer[i]</code> 是指对于第 <code>i</code>
+天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用
+<code>0</code> 来代替。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: temperatures = [73,74,75,71,69,72,76,73]</span><br><span class="line">输出: [1,1,4,2,1,1,0,0]</span><br></pre></td></tr></table></figure>
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: temperatures = [30,40,50,60]</span><br><span class="line">输出: [1,1,1,0]</span><br></pre></td></tr></table></figure>
+<p><strong>示例 3:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: temperatures = [30,60,90]</span><br><span class="line">输出: [1,1,0]</span><br></pre></td></tr></table></figure>
+<p><strong>分析：</strong></p>
+<blockquote>
+<blockquote>
+<p>本题中用到的栈为 <font color='red'><strong>递减栈</strong></font>
+(栈里只有递减元素)</p>
+</blockquote>
+</blockquote>
+<p>​
+遍历整个数组，如果栈不空，且当前数字大于栈顶元素，那么如果直接入栈的话就不是
+递减栈
+，所以需要取出栈顶元素，由于当前数字大于栈顶元素的数字，而且一定是第一个大于栈顶元素的数，直接求出下标差就是二者的距离。</p>
+<p>​
+继续看新的栈顶元素，直到当前数字小于等于栈顶元素停止，然后将数字入栈，这样就可以一直保持递减栈，且每个数字和第一个大于它的数的距离也可以算出来。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202402291627185.gif"
+alt="Rec_2024-02-29_0004" />
+<figcaption aria-hidden="true">Rec_2024-02-29_0004</figcaption>
+</figure>
+<p><strong>代码：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dailyTemperatures</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;temperatures)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = temperatures.<span class="built_in">size</span>();</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">res</span><span class="params">(n, <span class="number">0</span>)</span></span>;</span><br><span class="line">        stack&lt;<span class="type">int</span>&gt; s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span> (!s.<span class="built_in">empty</span>() &amp;&amp; temperatures[i] &gt; temperatures[s.<span class="built_in">top</span>()])</span><br><span class="line">            &#123;</span><br><span class="line">                res[s.<span class="built_in">top</span>()] = i - s.<span class="built_in">top</span>();</span><br><span class="line">                s.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            s.<span class="built_in">push</span>(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%A0%88%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/【排序】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/" target="_blank">【排序】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/" class="archive-article-date">
+        <time datetime="2023-10-03T02:27:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="快排">快排</h1>
+<h2 id="模板">模板</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403061850624.png"
+alt="image-20240306185054453" />
+<figcaption aria-hidden="true">image-20240306185054453</figcaption>
+</figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">quick_sort</span><span class="params">(<span class="type">int</span> q[], <span class="type">int</span> l, <span class="type">int</span> r)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l &gt;= r)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> i = l - <span class="number">1</span>, j = r + <span class="number">1</span>, x = q[l + r &gt;&gt; <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">while</span> (i &lt; j)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            i++;</span><br><span class="line">        <span class="keyword">while</span> (q[i] &lt; x);</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            j--;</span><br><span class="line">        <span class="keyword">while</span> (q[j] &gt; x);</span><br><span class="line">        <span class="keyword">if</span> (i &lt; j)</span><br><span class="line">            <span class="built_in">swap</span>(q[i], q[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// q[l...j] 均 &lt;=x , q[j...r] 均 &gt;=x</span></span><br><span class="line">    <span class="built_in">quick_sort</span>(q, l, j), <span class="built_in">quick_sort</span>(q, j + <span class="number">1</span>, r);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>不要轻易改动，非常容易出错</p>
+<ul>
+<li><p><strong>分界点的位置不一定是<code>x</code></strong>，因为<code>x</code>参与交换之后仍然会被留在左右区间中的一个里</p></li>
+<li><p>这里考虑一个边界问题，为什么移动i和j指针的条件是q[i] &lt; x和q[j]
+&gt; x，而不是q[i] &lt;= x和q[j] &gt;= x ？</p>
+<p>——因为如果选取的x是数组里最大的数，那么一直都满足q[i] &lt;=
+x，所以i会一直++发生越界都不会停下来。同理，如果选取的x是数组里最小的数，那么一直都满足q[j]
+&gt;= x，所以j会一直--发生越界都不会停下来</p></li>
+<li><p>指针i和j初始化为数组两侧外一个元素，即i = l - 1，j = r +
+1，然后在数组中使用do-while循环每次先进行一次指针的移动，再去看循环条件</p></li>
+<li><p>这里考虑一个边界问题，为什么不能让i = l和j =
+r然后使用while循环代替do-while循环 ？</p>
+<p>——因为如果数组中存在重复的数字，那么某一轮可能存在i和j都指向重复的数字，并且划分数字x也是这个数字，那么while
+(q[i] &lt; x)和while (q[j] &gt; x)判断不成立不会进入，又因为q[i] = q[j]
+=
+x，交换它们之后这个局面仍然不会改变，从而陷入死循环。所以要使用do-while循环，确保每次两个指针都至少会移动一步，以保证上一次交换的结果能被走掉</p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/SHU15121856/article/details/109839618">【算法学习笔记】8：快速排序中的边界问题_快速排序分界点-CSDN博客</a></p></li>
+</ul>
+</blockquote>
+<h2 id="acwing">AcWing</h2>
+<h3 id="快速排序"><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/problem/content/819/">快速排序</a></h3>
+<h3 id="第k个数"><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/problem/content/820/">第k个数</a></h3>
+<h1 id="归并排序">归并排序</h1>
+<h2 id="模板-1">模板</h2>
+<ul>
+<li>[ L , R ] =&gt; [ L , mid ] , [ mid + 1 , R ]</li>
+<li>递归排序 [ L , mid ] 和 [ mid + 1 , R]</li>
+<li>归并，将左右 2 个有序序列合并成 1 个有序序列</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100005</span>;</span><br><span class="line"><span class="type">int</span> q[N], temp[N];</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">merge_sort</span><span class="params">(<span class="type">int</span> q[], <span class="type">int</span> l, <span class="type">int</span> r)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 递归出口</span></span><br><span class="line">    <span class="keyword">if</span> (l &gt;= r)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> mid = l + r &gt;&gt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 递归排序 [ L , mid ] 和 [ mid + 1 , R]</span></span><br><span class="line">    <span class="built_in">merge_sort</span>(q, l, mid);</span><br><span class="line">    <span class="built_in">merge_sort</span>(q, mid + <span class="number">1</span>, r);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 归并，将左右 2 个有序序列合并成 1 个有序序列</span></span><br><span class="line">    <span class="type">int</span> k = <span class="number">0</span>, i = l, j = mid + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= r)</span><br><span class="line">        <span class="keyword">if</span> (q[i] &lt;= q[j])	<span class="comment">// 此处也可以是 &lt; ,但在某些情况下只能是 &lt;=</span></span><br><span class="line">            tmp[k++] = q[i++];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            tmp[k++] = q[j++];</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid)</span><br><span class="line">        tmp[k++] = q[i++];</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= r)</span><br><span class="line">        tmp[k++] = q[j++];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = l, j = <span class="number">0</span>; i &lt;= r; i++, j++)</span><br><span class="line">        q[i] = tmp[j];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="acwing-1">AcWing</h2>
+<h3 id="归并排序-1"><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/problem/content/821/">归并排序</a></h3>
+<h3 id="逆序对的数量"><a
+target="_blank" rel="noopener" href="https://www.acwing.com/problem/content/790/">逆序对的数量</a></h3>
+<ul>
+<li><strong>分析：</strong></li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403061725480.png"
+alt="Snipaste_2024-03-06_17-20-57_clear_compress" />
+<figcaption
+aria-hidden="true">Snipaste_2024-03-06_17-20-57_clear_compress</figcaption>
+</figure>
+<p>本题需要注意的一点是，N最大是<span
+class="math inline">\(10^5\)</span>，当原始序列是逆序的时候，逆序对数量最多，为
+<span class="math display">\[
+\left( n-1 \right) +\left( n-2 \right) +\left( n-3 \right) +\cdots
++1=\frac{n\left( n-1 \right)}{2}\approx \frac{n^2}{2}=5*10^9
+\]</span> 超过了 INT 的最大取值范围，所以结果 res 要设置为
+<code>long long</code> 类型</p>
+<ul>
+<li><strong>代码：</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> LL;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100005</span>;</span><br><span class="line"><span class="type">int</span> q[N], tmp[N];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">    merge_sort作用</span></span><br><span class="line"><span class="comment">    1. 排序</span></span><br><span class="line"><span class="comment">    2. 返回逆序对数量</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function">LL <span class="title">merge_sort</span><span class="params">(<span class="type">int</span> q[], <span class="type">int</span> l, <span class="type">int</span> r)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l &gt;= r)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> mid = l + r &gt;&gt; <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 递归得到 [ L , mid ] 和 [ mid + 1 , R] 的逆序对数量</span></span><br><span class="line">    LL res = <span class="built_in">merge_sort</span>(q, l, mid) + <span class="built_in">merge_sort</span>(q, mid + <span class="number">1</span>, r);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 归并，将左右 2 个有序序列合并成 1 个有序序列，同时统计逆序对数量</span></span><br><span class="line">    <span class="type">int</span> k = <span class="number">0</span>, i = l, j = mid + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= r)</span><br><span class="line">        <span class="keyword">if</span> (q[i] &lt;= q[j])       <span class="comment">// 注意本题此处必须是 &lt;= , 不能是 &lt;</span></span><br><span class="line">            tmp[k++] = q[i++];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            tmp[k++] = q[j++];</span><br><span class="line">            res += mid - i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= mid)</span><br><span class="line">        tmp[k++] = q[i++];</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= r)</span><br><span class="line">        tmp[k++] = q[j++];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = l, j = <span class="number">0</span>; i &lt;= r; i++, j++)</span><br><span class="line">        q[i] = tmp[j];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;q[i]);</span><br><span class="line">    </span><br><span class="line">    cout &lt;&lt; <span class="built_in">merge_sort</span>(q, <span class="number">0</span>, n - <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-生活/5A景区" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" target="_blank">5A级景区</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" class="archive-article-date">
+        <time datetime="2023-10-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202310030939877.jpeg"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">生活</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-保研/院校" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%99%A2%E6%A0%A1/" target="_blank">强弱com</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%99%A2%E6%A0%A1/" class="archive-article-date">
+        <time datetime="2023-10-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403150851284.jpeg"
+alt="38249f41fdcdd6b840eb92e95c719ba" />
+<figcaption
+aria-hidden="true">38249f41fdcdd6b840eb92e95c719ba</figcaption>
+</figure>
+<h1 id="院校com概念">院校COM概念</h1>
+<p><strong>强COM院校:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">院校</th>
+<th style="text-align: left;">com强弱</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">清华软件</td>
+<td style="text-align: left;">强com*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">北大软微</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">中科院自动化所</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">上交计算机硕士</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">复旦计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">南大计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">南大人工智能</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">人大高瓴</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">人大信息</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">北航计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">哈工大计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">天大智算</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">南开软院</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">厦大计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">川大计算机</td>
+<td style="text-align: left;">强com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">中科大计算机</td>
+<td style="text-align: left;">强com*</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">东南计算机</td>
+<td style="text-align: left;">强com*</td>
+</tr>
+</tbody>
+</table>
+<p>清华*: 如果涉及上机考核，必须通过上机考试</p>
+<p>中科大计算机*：导师可以推荐入营，但是仍需要通过学校面试拿到优营。</p>
+<p>东南计算机*：必须先陶瓷拿到导师推荐信，才能入营参加学院考核。</p>
+<p><strong>弱COM院校:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">院校</th>
+<th style="text-align: left;">com强弱</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">清华叉院</td>
+<td style="text-align: left;">弱com*</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">北大叉院</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">北大计算机</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">北大智能</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">中科院计算所</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">中科院软件所</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">上交计算机直博</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">浙大计算机直博</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">南开计算机</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">上科大计算机</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">北邮计算机</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">西电AI</td>
+<td style="text-align: left;">弱com</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">电子科大计算机</td>
+<td style="text-align: left;">弱com*</td>
+</tr>
+</tbody>
+</table>
+<p>清华*: 如果涉及上机考核，必须通过上机考试</p>
+<p>电子科大*：22年因导师招生超标，学院组织面试刷掉部分学生。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%99%A2%E6%A0%A1/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-保研/黑话" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" target="_blank">黑话</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" class="archive-article-date">
+        <time datetime="2023-10-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403101310480.jpg"
+alt="71aadb82ca8db1e3230dd4494834751" />
+<figcaption
+aria-hidden="true">71aadb82ca8db1e3230dd4494834751</figcaption>
+</figure>
+<ul>
+<li>rk：rank，绩点排名。</li>
+<li>bar：入营门槛。</li>
+<li>oq：即over
+qualified，举例：清北选手报中九末九，可能因oq直接被筛掉。</li>
+<li>弱(强)com：com即committee，弱com即学院官方权利弱，对应导师权力大。强com反之。</li>
+<li>套磁：由 keep in touch
+引申而来，指提前与老师联系，通常以实习或捞入营为目的，部分导师会提前组织考核。</li>
+<li>bg：即 background，指个人背景条件。</li>
+<li>pub：即 publication，指论文发表情况。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-数据结构/【排序】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/09/29/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/" target="_blank">【排序】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/09/29/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/" class="archive-article-date">
+        <time datetime="2023-09-29T00:15:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-09-29</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="内部排序img">内部排序<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202309290900163.png"
+alt="img" /></h1>
+    
+    <a class="article-more-a" href="/2023/09/29/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">数据结构</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/09/29/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%8E%92%E5%BA%8F%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
+    </nav>
+  
+ -->
+
 
   
     <article id="post-STL/队组pair" class="article article-type-post  article-index" itemscope itemprop="blogPost">
@@ -1028,7 +2387,7 @@ class="math inline">\(10^5\)</span>，当原始序列是逆序的时候，逆序
 
 
   
-    <article id="post-保研/黑话" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-生活/5A景区" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1036,7 +2395,7 @@ class="math inline">\(10^5\)</span>，当原始序列是逆序的时候，逆序
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" target="_blank">黑话</a>
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" target="_blank">5A级景区</a>
   
     </h1>
   
@@ -1044,7 +2403,7 @@ class="math inline">\(10^5\)</span>，当原始序列是逆序的时候，逆序
 
   
   
-<a href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" class="archive-article-date">
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" class="archive-article-date">
         <time datetime="2023-10-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
 </a>
 
@@ -1059,23 +2418,13 @@ class="math inline">\(10^5\)</span>，当原始序列是逆序的时候，逆序
     
     <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403101310480.jpg"
-alt="71aadb82ca8db1e3230dd4494834751" />
-<figcaption
-aria-hidden="true">71aadb82ca8db1e3230dd4494834751</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202310030939877.jpeg"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
 </figure>
-<ul>
-<li>rk：rank，绩点排名。</li>
-<li>bar：入营门槛。</li>
-<li>oq：即over
-qualified，举例：清北选手报中九末九，可能因oq直接被筛掉。</li>
-<li>弱(强)com：com即committee，弱com即学院官方权利弱，对应导师权力大。强com反之。</li>
-<li>套磁：由 keep in touch
-引申而来，指提前与老师联系，通常以实习或捞入营为目的，部分导师会提前组织考核。</li>
-<li>bg：即 background，指个人背景条件。</li>
-<li>pub：即 publication，指论文发表情况。</li>
-</ul>
-
+    
+    <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/#more">more >></a>
+    
     
 
     
@@ -1091,7 +2440,7 @@ qualified，举例：清北选手报中九末九，可能因oq直接被筛掉。
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">生活</a>
         		</li>
       		
 		</ul>
@@ -1101,7 +2450,7 @@ qualified，举例：清北选手报中九末九，可能因oq直接被筛掉。
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/">展开全文 >></a>
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/">展开全文 >></a>
     </p>
     
 
@@ -1371,7 +2720,7 @@ aria-hidden="true">38249f41fdcdd6b840eb92e95c719ba</figcaption>
 
 
   
-    <article id="post-生活/5A景区" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-保研/黑话" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1379,7 +2728,7 @@ aria-hidden="true">38249f41fdcdd6b840eb92e95c719ba</figcaption>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" target="_blank">5A级景区</a>
+	  <a class="article-title" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" target="_blank">黑话</a>
   
     </h1>
   
@@ -1387,7 +2736,7 @@ aria-hidden="true">38249f41fdcdd6b840eb92e95c719ba</figcaption>
 
   
   
-<a href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/" class="archive-article-date">
+<a href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/" class="archive-article-date">
         <time datetime="2023-10-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-03</time>
 </a>
 
@@ -1402,13 +2751,23 @@ aria-hidden="true">38249f41fdcdd6b840eb92e95c719ba</figcaption>
     
     <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202310030939877.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403101310480.jpg"
+alt="71aadb82ca8db1e3230dd4494834751" />
+<figcaption
+aria-hidden="true">71aadb82ca8db1e3230dd4494834751</figcaption>
 </figure>
-    
-    <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/#more">more >></a>
-    
+<ul>
+<li>rk：rank，绩点排名。</li>
+<li>bar：入营门槛。</li>
+<li>oq：即over
+qualified，举例：清北选手报中九末九，可能因oq直接被筛掉。</li>
+<li>弱(强)com：com即committee，弱com即学院官方权利弱，对应导师权力大。强com反之。</li>
+<li>套磁：由 keep in touch
+引申而来，指提前与老师联系，通常以实习或捞入营为目的，部分导师会提前组织考核。</li>
+<li>bg：即 background，指个人背景条件。</li>
+<li>pub：即 publication，指论文发表情况。</li>
+</ul>
+
     
 
     
@@ -1424,7 +2783,7 @@ alt="img" />
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">生活</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
         		</li>
       		
 		</ul>
@@ -1434,7 +2793,7 @@ alt="img" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E7%94%9F%E6%B4%BB/5A%E6%99%AF%E5%8C%BA/">展开全文 >></a>
+      <a class="article-more-a" href="/2023/10/03/%5Bobject%20Object%5D/%E4%BF%9D%E7%A0%94/%E9%BB%91%E8%AF%9D/">展开全文 >></a>
     </p>
     
 
@@ -1559,6 +2918,7 @@ alt="img" /></h1>
       <a class="extend prev" rel="prev" href="/page/6/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">Next &amp;raquo;</a>
     </nav>
   
+
 
 
           </div>
@@ -1708,11 +3068,15 @@ alt="img" /></h1>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1724,11 +3088,11 @@ alt="img" /></h1>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1741,10 +3105,6 @@ alt="img" /></h1>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
             
             <div class="clearfix"></div>

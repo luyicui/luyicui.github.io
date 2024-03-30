@@ -17,11 +17,13 @@
 <meta property="og:site_name" content="天道酬勤，厚德载物">
 <meta property="og:description" content="DFS 连通性模型 搜索顺序 剪枝与优化 迭代加深 双向DFS IDA*  AcWing 842. 排列数字 - AcWing AcWing 843. n-皇后问题 - AcWing 79. 单词搜索 - 力扣（LeetCode） 994. 腐烂的橘子 - 力扣（LeetCode） 22. 括号生成 - 力扣（LeetCode） 39. 组合总和 - 力扣（L">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png">
 <meta property="article:published_time" content="2024-02-29T07:23:16.000Z">
-<meta property="article:modified_time" content="2024-03-29T11:06:36.844Z">
+<meta property="article:modified_time" content="2024-03-30T02:03:21.058Z">
 <meta property="article:author" content="tianchou">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png">
   
     <link rel="alternative" href="/atom.xml" title="天道酬勤，厚德载物" type="application/atom+xml">
   
@@ -78,7 +80,7 @@
 			<div align=center>
 				
 					<div class="tag-cloud">
-					<a href="/tags/C/" style="font-size: 25px;">C++</a> <a href="/tags/Linux/" style="font-size: 17px;">Linux</a> <a href="/tags/STL/" style="font-size: 23px;">STL</a> <a href="/tags/fighting/" style="font-size: 15px;">fighting</a> <a href="/tags/others/" style="font-size: 21px;">others</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 19px;">保研</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 25px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 17px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 23px;">算法</a>
+					<a href="/tags/C/" style="font-size: 25px;">C++</a> <a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a> <a href="/tags/STL/" style="font-size: 21.67px;">STL</a> <a href="/tags/fighting/" style="font-size: 15px;">fighting</a> <a href="/tags/others/" style="font-size: 20px;">others</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 18.33px;">保研</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 23.33px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 16.67px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 21.67px;">算法</a>
 					</div>
 				
 			</div>
@@ -243,7 +245,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">137字</span>
+      <span class="post-count">272字</span>
     </span>
   </span>
 
@@ -295,24 +297,35 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
 子集 - 力扣（LeetCode）</a></p></li>
 </ul>
 <h1 id="bfs">BFS</h1>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png" alt="image-20240330091250874" style="zoom: 25%;" /></p>
+<p><code>BFS</code> 通常用于“<strong>求最小</strong>”，相较于
+<code>DFS</code> 是基于<strong>迭代</strong>，不会发生爆栈</p>
 <h2 id="flood-fill">Flood FIll</h2>
+<ul>
+<li>洪水覆盖算法，技巧在于使用类似于下面的代码，进行<strong>不同方向的搜索</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 4 联通</span></span><br><span class="line"><span class="type">int</span> dx[<span class="number">4</span>] = &#123;<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>&#125;, dy[<span class="number">4</span>] = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">-1</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 联通</span></span><br><span class="line"><span class="type">int</span> dx[<span class="number">8</span>] = &#123;<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>&#125;, dy[<span class="number">8</span>] = &#123;<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">-1</span>, <span class="number">1</span>, <span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟中国象棋中的“马”</span></span><br><span class="line"><span class="type">int</span> dx[<span class="number">8</span>] = &#123;<span class="number">-2</span>, <span class="number">-2</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>&#125;, dy[<span class="number">8</span>] = &#123;<span class="number">-1</span>, <span class="number">1</span>, <span class="number">-2</span>, <span class="number">2</span>, <span class="number">-2</span>, <span class="number">2</span>, <span class="number">-1</span>, <span class="number">1</span>&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-islands/description/">200.
+岛屿数量 - 力扣（LeetCode）</a></li>
+</ul>
 <h2 id="最短路模型">最短路模型</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7996829/">AcWing
+844. 走迷宫 - AcWing</a></li>
+</ul>
 <h2 id="多源bfs">多源BFS</h2>
-<h2 id="最小部属模型">最小部属模型</h2>
+<h2 id="最小步数模型">最小步数模型</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8218005/">AcWing
+845. 八数码 - AcWing</a></li>
+</ul>
 <h2 id="双端队列广搜">双端队列广搜</h2>
 <h2 id="双向bfs">双向BFS</h2>
 <h2 id="a">A*</h2>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7996829/">AcWing
-844. 走迷宫 - AcWing</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8218005/">AcWing
-845. 八数码 - AcWing</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-islands/description/">200.
-岛屿数量 - 力扣（LeetCode）</a></p></li>
-</ul>
 
     
 
@@ -490,7 +503,7 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-isla
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dfs"><span class="toc-number">1.</span> <span class="toc-text">DFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E9%80%9A%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">连通性模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">搜索顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">剪枝与优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1"><span class="toc-number">1.4.</span> <span class="toc-text">迭代加深</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91dfs"><span class="toc-number">1.5.</span> <span class="toc-text">双向DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ida"><span class="toc-number">1.6.</span> <span class="toc-text">IDA*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bfs"><span class="toc-number">2.</span> <span class="toc-text">BFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#flood-fill"><span class="toc-number">2.1.</span> <span class="toc-text">Flood FIll</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.2.</span> <span class="toc-text">最短路模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E6%BA%90bfs"><span class="toc-number">2.3.</span> <span class="toc-text">多源BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E9%83%A8%E5%B1%9E%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.4.</span> <span class="toc-text">最小部属模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97%E5%B9%BF%E6%90%9C"><span class="toc-number">2.5.</span> <span class="toc-text">双端队列广搜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91bfs"><span class="toc-number">2.6.</span> <span class="toc-text">双向BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a"><span class="toc-number">2.7.</span> <span class="toc-text">A*</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dfs"><span class="toc-number">1.</span> <span class="toc-text">DFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E9%80%9A%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">连通性模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">搜索顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-number">1.3.</span> <span class="toc-text">剪枝与优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1"><span class="toc-number">1.4.</span> <span class="toc-text">迭代加深</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91dfs"><span class="toc-number">1.5.</span> <span class="toc-text">双向DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ida"><span class="toc-number">1.6.</span> <span class="toc-text">IDA*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bfs"><span class="toc-number">2.</span> <span class="toc-text">BFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#flood-fill"><span class="toc-number">2.1.</span> <span class="toc-text">Flood FIll</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.2.</span> <span class="toc-text">最短路模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E6%BA%90bfs"><span class="toc-number">2.3.</span> <span class="toc-text">多源BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E6%AD%A5%E6%95%B0%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.4.</span> <span class="toc-text">最小步数模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97%E5%B9%BF%E6%90%9C"><span class="toc-number">2.5.</span> <span class="toc-text">双端队列广搜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91bfs"><span class="toc-number">2.6.</span> <span class="toc-text">双向BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a"><span class="toc-number">2.7.</span> <span class="toc-text">A*</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -689,15 +702,11 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-isla
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -706,6 +715,10 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/number-of-isla
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>

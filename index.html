@@ -214,6 +214,57 @@
             
 
   
+    <article id="post-打印" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/31/%5Bobject%20Object%5D/%E6%89%93%E5%8D%B0/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-C++/ssize_t&amp;&amp;size_t" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -262,126 +313,9 @@
 的声明是实现相关的。它出现在一个或多个标准头文件中，比如
 <code>stdio.h</code> 和 <code>stblib.h</code>，典型的定义如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __SIZE_T</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SIZE_T</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> <span class="type">size_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<p>​ <code>define</code>
-指令确保它只被定义一次。实际的长度取决于实现。通常在 32
-位系统上它的长度是 32 位，而在 64 位系统上则是 64
-位。一般来说，<code>size_t</code> 可能的最大值是
-<code>SIZE_MAX</code></p>
-<p>​ 打印 <code>size_t</code>
-类型的值时要小心。这是无符号值，如果选错格式说明符，可能会得到不可靠的结果。推荐的格式说明符是
-<code>%zu</code>。不过，某些情况下不能用这个说明符， 作为替代，可以考虑
-<code>%u</code> 或 <code>%lu</code>。下面这个例子将一个变量定义为
-<code>size_t</code>，然后用两种不同的格式说明符来打印：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">size_t</span> sizet = <span class="number">-5</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,sizet);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%zu\n&quot;</span>,sizet);</span><br></pre></td></tr></table></figure>
-<p>​ 因为 <code>size_t</code>
-本来是用于表示正整数的，如果用来表示负数就会出问题。如果为其赋一个负数，然后用
-<code>%d</code> 和 <code>%zu</code> 格式说明符打印，就得到如下结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-5</span><br><span class="line">4294967291</span><br></pre></td></tr></table></figure>
-<p>​ <code>%d</code> 把 <code>size_t</code> 当做有符号整数，它打印出
--5。因为变量中存放的就是 -5。<code>%zu</code> 把 <code>size_t</code>
-当做无符号整数。当 -5 被解析为有符号数时，高位置为
-1，表示这个数是负数。当它被解析为无符号数时，高位的 1 被当做 2
-的乘幂。所以在用 <code>%zu</code> 格式说明符时才会看到那个大整数。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sizet = <span class="number">5</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,sizet); <span class="comment">// 显示5</span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%zu\n&quot;</span>,sizet); <span class="comment">// 显示5</span></span><br></pre></td></tr></table></figure>
-<p>​ 因为 <code>size_t</code> 是无符号的，一定要给这种类型的变量赋正数
-。</p>
-<h2 id="ssize_t">ssize_t</h2>
-<p><strong><code>ssize_t</code></strong> 和 <code>size_t</code>
-类似，但必需是<strong>signed</strong>（表示 <code>signed size_t</code>
-类型）， 用来表示可以被执行读写操作的数据块的大小。</p>
-<h2 id="size_t-和-int-比较">size_t 和 int 比较</h2>
-<ul>
-<li><code>size_t</code>
-在32位架构中定义为：<code>typedef  unsigned int size_t</code></li>
-<li><code>size_t</code>
-在64位架构中被定义为：<code>typedef  unsigned long size_t</code></li>
-<li><code>size_t</code> 是无符号的，并且是平台无关的，表示 0 ~
-MAXINT的范围；<code>int</code> 为是有符号的；</li>
-<li><code>int</code> 在不同架构上都是4字节，<code>size_t</code>
-在32位和64位架构上分别是 4 字节和 8
-字节，在不同架构上进行编译时需要注意这个问题。</li>
-<li><strong><code>ssize_t</code></strong>是<strong>有符号</strong>整型，在
-32 位机器上等同与 <code>int</code>，在 64 位机器上等同与
-<code>long int</code>.</li>
-</ul>
-<h2
-id="c语言编程需要注意的64位和32机器的区别">C语言编程需要注意的64位和32机器的区别</h2>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th>char</th>
-<th>short</th>
-<th>int</th>
-<th>long</th>
-<th>long long</th>
-<th>指针</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>16 位 平台</td>
-<td>1Byte</td>
-<td>2Byte</td>
-<td>2Byte</td>
-<td>4Byte</td>
-<td></td>
-<td>2 Byte</td>
-</tr>
-<tr class="even">
-<td>32 位 平台</td>
-<td>1Byte</td>
-<td>2Byte</td>
-<td>4Byte</td>
-<td>4Byte</td>
-<td>8Byte</td>
-<td>4 Byte</td>
-</tr>
-<tr class="odd">
-<td>64 位 平台</td>
-<td>1Byte</td>
-<td>2Byte</td>
-<td>4Byte</td>
-<td>8Byte</td>
-<td>8Byte</td>
-<td>8Byte</td>
-</tr>
-</tbody>
-</table>
-<h2 id="编程注意事项">编程注意事项</h2>
-<p>​ 为了保证平台的通用性，程序中尽量不要使用 <code>long</code>
-数据库型。可以使用固定大小的数据类型宏定义，这些宏定义需要引用
-<code>stdint.h</code> 头文件：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">signed</span> <span class="type">char</span> <span class="type">int8_t</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">short</span> <span class="type">int</span> <span class="type">int16_t</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">int32_t</span>;</span><br><span class="line"><span class="meta"># <span class="keyword">if</span> __WORDSIZE == 64</span></span><br><span class="line">    <span class="keyword">typedef</span> <span class="type">long</span> <span class="type">int</span> <span class="type">int64_t</span>;</span><br><span class="line"><span class="meta"># <span class="keyword">else</span></span></span><br><span class="line">    __extension__</span><br><span class="line">    <span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> <span class="type">int64_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<h2 id="intptr_t">intptr_t</h2>
-<p>​ 使用 <code>int</code> 时也可以使用 <code>intptr_t</code>
-来保证平台的通用性，它在不同的平台上编译时长度不同，但都是标准的平台字长，比如
-64 位机器它的长度就是 8 字节，32
-位机器它的长度是4字节，使用它可以安全地进行整数与指针的转换运算，也就是说当需要将指针作为整数运算时，将它转换成
-<code>intptr_t</code> 进行运算才是安全的。<code>intptr_t</code>
-需要引用<code>stddef.h</code> 头文件，它的定义如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">if</span> __WORDSIZE == 64</span></span><br><span class="line">    <span class="keyword">typedef</span> <span class="type">long</span> <span class="type">int</span> <span class="type">intptr_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    <span class="keyword">typedef</span> <span class="type">int</span> <span class="type">intptr_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<p>​ 编程中要尽量使用 <code>sizeof</code>
-来计算数据类型的大小。以上类型定义都有相应的无符号类型。</p>
-<h2 id="使用ssize_t和size_t">使用ssize_t和size_t</h2>
-<p>​ 它们分别是 <code>unsigned</code> 和 <code>signed</code> size of
-computer word size。它们也是表示<strong>计算机的字长</strong>，在 32
-位机器上是 <code>int</code>型，在64位机器上 <code>long</code>
-型。使用它们对于增加平台的通用性有很大好处，从某种意义上来说它们等同于
-<code>intptr_t</code> 和 <code>uintptr_t</code>。使用它们也需要引用
-<code>stddef.h</code> 头文件。</p>
-<p>​ socket 的 <code>accept</code> 函数在有些操作系统上使用
-<code>size_t</code> 是不正确的，因为 <code>accept</code> 接收的
-<code>int</code> 类型，而size_t的长度可能会超过 <code>int*</code>
-的长度限制，导致错误。后来BSD使用 <code>sock_t</code> 来替代它。</p>
-<blockquote>
-<p>参考：</p>
-<ul>
-<li>https://blog.csdn.net/bzhxuexi/article/details/19899803</li>
-<li>https://blog.csdn.net/qq_30866297/article/details/51465473</li>
-</ul>
-</blockquote>
-
+    
+    <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/#more">more >></a>
+    
     
 
     
@@ -509,6 +443,171 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/29/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%95%B0%E7%BB%84%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/【动态规划】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/25/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E3%80%91/" target="_blank">【动态规划】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/25/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-03-24T17:02:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-25</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="动态规划">动态规划</h1>
+<h2 id="概念了解">概念【了解】</h2>
+<ol type="1">
+<li><p><strong>动态规划：</strong>将一个复杂的问题分解成若干个子问题，通过综合子问题的最优解来得到原问题的最优解</p>
+<ul>
+<li>动态规划会将每个求解过的子问题的解记录下来，这样下一次碰到同样的子问题时，就可以直接使用之前记录的结果，而不是重复计算</li>
+<li>采用<strong>递归</strong>（又叫<strong>记忆化搜索</strong>）实现</li>
+</ul></li>
+<li><p><strong>重叠子问题：</strong>如果<strong>一个问题可以被分解成若干个子问题</strong>，且这些子问题会重复出现，就称这个问题拥有重叠子问题。
+一个问题必须拥有重叠子问题，才能用动态规划去解决。</p></li>
+<li><p><strong>最优子结构：</strong>如果<strong>一个问题的最优解可以由其子问题的最优解有效地构造出来</strong>，那么称为这个问题拥有的最优子结构。最优子结构保证了动态规划中的原问题的最优解可以由子问题的最优解推导而来</p></li>
+<li><p><strong>动态规划</strong> vs
+<strong>分治：</strong>都是分解为子问题然后合并子问题得到解，但是：</p>
+<ul>
+<li>动态规划分解出的子问题是重叠的</li>
+<li>分治分解出的子问题是不重叠的</li>
+</ul></li>
+<li><p><strong>动态规划 vs 贪心：</strong>都有最优子结构，但是：</p>
+<ul>
+<li>贪心直接选择一个子问题去求解，会抛弃一些子问题，这种选择的正确性需要用归纳法证明</li>
+<li>而动态规划会考虑所有的子问题，所以这种选择一定是正确的</li>
+</ul></li>
+</ol>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403201846385.png"
+alt="Snipaste_2019-09-13_17-06-58.png" />
+<figcaption
+aria-hidden="true">Snipaste_2019-09-13_17-06-58.png</figcaption>
+</figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403231407219.jpeg"
+alt="闫式dp.jpg" />
+<figcaption aria-hidden="true">闫式dp.jpg</figcaption>
+</figure>
+<ol type="1">
+<li>集合划分原则</li>
+</ol>
+<ul>
+<li><p>不重不漏【不漏一定要满足，不重不一定都要满足(一般求个数时要满足)】</p></li>
+<li><p>如何将现有的集合划分为更小的子集，使得<strong>所有子集</strong>都可以计算出来</p></li>
+</ul>
+<ol start="2" type="1">
+<li>下标从 0 开始递归还是下标从 1开始递归？</li>
+</ol>
+<ul>
+<li>如果涉及到 <code>f[i-1]</code>，建议下标从 1
+开始递归，<code>f[0]</code>存储初始值</li>
+<li>否则下标从 0 开始递归</li>
+</ul>
+<ol start="3" type="1">
+<li>考虑状态函数初始化</li>
+</ol>
+<ul>
+<li>你看看在for遍历的时候需要用到的但是你事先没有的（往往就是下标0）就要预处理</li>
+<li>如果要找min的话别忘了INF，要找有负数的max的话别忘了-INF</li>
+</ul>
+<h2 id="背包问题">背包问题</h2>
+<ul>
+<li>0/1 背包：每种物品只有 1 个</li>
+<li>完全背包：每种物品有无限个</li>
+<li>多重背包：每种物品有 <span class="math inline">\(S_i\)</span>
+个</li>
+<li>分组背包：有 N 组物品，每一组中有 若干个 物品</li>
+</ul>
+<p>标记</p>
+<ul>
+<li>N：物品种数</li>
+<li>V：背包容量</li>
+<li>S：物品数量</li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403081245014.png"
+alt="image-20240308124413525" />
+<figcaption aria-hidden="true">image-20240308124413525</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/03/25/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/25/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -797,7 +896,6 @@ id="咖啡因每日的安全使用量是多少">咖啡因每日的安全使用�
   <div class="article-entry" itemprop="articleBody">
     
     <h1 id="数学知识">数学知识</h1>
-<p>[TOC]</p>
 <p>:smile:<strong>数论</strong> 经常会出现 <strong>数的大小越界</strong>
 情况：</p>
 <ul>
@@ -1078,57 +1176,6 @@ alt="在这里插入图片描述" />
 
 
   
-    <article id="post-others/typora报错" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-  <div class="article-entry" itemprop="articleBody">
-    
-    
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/others/typora%E6%8A%A5%E9%94%99/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-C++/【C++标准库函数】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1160,8 +1207,33 @@ alt="在这里插入图片描述" />
     
     <h1 id="c标准库函数">C++标准库函数</h1>
 <p>[TOC]</p>
-<h2 id="nth_element">nth_element</h2>
+<h2 id="lower_bound-upper_bound">lower_bound &amp;&amp; upper_bound</h2>
 <h3 id="头文件">头文件</h3>
+<p><strong><code>#include &lt;algorithm&gt;</code></strong></p>
+<h3 id="作用">作用</h3>
+<ul>
+<li><p>在一个<strong>排好序的数组</strong>中进行<strong>二分查找</strong></p></li>
+<li><p><strong>基于二分查找！数组或容器必须有序！</strong></p></li>
+</ul>
+<h3 id="用法">用法</h3>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403312142542.png"
+alt="image-20240331214206385" />
+<figcaption aria-hidden="true">image-20240331214206385</figcaption>
+</figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403312142606.png"
+alt="image-20240331214221383" />
+<figcaption aria-hidden="true">image-20240331214221383</figcaption>
+</figure>
+<h3 id="举例">举例</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; a = &#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>&#125;; <span class="comment">// 示例数组，假设已经从小到大排序</span></span><br><span class="line">    <span class="type">int</span> x;</span><br><span class="line">    cin &gt;&gt; x;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 最后一个小于x的元素</span></span><br><span class="line">    <span class="keyword">auto</span> p1 = <span class="built_in">lower_bound</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), x) - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (p1 &gt;= a.<span class="built_in">begin</span>())</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;1. 最后一个小于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素是: &quot;</span> &lt;&lt; *p1 &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;1. 没有小于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 最后一个小于等于x的元素</span></span><br><span class="line">    <span class="keyword">auto</span> p2 = <span class="built_in">upper_bound</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), x) - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (p2 &gt;= a.<span class="built_in">begin</span>())</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;2. 最后一个小于等于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素是: &quot;</span> &lt;&lt; *p2 &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;2. 没有小于等于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 第一个大于x的元素</span></span><br><span class="line">    <span class="keyword">auto</span> p3 = <span class="built_in">upper_bound</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), x);</span><br><span class="line">    <span class="keyword">if</span> (p3 != a.<span class="built_in">end</span>())</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;3. 第一个大于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素是: &quot;</span> &lt;&lt; *p3 &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;3. 没有大于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 第一个大于等于x的元素</span></span><br><span class="line">    <span class="keyword">auto</span> p4 = <span class="built_in">lower_bound</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), x);</span><br><span class="line">    <span class="keyword">if</span> (p4 != a.<span class="built_in">end</span>())</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;4. 第一个大于等于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素是: &quot;</span> &lt;&lt; *p4 &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;4. 没有大于等于 &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&quot; 的元素&quot;</span> &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">6</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 最后一个小于 <span class="number">6</span> 的元素是: <span class="number">5</span></span><br><span class="line"><span class="number">2.</span> 最后一个小于等于 <span class="number">6</span> 的元素是: <span class="number">5</span></span><br><span class="line"><span class="number">3.</span> 第一个大于 <span class="number">6</span> 的元素是: <span class="number">7</span></span><br><span class="line"><span class="number">4.</span> 第一个大于等于 <span class="number">6</span> 的元素是: <span class="number">7</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">7</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 最后一个小于 <span class="number">7</span> 的元素是: <span class="number">5</span></span><br><span class="line"><span class="number">2.</span> 最后一个小于等于 <span class="number">7</span> 的元素是: <span class="number">7</span></span><br><span class="line"><span class="number">3.</span> 第一个大于 <span class="number">7</span> 的元素是: <span class="number">9</span></span><br><span class="line"><span class="number">4.</span> 第一个大于等于 <span class="number">7</span> 的元素是: <span class="number">7</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 没有小于 <span class="number">0</span> 的元素</span><br><span class="line"><span class="number">2.</span> 没有小于等于 <span class="number">0</span> 的元素</span><br><span class="line"><span class="number">3.</span> 第一个大于 <span class="number">0</span> 的元素是: <span class="number">1</span></span><br><span class="line"><span class="number">4.</span> 第一个大于等于 <span class="number">0</span> 的元素是: <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 最后一个小于 <span class="number">10</span> 的元素是: <span class="number">9</span></span><br><span class="line"><span class="number">2.</span> 最后一个小于等于 <span class="number">10</span> 的元素是: <span class="number">9</span></span><br><span class="line"><span class="number">3.</span> 没有大于 <span class="number">10</span> 的元素</span><br><span class="line"><span class="number">4.</span> 没有大于等于 <span class="number">10</span> 的元素</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 没有小于 <span class="number">1</span> 的元素</span><br><span class="line"><span class="number">2.</span> 最后一个小于等于 <span class="number">1</span> 的元素是: <span class="number">1</span></span><br><span class="line"><span class="number">3.</span> 第一个大于 <span class="number">1</span> 的元素是: <span class="number">3</span></span><br><span class="line"><span class="number">4.</span> 第一个大于等于 <span class="number">1</span> 的元素是: <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 输入 */</span></span><br><span class="line"><span class="number">9</span></span><br><span class="line"><span class="comment">/* 输出 */</span></span><br><span class="line"><span class="number">1.</span> 最后一个小于 <span class="number">9</span> 的元素是: <span class="number">7</span></span><br><span class="line"><span class="number">2.</span> 最后一个小于等于 <span class="number">9</span> 的元素是: <span class="number">9</span></span><br><span class="line"><span class="number">3.</span> 没有大于 <span class="number">9</span> 的元素</span><br><span class="line"><span class="number">4.</span> 第一个大于等于 <span class="number">9</span> 的元素是: <span class="number">9</span></span><br></pre></td></tr></table></figure>
+<h2 id="nth_element">nth_element</h2>
+<h3 id="头文件-1">头文件</h3>
 <p><strong><code>#include &lt;algorithm&gt;</code></strong></p>
 <h3 id="原型">原型</h3>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//排序规则采用默认的升序排序</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">nth_element</span> <span class="params">(RandomAccessIterator first,</span></span></span><br><span class="line"><span class="params"><span class="function">                  RandomAccessIterator nth,</span></span></span><br><span class="line"><span class="params"><span class="function">                  RandomAccessIterator last)</span></span>;</span><br><span class="line"><span class="comment">//排序规则为自定义的 comp 排序规则</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">nth_element</span> <span class="params">(RandomAccessIterator first,</span></span></span><br><span class="line"><span class="params"><span class="function">                  RandomAccessIterator nth,</span></span></span><br><span class="line"><span class="params"><span class="function">                  RandomAccessIterator last,</span></span></span><br><span class="line"><span class="params"><span class="function">                  Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
@@ -1182,7 +1254,7 @@ class="math inline">\(k\)</span> 小</p>
 <ul>
 <li>无</li>
 </ul>
-<h3 id="作用">作用</h3>
+<h3 id="作用-1">作用</h3>
 <ul>
 <li>将数组中<strong>第 <span class="math inline">\(k\)</span>
 小</strong>的数 放在 <code>nth</code> 指向的位置</li>
@@ -1190,7 +1262,7 @@ class="math inline">\(k\)</span> 小</p>
 指向的元素将处于正确位置，其他位置元素顺序相较于初始顺序会被<strong>打乱</strong>，但前面的都比它小，后面的都比它大</li>
 <li>时间复杂度：<span class="math inline">\(O(n)\)</span></li>
 </ul>
-<h3 id="举例">举例</h3>
+<h3 id="举例-1">举例</h3>
 <h4 id="求第k小">求第k小</h4>
 <ul>
 <li><strong>数组</strong> <code>a[]</code></li>
@@ -1218,9 +1290,9 @@ class="math inline">\(k\)</span> 小</p>
 <p>运行结果：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第 k 大为 <span class="number">7</span></span><br><span class="line"><span class="number">9</span> <span class="number">8</span> <span class="number">7</span> <span class="number">6</span> <span class="number">5</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> </span><br></pre></td></tr></table></figure>
 <h2 id="max_elementmin_element">max_element、min_element</h2>
-<h3 id="头文件-1">头文件</h3>
+<h3 id="头文件-2">头文件</h3>
 <p><strong><code>#include &lt;algorithm&gt;</code></strong></p>
-<h3 id="作用-1">作用</h3>
+<h3 id="作用-2">作用</h3>
 <p><strong>1. 求数组的最大值或最小值</strong></p>
 <ul>
 <li>普通数组</li>
@@ -1259,101 +1331,6 @@ class="math inline">\(k\)</span> 小</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/C++/%E3%80%90C++%E6%A0%87%E5%87%86%E5%BA%93%E5%87%BD%E6%95%B0%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-fighting/《致谢》——黄国平" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/" target="_blank">《致谢》——黄国平</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/" class="archive-article-date">
-        <time datetime="2024-03-04T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-04</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="致谢">致谢</h1>
-<p>​
-<strong>我走了很远的路，吃了很多的苦，才将这份博士学位论文送到你的面前。二十二载求学路，一路风雨泥泞，许多不容易。如梦一场，仿佛昨天家人才团聚过。</strong></p>
-<p>​
-出生在一个小山坳里，母亲在我十二岁时离家。父亲在家的日子不多，即便在我病得不能自己去医院的时候，也仅是留下勉强够治病的钱后又走了。我十七岁时，他因交通事故离世后，我哭得稀里糊涂，因为再得重病时没有谁来管我了。同年，和我住在一起的婆婆病故，真的无能为力。她照顾我十七年，下葬时却仅是一副薄薄的棺材。另一个家庭成员是老狗小花，为父亲和婆婆守过坟，后因我进城上高中而命不知何时何处所终。如兄长般的计算机启蒙老师■■没能看到我的大学录取通知书，对我照顾有加的师母也在不惑之前匆匆离开人世。<strong>每次回去看他们，这一座座坟茔都提示着生命的每一分钟都弥足珍贵。</strong></p>
-<p>​
-<strong>人情冷暖，生离死别，固然让人痛苦与无奈，而贫穷则可能让人失去希望。</strong>家徒四壁，在煤油灯下写作业或者读书都是晚上最开心的事。如果下雨，保留节目就是用竹笋壳塞瓦缝防漏雨。高中之前的主要经济来源是夜里抓黄鳝、周末钓鱼、养小猪崽和出租水牛。那些年里，方圆十公里的水田和小河都被我用脚测量过无数次。被狗和蛇追，半夜落水，因蓄电瓶进水而摸黑逃回家中：学费没交，
-黄鳍却被父亲偷卖了，然后买了肉和酒，都是难以避免的事。</p>
-    
-    <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">fighting</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/">展开全文 >></a>
     </p>
     
 
@@ -1565,15 +1542,15 @@ class="math inline">\(k\)</span> 小</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
             
             <div class="clearfix"></div>

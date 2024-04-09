@@ -42,57 +42,6 @@ Learning），纵向联邦学习</summary>
   </entry>
   
   <entry>
-    <title>throughput</title>
-    <link href="https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/throughput/"/>
-    <id>https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/throughput/</id>
-    <published>2024-04-06T05:59:27.000Z</published>
-    <updated>2024-04-06T13:24:22.396Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="throughput">throughput</h1><p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><p>真的是到处都是呢！！</p><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752217.webp"alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><hr /><p>​ <ahref="https://www.zhihu.com/search?q=神经网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">神经网络</a>的吞吐量（Throughput）定义为网络模型在<strong>单位时间内</strong>（例如，1s）<strong>可以处理的最大输入的训练样本数据</strong>。</p><p>​ 与涉及单个样本数据处理的延迟 Latency 不同，为了实现最大吞吐量Throughput，希望在集群训练的过程中并行处理尽可能多的样本数据。有效的并行性显然依赖于数据、模型和设备规模。</p><p>​ 因此，为了正确测量吞吐量，可以执行以下两个步骤：</p><ol type="1"><li>估计允许最大<ahref="https://www.zhihu.com/search?q=并行度&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">并行度</a>的最佳训练样本数据批量大小，即Batch Size</li><li>在AI训练集群中给定这个最佳批量大小，<ahref="https://www.zhihu.com/search?q=测量网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">测量网络</a>在1秒钟内可以处理的训练样本数据。</li></ol><p>​ 要找到最佳批量大小，一个好的经验法则是达到 Ascend <ahref="https://www.zhihu.com/search?q=昇腾处理器&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">昇腾处理器</a>对给定数据类型的内存限制，即BatchSize塞满内存。这个大小当然取决于硬件类型和网络的大小。</p><p>​ 找到这个最大批量大小 Batch Size的最快方法是执行二进制搜索。当时间不重要时，简单的<ahref="https://www.zhihu.com/search?q=顺序搜索&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">顺序搜索</a>就足够了。不过在大模型训练的过程中，因为BatchSize比较重要，设计到重计算、Pipeline并行、Tensor并行等不同并行模式的配比，还有包括microBatch Size的数据配比。因此默认Batch Size会为16的倍数增长比较合理。</p><p>​ 这确定了 AI加速卡上可以处理的最大批量大小，用于训练大模型及其处理的输入训练样本数据。在找到最佳批量大小后，可以计算实际吞吐量，然后使用以下公式：<span class="math display">\[sample_{throughput}=BS*N/step_{time}\]</span> 其中，BS 为 Batch Size，N 为集群中AI加速卡的数量，steptime为在分布式集群中，执行完一个BatchSize的时间（单位为s）。大模型训练的<ahref="https://www.zhihu.com/search?q=吞吐率&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">吞吐率</a>的单位在CV和部分NLP任务重为Samples/s，在固定 Shape 的 NLP任务有seqlen，因此单位为tokens/s，计算公式为： <span class="math display">\[tokens_{throughout}=sample_{throughput}*seq_{len}\]</span> ​ 假设GLM10B<ahref="https://www.zhihu.com/search?q=网络模型&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">网络模型</a>的吞吐为25Samples/s，max seq_len 为1024，那么按照tokens来计算吞吐率为 25 * 1024 =25600 tokens/s。也就是每秒能处理2万多个tokens啦。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;throughput&quot;&gt;throughput&lt;/h1&gt;
-&lt;p&gt;哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！&lt;/p&gt;
-&lt;figure&gt;
-&lt;img
-src=&quot;https://tianchou.oss-cn-beijing</summary>
-      
-    
-    
-    
-    
-    <category term="AI" scheme="https://cuiluyi.gitee.io/tags/AI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>矩阵乘法复杂度分析</title>
-    <link href="https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/"/>
-    <id>https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/</id>
-    <published>2024-04-06T05:59:27.000Z</published>
-    <updated>2024-04-06T06:19:34.307Z</updated>
-    
-    <content type="html"><![CDATA[<p># 矩阵乘法复杂度分析</p><h2 id="前言">前言</h2><p><strong>矩阵乘法</strong>：<strong>矩阵乘法（英语：matrixmultiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩阵</strong>的<strong>二元运算</strong>（需要2个对象参与，这里指2个矩阵），第三个矩阵即前两者的乘积，称为<strong>矩阵积</strong></p><p><strong>条件：</strong>它只有在第一个矩阵的<strong>列数（column）</strong>和第二个矩阵的<strong>行数（row）</strong>相同时才有意义</p><h2 id="矩阵乘法">矩阵乘法</h2><h3 id="个矩阵相乘">2个矩阵相乘</h3><p>对于矩阵 <span class="math inline">\(A_{a*b}\)</span>、<spanclass="math inline">\(B_{b*c}\)</span>，那么 <spanclass="math inline">\(A*B\)</span> 的复杂度为 <spanclass="math inline">\(O(a*b*c)\)</span>，准确是 <spanclass="math inline">\(2abc\)</span></p><ul><li>加法计算了 <span class="math inline">\(abc\)</span> 次</li><li>乘法计算了 <span class="math inline">\(abc\)</span> 次</li></ul><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)         <span class="comment">// A矩阵中的n 行</span></span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; n; j++)     <span class="comment">// B矩阵中的n  列</span></span><br><span class="line">        <span class="keyword">for</span> (k = <span class="number">0</span>; k &lt; m; k++) <span class="comment">// A矩阵中的m 或者B矩阵中的m ,一样的</span></span><br><span class="line">            C[i][j] = C[i][j] + A[i][k] * B[k][j];</span><br></pre></td></tr></table></figure><h3 id="个矩阵相乘-1">3个矩阵相乘</h3><p>对于矩阵 <span class="math inline">\(A_{a*b}\)</span>、<spanclass="math inline">\(B_{b*c}\)</span>、<spanclass="math inline">\(C_{c*d}\)</span>，那么 <spanclass="math inline">\(A*B*C\)</span> 的复杂度为 <spanclass="math inline">\(O(abc + acd)\)</span></p><ul><li><span class="math inline">\(A*B\)</span> 的复杂度为 <spanclass="math inline">\(O(a*b*c)\)</span>，得到 <spanclass="math inline">\(a*c\)</span> 的矩阵</li><li><span class="math inline">\((A*B)_{a*c}*C\)</span> 的复杂度为 <spanclass="math inline">\(O(abc + acd)\)</span></li></ul><h3 id="推广">推广</h3><p>对于矩阵 <spanclass="math inline">\({A_1}_{_{a_1*a_2}}\)</span>、<spanclass="math inline">\({A_2}_{_{a_2*a_3}}\)</span>、… 、<spanclass="math inline">\({A_n}_{_{a_n*a_{n+1}}}\)</span>，那么 <spanclass="math inline">\(A*B*C\)</span> 的复杂度为 $a_1*(a_2a_3+a_3a_4++a_na_{n+1} ) $</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;# 矩阵乘法复杂度分析&lt;/p&gt;
-&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;矩阵乘法&lt;/strong&gt;：&lt;strong&gt;矩阵乘法（英语：matrix
-multiplication）&lt;/strong&gt;是一种根据两个矩阵得到&lt;strong&gt;第三个矩阵&lt;/</summary>
-      
-    
-    
-    
-    
-    <category term="AI" scheme="https://cuiluyi.gitee.io/tags/AI/"/>
-    
-  </entry>
-  
-  <entry>
     <title>FLOPs&amp;&amp;FLOPS</title>
     <link href="https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/FLOPs&amp;&amp;FLOPS/"/>
     <id>https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/FLOPs&amp;&amp;FLOPS/</id>
@@ -134,6 +83,57 @@ multiplication）&lt;/strong&gt;是一种根据两个矩阵得到&lt;strong&gt;�
 集群基础设施&amp;amp;&amp;amp;InfiniBand&lt;/h1&gt;
 &lt;p&gt;GPU在高性能计算和深度学习加速中扮演着非常重要的角色，
 GPU的强大的并行计算能力，大大提升了运算性能。随着运算数据量的不断攀升，GPU间</summary>
+      
+    
+    
+    
+    
+    <category term="AI" scheme="https://cuiluyi.gitee.io/tags/AI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>throughput</title>
+    <link href="https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/throughput/"/>
+    <id>https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/throughput/</id>
+    <published>2024-04-06T05:59:27.000Z</published>
+    <updated>2024-04-06T13:24:22.396Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="throughput">throughput</h1><p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><p>真的是到处都是呢！！</p><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752217.webp"alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><hr /><p>​ <ahref="https://www.zhihu.com/search?q=神经网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">神经网络</a>的吞吐量（Throughput）定义为网络模型在<strong>单位时间内</strong>（例如，1s）<strong>可以处理的最大输入的训练样本数据</strong>。</p><p>​ 与涉及单个样本数据处理的延迟 Latency 不同，为了实现最大吞吐量Throughput，希望在集群训练的过程中并行处理尽可能多的样本数据。有效的并行性显然依赖于数据、模型和设备规模。</p><p>​ 因此，为了正确测量吞吐量，可以执行以下两个步骤：</p><ol type="1"><li>估计允许最大<ahref="https://www.zhihu.com/search?q=并行度&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">并行度</a>的最佳训练样本数据批量大小，即Batch Size</li><li>在AI训练集群中给定这个最佳批量大小，<ahref="https://www.zhihu.com/search?q=测量网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">测量网络</a>在1秒钟内可以处理的训练样本数据。</li></ol><p>​ 要找到最佳批量大小，一个好的经验法则是达到 Ascend <ahref="https://www.zhihu.com/search?q=昇腾处理器&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">昇腾处理器</a>对给定数据类型的内存限制，即BatchSize塞满内存。这个大小当然取决于硬件类型和网络的大小。</p><p>​ 找到这个最大批量大小 Batch Size的最快方法是执行二进制搜索。当时间不重要时，简单的<ahref="https://www.zhihu.com/search?q=顺序搜索&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">顺序搜索</a>就足够了。不过在大模型训练的过程中，因为BatchSize比较重要，设计到重计算、Pipeline并行、Tensor并行等不同并行模式的配比，还有包括microBatch Size的数据配比。因此默认Batch Size会为16的倍数增长比较合理。</p><p>​ 这确定了 AI加速卡上可以处理的最大批量大小，用于训练大模型及其处理的输入训练样本数据。在找到最佳批量大小后，可以计算实际吞吐量，然后使用以下公式：<span class="math display">\[sample_{throughput}=BS*N/step_{time}\]</span> 其中，BS 为 Batch Size，N 为集群中AI加速卡的数量，steptime为在分布式集群中，执行完一个BatchSize的时间（单位为s）。大模型训练的<ahref="https://www.zhihu.com/search?q=吞吐率&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">吞吐率</a>的单位在CV和部分NLP任务重为Samples/s，在固定 Shape 的 NLP任务有seqlen，因此单位为tokens/s，计算公式为： <span class="math display">\[tokens_{throughout}=sample_{throughput}*seq_{len}\]</span> ​ 假设GLM10B<ahref="https://www.zhihu.com/search?q=网络模型&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">网络模型</a>的吞吐为25Samples/s，max seq_len 为1024，那么按照tokens来计算吞吐率为 25 * 1024 =25600 tokens/s。也就是每秒能处理2万多个tokens啦。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;throughput&quot;&gt;throughput&lt;/h1&gt;
+&lt;p&gt;哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！&lt;/p&gt;
+&lt;figure&gt;
+&lt;img
+src=&quot;https://tianchou.oss-cn-beijing</summary>
+      
+    
+    
+    
+    
+    <category term="AI" scheme="https://cuiluyi.gitee.io/tags/AI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>矩阵乘法复杂度分析</title>
+    <link href="https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/"/>
+    <id>https://cuiluyi.gitee.io/2024/04/06/[object%20Object]/AI/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/</id>
+    <published>2024-04-06T05:59:27.000Z</published>
+    <updated>2024-04-06T06:19:34.307Z</updated>
+    
+    <content type="html"><![CDATA[<p># 矩阵乘法复杂度分析</p><h2 id="前言">前言</h2><p><strong>矩阵乘法</strong>：<strong>矩阵乘法（英语：matrixmultiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩阵</strong>的<strong>二元运算</strong>（需要2个对象参与，这里指2个矩阵），第三个矩阵即前两者的乘积，称为<strong>矩阵积</strong></p><p><strong>条件：</strong>它只有在第一个矩阵的<strong>列数（column）</strong>和第二个矩阵的<strong>行数（row）</strong>相同时才有意义</p><h2 id="矩阵乘法">矩阵乘法</h2><h3 id="个矩阵相乘">2个矩阵相乘</h3><p>对于矩阵 <span class="math inline">\(A_{a*b}\)</span>、<spanclass="math inline">\(B_{b*c}\)</span>，那么 <spanclass="math inline">\(A*B\)</span> 的复杂度为 <spanclass="math inline">\(O(a*b*c)\)</span>，准确是 <spanclass="math inline">\(2abc\)</span></p><ul><li>加法计算了 <span class="math inline">\(abc\)</span> 次</li><li>乘法计算了 <span class="math inline">\(abc\)</span> 次</li></ul><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)         <span class="comment">// A矩阵中的n 行</span></span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; n; j++)     <span class="comment">// B矩阵中的n  列</span></span><br><span class="line">        <span class="keyword">for</span> (k = <span class="number">0</span>; k &lt; m; k++) <span class="comment">// A矩阵中的m 或者B矩阵中的m ,一样的</span></span><br><span class="line">            C[i][j] = C[i][j] + A[i][k] * B[k][j];</span><br></pre></td></tr></table></figure><h3 id="个矩阵相乘-1">3个矩阵相乘</h3><p>对于矩阵 <span class="math inline">\(A_{a*b}\)</span>、<spanclass="math inline">\(B_{b*c}\)</span>、<spanclass="math inline">\(C_{c*d}\)</span>，那么 <spanclass="math inline">\(A*B*C\)</span> 的复杂度为 <spanclass="math inline">\(O(abc + acd)\)</span></p><ul><li><span class="math inline">\(A*B\)</span> 的复杂度为 <spanclass="math inline">\(O(a*b*c)\)</span>，得到 <spanclass="math inline">\(a*c\)</span> 的矩阵</li><li><span class="math inline">\((A*B)_{a*c}*C\)</span> 的复杂度为 <spanclass="math inline">\(O(abc + acd)\)</span></li></ul><h3 id="推广">推广</h3><p>对于矩阵 <spanclass="math inline">\({A_1}_{_{a_1*a_2}}\)</span>、<spanclass="math inline">\({A_2}_{_{a_2*a_3}}\)</span>、… 、<spanclass="math inline">\({A_n}_{_{a_n*a_{n+1}}}\)</span>，那么 <spanclass="math inline">\(A*B*C\)</span> 的复杂度为 $a_1*(a_2a_3+a_3a_4++a_na_{n+1} ) $</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;# 矩阵乘法复杂度分析&lt;/p&gt;
+&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;矩阵乘法&lt;/strong&gt;：&lt;strong&gt;矩阵乘法（英语：matrix
+multiplication）&lt;/strong&gt;是一种根据两个矩阵得到&lt;strong&gt;第三个矩阵&lt;/</summary>
       
     
     

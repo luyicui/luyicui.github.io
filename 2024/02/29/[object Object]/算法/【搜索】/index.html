@@ -10,17 +10,17 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="内&#x2F;外部搜索 搜索有 \(2\) 大类  内部搜索：把棋盘中的每个格子当作一个点，从棋盘内中的一个点搜索到另一个点——不需要恢复现场 外部搜索：把整个棋盘当作一个点，从一个棋盘状态搜索到另一个棋盘状态  在棋盘现场&#x2F;点 上直接操作，需要恢复现场 拷贝棋盘现场&#x2F;点，然后在棋盘现场&#x2F;点的 副本 上操作，不需要恢复现场  是否需要回溯的关键在于——st[][]表示的这个状态&#x2F;点能否">
+  <meta name="description" content="内&#x2F;外部搜索  搜索有 \(2\) 大类：   内部搜索：把棋盘中的每个格子当作一个点，从棋盘内中的一个点搜索到另一个点——不需要恢复现场 外部搜索：把整个棋盘当作一个点，从一个棋盘状态搜索到另一个棋盘状态  在棋盘现场&#x2F;点 上直接操作，需要恢复现场 拷贝棋盘现场&#x2F;点，然后在棋盘现场&#x2F;点的 副本 上操作，不需要恢复现场    是否需要回溯的关键在于——st[][]表示">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【搜索】">
 <meta property="og:url" content="https://cuiluyi.gitee.io/2024/02/29/[object%20Object]/%E7%AE%97%E6%B3%95/%E3%80%90%E6%90%9C%E7%B4%A2%E3%80%91/index.html">
 <meta property="og:site_name" content="天道酬勤，厚德载物">
-<meta property="og:description" content="内&#x2F;外部搜索 搜索有 \(2\) 大类  内部搜索：把棋盘中的每个格子当作一个点，从棋盘内中的一个点搜索到另一个点——不需要恢复现场 外部搜索：把整个棋盘当作一个点，从一个棋盘状态搜索到另一个棋盘状态  在棋盘现场&#x2F;点 上直接操作，需要恢复现场 拷贝棋盘现场&#x2F;点，然后在棋盘现场&#x2F;点的 副本 上操作，不需要恢复现场  是否需要回溯的关键在于——st[][]表示的这个状态&#x2F;点能否">
+<meta property="og:description" content="内&#x2F;外部搜索  搜索有 \(2\) 大类：   内部搜索：把棋盘中的每个格子当作一个点，从棋盘内中的一个点搜索到另一个点——不需要恢复现场 外部搜索：把整个棋盘当作一个点，从一个棋盘状态搜索到另一个棋盘状态  在棋盘现场&#x2F;点 上直接操作，需要恢复现场 拷贝棋盘现场&#x2F;点，然后在棋盘现场&#x2F;点的 副本 上操作，不需要恢复现场    是否需要回溯的关键在于——st[][]表示">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png">
 <meta property="article:published_time" content="2024-02-29T07:23:16.000Z">
-<meta property="article:modified_time" content="2024-04-13T12:26:27.332Z">
-<meta property="article:author" content="tianchou">
+<meta property="article:modified_time" content="2024-04-16T00:29:23.376Z">
+<meta property="article:author" content="银杏枫树">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png">
@@ -72,7 +72,7 @@
 			<img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202402212356074.png" class="js-avatar">
 		</a>
 		<hgroup>
-			<h1 class="header-author"><a href="/">tianchou</a></h1>
+			<h1 class="header-author"><a href="/">银杏枫树</a></h1>
 		</hgroup>
 		
 
@@ -153,7 +153,7 @@
 				</a>
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author">tianchou</h1>
+			  <h1 class="header-author js-header-author">银杏枫树</h1>
 			</hgroup>
 			
 			
@@ -245,7 +245,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">1.7k字</span>
+      <span class="post-count">2.1k字</span>
     </span>
   </span>
 
@@ -254,7 +254,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">6分</span>
+      <span class="post-count">8分</span>
     </span>
   </span>
 </div>
@@ -266,53 +266,37 @@
   <div class="article-entry" itemprop="articleBody">
     
     <h1 id="内外部搜索">内/外部搜索</h1>
-<p>搜索有 <span class="math inline">\(2\)</span> 大类</p>
 <ol type="1">
-<li><strong>内部搜索</strong>：把棋盘中的<strong>每个格子</strong>当作一个<strong>点</strong>，从<strong>棋盘内</strong>中的<strong>一个点</strong>搜索到<strong>另一个点</strong>——不需要恢复现场</li>
-<li><strong>外部搜索</strong>：把<strong>整个棋盘</strong>当作一个<strong>点</strong>，从<strong>一个棋盘状态</strong>搜索到<strong>另一个棋盘状态</strong>
-<ol type="1">
+<li>搜索有 <span class="math inline">\(2\)</span> 大类：</li>
+</ol>
+<ul>
+<li><p><strong>内部搜索</strong>：把棋盘中的<strong>每个格子</strong>当作一个<strong>点</strong>，从<strong>棋盘内</strong>中的<strong>一个点</strong>搜索到<strong>另一个点</strong>——不需要恢复现场</p></li>
+<li><p><strong>外部搜索</strong>：把<strong>整个棋盘</strong>当作一个<strong>点</strong>，从<strong>一个棋盘状态</strong>搜索到<strong>另一个棋盘状态</strong></p>
+<ul>
 <li>在<strong>棋盘现场/点</strong>
 上直接操作，需要<strong>恢复现场</strong></li>
 <li>拷贝<strong>棋盘现场/点</strong>，然后在<strong>棋盘现场/点的
 副本</strong> 上操作，不需要恢复现场</li>
-</ol></li>
-<li>是否需要回溯的关键在于——<code>st[][]</code>表示的这个<strong>状态/点</strong>能否被<font color = 'red'><strong>其他DFS分支</strong></font>搜索到，或者说<code>st[][]</code>表示的这个<strong>状态/点</strong>是否只能被访问
-1 次</li>
-</ol>
-<blockquote>
-<p>只有可行性路径搜索(最优性也是需要的因为他还要搜其他路)和连通性的dfs不需要恢复现场,
-其他的dfs题都写吧~</p>
-</blockquote>
-<ol type="1">
-<li>例题：
-<ul>
-<li><a href="#BFS_最小步数模型">BFS_最小步数模型</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7993461/">AcWing
-842. 排列数字 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7994793/">AcWing
-843. n-皇后问题 - AcWing</a></li>
 </ul></li>
-</ol>
-<ul>
-<li></li>
 </ul>
-<blockquote>
-<p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/9210858/">dfs什么时候需要恢复现场
-- AcWing</a></p>
-</blockquote>
+<ol start="2" type="1">
+<li><p>是否需要回溯的关键在于——<code>st[][]</code>表示的这个<strong>状态/点</strong>能否被<font color = 'red'><strong>其他DFS分支</strong></font>搜索到，或者说<code>st[][]</code>表示的这个<strong>状态/点</strong>是否只能被访问
+1 次</p></li>
+<li><p><strong>总结：</strong>只有<strong>可行性
+dfs</strong>（最优性也是需要的因为他还要搜其他路）和<strong>连通性
+dfs</strong>不需要恢复现场, 其他的 dfs 题都写吧~</p></li>
+</ol>
 <figure>
 <img
 src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404041541544.png"
 alt="image-20240404154110448" />
 <figcaption aria-hidden="true">image-20240404154110448</figcaption>
 </figure>
-<h1 id="连通性模型flood_fill">连通性模型/Flood_FIll</h1>
+<span id="more"></span>
+<h1 id="flood-fill">Flood FIll</h1>
 <ol type="1">
 <li><p>搜索之<strong>连通性模型</strong>，即 <span
-class="math inline">\(Flood_Fill\)</span> 洪水覆盖算法，有 <span
+class="math inline">\(Flood\ Fill\)</span> 洪水覆盖算法，有 <span
 class="math inline">\(DFS\)</span>、<span
 class="math inline">\(BFS\)</span> 两种实现方式</p>
 <ul>
@@ -331,12 +315,15 @@ class="math inline">\(BFS\)</span>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 4 联通</span></span><br><span class="line"><span class="type">int</span> dx[<span class="number">4</span>] = &#123;<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>&#125;, dy[<span class="number">4</span>] = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">-1</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 联通</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = t.x - <span class="number">1</span>; i &lt;= t.x + <span class="number">1</span>; i++)</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = t.y - <span class="number">1</span>; j &lt;= t.y +<span class="number">1</span>; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i == t.x &amp;&amp; j == t.y)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">/* ...... */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟中国象棋中的“马”</span></span><br><span class="line"><span class="type">int</span> dx[<span class="number">8</span>] = &#123;<span class="number">-2</span>, <span class="number">-2</span>, <span class="number">-1</span>, <span class="number">-1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>&#125;, dy[<span class="number">8</span>] = &#123;<span class="number">-1</span>, <span class="number">1</span>, <span class="number">-2</span>, <span class="number">2</span>, <span class="number">-2</span>, <span class="number">2</span>, <span class="number">-1</span>, <span class="number">1</span>&#125;;</span><br></pre></td></tr></table></figure>
 <h2 id="dfs">DFS</h2>
 <ul>
-<li><a
+<li><p><a
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8291582/">AcWing
-1112. 迷宫 - AcWing</a></li>
-<li><a
+1112. 迷宫 - AcWing</a></p></li>
+<li><p><a
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8292209/">AcWing
-1113. 红与黑 - AcWing</a></li>
+1113. 红与黑 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8408743/">AcWing
+2060. 奶牛选美（每日一题） - AcWing</a></p></li>
 </ul>
 <h2 id="bfs">BFS</h2>
 <ul>
@@ -419,19 +406,21 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 <h2 id="双端队列广搜">双端队列广搜</h2>
 <h2 id="双向bfs">双向BFS</h2>
 <h2 id="a">A*</h2>
-<p>搜索</p>
-<ul>
-<li>内部搜索——不需要回溯</li>
-<li>外部搜索——需要回溯</li>
-</ul>
 <h1 id="dfs-1">DFS</h1>
-<p><code>dfs</code>的参数有两种类型：</p>
 <ul>
-<li>函数形参</li>
-<li>全局变量</li>
+<li><p><code>dfs</code>的参数有两种类型：</p>
+<ul>
+<li><p>函数形参</p></li>
+<li><p>全局变量</p></li>
+</ul></li>
+<li><p><code>DFS</code>
+的关键在于<strong>搜索顺序</strong>：按照什么顺序搜索才能<strong>不重不漏地搜素出所有合法方案</strong></p></li>
 </ul>
 <h2 id="搜索顺序">搜索顺序</h2>
 <ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7994793/">AcWing
+843. n-皇后问题 - AcWing</a></p></li>
 <li><p><a
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8295785/">AcWing
 1116. 马走日 - AcWing</a></p></li>
@@ -445,9 +434,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 <h2 id="剪枝与优化">剪枝与优化</h2>
 <p>​
 剪枝，就是减小搜索树规模、尽早排除搜索树中不必要的分支的一种手段。形象地看，就好像剪掉了搜索树的枝条，故被称为“剪枝”。在深度优先搜索中，有以下几类常见的剪枝方法：</p>
-<ol type="1">
-<li><strong>优化搜索顺序</strong></li>
-</ol>
+<h3 id="优化搜索顺序">优化搜索顺序</h3>
 <p>​
 在一些搜索问题中，搜索树的各个层次、各个分支之间的顺序不是固定的。不同的搜索顺序会产生不同的搜索树形态，其规模大小也相差甚远。例如：</p>
 <p>（1）在上一节的 <a
@@ -459,9 +446,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 <blockquote>
 <p>大部分情况下，我们应该优先搜索<font color = 'red'><strong>分支较少的节点</strong></font></p>
 </blockquote>
-<ol start="2" type="1">
-<li><strong>排除等效冗余</strong></li>
-</ol>
+<h3 id="排除等效冗余">排除等效冗余</h3>
 <p>​
 在搜索过程中，如果我们能够判定从搜索树的当前节点上沿着某几条不同分支到达的子树是等效的，那么只需要对其中的一条分支执行搜索。我们会在本节的
 <a
@@ -470,18 +455,29 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8400569/">AcWing
 166. 数独</a>
 问题中提出的，初学者一定要避免重叠、混淆“层次”与“分支”，避免遍历若干棵覆盖同一状态空间的等效搜索树。</p>
-<ol start="3" type="1">
-<li><strong>可行性剪枝</strong></li>
-</ol>
+<h3 id="可行性剪枝">可行性剪枝</h3>
 <p>​
 在搜索过程中，及时对当前状态进行检查，如果发现分支已经无法到达递归边界，就执行回溯。这就好比我们在道路上行走时，远远看到前方是一个死胡同，就应该立即折返绕路，而不是走到路的尽头再返回。
 ​
 某些题目条件的范围限制是一个区间，此时可行性剪枝也被称为“上下界剪枝”。</p>
-<ol start="4" type="1">
-<li><strong>最优性剪枝</strong></li>
-</ol>
+<h3 id="最优性剪枝">最优性剪枝</h3>
 <p>​
 在最优化问题的搜索过程中，如果当前花费的代价已经超过了当前搜到的最优解，那么无论采取多么优秀的策略到达递归边界，都不可能更新答案。此时可以停止对当前分支的搜索，执行回溯。</p>
+<h3 id="例题">例题</h3>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8400608/">AcWing
+167. 木棒 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8400569/">AcWing
+166. 数独 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8399835/">AcWing
+165. 小猫爬山 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/11818008/">AcWing
+168. 生日蛋糕 - AcWing</a></p></li>
+</ul>
 <h2 id="迭代加深">迭代加深</h2>
 <h2 id="双向dfs">双向DFS</h2>
 <h2 id="ida">IDA*</h2>
@@ -502,6 +498,72 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/letter-combina
 <li><p><a
 target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/description/?envType=study-plan-v2&amp;envId=top-100-liked">78.
 子集 - 力扣（LeetCode）</a></p></li>
+</ul>
+<h1 id="递归与递推">递归与递推</h1>
+<ul>
+<li>递归的关键在于寻找<strong>顺序</strong>，能够<strong>不重不漏地搜素出所有方案</strong></li>
+<li>所有的<strong>递归</strong>问题最终都可以转化成一棵<font color = 'red'><strong>递归搜索树</strong></font></li>
+</ul>
+<p>以斐波那契序列为例：<a
+target="_blank" rel="noopener" href="https://www.acwing.com/blog/content/25/">求解斐波那契数列的若干方法
+- AcWing</a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写法 1:</span></span><br><span class="line"><span class="type">int</span> f[N];</span><br><span class="line">f[<span class="number">1</span>] = <span class="number">0</span>, f[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">3</span>; i &lt;= n; i++)</span><br><span class="line">    f[i] = f[i - <span class="number">1</span>] + f[i - <span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/6489818/">论递归算法的数学原理
+- AcWing</a></p>
+</blockquote>
+<h2 id="简单运用">简单运用</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404160812350.png"
+alt="image-20240409142141963" />
+<figcaption aria-hidden="true">image-20240409142141963</figcaption>
+</figure>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8338997/">AcWing
+92. 递归实现指数型枚举 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8345534/">AcWing
+93. 递归实现组合型枚举 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8342624/">AcWing
+94. 递归实现排列型枚举 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8352597/">AcWing
+1209. 带分数（蓝桥杯辅导课） - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8333433/">AcWing
+1360. 有序分数（每日一题） - AcWing</a></p></li>
+</ul>
+<h2 id="分治">分治</h2>
+<p>​
+分治法把一个问题划分为若干个规模更小的同类子问题，对这些子问题递归求解然后在回溯时通过它们推导出原问题的解。</p>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8351803/">AcWing
+97. 约数之和 - AcWing</a></li>
+</ul>
+<h2 id="开关问题">开关问题</h2>
+<p>用于解决开关问题的题目均具备 <span class="math inline">\(2\)</span>
+个特点</p>
+<ol type="1">
+<li><strong>每个开关至多只能按 <span class="math inline">\(1\)</span>
+次</strong>（按 <span class="math inline">\(2\)</span> 次相当于没按，按
+<span class="math inline">\(3\)</span> 相当于只按下 <span
+class="math inline">\(1\)</span> 次）</li>
+<li><strong>按下开关的顺序不影响最后的答案</strong>（即：每个灯泡的最终状态只与影响其状态的操作次数之和有关）</li>
+</ol>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8345157/">AcWing
+95. 费解的开关 - AcWing</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/241197/">AcWing
+1208. 翻硬币 - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/11792432/">AcWing
+116. 飞行员兄弟 - AcWing</a></p></li>
 </ul>
 
     
@@ -545,7 +607,7 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
       <ul class="post-copyright">
         <li>
           <strong>本文作者：</strong>
-          tianchou
+          银杏枫树
         </li>
         <li>
           <strong>本文链接：</strong>
@@ -652,8 +714,8 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
     </a>
   
   
-    <a href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【图论】</div>
+    <a href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90tag%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【Tag】</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -680,7 +742,7 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%A4%96%E9%83%A8%E6%90%9C%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text">内&#x2F;外部搜索</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9E%E9%80%9A%E6%80%A7%E6%A8%A1%E5%9E%8Bflood_fill"><span class="toc-number">2.</span> <span class="toc-text">连通性模型&#x2F;Flood_FIll</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#dfs"><span class="toc-number">2.1.</span> <span class="toc-text">DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bfs"><span class="toc-number">2.2.</span> <span class="toc-text">BFS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bfs-1"><span class="toc-number">3.</span> <span class="toc-text">BFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.1.</span> <span class="toc-text">最短路模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%BA%90bfs"><span class="toc-number">3.1.1.</span> <span class="toc-text">单源BFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%BA%90bfs"><span class="toc-number">3.1.2.</span> <span class="toc-text">多源BFS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E6%AD%A5%E6%95%B0%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">最小步数模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97%E5%B9%BF%E6%90%9C"><span class="toc-number">3.3.</span> <span class="toc-text">双端队列广搜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91bfs"><span class="toc-number">3.4.</span> <span class="toc-text">双向BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a"><span class="toc-number">3.5.</span> <span class="toc-text">A*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dfs-1"><span class="toc-number">4.</span> <span class="toc-text">DFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-number">4.1.</span> <span class="toc-text">搜索顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-number">4.2.</span> <span class="toc-text">剪枝与优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1"><span class="toc-number">4.3.</span> <span class="toc-text">迭代加深</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91dfs"><span class="toc-number">4.4.</span> <span class="toc-text">双向DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ida"><span class="toc-number">4.5.</span> <span class="toc-text">IDA*</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%A4%96%E9%83%A8%E6%90%9C%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text">内&#x2F;外部搜索</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#flood-fill"><span class="toc-number">2.</span> <span class="toc-text">Flood FIll</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#dfs"><span class="toc-number">2.1.</span> <span class="toc-text">DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bfs"><span class="toc-number">2.2.</span> <span class="toc-text">BFS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bfs-1"><span class="toc-number">3.</span> <span class="toc-text">BFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%AD%E8%B7%AF%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.1.</span> <span class="toc-text">最短路模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%BA%90bfs"><span class="toc-number">3.1.1.</span> <span class="toc-text">单源BFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%BA%90bfs"><span class="toc-number">3.1.2.</span> <span class="toc-text">多源BFS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E6%AD%A5%E6%95%B0%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">最小步数模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97%E5%B9%BF%E6%90%9C"><span class="toc-number">3.3.</span> <span class="toc-text">双端队列广搜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91bfs"><span class="toc-number">3.4.</span> <span class="toc-text">双向BFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a"><span class="toc-number">3.5.</span> <span class="toc-text">A*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dfs-1"><span class="toc-number">4.</span> <span class="toc-text">DFS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-number">4.1.</span> <span class="toc-text">搜索顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AA%E6%9E%9D%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-number">4.2.</span> <span class="toc-text">剪枝与优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%A1%BA%E5%BA%8F"><span class="toc-number">4.2.1.</span> <span class="toc-text">优化搜索顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E9%99%A4%E7%AD%89%E6%95%88%E5%86%97%E4%BD%99"><span class="toc-number">4.2.2.</span> <span class="toc-text">排除等效冗余</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A1%8C%E6%80%A7%E5%89%AA%E6%9E%9D"><span class="toc-number">4.2.3.</span> <span class="toc-text">可行性剪枝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E6%80%A7%E5%89%AA%E6%9E%9D"><span class="toc-number">4.2.4.</span> <span class="toc-text">最优性剪枝</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">4.2.5.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1"><span class="toc-number">4.3.</span> <span class="toc-text">迭代加深</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%90%91dfs"><span class="toc-number">4.4.</span> <span class="toc-text">双向DFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ida"><span class="toc-number">4.5.</span> <span class="toc-text">IDA*</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%92%E5%BD%92%E4%B8%8E%E9%80%92%E6%8E%A8"><span class="toc-number">5.</span> <span class="toc-text">递归与递推</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E8%BF%90%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text">简单运用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%B2%BB"><span class="toc-number">5.2.</span> <span class="toc-text">分治</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%85%B3%E9%97%AE%E9%A2%98"><span class="toc-number">5.3.</span> <span class="toc-text">开关问题</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -719,7 +781,7 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2023-2024 <a href="https://cuiluyi.gitee.io/" target="_blank">tianchou</a>
+    		&copy; 2023-2024 <a href="https://cuiluyi.gitee.io/" target="_blank">银杏枫树</a>
     	</div>
       	<div class="footer-right">
 			
@@ -859,11 +921,11 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,15 +945,15 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -899,7 +961,7 @@ target="_blank" rel="noopener" href="https://leetcode.cn/problems/subsets/descri
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>

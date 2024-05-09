@@ -821,8 +821,9 @@ class="math inline">\(n\)</span> 表示点数</li>
 </ul>
 <h3 id="无向树">无向树</h3>
 <ul>
-<li>无向树<strong>任选</strong>一个节点进行遍历即可，但需要避免重复遍历，有
-<span class="math inline">\(2\)</span> 种方式
+<li>无向树<strong>任选</strong>一个节点进行遍历即可，但需要<font color='red'><strong>避免重复遍历</strong></font>（否则一上一下会死循环，导致
+<span class="math inline">\(TLE/MLE\)</span>），有 <span
+class="math inline">\(2\)</span> 种方式
 <ul>
 <li>使用 <code>st[]</code> 标记每个节点是否被遍历，代码与图的 <span
 class="math inline">\(dfs/bfs\)</span> 一摸一样</li>
@@ -878,7 +879,123 @@ href="#图的bfs">图的bfs</a> 一模一样</li>
 <h3 id="dfs-2">dfs</h3>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> dist[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> father, <span class="type">int</span> distance)</span></span><br><span class="line">&#123;</span><br><span class="line">    dist[u] = distance;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (j != father)</span><br><span class="line">            dfs(j, u, distance + w[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 假设求 1 号节点到其他所有点的最短距离</span></span><br><span class="line">dfs(<span class="number">1</span>, <span class="number">-1</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 <h3 id="bfs-2">bfs</h3>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> hh = <span class="number">0</span>, tt = <span class="number">-1</span>;</span><br><span class="line">    q[++ tt] = u;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(dist, <span class="number">-1</span>, <span class="keyword">sizeof</span> dist);</span><br><span class="line">    dist[u] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(hh &lt;= tt)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q[hh ++];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; i != <span class="number">-1</span>; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(dist[j] == <span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                dist[j] = dist[t] + w[i];</span><br><span class="line">                q[++ tt] = j;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    q.push(u);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">memset</span>(dist, <span class="number">-1</span>, <span class="keyword">sizeof</span> dist);</span><br><span class="line">    dist[u] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(!q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q.front();</span><br><span class="line">        q.pop();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; i != <span class="number">-1</span>; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(dist[j] == <span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                dist[j] = dist[t] + w[i];</span><br><span class="line">                q.push(j);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="树的直径">树的直径</h2>
+<p><strong>树的直径：</strong>树中长度最长的路径</p>
+<h3 id="边权均为正数dfsbfs">边权均为正数——DFS/BFS</h3>
+<ol type="1">
+<li><p>任取一点 <code>x</code></p></li>
+<li><p>找到距离 <code>x</code> 最远的点 <code>y</code>——<span
+class="math inline">\(DFS/BFS\)</span> 求最短路</p></li>
+<li><p>从 <code>y</code> 开始遍历，找到离 <code>y</code> 最远的点，与
+<code>y</code> 最远的点的距离是树的直径——<span
+class="math inline">\(DFS/BFS\)</span> 求最短路</p></li>
+</ol>
+<blockquote>
+<p>证明：<code>y</code> 一定是树的某条直径的端点</p>
+<p>假设 <code>y</code>
+不是任意树的直径的端点，分两种情况，如图所示，其中 <code>uv</code>
+是树的直径</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405091730410.png"
+alt="ds" />
+<figcaption aria-hidden="true">ds</figcaption>
+</figure>
+<ul>
+<li><p>情况1：<code>xy</code> 与 <code>uv</code> 有交点，由于离
+<code>x</code> 最远的点是 <code>y</code>，因此</p>
+<ul>
+<li><p>有 1 + 3 &lt;= 1 + 4</p></li>
+<li><p>即 3 &lt;= 4</p></li>
+<li><p>则 3 + 2 &lt;= 4 + 2</p></li>
+<li><p>由于 3 + 2 是树的直径，因此 4 + 2 一定也是树的直径，与假设
+<code>y</code> 不是任意树的直径的端点矛盾</p></li>
+</ul></li>
+<li><p>情况2：<code>xy</code> 与 <code>uv</code> 没有交点，由于离
+<code>x</code> 最远的点是 <code>y</code>，因此</p>
+<ul>
+<li><p>有 1 + 2 &gt;= 1 + 3 + 5</p></li>
+<li><p>即 2 &gt;= 3 + 5</p></li>
+<li><p>即 2 &gt; 5</p></li>
+<li><p>则 2 + 3 &gt; 5</p></li>
+<li><p>则 2 + 3 + 4 &gt; 4 + 5</p></li>
+<li><p>由于 4 + 5 是树的直径，但存在着一个长度更长的路径，因此
+<code>y</code> 不是树的直径的端点矛盾</p></li>
+</ul></li>
+</ul>
+<p>因此，<code>y</code> 一定是树的直径的端点</p>
+<blockquote>
+<ul>
+<li><p>其实情况 2 可以包含到情况 1，此时 ③ ≥ 0</p></li>
+<li><p>若边权为负，则不满足上述<span class="math inline">\(②\ge③+⑤
+\Rightarrow ②+③\ge ⑤\)</span>，因此上述解法不可行</p></li>
+</ul>
+</blockquote>
+</blockquote>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8409456/">AcWing
+1207. 大臣的旅费（蓝桥杯辅导课） - AcWing</a></li>
+</ul>
+<h3 id="边权可正可负树型dp">边权可正可负——树型<span
+class="math inline">\(DP\)</span></h3>
+<p>​
+任选一个点作为无向树的根节点，将这个根节点拎起来（可以想象为节点是有质量，边是没有质量的），考虑从集合的角度划分问题：</p>
+<ul>
+<li><p>任何一条路径 都可以划分到其 <strong>路径最高节点</strong>
+对应的集合</p></li>
+<li><p><span class="math inline">\(dp[u]\)</span> 表示以 <span
+class="math inline">\(u\)</span>（<span class="math inline">\(u =
+1,2,...,n\)</span>）为 <strong>路径最高点</strong>
+的所有路径下的最长路径</p></li>
+</ul>
+<p>如下图，红色线便是<span
+class="math inline">\(u\)</span>作为制高点的一条路径（同时也正好是 <span
+class="math inline">\(u\)</span> 集合下的一条最长路径）</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007140.png" alt="QQ截图20220824181058.png" style="zoom: 33%;" /></p>
+<p>接下来，我们考虑用树形 <span class="math inline">\(dp\)</span>
+的思想，如何解决。考虑如下图，我们已知了 <span
+class="math inline">\(dp[2]\)</span> 和 <span
+class="math inline">\(dp[3]\)</span>，也就是以点 <span
+class="math inline">\(2\)</span> 和 <span
+class="math inline">\(3\)</span> 作为根的信息，如何才能求 <span
+class="math inline">\(dp[1]\)</span></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007144.png" alt="QQ截图20220824005723.png" style="zoom:33%;" /></p>
+<p>可以发现，<span class="math inline">\(dp[1]\)</span> 和 <span
+class="math inline">\(dp[2]\)</span>、<span
+class="math inline">\(dp[3]\)</span>
+之间并没有什么直接的联系！但我们很容易观察知道，<strong>以 <span
+class="math inline">\(1\)</span>
+为制高点的最长路径，一定是选了它下方的多条直路中最长的两条</strong></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007137.png" alt="QQ截图20220824013655.png" style="zoom:33%;" /></p>
+<p>所以我们可以存储<strong>每个点往下能走的最长路径</strong>（记作
+<code>maxlen</code>），那么我们可以得到转移方程：</p>
+<p><span class="math display">\[
+dp[u] = max _1\left\{ \max len\left( son_i \right) +w\left[ u \right]
+\left[ son_i \right] \right\} +max _2\left\{ \max len\left( son_i
+\right) +w\left[ u \right] \left[ son_i \right] \right\}
+\]</span> 其中，<span class="math inline">\(max_1\)</span>
+表示最大值，<span class="math inline">\(max_2\)</span> 表示次大值</p>
+<blockquote>
+<p>注意：注意，这里如果 <span
+class="math inline">\(max_1\)</span>、<span
+class="math inline">\(max_2\)</span> 不能小于 0，如果小于
+0，我们就不选择从当前这个点往下走的最大数值/次大值，直接不走了</p>
+</blockquote>
+<p>找最大值、次大值的伪代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> 当前值 &gt;= 最大值:</span><br><span class="line">    次大值 = 最大值, 最大值 = 当前值;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> 当前值 &gt; 次大值:</span><br><span class="line">    次大值 = 当前值;</span><br></pre></td></tr></table></figure>
+<p><span class="math inline">\(maxlen\)</span> 显然是可以递归的，即
+<span
+class="math inline">\(maxlen(u)=max(maxlen[son_i]+w[u][son_i])\)</span>，可以使用
+<span class="math inline">\(dfs\)</span> 求解，最终答案即为 <span
+class="math inline">\(dp\)</span>​ 数组中的最大值</p>
+<hr />
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8493787/">AcWing
+1072. 树的最长路径 - AcWing</a></li>
+</ul>
 <h1 id="图">图</h1>
 <h2 id="图的存储">图的存储</h2>
 <p>​ <span class="math inline">\(n\)</span> 个顶点，无向图最多有 <span
@@ -1671,15 +1788,11 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1687,7 +1800,15 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1695,7 +1816,7 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1704,10 +1825,6 @@ IV</a></h3>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
             
             <div class="clearfix"></div>

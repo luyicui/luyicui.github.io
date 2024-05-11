@@ -782,8 +782,9 @@ class="math inline">\(b\)</span> ，存储两条有向边
 即可，因此我们可以只考虑有向树/图的模型</li>
 </ul>
 <h1 id="树">树</h1>
-<p>​ <strong>树是一种特殊的图</strong>，与图的存储方式相同</p>
+<p>​ <strong>树是一种特殊的图</strong></p>
 <p>:apple:无向树性质：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101139307.png" alt="image-20240510113916052" style="zoom: 15%;" /></p>
 <ul>
 <li>无向树的<strong>任意一个节点</strong>都可以作为<strong>树的根节点</strong></li>
 </ul>
@@ -795,8 +796,9 @@ class="math inline">\(b\)</span> ，存储两条有向边
 个节点</strong>之间都是<strong>连通的</strong>，且<strong>路径唯一</strong></li>
 </ul>
 <p>:orange:有向树性质：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101139785.png" alt="image-20240510113948565" style="zoom:15%;" /></p>
 <ul>
-<li>有向树的<strong>根节点是唯一的</strong>：<strong>入度为 <span
+<li>有向树的<strong>根节点是唯一的</strong>，即<strong>入度为 <span
 class="math inline">\(0\)</span></strong> 的节点</li>
 <li>有向树中<strong>任意 <span class="math inline">\(2\)</span>
 个节点</strong>之间<strong>未必连通</strong>，但<strong>从根节点到任意一个节点</strong>都是<strong>连通的</strong>，且<strong>路径唯一</strong></li>
@@ -850,7 +852,8 @@ href="#图的bfs">图的bfs</a> 一模一样</li>
 </ul>
 <h3 id="有向树">有向树</h3>
 <ul>
-<li>有向树<strong>必须从根节点开始</strong>进行遍历，寻找根节点的办法如下：</li>
+<li>有向树<strong>必须从根节点开始</strong>进行遍历，永远不可能遍历一个节点两次，不需要判断是否重复遍历</li>
+<li>寻找根节点的办法如下：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> has_fa[N];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输入 n - 1 条边</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n - <span class="number">1</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> a, b;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    add(a, b);	<span class="comment">// 添加一条从 a 走向 b 的有向边</span></span><br><span class="line">    has_fa[b] = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 求树的根节点（没有父节点）</span></span><br><span class="line"><span class="type">int</span> root = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> (has_fa[root])</span><br><span class="line">    root++;</span><br></pre></td></tr></table></figure>
 <h4 id="dfs-1">dfs</h4>
@@ -881,65 +884,8 @@ href="#图的bfs">图的bfs</a> 一模一样</li>
 <h3 id="bfs-2">bfs</h3>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    q.push(u);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">memset</span>(dist, <span class="number">-1</span>, <span class="keyword">sizeof</span> dist);</span><br><span class="line">    dist[u] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(!q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q.front();</span><br><span class="line">        q.pop();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; i != <span class="number">-1</span>; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(dist[j] == <span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                dist[j] = dist[t] + w[i];</span><br><span class="line">                q.push(j);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="树的直径">树的直径</h2>
-<p><strong>树的直径：</strong>树中长度最长的路径</p>
-<h3 id="边权均为正数dfsbfs">边权均为正数——DFS/BFS</h3>
-<ol type="1">
-<li><p>任取一点 <code>x</code></p></li>
-<li><p>找到距离 <code>x</code> 最远的点 <code>y</code>——<span
-class="math inline">\(DFS/BFS\)</span> 求最短路</p></li>
-<li><p>从 <code>y</code> 开始遍历，找到离 <code>y</code> 最远的点，与
-<code>y</code> 最远的点的距离是树的直径——<span
-class="math inline">\(DFS/BFS\)</span> 求最短路</p></li>
-</ol>
-<blockquote>
-<p>证明：<code>y</code> 一定是树的某条直径的端点</p>
-<p>假设 <code>y</code>
-不是任意树的直径的端点，分两种情况，如图所示，其中 <code>uv</code>
-是树的直径</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405091730410.png"
-alt="ds" />
-<figcaption aria-hidden="true">ds</figcaption>
-</figure>
-<ul>
-<li><p>情况1：<code>xy</code> 与 <code>uv</code> 有交点，由于离
-<code>x</code> 最远的点是 <code>y</code>，因此</p>
-<ul>
-<li><p>有 1 + 3 &lt;= 1 + 4</p></li>
-<li><p>即 3 &lt;= 4</p></li>
-<li><p>则 3 + 2 &lt;= 4 + 2</p></li>
-<li><p>由于 3 + 2 是树的直径，因此 4 + 2 一定也是树的直径，与假设
-<code>y</code> 不是任意树的直径的端点矛盾</p></li>
-</ul></li>
-<li><p>情况2：<code>xy</code> 与 <code>uv</code> 没有交点，由于离
-<code>x</code> 最远的点是 <code>y</code>，因此</p>
-<ul>
-<li><p>有 1 + 2 &gt;= 1 + 3 + 5</p></li>
-<li><p>即 2 &gt;= 3 + 5</p></li>
-<li><p>即 2 &gt; 5</p></li>
-<li><p>则 2 + 3 &gt; 5</p></li>
-<li><p>则 2 + 3 + 4 &gt; 4 + 5</p></li>
-<li><p>由于 4 + 5 是树的直径，但存在着一个长度更长的路径，因此
-<code>y</code> 不是树的直径的端点矛盾</p></li>
-</ul></li>
-</ul>
-<p>因此，<code>y</code> 一定是树的直径的端点</p>
-<blockquote>
-<ul>
-<li><p>其实情况 2 可以包含到情况 1，此时 ③ ≥ 0</p></li>
-<li><p>若边权为负，则不满足上述<span class="math inline">\(②\ge③+⑤
-\Rightarrow ②+③\ge ⑤\)</span>，因此上述解法不可行</p></li>
-</ul>
-</blockquote>
-</blockquote>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8409456/">AcWing
-1207. 大臣的旅费（蓝桥杯辅导课） - AcWing</a></li>
-</ul>
-<h3 id="边权可正可负树型dp">边权可正可负——树型<span
-class="math inline">\(DP\)</span></h3>
+<p><strong>树的直径</strong> 是 树中长度最长的路径，可以使用树型 <span
+class="math inline">\(DP\)</span> 求解</p>
 <p>​
 任选一个点作为无向树的根节点，将这个根节点拎起来（可以想象为节点是有质量，边是没有质量的），考虑从集合的角度划分问题：</p>
 <ul>
@@ -953,48 +899,98 @@ class="math inline">\(u\)</span>（<span class="math inline">\(u =
 <p>如下图，红色线便是<span
 class="math inline">\(u\)</span>作为制高点的一条路径（同时也正好是 <span
 class="math inline">\(u\)</span> 集合下的一条最长路径）</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007140.png" alt="QQ截图20220824181058.png" style="zoom: 33%;" /></p>
-<p>接下来，我们考虑用树形 <span class="math inline">\(dp\)</span>
-的思想，如何解决。考虑如下图，我们已知了 <span
-class="math inline">\(dp[2]\)</span> 和 <span
-class="math inline">\(dp[3]\)</span>，也就是以点 <span
-class="math inline">\(2\)</span> 和 <span
-class="math inline">\(3\)</span> 作为根的信息，如何才能求 <span
-class="math inline">\(dp[1]\)</span></p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007144.png" alt="QQ截图20220824005723.png" style="zoom:33%;" /></p>
-<p>可以发现，<span class="math inline">\(dp[1]\)</span> 和 <span
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101317859.png"
+alt="image-20240510131706551" />
+<figcaption aria-hidden="true">image-20240510131706551</figcaption>
+</figure>
+<p>​ 考虑上图，我们已知了 <span class="math inline">\(dp[2]\)</span> 和
+<span class="math inline">\(dp[3]\)</span>，如何使用树形 <span
+class="math inline">\(dp\)</span> 的思想求解 <span
+class="math inline">\(dp[1]\)</span>？我们可以发现：</p>
+<ul>
+<li><span class="math inline">\(dp[1]\)</span> 和 <span
 class="math inline">\(dp[2]\)</span>、<span
-class="math inline">\(dp[3]\)</span>
-之间并没有什么直接的联系！但我们很容易观察知道，<strong>以 <span
-class="math inline">\(1\)</span>
-为制高点的最长路径，一定是选了它下方的多条直路中最长的两条</strong></p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405092007137.png" alt="QQ截图20220824013655.png" style="zoom:33%;" /></p>
+class="math inline">\(dp[3]\)</span> 之间并没有直接关系</li>
+<li>但<strong>以 <span class="math inline">\(1\)</span>​
+为制高点的最长路径</strong>：
+<ul>
+<li>要么选择其下方<font color='blue'><strong>最长的一条路径</strong></font>（此时次长路径的长度
+&lt; 0）</li>
+<li>要么选择其下方<font color='blue'><strong>每一个儿子方向上的路径最长的两条</strong></font>（此时次长路径的长度
+&gt; 0）</li>
+</ul></li>
+</ul>
 <p>所以我们可以存储<strong>每个点往下能走的最长路径</strong>（记作
 <code>maxlen</code>），那么我们可以得到转移方程：</p>
 <p><span class="math display">\[
 dp[u] = max _1\left\{ \max len\left( son_i \right) +w\left[ u \right]
 \left[ son_i \right] \right\} +max _2\left\{ \max len\left( son_i
 \right) +w\left[ u \right] \left[ son_i \right] \right\}
-\]</span> 其中，<span class="math inline">\(max_1\)</span>
-表示最大值，<span class="math inline">\(max_2\)</span> 表示次大值</p>
-<blockquote>
-<p>注意：注意，这里如果 <span
-class="math inline">\(max_1\)</span>、<span
-class="math inline">\(max_2\)</span> 不能小于 0，如果小于
-0，我们就不选择从当前这个点往下走的最大数值/次大值，直接不走了</p>
-</blockquote>
-<p>找最大值、次大值的伪代码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> 当前值 &gt;= 最大值:</span><br><span class="line">    次大值 = 最大值, 最大值 = 当前值;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> 当前值 &gt; 次大值:</span><br><span class="line">    次大值 = 当前值;</span><br></pre></td></tr></table></figure>
-<p><span class="math inline">\(maxlen\)</span> 显然是可以递归的，即
-<span
-class="math inline">\(maxlen(u)=max(maxlen[son_i]+w[u][son_i])\)</span>，可以使用
-<span class="math inline">\(dfs\)</span> 求解，最终答案即为 <span
-class="math inline">\(dp\)</span>​ 数组中的最大值</p>
-<hr />
+\]</span> 其中，<span class="math inline">\(max_1\)</span>​
+表示最大值，<span class="math inline">\(max_2\)</span>​ 表示次大值，<span
+class="math inline">\(maxlen\)</span> 显然是可以递归的，可以使用 <span
+class="math inline">\(dfs\)</span> 求解，即 <span
+class="math display">\[
+maxlen(u)=max(maxlen[son_i]+w[u][son_i])
+\]</span> 最终答案即为 <span class="math inline">\(dp\)</span>​
+数组中的最大值</p>
+<p><strong>注意：</strong></p>
 <ul>
-<li><a
+<li>假设顶点 <span class="math inline">\(u\)</span> 有 <span
+class="math inline">\(t\)</span> 个儿子节点 <span
+class="math inline">\(son_1\)</span>,...,<span
+class="math inline">\(son_t\)</span>，则 <span
+class="math inline">\(max_1\)</span>、<span
+class="math inline">\(max_2\)</span> 是从含有 <span
+class="math inline">\(t+1\)</span> 条路径的集合 { <span
+class="math inline">\(u\)</span>，<span
+class="math inline">\(u\)</span>-&gt;<span
+class="math inline">\(son_1\)</span>-&gt;...，<span
+class="math inline">\(u\)</span>-&gt;<span
+class="math inline">\(son_2\)</span>-&gt;...，······，<span
+class="math inline">\(u\)</span>-&gt;<span
+class="math inline">\(son_t\)</span>-&gt;...} 中选出最长的 <span
+class="math inline">\(d_1\)</span> 和次长的 <span
+class="math inline">\(d_2\)</span>
+<ul>
+<li>路径 <span class="math inline">\(\{u\}\)</span> 的长度为 <span
+class="math inline">\(0\)</span>，因此我们将 <span
+class="math inline">\(max_1\)</span>、<span
+class="math inline">\(max_2\)</span> 的初值赋为 <span
+class="math inline">\(0\)</span></li>
+</ul>
+<blockquote>
+<p>表示如果从当前节点 <span class="math inline">\(u\)</span>
+往每一个儿子方向上的 <span class="math inline">\(t\)</span>
+条路径长度最大值/次大值小于 <span
+class="math inline">\(0\)</span>，我们就<strong>不</strong>从当前这个点往下走，这样路径即为
+<span class="math inline">\(\{u\}\)</span>，距离为 <span
+class="math inline">\(0\)</span></p>
+</blockquote>
+<ul>
+<li>剩下的 <span class="math inline">\(t\)</span> 条路径是当前节点 <span
+class="math inline">\(u\)</span> 往下走，每一个儿子方向上的路径，从第
+<span class="math inline">\(2\)</span> 个点开始就各不相同，所以这 <span
+class="math inline">\(t\)</span> 条路径也一定是完全不同的路径</li>
+<li><span class="math inline">\(max_1\)</span> 一定是从当前顶点 <span
+class="math inline">\(u\)</span> 向下走的最大距离，但是 <span
+class="math inline">\(max_2\)</span> 不一定是从当前顶点 <span
+class="math inline">\(u\)</span>
+向下走的次大距离，因为最大距离和次大距离对应的路径有可能经过 <span
+class="math inline">\(u\)</span>
+的同一个儿子节点，但是我们的集合不包含这种情况</li>
+</ul></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> ans = <span class="number">0</span>; <span class="comment">// 全局变量，记录最长路径，便于在 dfs 中更新（当路径中只有一个节点的路径长度为 0）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回从根节点 u 往下走的最大距离 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> father)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> d1 = <span class="number">0</span>, d2 = <span class="number">0</span>; <span class="comment">// 根节点 u 往下走的最大距离 d1 和次大距离 d2，初始值为 0，表示不往下走，路径中只包含 u 的距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (j != father) <span class="comment">// 否则一上一下会死循环，导致 TLE/MLE</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> t = dfs(j, u) + w[i];</span><br><span class="line">            <span class="keyword">if</span> (t &gt;= d1) <span class="comment">// 这里必须是 ≥</span></span><br><span class="line">                d2 = d1, d1 = t;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (t &gt; d2) <span class="comment">// 这里可以是 &gt; 也可以是 ≥</span></span><br><span class="line">                d2 = t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ans = max(ans, d1 + d2); <span class="comment">// dp[u] = d1 + d2，直接更新最大值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> d1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dfs(<span class="number">1</span>, <span class="number">-1</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8409456/">AcWing
+1207. 大臣的旅费（蓝桥杯辅导课） - AcWing</a></p></li>
+<li><p><a
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8493787/">AcWing
-1072. 树的最长路径 - AcWing</a></li>
+1072. 树的最长路径 - AcWing</a></p></li>
 </ul>
 <h1 id="图">图</h1>
 <h2 id="图的存储">图的存储</h2>
@@ -1059,6 +1055,106 @@ class="math inline">\(int\)</span>，因此在这种情况下，我们通常采�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-算法/标准记号与常用函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" target="_blank">标准记号与常用函数</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" class="archive-article-date">
+        <time datetime="2024-02-28T07:23:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-28</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="标准记号与常用函数">标准记号与常用函数</h1>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404071215513.png"
+alt="image-20240407121507444" />
+<figcaption aria-hidden="true">image-20240407121507444</figcaption>
+</figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404071215300.png"
+alt="image-20240407121531163" />
+<figcaption aria-hidden="true">image-20240407121531163</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/">展开全文 >></a>
     </p>
     
 
@@ -1162,106 +1258,6 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E8%B4%AA%E5%BF%83%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-算法/标准记号与常用函数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" target="_blank">标准记号与常用函数</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" class="archive-article-date">
-        <time datetime="2024-02-28T07:23:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-28</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="标准记号与常用函数">标准记号与常用函数</h1>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404071215513.png"
-alt="image-20240407121507444" />
-<figcaption aria-hidden="true">image-20240407121507444</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404071215300.png"
-alt="image-20240407121531163" />
-<figcaption aria-hidden="true">image-20240407121531163</figcaption>
-</figure>
-    
-    <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E6%A0%87%E5%87%86%E8%AE%B0%E5%8F%B7%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/">展开全文 >></a>
     </p>
     
 
@@ -1784,15 +1780,11 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1800,11 +1792,11 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1812,11 +1804,11 @@ IV</a></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1825,6 +1817,10 @@ IV</a></h3>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
             
             <div class="clearfix"></div>

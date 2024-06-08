@@ -643,9 +643,9 @@ href="#图的dfs">图的dfs</a> 一模一样</li>
 </ul>
 <hr />
 <ul>
-<li>法2：传入参数 <code>father</code>，表示父节点</li>
+<li>法2：传入参数 <code>fa</code>，表示父节点</li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> father)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (u != father)</span><br><span class="line">            dfs(j);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> fa)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (u != fa)</span><br><span class="line">            dfs(j);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="bfs">bfs</h4>
 <ul>
 <li>有向树遍历时<strong>一定不会重复遍历</strong>，因此不需要
@@ -795,6 +795,217 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8493787/">AcWing
 1072. 树的最长路径 - AcWing</a></p></li>
 </ul>
+<h2 id="最近公共祖先lca">最近公共祖先LCA</h2>
+<p>​ 给定一棵有根树，若节点 <span class="math inline">\(z\)</span>
+既是节点 <span class="math inline">\(x\)</span> 的祖先，也是节点 <span
+class="math inline">\(y\)</span> 的祖先，则称 <span
+class="math inline">\(z\)</span> 是 <span
+class="math inline">\(x\)</span>、<span class="math inline">\(y\)</span>
+的公共祖先。在 <span class="math inline">\(x\)</span>、<span
+class="math inline">\(y\)</span> 的所有公共祖先中，深度最大的一个称为
+<span class="math inline">\(x\)</span>、<span
+class="math inline">\(y\)</span> 的最近公共祖先，记为 <span
+class="math inline">\(LCA(x,y)\)</span>​</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406081754498.png"
+alt="image-20240608175459145" />
+<figcaption aria-hidden="true">image-20240608175459145</figcaption>
+</figure>
+<p><span class="math inline">\(LCA(x,y)\)</span> 是 <span
+class="math inline">\(x\)</span> 到根的路径与 <span
+class="math inline">\(y\)</span> 到根的路径的交会点。它也是 <span
+class="math inline">\(x\)</span> 与 <span
+class="math inline">\(y\)</span>​
+之间的路径上深度最小的节点。求最近公共祖先的方法通常有三种：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406081937492.png"
+alt="image-20240608193703117" />
+<figcaption aria-hidden="true">image-20240608193703117</figcaption>
+</figure>
+<h3 id="树上倍增法">树上倍增法☆</h3>
+<h4 id="预处理">预处理</h4>
+<p>预处理得到 <span class="math inline">\(depth[\ ]\)</span>、<span
+class="math inline">\(fa[\ ][\ ]\)</span></p>
+<ul>
+<li><span class="math inline">\(depth[i]\)</span> 表示 <span
+class="math inline">\(i\)</span> 的深度，<span
+class="math inline">\(1\le i \le n\)</span>​</li>
+<li><span class="math inline">\(fa\left[ i,j \right]\)</span> 表示从
+<span class="math inline">\(i\)</span> 开始向上走 <span
+class="math inline">\(2^j\)</span> 步到达的节点，<span
+class="math inline">\(0\le j \le logn\)</span></li>
+</ul>
+<p><span class="math display">\[
+\begin{cases}
+    fa\left[ i,0 \right] =i\ \text{的父节点}\\
+    \\
+    fa\left[ i,j \right] =fa\left[ fa\left[ i,j-1 \right] ,j-1 \right]
+,  1\le j\le logn\\
+\end{cases}
+\]</span></p>
+<blockquote>
+<ol type="1">
+<li>由于 <span class="math inline">\(2^j=2^{j-1}+2^{j-1}\)</span>
+，因此从 <span class="math inline">\(i\)</span> 向上跳 <span
+class="math inline">\(2^{j}\)</span> 步到达 <span
+class="math inline">\(fa[i,j]\)</span>，等价于先从 <span
+class="math inline">\(i\)</span> 向上跳 <span
+class="math inline">\(2^{j-1}\)</span> 步到达 <span
+class="math inline">\(fa[i,j-1]\)</span>，再从 <span
+class="math inline">\(fa[i,j-1]\)</span> 向上跳 <span
+class="math inline">\(2^{j-1}\)</span> 步最终到达 <span
+class="math inline">\(fa[i,j]\)</span></li>
+<li>这类似于一个树型<span
+class="math inline">\(DP\)</span>过程，“阶段”就是节点的深度。因此，我们可以对树进行广度优先遍历，按照层次顺序，在节点入队之前，计算它在
+<span class="math inline">\(fa[]\)</span> 中相应的值</li>
+</ol>
+</blockquote>
+<ul>
+<li><strong>哨兵 <span class="math inline">\(0\)</span>
+号节点</strong>：<span class="math inline">\(depth[0]=0\)</span>，如果从
+<span class="math inline">\(i\)</span> 开始跳 <span
+class="math inline">\(2^j\)</span> 步会跳过根节点，那么 <span
+class="math inline">\(fa[i,j]=0\)</span></li>
+<li><strong>时间复杂度</strong>：<span
+class="math inline">\(O(nlogn)\)</span></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"><span class="type">int</span> h[N], e[M], ne[M], idx;</span><br><span class="line"><span class="type">int</span> depth[N], fa[N][<span class="number">16</span>];</span><br><span class="line"><span class="type">int</span> q[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> root)</span></span><br><span class="line">&#123;</span><br><span class="line">    depth[root] = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> hh = <span class="number">0</span>, tt = <span class="number">-1</span>;</span><br><span class="line">    q[++ tt] = root;</span><br><span class="line">    <span class="comment">// 初始化 fa[root][...] = 0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(hh &lt;= tt)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q[hh ++];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; ~i; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(!depth[j])	<span class="comment">// 无向树需要使用标记数组</span></span><br><span class="line">            &#123;</span><br><span class="line">                depth[j] = depth[t] + <span class="number">1</span>;</span><br><span class="line">                q[++ tt] = j;</span><br><span class="line">                <span class="comment">/* 树型 DP 计算 fa[j][] */</span></span><br><span class="line">                fa[j][<span class="number">0</span>] = t;</span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">1</span>; k &lt;= <span class="number">15</span>; k ++)</span><br><span class="line">                    fa[j][k] = fa[fa[j][k - <span class="number">1</span>]][k - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查询">查询</h4>
+<p>基于 <span class="math inline">\(depth[\ ]\)</span>、<span
+class="math inline">\(fa[\ ][\ ]\)</span> 计算 <span
+class="math inline">\(LCA(a,b)\)</span>​</p>
+<ul>
+<li><strong>算法思想</strong>：</li>
+</ul>
+<ol type="1">
+<li>先将两个点跳到同一层</li>
+<li>让两个点同时往上跳，一直跳到它们的<font color='red'><strong>最近公共祖先的下一层</strong></font></li>
+</ol>
+<blockquote>
+<p>为什么要跳到最近公共祖先的下一层，而不是直接跳到最近公共祖先那一层呢？</p>
+<p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">假如 fa[x][k] == f[y][k] &lt;=&gt; f[x][k] or f[y][k] 是 x 和 y 的一个公共祖先，但不一定是最近的</span><br><span class="line">      1        </span><br><span class="line">     / \      </span><br><span class="line">    2   3    </span><br><span class="line">   / \      </span><br><span class="line">  4   5   </span><br><span class="line"> / \  /   </span><br><span class="line">x  y 6</span><br><span class="line">举个例子，此时f[x][1] == f[y][1] = 节点2 是 x 和 y 的一个公共祖先 但不是最近公共祖先 4</span><br><span class="line">但由于我们是从大到小拼凑的，假如拼凑终止条件为 f[x][k] == f[y][k]，则此时会停在公共祖先 2 而非最近公共祖先 4</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ul>
+<li><strong>实现步骤</strong>：</li>
+</ul>
+<ol type="1">
+<li>不妨设 <span class="math inline">\(depth[a] \ge
+depth[b]\)</span>（否则可交换 <span
+class="math inline">\(a\)</span>，<span
+class="math inline">\(b\)</span>）</li>
+<li>用二进制拆分思想，把 <span class="math inline">\(a\)</span>
+向上调整到与 <span class="math inline">\(b\)</span>​ 同一深度</li>
+</ol>
+<blockquote>
+<p>具体来说，就是依次尝试从 <span class="math inline">\(a\)</span>
+向上走 <span class="math inline">\(k=2^{logn},…,2^1,2^0\)</span>
+步，检查到达的节点是否比 <span class="math inline">\(b\)</span>
+深。在每次检查中，若是，则令 <span
+class="math inline">\(a=fa[a,k]\)</span></p>
+</blockquote>
+<ol start="3" type="1">
+<li><p>若此时 <span class="math inline">\(a=b\)</span>，说明已经找到了
+<span class="math inline">\(LCA\)</span>，<span
+class="math inline">\(LCA\)</span> 就等于 <span
+class="math inline">\(b\)</span>（这就是上面的图中的第三种情况）</p></li>
+<li><p>用<strong>二进制拼凑</strong>的思想，把 <span
+class="math inline">\(a\)</span>，<span class="math inline">\(b\)</span>
+同时向上跳，并保持深度一致且二者不相会</p></li>
+</ol>
+<blockquote>
+<p>具体来说，就是<font color =’blue'><strong>依次尝试</strong></font>把
+<span class="math inline">\(a\)</span>，<span
+class="math inline">\(b\)</span> 同时向上走 <span
+class="math inline">\(k=2^{logn},…,2^1,2^0\)</span> 步，在每次尝试中，若
+<span class="math inline">\(fa[a,k]\ne
+fa[b,k]\)</span>（即仍未相会），则令 <span
+class="math inline">\(x=F[x,k],y = F[y,k]\)</span></p>
+</blockquote>
+<ol start="5" type="1">
+<li><font color =’blue'><strong>此时 <span
+class="math inline">\(a\)</span>，<span class="math inline">\(b\)</span>
+必定只差一步就相会了</strong></font>，它们的父节点 <span
+class="math inline">\(fa[a,0]\)</span> 或 <span
+class="math inline">\(fa[b,0]\)</span> 就是 <span
+class="math inline">\(LCA(a,b)\)</span></li>
+</ol>
+<ul>
+<li><strong>时间复杂度</strong>：
+<ul>
+<li>对于每个询问，时间复杂度为 <span
+class="math inline">\(O(logn)\)</span></li>
+<li>如果有 <span class="math inline">\(n\)</span> 个点，<span
+class="math inline">\(m\)</span> 个询问，总共的时间复杂度为 <span
+class="math inline">\(O(mlogn)\)</span></li>
+</ul></li>
+<li>【<strong>模板题</strong>：<a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8578980/">AcWing
+1172. 祖孙询问 - AcWing</a>】</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">lca</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(depth[a] &lt; depth[b])</span><br><span class="line">        swap(a, b);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> k = <span class="built_in">log</span>(n) / <span class="built_in">log</span>(<span class="number">2</span>); k &gt;= <span class="number">0</span>; k --)</span><br><span class="line">    <span class="comment">// 哨兵作用1：如果跳过根节点，fa[a][k] 会返回 0，depth[0] = 0，由于树中任何一个节点的 depth[] 均大于 0，if 判断条件不成立，不会跳</span></span><br><span class="line">        <span class="keyword">if</span>(depth[fa[a][k]] &gt;= depth[b])</span><br><span class="line">            a = fa[a][k];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(a == b)</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">15</span>; k &gt;= <span class="number">0</span>; k --)</span><br><span class="line">    <span class="comment">// 哨兵作用2：如果跳过根节点，由于 a 和 b 的深度相同，此时 fa[a][k] = fa[a][k] = 0，if 判断条件不成立，不会跳</span></span><br><span class="line">        <span class="keyword">if</span>(fa[a][k] != fa[b][k])</span><br><span class="line">        &#123;</span><br><span class="line">            a = fa[a][k];</span><br><span class="line">            b = fa[b][k];</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> fa[a][<span class="number">0</span>];	<span class="comment">// return fa[b][0];	也是正确的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="向上标记法">向上标记法</h3>
+<ul>
+<li><p>从 <span class="math inline">\(x\)</span>​
+向上走到根节点，并标记所有经过的节点。</p></li>
+<li><p>从 y向上走到根节点，当第一次遇到已标记的节点时，就找到了 <span
+class="math inline">\(LCA(x,y)\)</span></p></li>
+<li><p><strong>时间复杂度</strong>：</p>
+<ul>
+<li>对于每个询问，时间复杂度为 <span
+class="math inline">\(O(n)\)</span>​</li>
+<li>如果有 <span class="math inline">\(n\)</span> 个点，<span
+class="math inline">\(m\)</span> 个询问，总共的时间复杂度为 <span
+class="math inline">\(O(nm)\)</span></li>
+</ul></li>
+</ul>
+<blockquote>
+<p>基本不用这种方法</p>
+</blockquote>
+<h3 id="tarjan-lca算法">Tarjan-LCA算法★</h3>
+<p>​ <span class="math inline">\(Tarjan-LCA\)</span>
+算法本质上是<strong>使用并查集对“向上标记法”的优化</strong>。它是一个离线算法，需要把
+m 个询问一次性读入，统一计算，最后统一输出 -
+<strong>时间复杂度</strong>：<span
+class="math inline">\(O(n+m)\)</span>，其中 <span
+class="math inline">\(n\)</span>为节点数量，<span
+class="math inline">\(m\)</span> 为询问数量</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406082139869.png"
+alt="image-20240608213845895" />
+<figcaption aria-hidden="true">image-20240608213845895</figcaption>
+</figure>
+<p>在深度优先遍历时，将所有树中节点分为三类：</p>
+<ol type="1">
+<li><p><strong>已经</strong>访问完毕且<strong>回溯</strong>的节点，标记为
+<span class="math inline">\(2\)</span></p></li>
+<li><p>已经开始递归，但尚未回溯的节点，标记为 <span
+class="math inline">\(1\)</span></p></li>
+</ol>
+<blockquote>
+<p>这些节点就是当前正在访问的节点 <span class="math inline">\(x\)</span>
+以及的 <span class="math inline">\(x\)</span> 的祖先</p>
+</blockquote>
+<ol start="3" type="1">
+<li>尚未访问的节点，标记为 <span class="math inline">\(0\)</span></li>
+</ol>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406082140480.png"
+alt="image-20240608214025565" />
+<figcaption aria-hidden="true">image-20240608214025565</figcaption>
+</figure>
+<ul>
+<li><span class="math inline">\(tarjan\)</span> 本质是<font color='red'>
+<strong><span class="math inline">\(DFS\)</span>​ +
+并查集</strong></font></li>
+<li>【<strong>模板题</strong>：<a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8579327/">AcWing
+1171. 距离 - AcWing</a>】</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> p[N];</span><br><span class="line"><span class="type">int</span> st[M];              <span class="comment">// 用于 tarjan 标记节点</span></span><br><span class="line"><span class="type">int</span> res[M];             <span class="comment">// 存储离线查询结果</span></span><br><span class="line"><span class="built_in">vector</span>&lt;PII&gt; query[N];   <span class="comment">// query[i] 存储与节点 i 相关的查询：first 存储查询的另一个点， second 存储查询编号</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">find</span><span class="params">(<span class="type">int</span> x)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(p[x] != x)</span><br><span class="line">        p[x] = find(p[x]);</span><br><span class="line">    <span class="keyword">return</span> p[x];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tarjan</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    st[u] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span>(!st[j])</span><br><span class="line">        &#123;</span><br><span class="line">            tarjan(j);</span><br><span class="line">            p[j] = u;   <span class="comment">// p[u] = j 错误且一定要在回溯 tarjan(j) 结束后</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> item : query[u])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> y = item.first, id = item.second;</span><br><span class="line">        <span class="keyword">if</span>(st[y] == <span class="number">2</span>)</span><br><span class="line">            res[id] = find(y);</span><br><span class="line">    &#125;</span><br><span class="line">    st[u] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* ........................ */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> a, b;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">        <span class="comment">/* 如果 a == b 答案就是 res[] 初始值 0 */</span></span><br><span class="line">        <span class="keyword">if</span>(a != b)	<span class="comment">// 必须加 2 遍</span></span><br><span class="line">        &#123;</span><br><span class="line">            query[a].push_back(&#123;b, i&#125;);</span><br><span class="line">            query[b].push_back(&#123;a, i&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">        p[i] = i;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 无向图任选一个节点作为根节点</span></span><br><span class="line">    tarjan(<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i ++)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, res[i]);</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="图">图</h1>
 <h2 id="图的存储">图的存储</h2>
 <p>​ <span class="math inline">\(n\)</span> 个顶点，无向图最多有 <span
@@ -1820,6 +2031,10 @@ class="math display">\[n\]</span> ）：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -1832,23 +2047,7 @@ class="math display">\[n\]</span> ）：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1856,7 +2055,19 @@ class="math display">\[n\]</span> ）：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">

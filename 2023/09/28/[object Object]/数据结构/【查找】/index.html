@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202309290949392.png">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202309291002875.png">
 <meta property="article:published_time" content="2023-09-28T12:15:27.000Z">
-<meta property="article:modified_time" content="2024-05-28T16:03:59.972Z">
+<meta property="article:modified_time" content="2024-07-02T12:24:42.217Z">
 <meta property="article:author" content="银杏枫树">
 <meta property="article:tag" content="数据结构">
 <meta name="twitter:card" content="summary">
@@ -682,7 +682,8 @@ alt="在这里插入图片描述" />
 <h3 id="说明">说明</h3>
 <ol type="1">
 <li>题目条件通常是在<strong><font color='red'>等概率下</font>查找</strong>，所以<strong><code>ASL=（C0+C1+...+Cn）/n.</code></strong></li>
-<li>查找成功是针对==<strong><font color='red'>关键字</font></strong>==查找的，最后除以<strong><font color='blue'>关键字的总个数</font></strong>。</li>
+<li>查找成功是针对==<strong><font color='red'>关键字</font></strong>==查找的，最后除以<strong><font color='blue'>关键字的总个数</font></strong></li>
+<li>装填因子=哈希表中关键字数量/哈希表的长度</li>
 </ol>
 <h2 id="查找失败的asl">查找失败的ASL</h2>
 <h3 id="失败原因">失败原因</h3>
@@ -690,7 +691,8 @@ alt="在这里插入图片描述" />
 <h3 id="说明-1">说明</h3>
 <ol type="1">
 <li>查找失败是针对<strong><font color='red'>表中没有的元素，是对位置的查找</font></strong></li>
-<li>失败查找次数就是该位置<strong>向后探测到第一个没有关键字的地址位置之间的距离</strong></li>
+<li>失败查找次数就是该位置<strong><font color='blue'>该位置向后探测到第一个没有关键字的地址位置之间的距离</font></strong></li>
+<li>求平均数的除数是==<strong><font color='red'>模的大小</font></strong>==，与哈希表的长度无关</li>
 </ol>
 <h2 id="例题-1">例题</h2>
 <h3 id="例一-1">例一</h3>
@@ -702,14 +704,13 @@ alt="在这里插入图片描述" />
 </figure>
 <h4 id="线性探测法开放定址法">线性探测法/开放定址法</h4>
 <h5 id="查找成功">查找成功</h5>
-<p>构建出来的哈希表有八个元素，针对这八个元素的比较次数，得出： <span
+<p>构建出来的哈希表有8个元素，针对这8个元素的比较次数，得出： <span
 class="math display">\[
 ASL_{success}=(1+1+1+2+1+2+1+2)/8 = 11/8
 \]</span></p>
-<p>而查找失败时的平均查找长度，却是针对位置的查找</p>
 <h5 id="查找失败">查找失败</h5>
 <p>​
-为什么呢？因为如果我们要查找表中的元素，那么一定可以找到，所以讨论查找失败就没有意义。我们讨论查找失败，一定是针对表中没有的元素在这张表中查找，才有查找失败的意义。所以，针对上图的哈希表，我们将待查找关键字X代入哈希函数，我们设定X与这张表中的关键字都不相同：</p>
+查找失败时的平均查找长度，却是针对位置的查找。因为如果我们要查找表中的元素，那么一定可以找到，所以讨论查找失败就没有意义；我们讨论查找失败，一定是针对表中没有的元素在这张表中查找，才有查找失败的意义。所以，针对上图的哈希表，我们将待查找关键字X代入哈希函数，我们设定X与这张表中的关键字都不相同：</p>
 <ol type="1">
 <li><p>当<span class="math inline">\(H(X)=3X mod
 11=0\)</span>时，因为散列地址为<span
@@ -722,7 +723,7 @@ class="math inline">\(0\)</span>的位置没有关键字，所以查找1次就�
 11=3\)</span>时，因为散列地址为3的位置有关键字12，X与12不等，所以向后线性探测，散列地址为4的位置有关键字49，还不等，继续探测，因为X与表中的关键字都不等，所以直到散列地址为10没有关键字，才查找失败，这次一共查找了8次</p></li>
 <li><p>…以此类推</p></li>
 </ol>
-<p>失败查找次数就是<strong><font color='blue'>该位置向后探测到第一个没有关键字的地址位置之间的距离</font></strong>，而求平均数的除数，是<strong><font color='red'>模的大小</font></strong></p>
+<p>而求平均数的除数，是<strong><font color='red'>模的大小</font></strong></p>
 <p>​
 因为失败查找次数是针对位置查找，因为模为11，所以查找的位置(哈希函数的值)为0-10(共11个),针对这11个位置进行查找，而与表的长度无关。</p>
 <h4 id="链地址法">链地址法</h4>
@@ -740,15 +741,11 @@ class="math inline">\(0\)</span>的位置没有关键字，所以查找1次就�
 <h4 id="总结">总结</h4>
 <ul>
 <li><p><strong>失败查找次数就是当前位置所带的结点个数+1</strong></p></li>
-<li><p>使用链地址法查找时无二次聚集现象</p></li>
+<li><p>链地址法<strong>不存在</strong>二次聚集现象</p></li>
 </ul>
 <blockquote>
-<p>二次聚集：处理冲突过程中发生的两个第一个散列地址不同的记录争夺同一个后继散列地址的现象</p>
+<p><strong>二次聚集</strong>：处理冲突过程中发生的两个第一个散列地址不同的记录争夺同一个后继散列地址的现象</p>
 </blockquote>
-<ul>
-<li><p>查找<strong>成功</strong>时，分母为<strong>哈希表中元素的个数</strong></p></li>
-<li><p>查找<strong>失败</strong>时，分母为<strong>哈希表长度</strong></p></li>
-</ul>
 <h3 id="例二-1">例二</h3>
 <figure>
 <img
@@ -758,8 +755,8 @@ alt="img" />
 </figure>
 <h3 id="例三-1">例三</h3>
 <p>将关键字序列（7、8、30、11、18、9、14）散列存储到散列表中。散列表的存储空间是一个下标从0开始的一维数组。散列函数为：
-H(key) = (keyx3) MOD
-T，处理冲突采用线性探测再散列法，要求装填（载）因子为0.7。 (1)
+<span class="math display">\[H(key) = (key\times3)\ mod\
+T\]</span>，处理冲突采用线性探测再散列法，要求装填（载）因子为0.7 (1)
 请画出所构造的散列表； (2)
 分别计算等概率情况下查找成功和查找不成功的平均查找长度。</p>
 <figure>
@@ -982,18 +979,18 @@ aria-hidden="true">watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9
 
 <nav id="article-nav">
   
-    <a href="/2023/09/28/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E5%A0%86%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2023/09/28/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90HuffmanTree%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          【堆】
+          【HuffmanTree】
         
       </div>
     </a>
   
   
-    <a href="/2023/09/28/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E5%9B%BE%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【图】</div>
+    <a href="/2023/09/28/%5Bobject%20Object%5D/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E3%80%90%E6%A0%88%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【栈】</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -1207,10 +1204,6 @@ aria-hidden="true">watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -1219,15 +1212,11 @@ aria-hidden="true">watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1235,11 +1224,7 @@ aria-hidden="true">watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1247,7 +1232,19 @@ aria-hidden="true">watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>

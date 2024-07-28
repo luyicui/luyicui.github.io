@@ -214,6 +214,142 @@
             
 
   
+    <article id="post-AI/throughput" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" target="_blank">throughput</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" class="archive-article-date">
+        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="throughput">throughput</h1>
+<p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>真的是到处都是呢！！</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752217.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<hr />
+<p>​ <a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=神经网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">神经网络</a>的吞吐量（Throughput）定义为网络模型在<strong>单位时间内</strong>（例如，1s）<strong>可以处理的最大输入的训练样本数据</strong>。</p>
+<p>​ 与涉及单个样本数据处理的延迟 Latency 不同，为了实现最大吞吐量
+Throughput，希望在集群训练的过程中并行处理尽可能多的样本数据。有效的并行性显然依赖于数据、模型和设备规模。</p>
+<p>​ 因此，为了正确测量吞吐量，可以执行以下两个步骤：</p>
+<ol type="1">
+<li>估计允许最大<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=并行度&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">并行度</a>的最佳训练样本数据批量大小，即
+Batch Size</li>
+<li>在AI训练集群中给定这个最佳批量大小，<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=测量网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">测量网络</a>在1秒钟内可以处理的训练样本数据。</li>
+</ol>
+<p>​ 要找到最佳批量大小，一个好的经验法则是达到 Ascend <a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=昇腾处理器&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">昇腾处理器</a>对给定数据类型的内存限制，即Batch
+Size塞满内存。这个大小当然取决于硬件类型和网络的大小。</p>
+<p>​ 找到这个最大批量大小 Batch Size
+的最快方法是执行二进制搜索。当时间不重要时，简单的<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=顺序搜索&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">顺序搜索</a>就足够了。不过在大模型训练的过程中，因为Batch
+Size比较重要，设计到重计算、Pipeline并行、Tensor并行等不同并行模式的配比，还有包括micro
+Batch Size的数据配比。因此默认Batch Size会为16的倍数增长比较合理。</p>
+<p>​ 这确定了 AI
+加速卡上可以处理的最大批量大小，用于训练大模型及其处理的输入训练样本数据。在找到最佳批量大小后，可以计算实际吞吐量，然后使用以下公式：
+<span class="math display">\[
+sample_{throughput}=BS*N/step_{time}
+\]</span> 其中，BS 为 Batch Size，N 为集群中AI加速卡的数量，step
+time为在分布式集群中，执行完一个Batch
+Size的时间（单位为s）。大模型训练的<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=吞吐率&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">吞吐率</a>的单位在CV和部分NLP任务重为
+Samples/s，在固定 Shape 的 NLP任务有seq
+len，因此单位为tokens/s，计算公式为： <span class="math display">\[
+tokens_{throughout}=sample_{throughput}*seq_{len}
+\]</span> ​ 假设GLM10B<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=网络模型&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">网络模型</a>的吞吐为25
+Samples/s，max seq_len 为1024，那么按照tokens来计算吞吐率为 25 * 1024 =
+25600 tokens/s。也就是每秒能处理2万多个tokens啦。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-算法/【模拟】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -273,112 +409,6 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/31/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%A8%A1%E6%8B%9F%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C++/ssize_t&amp;&amp;size_t" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/" target="_blank">ssize_t&amp;&amp;size_t</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/" class="archive-article-date">
-        <time datetime="2024-03-30T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-30</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h2 id="size_t">size_t</h2>
-<p>​ <strong><code>size_t</code></strong> 是一些C/C++标准在
-<code>stddef.h</code> 中定义的，<code>size_t</code> 类型表示 C
-中任何对象所能达到的最大长度，它是无符号整数。</p>
-<p>​ 它是为了方便系统之间的移植而定义的，不同的系统上，定义
-<code>size_t</code> 可能不一样。<code>size_t</code> 在 32 位系统上定义为
-<code>unsigned int</code>，也就是 32 位无符号整型。在64位系统上定义为
-<code>unsigned long</code> ，也就是 64 位无符号整形。<code>size_t</code>
-的目的是提供一种可移植的方法来声明与系统中可寻址的内存区域一致的长度。</p>
-<p>​ <code>size_t</code>
-在数组下标和内存管理函数之类的地方广泛使用。例如，<code>size_t</code>
-用做 <code>sizeof</code>
-操作符的返回值类型，同时也是很多函数的参数类型，包括 <code>malloc</code>
-和 <code>strlen</code>。</p>
-<p>​ 在声明诸如字符数或者数组索引这样的长度变量时用 <code>size_t</code>
-是好的做法。它经常用于循环计数器、数组索引，有时候还用在指针算术运算上。<code>size_t</code>
-的声明是实现相关的。它出现在一个或多个标准头文件中，比如
-<code>stdio.h</code> 和 <code>stblib.h</code>，典型的定义如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __SIZE_T</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SIZE_T</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> <span class="type">size_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/">展开全文 >></a>
     </p>
     
 
@@ -515,6 +545,112 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405012351119.png" /></p
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/stringstream/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-C++/ssize_t&amp;&amp;size_t" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/" target="_blank">ssize_t&amp;&amp;size_t</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/" class="archive-article-date">
+        <time datetime="2024-03-30T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-30</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="size_t">size_t</h2>
+<p>​ <strong><code>size_t</code></strong> 是一些C/C++标准在
+<code>stddef.h</code> 中定义的，<code>size_t</code> 类型表示 C
+中任何对象所能达到的最大长度，它是无符号整数。</p>
+<p>​ 它是为了方便系统之间的移植而定义的，不同的系统上，定义
+<code>size_t</code> 可能不一样。<code>size_t</code> 在 32 位系统上定义为
+<code>unsigned int</code>，也就是 32 位无符号整型。在64位系统上定义为
+<code>unsigned long</code> ，也就是 64 位无符号整形。<code>size_t</code>
+的目的是提供一种可移植的方法来声明与系统中可寻址的内存区域一致的长度。</p>
+<p>​ <code>size_t</code>
+在数组下标和内存管理函数之类的地方广泛使用。例如，<code>size_t</code>
+用做 <code>sizeof</code>
+操作符的返回值类型，同时也是很多函数的参数类型，包括 <code>malloc</code>
+和 <code>strlen</code>。</p>
+<p>​ 在声明诸如字符数或者数组索引这样的长度变量时用 <code>size_t</code>
+是好的做法。它经常用于循环计数器、数组索引，有时候还用在指针算术运算上。<code>size_t</code>
+的声明是实现相关的。它出现在一个或多个标准头文件中，比如
+<code>stdio.h</code> 和 <code>stblib.h</code>，典型的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __SIZE_T</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SIZE_T</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> <span class="type">size_t</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/C++/ssize_t&&size_t/">展开全文 >></a>
     </p>
     
 
@@ -1269,101 +1405,6 @@ _i\geqslant 0,  i=1,2,\cdots ,k
 
 
   
-    <article id="post-fighting/《致谢》——黄国平" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/" target="_blank">《致谢》——黄国平</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/" class="archive-article-date">
-        <time datetime="2024-03-04T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-04</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="致谢">致谢</h1>
-<p>​
-<strong>我走了很远的路，吃了很多的苦，才将这份博士学位论文送到你的面前。二十二载求学路，一路风雨泥泞，许多不容易。如梦一场，仿佛昨天家人才团聚过。</strong></p>
-<p>​
-出生在一个小山坳里，母亲在我十二岁时离家。父亲在家的日子不多，即便在我病得不能自己去医院的时候，也仅是留下勉强够治病的钱后又走了。我十七岁时，他因交通事故离世后，我哭得稀里糊涂，因为再得重病时没有谁来管我了。同年，和我住在一起的婆婆病故，真的无能为力。她照顾我十七年，下葬时却仅是一副薄薄的棺材。另一个家庭成员是老狗小花，为父亲和婆婆守过坟，后因我进城上高中而命不知何时何处所终。如兄长般的计算机启蒙老师■■没能看到我的大学录取通知书，对我照顾有加的师母也在不惑之前匆匆离开人世。<strong>每次回去看他们，这一座座坟茔都提示着生命的每一分钟都弥足珍贵。</strong></p>
-<p>​
-<strong>人情冷暖，生离死别，固然让人痛苦与无奈，而贫穷则可能让人失去希望。</strong>家徒四壁，在煤油灯下写作业或者读书都是晚上最开心的事。如果下雨，保留节目就是用竹笋壳塞瓦缝防漏雨。高中之前的主要经济来源是夜里抓黄鳝、周末钓鱼、养小猪崽和出租水牛。那些年里，方圆十公里的水田和小河都被我用脚测量过无数次。被狗和蛇追，半夜落水，因蓄电瓶进水而摸黑逃回家中：学费没交，
-黄鳍却被父亲偷卖了，然后买了肉和酒，都是难以避免的事。</p>
-    
-    <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">fighting</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/04/%5Bobject%20Object%5D/fighting/%E3%80%8A%E8%87%B4%E8%B0%A2%E3%80%8B%E2%80%94%E2%80%94%E9%BB%84%E5%9B%BD%E5%B9%B3/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1530,6 +1571,10 @@ _i\geqslant 0,  i=1,2,\cdots ,k
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
@@ -1538,15 +1583,7 @@ _i\geqslant 0,  i=1,2,\cdots ,k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1554,7 +1591,7 @@ _i\geqslant 0,  i=1,2,\cdots ,k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1567,6 +1604,10 @@ _i\geqslant 0,  i=1,2,\cdots ,k
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
             
             <div class="clearfix"></div>

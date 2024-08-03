@@ -19,7 +19,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403300912028.png">
 <meta property="article:published_time" content="2024-02-29T07:23:16.000Z">
-<meta property="article:modified_time" content="2024-07-01T10:17:28.500Z">
+<meta property="article:modified_time" content="2024-07-29T04:56:17.004Z">
 <meta property="article:author" content="银杏枫树">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -588,7 +588,7 @@ class="math inline">\(dfs\)</span> 的返回值</li>
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8490430/">AcWing
 321. 棋盘分割 - AcWing</a>为例</p></li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> f[M][M][M][M][N]; <span class="comment">// 增加 f[] 数组，f 的各个维度与 dfs 的函数参数一一对应</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">memset</span>(f, <span class="number">-1</span>, <span class="keyword">sizeof</span> f); <span class="comment">// 根据具体问题，将 f[] 初始化为 dfs 不可能的返回值（例如 0、-1、0x3f3f3f3f 等），本题初始化为 -1</span></span><br><span class="line"></span><br><span class="line"><span class="type">double</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> x1, <span class="type">int</span> y1, <span class="type">int</span> x2, <span class="type">int</span> y2, <span class="type">int</span> k)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">double</span> &amp;v = f[x1][y1][x2][y2][k];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (v &gt;= <span class="number">0</span>)		</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    <span class="keyword">if</span> (k == <span class="number">1</span>)		</span><br><span class="line"></span><br><span class="line"><span class="type">double</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> x1, <span class="type">int</span> y1, <span class="type">int</span> x2, <span class="type">int</span> y2, <span class="type">int</span> k)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">double</span> &amp;v = f[x1][y1][x2][y2][k];   <span class="comment">// 减小代码长度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 在 原始 dfs 的最开始处，根据 f[] 的取值是否为初始值，判断本次 dfs 是否曾经搜索过 */</span></span><br><span class="line">	<span class="comment">// 本次 dfs 搜索过：直接返回 f[]</span></span><br><span class="line">    <span class="keyword">if</span>(v &gt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 本次 dfs 没搜索过：则继续执行</span></span><br><span class="line">    <span class="keyword">if</span>(k == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> f[x1][y1][x2][y2][k] = get(x1, y1, x2, y2);	<span class="comment">// 在 return 处，用 f[] 记录本次 dfs 的返回值</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 初始化为最大值</span></span><br><span class="line">    v = INF;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 横切</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = x1; i &lt; x2; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        v = min(v, dfs(x1, y1, i, y2, k - <span class="number">1</span>) + get(i + <span class="number">1</span>, y1, x2, y2));</span><br><span class="line">        v = min(v, dfs(i + <span class="number">1</span>, y1, x2, y2, k - <span class="number">1</span>) + get(x1, y1, i, y2));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 纵切</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = y1; i &lt; y2; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        v = min(v, dfs(x1, y1, x2, i, k - <span class="number">1</span>) + get(x1, i + <span class="number">1</span>, x2, y2));</span><br><span class="line">        v = min(v, dfs(x1, i + <span class="number">1</span>, x2, y2, k - <span class="number">1</span>) + get(x1, y1, x2, i));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> v;	<span class="comment">// return 处，v 即为 f[x1][y1][x2][y2][k]（见第 15 行代码）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> f[M][M][M][M][N]; <span class="comment">// 增加 f[] 数组，f 的各个维度与 dfs 的函数参数一一对应</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">memset</span>(f, <span class="number">-1</span>, <span class="keyword">sizeof</span> f); <span class="comment">// 根据具体问题，将 f[] 初始化为 dfs 不可能的返回值（例如 0、-1、0x3f3f3f3f 等），本题初始化为 -1</span></span><br><span class="line"></span><br><span class="line"><span class="type">double</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> x1, <span class="type">int</span> y1, <span class="type">int</span> x2, <span class="type">int</span> y2, <span class="type">int</span> k)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">double</span> &amp;v = f[x1][y1][x2][y2][k];   <span class="comment">// 减小代码长度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 在 原始 dfs 的最开始处，根据 f[] 的取值是否为初始值，判断本次 dfs 是否曾经搜索过 */</span></span><br><span class="line">	<span class="comment">// 本次 dfs 搜索过：直接返回 f[]</span></span><br><span class="line">    <span class="keyword">if</span>(v &gt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 本次 dfs 没搜索过：则继续执行</span></span><br><span class="line">    <span class="keyword">if</span>(k == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> f[x1][y1][x2][y2][k] = get(x1, y1, x2, y2);	<span class="comment">// 在 return 处，用 f[] 记录本次 dfs 的返回值</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 初始化为最大值</span></span><br><span class="line">    v = INF;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 横切</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = x1; i &lt; x2; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        v = min(v, dfs(x1, y1, i, y2, k - <span class="number">1</span>) + get(i + <span class="number">1</span>, y1, x2, y2));</span><br><span class="line">        v = min(v, dfs(i + <span class="number">1</span>, y1, x2, y2, k - <span class="number">1</span>) + get(x1, y1, i, y2));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 纵切</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = y1; i &lt; y2; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        v = min(v, dfs(x1, y1, x2, i, k - <span class="number">1</span>) + get(x1, i + <span class="number">1</span>, x2, y2));</span><br><span class="line">        v = min(v, dfs(x1, i + <span class="number">1</span>, x2, y2, k - <span class="number">1</span>) + get(x1, y1, x2, i));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> v;	<span class="comment">// return 处，v 即为 f[x1][y1][x2][y2][k]（见第 15 行代码）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p><a
 target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8191621/">AcWing
@@ -993,15 +993,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1009,7 +1009,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1021,7 +1021,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1029,11 +1029,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
             
             <div class="clearfix"></div>

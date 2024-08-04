@@ -1812,6 +1812,142 @@ href="https://link.zhihu.com/?target=https%3A//cloud.baidu.com/doc/GPU/s/Yl3mr0r
 
 
   
+    <article id="post-AI/throughput" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" target="_blank">throughput</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" class="archive-article-date">
+        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="throughput">throughput</h1>
+<p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>真的是到处都是呢！！</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752217.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<hr />
+<p>​ <a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=神经网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">神经网络</a>的吞吐量（Throughput）定义为网络模型在<strong>单位时间内</strong>（例如，1s）<strong>可以处理的最大输入的训练样本数据</strong>。</p>
+<p>​ 与涉及单个样本数据处理的延迟 Latency 不同，为了实现最大吞吐量
+Throughput，希望在集群训练的过程中并行处理尽可能多的样本数据。有效的并行性显然依赖于数据、模型和设备规模。</p>
+<p>​ 因此，为了正确测量吞吐量，可以执行以下两个步骤：</p>
+<ol type="1">
+<li>估计允许最大<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=并行度&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">并行度</a>的最佳训练样本数据批量大小，即
+Batch Size</li>
+<li>在AI训练集群中给定这个最佳批量大小，<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=测量网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">测量网络</a>在1秒钟内可以处理的训练样本数据。</li>
+</ol>
+<p>​ 要找到最佳批量大小，一个好的经验法则是达到 Ascend <a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=昇腾处理器&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">昇腾处理器</a>对给定数据类型的内存限制，即Batch
+Size塞满内存。这个大小当然取决于硬件类型和网络的大小。</p>
+<p>​ 找到这个最大批量大小 Batch Size
+的最快方法是执行二进制搜索。当时间不重要时，简单的<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=顺序搜索&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">顺序搜索</a>就足够了。不过在大模型训练的过程中，因为Batch
+Size比较重要，设计到重计算、Pipeline并行、Tensor并行等不同并行模式的配比，还有包括micro
+Batch Size的数据配比。因此默认Batch Size会为16的倍数增长比较合理。</p>
+<p>​ 这确定了 AI
+加速卡上可以处理的最大批量大小，用于训练大模型及其处理的输入训练样本数据。在找到最佳批量大小后，可以计算实际吞吐量，然后使用以下公式：
+<span class="math display">\[
+sample_{throughput}=BS*N/step_{time}
+\]</span> 其中，BS 为 Batch Size，N 为集群中AI加速卡的数量，step
+time为在分布式集群中，执行完一个Batch
+Size的时间（单位为s）。大模型训练的<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=吞吐率&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">吞吐率</a>的单位在CV和部分NLP任务重为
+Samples/s，在固定 Shape 的 NLP任务有seq
+len，因此单位为tokens/s，计算公式为： <span class="math display">\[
+tokens_{throughout}=sample_{throughput}*seq_{len}
+\]</span> ​ 假设GLM10B<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=网络模型&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">网络模型</a>的吞吐为25
+Samples/s，max seq_len 为1024，那么按照tokens来计算吞吐率为 25 * 1024 =
+25600 tokens/s。也就是每秒能处理2万多个tokens啦。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-AI/FLOPs&amp;&amp;FLOPS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1948,142 +2084,6 @@ alt="img" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/FLOPs&&FLOPS/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-AI/throughput" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" target="_blank">throughput</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" class="archive-article-date">
-        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="throughput">throughput</h1>
-<p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>真的是到处都是呢！！</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752217.webp"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<hr />
-<p>​ <a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=神经网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">神经网络</a>的吞吐量（Throughput）定义为网络模型在<strong>单位时间内</strong>（例如，1s）<strong>可以处理的最大输入的训练样本数据</strong>。</p>
-<p>​ 与涉及单个样本数据处理的延迟 Latency 不同，为了实现最大吞吐量
-Throughput，希望在集群训练的过程中并行处理尽可能多的样本数据。有效的并行性显然依赖于数据、模型和设备规模。</p>
-<p>​ 因此，为了正确测量吞吐量，可以执行以下两个步骤：</p>
-<ol type="1">
-<li>估计允许最大<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=并行度&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">并行度</a>的最佳训练样本数据批量大小，即
-Batch Size</li>
-<li>在AI训练集群中给定这个最佳批量大小，<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=测量网络&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">测量网络</a>在1秒钟内可以处理的训练样本数据。</li>
-</ol>
-<p>​ 要找到最佳批量大小，一个好的经验法则是达到 Ascend <a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=昇腾处理器&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">昇腾处理器</a>对给定数据类型的内存限制，即Batch
-Size塞满内存。这个大小当然取决于硬件类型和网络的大小。</p>
-<p>​ 找到这个最大批量大小 Batch Size
-的最快方法是执行二进制搜索。当时间不重要时，简单的<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=顺序搜索&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">顺序搜索</a>就足够了。不过在大模型训练的过程中，因为Batch
-Size比较重要，设计到重计算、Pipeline并行、Tensor并行等不同并行模式的配比，还有包括micro
-Batch Size的数据配比。因此默认Batch Size会为16的倍数增长比较合理。</p>
-<p>​ 这确定了 AI
-加速卡上可以处理的最大批量大小，用于训练大模型及其处理的输入训练样本数据。在找到最佳批量大小后，可以计算实际吞吐量，然后使用以下公式：
-<span class="math display">\[
-sample_{throughput}=BS*N/step_{time}
-\]</span> 其中，BS 为 Batch Size，N 为集群中AI加速卡的数量，step
-time为在分布式集群中，执行完一个Batch
-Size的时间（单位为s）。大模型训练的<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=吞吐率&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">吞吐率</a>的单位在CV和部分NLP任务重为
-Samples/s，在固定 Shape 的 NLP任务有seq
-len，因此单位为tokens/s，计算公式为： <span class="math display">\[
-tokens_{throughout}=sample_{throughput}*seq_{len}
-\]</span> ​ 假设GLM10B<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=网络模型&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2989554131%7D">网络模型</a>的吞吐为25
-Samples/s，max seq_len 为1024，那么按照tokens来计算吞吐率为 25 * 1024 =
-25600 tokens/s。也就是每秒能处理2万多个tokens啦。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/">展开全文 >></a>
     </p>
     
 
@@ -2481,15 +2481,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2509,15 +2509,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">

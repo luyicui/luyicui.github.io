@@ -214,6 +214,274 @@
             
 
   
+    <article id="post-STL/stringstream类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/" target="_blank">stringstream</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/" class="archive-article-date">
+        <time datetime="2024-03-30T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-30</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p># stringstream类</p>
+<h2 id="概述">概述</h2>
+<p><strong><sstream></strong>
+定义了三个<strong>类</strong>：<strong>istringstream</strong>、<strong>ostringstream</strong>
+和
+<strong>stringstream</strong>，分别用来进行流的输入、输出和输入输出操作。本文以
+stringstream 为主，介绍流的输入和输出操作。</p>
+<p><sstream> 主要用来进行数据类型转换，由于 <sstream> 使用
+<strong>string 对象</strong>来代替字符数组（snprintf
+方式），避免了缓冲区溢出的危险；而且，因为传入参数和目标对象的类型会被自动推导出来，所以不存在错误的格式化符号的问题。简单说，相比
+C 编程语言库的数据类型转换，<sstream> 更加安全、自动和直接。</p>
+<h2 id="示例代码">示例代码</h2>
+<h3 id="数据类型转换">数据类型转换</h3>
+<p>这里展示一份示例代码，介绍将 int 类型转换为 string 类型的过程。</p>
+<p>示例代码（stringstream_test1.cpp）的内容如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    stringstream sstream;</span><br><span class="line">    string strResult;</span><br><span class="line">    <span class="type">int</span> nValue = <span class="number">1000</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 将int类型的值放入输入流中</span></span><br><span class="line">    sstream &lt;&lt; nValue;</span><br><span class="line">    <span class="comment">// 从sstream中抽取前面插入的int类型的值，赋给string类型</span></span><br><span class="line">    sstream &gt;&gt; strResult;</span><br><span class="line"> </span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;[cout]strResult is: &quot;</span> &lt;&lt; strResult &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[printf]strResult is: %s\n&quot;</span>, strResult.<span class="built_in">c_str</span>());</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译并执行上述代码，结果如下：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405012351103.png" /></p>
+<h3 id="多个字符串拼接">多个字符串拼接</h3>
+<p>本示例介绍在 stringstream
+中存放多个字符串，实现多个字符串拼接的目的（其实完全可以使用 string
+类实现），同时，介绍 stringstream 类的清空方法。</p>
+<p>示例代码（stringstream_test2.cpp）的内容如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    stringstream sstream;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 将多个字符串放入 sstream 中</span></span><br><span class="line">    sstream &lt;&lt; <span class="string">&quot;first&quot;</span> &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; <span class="string">&quot;string,&quot;</span>;</span><br><span class="line">    sstream &lt;&lt; <span class="string">&quot; second string&quot;</span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;strResult is: &quot;</span> &lt;&lt; sstream.<span class="built_in">str</span>() &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 清空 sstream</span></span><br><span class="line">    sstream.<span class="built_in">str</span>(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    sstream &lt;&lt; <span class="string">&quot;third string&quot;</span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;After clear, strResult is: &quot;</span> &lt;&lt; sstream.<span class="built_in">str</span>() &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译并执行上述代码，结果如下：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405012351129.png" /></p>
+<p>从上述代码执行结果能够知道：</p>
+<ul>
+<li>可以使用 str() 方法，将 stringstream 类型转换为 string 类型；</li>
+<li>可以将多个字符串放入 stringstream 中，实现字符串的拼接目的；</li>
+<li>如果想清空 stringstream，必须使用 sstream.str(""); 方式；clear()
+方法适用于进行多次数据类型转换的场景。详见示例 2.3。</li>
+</ul>
+<h3 id="stringstream的清空">stringstream的清空</h3>
+<p>清空 stringstream 有两种方法：clear() 方法以及 str("")
+方法，这两种方法对应不同的使用场景。str("")
+方法的使用场景，在上面的示例中已经介绍过了，这里介绍 clear()
+方法的使用场景。</p>
+<p>示例代码（stringstream_test3.cpp）的内容如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    stringstream sstream;</span><br><span class="line">    <span class="type">int</span> first, second;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 插入字符串</span></span><br><span class="line">    sstream &lt;&lt; <span class="string">&quot;456&quot;</span>;</span><br><span class="line">    <span class="comment">// 转换为int类型</span></span><br><span class="line">    sstream &gt;&gt; first;</span><br><span class="line">    cout &lt;&lt; first &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 在进行多次类型转换前，必须先运行clear()</span></span><br><span class="line">    sstream.<span class="built_in">clear</span>();</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 插入bool值</span></span><br><span class="line">    sstream &lt;&lt; <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// 转换为int类型</span></span><br><span class="line">    sstream &gt;&gt; second;</span><br><span class="line">    cout &lt;&lt; second &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译并执行上述代码，结果如下：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405012351190.png" /></p>
+<p>注意：在本示例涉及的场景下（多次数据类型转换），必须使用 clear()
+方法清空 stringstream，不使用 clear() 方法或使用 str("")
+方法，都不能得到数据类型转换的正确结果。下图分别是未使用 clear()
+方法、使用 str("") 方法代替 clear() 方法时的运行结果：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405012351119.png" /></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-C++/《计算几何中的精度问题》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/29/%5Bobject%20Object%5D/C++/%E3%80%8A%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%E4%B8%AD%E7%9A%84%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98%E3%80%8B/" target="_blank">《计算几何中的精度问题》</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/29/%5Bobject%20Object%5D/C++/%E3%80%8A%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%E4%B8%AD%E7%9A%84%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98%E3%80%8B/" class="archive-article-date">
+        <time datetime="2024-03-29T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-29</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="计算几何中的精度问题">《计算几何中的精度问题》</h1>
+<p>​
+计算几何头疼的地方一般在于代码量大和精度问题，代码量问题只要平时注意积累模板一般就不成问题了。精度问题则不好说，有时候一个<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=精度问题&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A38414169%7D">精度问题</a>就可能成为一道题的瓶颈，简直“画龙点睛”。这些年的题目基本是朝着越来越不卡精度的方向发展了，但是也不乏一些%^&amp;%题#<span
+class="math inline">\(%\)</span>^，另外有些常识不管题目卡不卡，都是应该知道的。今天我就开膛回顾下见过且还有印象的精度问题。</p>
+<p>​ 计算几何的精度问题说到底其实是<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=浮点数&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A38414169%7D">浮点数</a>的精度问题，但我觉得“<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=计算几何&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A38414169%7D">计算几何</a>”比“浮点数”更能吸引眼球，所以选了这个标题。</p>
+<h2 id="浮点数为啥会有精度问题">浮点数为啥会有精度问题？</h2>
+<p>​
+浮点数(以C/C++为准)，一般用的较多的是<code>float</code>、<code>double</code></p>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 19%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>占字节数</th>
+<th>数值范围</th>
+<th><a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=十进制精度位数&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A38414169%7D">十进制精度位数</a></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>float</code></td>
+<td>4</td>
+<td>-3.4e-38～3.4e38</td>
+<td>6~7</td>
+</tr>
+<tr class="even">
+<td><code>double</code></td>
+<td>8</td>
+<td>-1.7e-308～1.7e308</td>
+<td>14~15</td>
+</tr>
+</tbody>
+</table>
+<p>​
+如果内存不是很紧张或者精度要求不是很低，一般选用<code>double</code>。14位的精度(是有效数字位，不是小数点后的位数)通常够用了。注意，问题来了，数据精度位数达到了14位，但有些<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=浮点运算&amp;search_source=Entity&amp;hybrid_search_source=Entity&amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A38414169%7D">浮点运算</a>的结果精度并达不到这么高，可能准确的结果只有10~12位左右。那低几位呢？自然就是不可预料的数字了。这给我们带来这样的问题：即使是理论上相同的值，由于是经过不同的运算过程得到的，他们在低几位有可能(一般来说都是)是不同的。这种现象看似没太大的影响，却会一种运算产生致命的影响：==。恩，就是判断相等。注意，C/C++中浮点数的==需要完全一样才能返回true。来看下面这个例子：</p>
+    
+    <a class="article-more-a" href="/2024/03/29/%5Bobject%20Object%5D/C++/%E3%80%8A%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%E4%B8%AD%E7%9A%84%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98%E3%80%8B/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/29/%5Bobject%20Object%5D/C++/%E3%80%8A%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%E4%B8%AD%E7%9A%84%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98%E3%80%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-算法/【动态规划】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -434,6 +702,13 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403302109655.png"
 alt="aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy83MTg2OTc1LWQwNWViNjdlNTU4ZmU0MjUucG5n_clear_compress" />
 <figcaption
 aria-hidden="true">aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy83MTg2OTc1LWQwNWViNjdlNTU4ZmU0MjUucG5n_clear_compress</figcaption>
+</figure>
+<h3 id="主定理">主定理</h3>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408272051164.png"
+alt="image-20240827205131975" />
+<figcaption aria-hidden="true">image-20240827205131975</figcaption>
 </figure>
 <h3 id="常见算法的时间复杂度">常见算法的时间复杂度</h3>
 <p>一般来说，k重循环，算法时间复杂度就是<span
@@ -1140,7 +1415,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 785. 快速排序 - AcWing</a>】</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不要轻易改动</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quick_sort</span><span class="params">(<span class="type">int</span> q[], <span class="type">int</span> l, <span class="type">int</span> r)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l &gt;= r)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> i = l - <span class="number">1</span>, j = r + <span class="number">1</span>, x = q[l + r &gt;&gt; <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">while</span> (i &lt; j)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            i++;</span><br><span class="line">        <span class="keyword">while</span> (q[i] &lt; x);</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            j--;</span><br><span class="line">        <span class="keyword">while</span> (q[j] &gt; x);</span><br><span class="line">        <span class="keyword">if</span> (i &lt; j)</span><br><span class="line">            <span class="built_in">swap</span>(q[i], q[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// q[l...j] 均 &lt;=x , q[j...r] 均 &gt;=x</span></span><br><span class="line">    <span class="built_in">quick_sort</span>(q, l, j), <span class="built_in">quick_sort</span>(q, j + <span class="number">1</span>, r);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>:star:<strong>分界点的位置不一定是 <code>x</code></strong>，因为
-<code>x</code> 参与交换之后可能会被留在左右区间中的一个</p>
+<code>x</code> 参与交换之后可能会被留在左区间 或 右区间</p>
     
     <a class="article-more-a" href="/2024/03/03/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95%E3%80%91/#more">more >></a>
     
@@ -1278,283 +1553,9 @@ target="_blank" rel="noopener" href="https://github.com/ki-ljl/Scaffold-Federate
 
 
   
-    <article id="post-算法/【搜索】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/02/29/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%90%9C%E7%B4%A2%E3%80%91/" target="_blank">【搜索】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/02/29/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%90%9C%E7%B4%A2%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-02-29T07:23:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-29</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="内外部搜索">内/外部搜索</h1>
-<ol type="1">
-<li>搜索有 <span class="math inline">\(2\)</span> 大类：</li>
-</ol>
-<ul>
-<li><p><strong>内部搜索</strong>：把棋盘中的<strong>每个格子</strong>当作一个<strong>点</strong>，从<strong>棋盘内</strong>中的<strong>一个点</strong>搜索到<strong>另一个点</strong>——不需要恢复现场</p></li>
-<li><p><strong>外部搜索</strong>：把<strong>整个棋盘</strong>当作一个<strong>点</strong>，从<strong>一个棋盘状态</strong>搜索到<strong>另一个棋盘状态</strong></p>
-<ul>
-<li>在<strong>棋盘现场/点</strong>
-上直接操作，需要<strong>恢复现场</strong></li>
-<li>拷贝<strong>棋盘现场/点</strong>，然后在<strong>棋盘现场/点的
-副本</strong> 上操作，不需要恢复现场</li>
-</ul></li>
-</ul>
-<ol start="2" type="1">
-<li><p>是否需要回溯的关键在于——<code>st[][]</code>表示的这个<strong>状态/点</strong>能否被<font color = 'red'><strong>其他DFS分支</strong></font>搜索到，或者说<code>st[][]</code>表示的这个<strong>状态/点</strong>是否只能被访问
-1 次</p></li>
-<li><p><strong>总结：</strong>只有<strong>可行性
-dfs</strong>（最优性也是需要的因为他还要搜其他路）和<strong>连通性
-dfs</strong>不需要恢复现场, 其他的 dfs 题都写吧~</p></li>
-</ol>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404041541544.png"
-alt="image-20240404154110448" />
-<figcaption aria-hidden="true">image-20240404154110448</figcaption>
-</figure>
-    
-    <a class="article-more-a" href="/2024/02/29/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%90%9C%E7%B4%A2%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/02/29/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90%E6%90%9C%E7%B4%A2%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-算法/【tag】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90tag%E3%80%91/" target="_blank">【Tag】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90tag%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-02-28T07:23:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-28</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="tag">Tag</h1>
-<h2 id="期望dp记忆化搜索">期望+DP+记忆化搜索</h2>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251232/">AcWing
-4009. 收集卡牌 - AcWing</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8772879/">AcWing
-217. 绿豆蛙的归宿 - AcWing</a></p></li>
-</ul>
-<h2 id="二分差分">二分+差分</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8212454/">AcWing
-503. 借教室（每日一题） - AcWing</a></li>
-</ul>
-<h2 id="二分合并区间">二分+合并区间</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8305828/">AcWing
-5407. 管道（蓝桥杯辅导课） - AcWing</a></li>
-</ul>
-<h2 id="二分前缀和">二分+前缀和</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8335344/">AcWing
-102. 最佳牛围栏（算法提高课） - AcWing</a></li>
-</ul>
-<h2 id="二分贪心">二分+贪心</h2>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8155307/">AcWing
-895. 最长上升子序列 - AcWing</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8421970/">AcWing
-1010. 拦截导弹 - AcWing</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8423647/">AcWing
-187. 导弹防御系统 - AcWing</a></p></li>
-</ul>
-<h2 id="二分图论">二分+图论</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8575194/">AcWing
-361. 观光奶牛 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8569870/">AcWing
-340. 通信线路 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8540931/">AcWing
-1142. 繁忙的都市 - AcWing</a></li>
-</ul>
-<h2 id="差分贪心">差分+贪心</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8281317/">AcWing
-4655. 重新排序（蓝桥杯辅导课） - AcWing</a></li>
-</ul>
-<h2 id="双指针前缀和">双指针+前缀和</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8304518/">AcWing
-4405. 统计子矩阵（蓝桥杯辅导课） - AcWing</a></li>
-</ul>
-<h2 id="并查集离散化">并查集+离散化</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/11822485/">AcWing
-237. 程序自动分析 - AcWing</a></li>
-</ul>
-<h2 id="并查集01背包">并查集+0/1背包</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/content/whole/index/content/11821366/">AcWing
-1252. 搭配购买 - AcWing</a></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E7%AE%97%E6%B3%95/%E3%80%90tag%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1726,7 +1727,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/con
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1734,11 +1743,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/con
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1747,10 +1752,6 @@ target="_blank" rel="noopener" href="https://www.acwing.com/file_system/file/con
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">

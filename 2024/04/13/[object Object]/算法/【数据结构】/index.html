@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403081905012.png">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403082108366.png">
 <meta property="article:published_time" content="2024-04-13T01:40:37.000Z">
-<meta property="article:modified_time" content="2024-08-21T03:37:43.995Z">
+<meta property="article:modified_time" content="2024-09-10T13:10:06.591Z">
 <meta property="article:author" content="银杏枫树">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -487,8 +487,8 @@ alt="image-20240307143945027" />
 <li>当 <code>S[i] != P[j + 1]</code> 时，<code>j = next[j];</code></li>
 </ul></li>
 <li><code>i</code>一直往前走，不会后退</li>
-<li><code>j</code> 在 <code>S[i]</code> 与 <code>P[j + 1]</code>
-不匹配时会向后退，退到 <code>next[j]</code> 处</li>
+<li>当 <code>S[i]</code> 与 <code>P[j + 1]</code>
+不匹配时，<code>j</code> 会向后退到 <code>next[j]</code> 处</li>
 </ul>
 <figure>
 <img
@@ -498,13 +498,14 @@ alt="a8e37396968a427a0efaffde2c68e78" />
 aria-hidden="true">a8e37396968a427a0efaffde2c68e78</figcaption>
 </figure>
 <ul>
-<li><code>next[i]</code> 表示 <code>P[1…i]</code>
-最大前缀与后缀相等的长度（一定小于<code>i</code>，不能自己与自己相等~）</li>
+<li><code>next[i]</code> 表示 <code>P[1, ..., i]</code>
+最大<strong>前缀与后缀相等</strong>的长度（一定小于
+<code>i</code>，不能自己与自己相等~）</li>
 <li><code>next[]</code>
 是通过模板串<strong>自己与自己匹配</strong>操作得出来的（代码和匹配操作几乎一样）
 <ul>
 <li><code>next[0] = next[1] = 0</code></li>
-<li>由于是从 <code>i =2</code> 开始求 <code>next[]</code>，所以：
+<li>由于是从 <code>i = 2</code> 开始求 <code>next[]</code>，所以：
 <ul>
 <li>不可能匹配成功（不需要 <code>j == m</code> 的判断）</li>
 <li><code>j &lt; i</code>，回退时 <code>next[j]</code> 一定存在</li>
@@ -524,9 +525,10 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 831. KMP字符串 - AcWing</a>】</li>
 <li><strong>时间复杂度：</strong><span
 class="math inline">\(O(n)\)</span>，<span
-class="math inline">\(n\)</span> 为长文本主串的长度</li>
+class="math inline">\(n\)</span>
+为长文本<strong>主串</strong>的长度</li>
 </ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// s[]是长文本</span></span><br><span class="line"><span class="comment">// p[]是模式串</span></span><br><span class="line"><span class="comment">// n 是 s 的长度</span></span><br><span class="line"><span class="comment">// m 是 p 的长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 求模式串的Next数组：*/</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>, j = <span class="number">0</span>; i &lt;= m; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//  匹配失败，j 往后退，直到 s[i] == p[j + 1]或 j 退到 0 处（无路可退）</span></span><br><span class="line">    <span class="keyword">while</span> (j &amp;&amp; p[i] != p[j + <span class="number">1</span>])</span><br><span class="line">        j = ne[j];</span><br><span class="line">    <span class="keyword">if</span> (p[i] == p[j + <span class="number">1</span>])</span><br><span class="line">        j++;</span><br><span class="line">    <span class="comment">// 此时 j 的长度即为 next[i] 最大前缀与后缀相等的长度</span></span><br><span class="line">    ne[i] = j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 匹配过程 */</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>, j = <span class="number">0</span>; i &lt;= n; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//  匹配失败，j 往后退，直到 s[i] == p[j + 1]或 j 退到 0 处（无路可退）</span></span><br><span class="line">    <span class="keyword">while</span> (j &amp;&amp; s[i] != p[j + <span class="number">1</span>])</span><br><span class="line">        j = ne[j];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 将 j 移动到下一次比较的位置</span></span><br><span class="line">    <span class="keyword">if</span> (s[i] == p[j + <span class="number">1</span>])</span><br><span class="line">        j++;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 匹配成功</span></span><br><span class="line">    <span class="keyword">if</span> (j == m)</span><br><span class="line">    &#123;</span><br><span class="line">        j = ne[j];</span><br><span class="line">        <span class="comment">/* 匹配成功后的逻辑 */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// s[]是长文本</span></span><br><span class="line"><span class="comment">// p[]是模式串</span></span><br><span class="line"><span class="comment">// n 是 s 的长度</span></span><br><span class="line"><span class="comment">// m 是 p 的长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 求模式串的Next数组：*/</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>, j = <span class="number">0</span>; i &lt;= m; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//  匹配失败，j 往后退，直到 s[i] == p[j + 1]或 j 退到 0 处（无路可退）</span></span><br><span class="line">    <span class="keyword">while</span> (j &amp;&amp; p[i] != p[j + <span class="number">1</span>])</span><br><span class="line">        j = ne[j];</span><br><span class="line">    <span class="keyword">if</span> (p[i] == p[j + <span class="number">1</span>])</span><br><span class="line">        j ++;</span><br><span class="line">    <span class="comment">// 此时 j 的长度即为 next[i] 最大前缀与后缀相等的长度</span></span><br><span class="line">    ne[i] = j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 匹配过程 */</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>, j = <span class="number">0</span>; i &lt;= n; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//  匹配失败，j 往后退，直到 s[i] == p[j + 1]或 j 退到 0 处（无路可退）</span></span><br><span class="line">    <span class="keyword">while</span> (j &amp;&amp; s[i] != p[j + <span class="number">1</span>])</span><br><span class="line">        j = ne[j];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 将 j 移动到下一次比较的位置</span></span><br><span class="line">    <span class="keyword">if</span> (s[i] == p[j + <span class="number">1</span>])</span><br><span class="line">        j ++;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 匹配成功</span></span><br><span class="line">    <span class="keyword">if</span> (j == m)</span><br><span class="line">    &#123;</span><br><span class="line">        j = ne[j];</span><br><span class="line">        <span class="comment">/* 匹配成功后的逻辑 */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="trie树">Trie树</h1>
 <h2 id="模板-3">模板</h2>
 <p>​
@@ -538,7 +540,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403071732565.png"
 alt="image-20240307173227428" />
 <figcaption aria-hidden="true">image-20240307173227428</figcaption>
 </figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br><span class="line"><span class="comment">// 0号点既是根节点，又是空节点</span></span><br><span class="line"><span class="comment">// son[i][j]存储树中每个节点的子节点下标</span></span><br><span class="line"><span class="comment">// cnt[i]存储以 i 号节点结尾的单词数量</span></span><br><span class="line"><span class="comment">// idx表示当前用到了哪个节点</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 插入一个字符串 */</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">char</span> str[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; str[i]; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> u = str[i] - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u])</span><br><span class="line">            son[p][u] = ++ idx;	<span class="comment">// 不能是 idx++，因为son[0][]存放的是根节点，从下标 1 开始存储</span></span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    cnt[p]++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 查询字符串出现的次数 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">query</span><span class="params">(<span class="type">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; str[i]; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> u = str[i] - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt[p];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br><span class="line"><span class="comment">// 0号点既是根节点，又是空节点</span></span><br><span class="line"><span class="comment">// son[i][j]存储树中每个节点的子节点下标</span></span><br><span class="line"><span class="comment">// cnt[i]存储以 i 号节点结尾的单词数量</span></span><br><span class="line"><span class="comment">// idx表示当前用到了哪个节点</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 插入一个字符串 */</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">char</span> str[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; str[i]; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> u = str[i] - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u])</span><br><span class="line">            son[p][u] = ++ idx;	<span class="comment">// 不能是 idx ++，因为son[0][]存放的是根节点，从下标 1 开始存储</span></span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    cnt[p] ++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 查询字符串出现的次数 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">query</span><span class="params">(<span class="type">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; str[i]; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> u = str[i] - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt[p];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p><code>son[i][]</code> 存储 <span class="math inline">\(i\)</span>
@@ -1287,19 +1289,7 @@ alt="image-20240414133510262" />
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1307,11 +1297,23 @@ alt="image-20240414133510262" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1319,11 +1321,11 @@ alt="image-20240414133510262" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">

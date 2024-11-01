@@ -318,7 +318,7 @@ src="https://i-blog.csdnimg.cn/blog_migrate/fb5ba639e11a907eba934bc92ba9e86d.jpe
 
 
   
-    <article id="post-LLM/【RLHF】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/三种通信方式——单工、半双工和双工通信" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -326,7 +326,7 @@ src="https://i-blog.csdnimg.cn/blog_migrate/fb5ba639e11a907eba934bc92ba9e86d.jpe
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90RLHF%E3%80%91/" target="_blank">【RLHF】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E2%80%94%E2%80%94%E5%8D%95%E5%B7%A5%E3%80%81%E5%8D%8A%E5%8F%8C%E5%B7%A5%E5%92%8C%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1/" target="_blank">三种通信方式——单工、半双工和双工通信</a>
   
     </h1>
   
@@ -334,7 +334,7 @@ src="https://i-blog.csdnimg.cn/blog_migrate/fb5ba639e11a907eba934bc92ba9e86d.jpe
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90RLHF%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E2%80%94%E2%80%94%E5%8D%95%E5%B7%A5%E3%80%81%E5%8D%8A%E5%8F%8C%E5%B7%A5%E5%92%8C%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -347,40 +347,17 @@ src="https://i-blog.csdnimg.cn/blog_migrate/fb5ba639e11a907eba934bc92ba9e86d.jpe
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="rlhf">【RLHF】</h1>
-<p>通过人类标注数据训练得到 Reward
-Model（相当于有了人类标注数据，则相信它是不错的，然后反推人类因为什么样的奖励函数公会采取这些行为），有了奖励函数之后，就可以使用一般的强化学习的方法去找出最优策略/动作。</p>
+    <h1
+id="三种通信方式单工半双工和双工通信">三种通信方式——单工、半双工和双工通信</h1>
+<p>数据通常是在两个站（点对点）之间进行传输，按照数据流的方向可分为三种传输模式：<strong>单工、半双工、全双工</strong>。</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410151652948.png"
-alt="image-20241015165219882" />
-<figcaption aria-hidden="true">image-20241015165219882</figcaption>
+src="https://i-blog.csdnimg.cn/blog_migrate/3421f3fc614f2ba6a4fb15663769a8b8.png"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
 </figure>
-<h2 id="背景">## 背景</h2>
-<p>过去几年里，以 ChatGPT 为代表的基于 prompt 范式的大型语言模型 (Large
-Language Model，LLM) 取得了巨大的成功。然而，对生成结果的评估是
-<strong>主观和依赖上下文</strong> 的，这些结果难以用现有的基于规则的 <a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90&amp;spm=1001.2101.3001.7020">文本生成</a>
-指标 (如 BLUE 和 ROUGE)
-来衡量。除了评估指标，现有的模型通常以预测下一个单词的方式和简单的损失函数
-(如交叉熵) 来建模，没有显式地引入人的偏好和主观意见。</p>
-<p>一致性关注的是我们实际上希望模型做什么。它提出的问题是“目标函数是否符合我们的意图”，并且基于模型的目标和行为，在多大程度上与我们人类的价值观和和期望一致。举个简单的例子，假设我们要训练一个鸟类分类器，把鸟类分类为“麻雀”或“知更鸟”，并使用对数损失为训练目标，尽管我们的最终目标是很高的分类精度。该模型可能具有较低的对数损失，即模型的能力较强，但精度较差，这就是一个不一致的例子。模型可以优化培训目标，但与我们的最终目标不一致。</p>
-<p>然而，在实际应用中，这些模型的目的是执行某种形式的有价值的认知工作，这些模型的训练方式与我们希望使用它们的方式之间存在着明显的分歧。尽管从数学上讲，机器计算的单词序列的统计分布可能是一种高效的选择，但实际上，我们会通过选择最适合给定情境的文本序列来生成语言，并使用我们的背景知识和常识来指导这一过程。当语言模型用于需要高度信任或可靠性的应用程序（如对话系统或智能个人助理）时，这可能会成为一个问题。</p>
-<p>虽然在过去几年里，这些基于大量数据训练的模型变得极为复杂、强大，但当应用于实际人们生活生产时，它们往往无法发挥出潜力。大型语言模型中的一致性问题通常表现为：</p>
-<ul>
-<li><p>缺乏有效帮助：没有遵循用户的明确指示。</p></li>
-<li><p>虚构幻象：模型会虚构不存在或错误的事实。</p></li>
-<li><p>缺乏可解读性：人们很难理解模型是如何得出特定决策或预测结果的。</p></li>
-<li><p>训练内容偏见有害：经过有偏见、有害数据训练的语言模型，可能会在输出中重现这些数据，即使没有明确指示这样做。</p></li>
-</ul>
-<p>但具体来说，一致性问题是从何处来的？</p>
-<p>因此，训练阶段，如果直接用人的偏好（或者说人的反馈）来对模型整体的输出结果计算
-reward 或
-loss，显然是要比传统的“给定上下文，预测下一个词”的损失函数合理的多。基于这个思想，便引出了本文要讨论的对象——RLHF（Reinforcement
-Learning from Human
-Feedback）：即使用强化学习的方法，利用人类反馈信号直接优化语言模型。</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90RLHF%E3%80%91/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E2%80%94%E2%80%94%E5%8D%95%E5%B7%A5%E3%80%81%E5%8D%8A%E5%8F%8C%E5%B7%A5%E5%92%8C%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1/#more">more >></a>
     
     
 
@@ -407,7 +384,7 @@ Feedback）：即使用强化学习的方法，利用人类反馈信号直接优
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90RLHF%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E2%80%94%E2%80%94%E5%8D%95%E5%B7%A5%E3%80%81%E5%8D%8A%E5%8F%8C%E5%B7%A5%E5%92%8C%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1/">展开全文 >></a>
     </p>
     
 
@@ -2005,11 +1982,11 @@ alt="img" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2017,11 +1994,11 @@ alt="img" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2057,11 +2034,11 @@ alt="img" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">

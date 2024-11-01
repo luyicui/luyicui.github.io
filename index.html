@@ -214,6 +214,207 @@
             
 
   
+    <article id="post-命令操作/Git 分支" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="git-分支">Git 分支</h1>
+<h2 id="概念">概念</h2>
+<p>在任何代码管理工具中，分支都是一个非常重要的概念</p>
+<h3 id="什么是分支">什么是分支</h3>
+<p>首先，我们简单的复习一下什么是分支</p>
+<p>分支(branch)是一个比较抽象的概念，杰哥找了很久也没有一个非常好的确切定义.</p>
+<p>给一个自己的定义</p>
+<blockquote>
+<p>分支是主线某个状态的一个复制，在不影响主线情况下，可以有新的变化</p>
+</blockquote>
+<p>我们通过实际例子来理解</p>
+<p>我们的工作一般都是在一条主线(master)上进行，每一次提交会形成一个commit对象，如下图所示</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246236.jpeg" /></p>
+<p>客户提出了一个新的需求，而这个需求的开发需要一段时间才能完成.</p>
+<p>为了不影响主线的稳定性和持续进行. 我们会怎么做?</p>
+<p>我们可以把整个项目复制一份，在复制的项目上开发新功能，开发完成通过测试后，再将改动的代码整合回主线.</p>
+<p>那么，这个复制出来的项目就是一个分支</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246047.jpeg" /></p>
+<h3 id="分支的作用">分支的作用</h3>
+<p>现在，我们了解到分支的提出主要是为了开发新功能而不影响主线的正常运行</p>
+<p>通过上面的例子，我们大概可以知道</p>
+<ol type="1">
+<li>分支和主线有一部分内容是相同的，有一部分是不同的</li>
+<li>在分支上可以做新的开发，而不会影响到原来的主线</li>
+<li>在分支上开发完成后，通常还是要将改动合并回主线</li>
+</ol>
+<h2 id="相关命令">相关命令</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看已有分支</span></span><br><span class="line">git branch</span><br><span class="line"><span class="comment"># 创建分支</span></span><br><span class="line">git branch 分支名</span><br><span class="line"><span class="comment"># 切换分支</span></span><br><span class="line">git checkout 分支名</span><br><span class="line"><span class="comment"># 合并分支</span></span><br><span class="line">git merge</span><br></pre></td></tr></table></figure>
+<h2 id="分支的本质">分支的本质</h2>
+<p>git
+branch可以查看当前所有的分支，本质上是显示<code>.git/refs/heads</code>目录下的文件.</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312244347.jpeg" /></p>
+<p>查看文件具体的内容</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246258.jpeg" /></p>
+<ul>
+<li>文件名(dev，master)表示一个分支</li>
+<li>文件的内容是最近一次commit对象的Hash串</li>
+</ul>
+<p>因此，我们得出一个重要的结论</p>
+<p>Git中的分支本质上是一个指针，指向该工作流中最近的一次commit</p>
+<h2 id="命令详解">命令详解</h2>
+<h3 id="准备">准备</h3>
+<p>先做3次提交</p>
+<p>通过<code>git log --oneline</code>查看commit对象</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246509.jpeg" /></p>
+<blockquote>
+<p>分析</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246650.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246083.jpeg" /></p>
+<h3 id="创建分支">创建分支</h3>
+<p>使用<code>git branch 分支名</code>可以基于现有的commit对象，在<code>.git/refs/heads</code>下产生一个文件</p>
+<p>当执行<code>git branch dev</code>时创建了一个dev分支</p>
+<p>本质上就是在<code>.git/refs/heads</code>目录下创建了一个文件</p>
+<ul>
+<li>文件名: dev</li>
+<li>文件内容: d434d9f</li>
+</ul>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246361.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246828.jpeg" /></p>
+<h3 id="切换分支">切换分支</h3>
+<p>HEAD指针永远指向当前所在的分支</p>
+<p>执行<code>git checkout</code>的作用之一，就是改变HEAD的指向，本质就是修改了HEAD文件中的内容</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246385.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247507.jpeg" /></p>
+<h3 id="在分支上工作">在分支上工作</h3>
+<p>把分支切换到<code>dev</code>后，我们就可以在dev分支上进行修改，这些修改是不会影响到原来的master分支的</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247361.jpeg" /></p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247994.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248063.jpeg" /></p>
+<p>此时，我们可以通过<code>git chekout</code>在分支间来回切换，工作区的内容也会随之变化</p>
+<h3 id="fast-forward合并">Fast-forward合并</h3>
+<p>此时，如果我们要把在dev分支上的改动合并回master，需要</p>
+<ol type="1">
+<li>切换到master分支</li>
+<li>执行merge</li>
+</ol>
+<blockquote>
+<p>演示</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248153.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248566.jpeg" /></p>
+<p>像这样的合并是比较快的，叫做Fast-forward(快速向前)的合并方式，只是指针的移动</p>
+<h3 id="three-way合并">Three-way合并</h3>
+<p>在上面的例子中. 我们基于master的c3 commit创建了dev分支.</p>
+<p>在后面仅仅只在dev上改动了代码. master一直指向c3 commit.</p>
+<p>这样合并时就非常简单，也很快，只需要将master指针指向新的c4
+commit就可以. 这种方式就是Fast-forward</p>
+<p>但是如果，master和dev同时都有改动，将会如何呢?看下面的例子</p>
+<h3 id="步骤一">步骤一</h3>
+<p>在master分支创建一个文件，并提交</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249230.jpeg" /></p>
+<h3 id="步骤二"><strong>步骤二</strong></h3>
+<p>切换到dev分支，创建dev.txt文件并提交</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249108.jpeg" /></p>
+<p>执行命令，查看log</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline --graph --all</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312250729.jpeg" /></p>
+<ul>
+<li>--graph: 以图形展示log</li>
+<li>--all: 显示所有分支</li>
+</ul>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249303.jpeg" /></p>
+<h3 id="步骤三">步骤三</h3>
+<p>切换到master，执行合并</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249745.jpeg" /></p>
+<p>此时，会自动创建一个新的commit对象<code>e02bdf6</code>，同时指向<code>99fe8a</code>和<code>1740e</code></p>
+<p><img
+src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/10/31/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Git%20%E5%88%86%E6%94%AF/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-python/【huggingface】/HuggingFace模型缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -252,10 +453,13 @@ blobs
 bbbbbb
 中获取的同一个文件具有相同的哈希值，那么该文件就不需要被重新下载。这意味着，即使在不同的修订版本中，只要文件内容没有变化，就可以复用之前下载的文件，避免了不必要的重复下载。
 如下图所示，我展示了我 <code>blobs文件</code>
-里的模型文件，他们都自动是以哈希值命名的，我猜是为了防止调用模型是出现重复的情况。
+里的模型文件，他们都自动是以哈希值命名的，我猜是为了防止调用模型是出现重复的情况。</p>
+<figure>
 <img
-src="https://i-blog.csdnimg.cn/blog_migrate/4cee3905d1ce01a711c47888ab47389d.png"
-alt="在这里插入图片描述" /></p>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411010840348.png"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
 <h2 id="更改-transformers-库模型下载的缓存路径的两种方式">更改
 Transformers 库模型下载的缓存路径的两种方式</h2>
 <h3 id="方式一cache_dir-参数">方式一：cache_dir 参数</h3>
@@ -283,9 +487,13 @@ Transformers 库模型下载的缓存路径的两种方式</h2>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
 <p>可通过如下指令查看是否设置成功，</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">env</span> | grep HF_HOME</span><br></pre></td></tr></table></figure>
-<p>如果返回设置的路径，则成功。如图：<img
-src="https://i-blog.csdnimg.cn/blog_migrate/7754e481000e8cc9ab813faa619581d2.png"
-alt="Alt" /></p>
+<p>如果返回设置的路径，则成功。如图：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411010848803.png"
+alt="Alt" />
+<figcaption aria-hidden="true">Alt</figcaption>
+</figure>
 <h4 id="windows">Windows</h4>
 <h5 id="方法一">方法一</h5>
 <p>打开
@@ -305,8 +513,9 @@ alt="Alt" /></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install huggingface_hub[<span class="string">&quot;cli&quot;</span>]</span><br></pre></td></tr></table></figure>
 <p>然后运行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">huggingface-cli delete-cache <span class="comment">#此命令也可以用来查看已经缓存的模型列表。</span></span><br></pre></td></tr></table></figure>
-<p>出现如下图： <img
-src="https://i-blog.csdnimg.cn/blog_migrate/3118f6b93bc75f8ccba6d3f317593f13.png"
+<p>出现如下图：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411010847211.png"
 alt="缓存查看" /> 比如我图上的：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Model google/flan-t5-xxl (45.1G, used 3 weeks ago)</span><br><span class="line">○ ae7c9136: main <span class="comment"># modified 3 weeks ago</span></span><br></pre></td></tr></table></figure>
 <p><code>google/flan-t5-xxl</code> 是我下载的模型名称；
@@ -1441,110 +1650,6 @@ Descent 转换为 GD</li>
 
 
   
-    <article id="post-AI/优化算法/2.SGD" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/2.SGD/" target="_blank">SGD</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/2.SGD/" class="archive-article-date">
-        <time datetime="2024-08-12T20:02:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-08-13</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="随机梯度下降法sgd">随机梯度下降法（SGD）</h1>
-<p>​ 在<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0&amp;spm=1001.2101.3001.7020">深度学习</a>中，梯度下降法（Gradient
-Descent）是最常用的模型参数优化方法。然而，传统的梯度下降法（Full Batch
-Learning）存在一些缺点，例如训练时间过长和容易陷入局部最小值。为了解决这些问题，随机梯度下降法（Stochastic
-Gradient Descent，简称SGD）应运而生。</p>
-<h2 id="传统梯度下降法的问题">传统梯度下降法的问题</h2>
-<ol type="1">
-<li><strong>训练时间长</strong>：传统梯度下降法需要使用所有训练数据来计算梯度，因此数据量大时耗时严重。<br />
-</li>
-<li><strong>容易陷入局部最小值</strong>：复杂的损失函数可能会导致算法在局部最小值附近来回震荡，无法快速收敛。<br />
-</li>
-<li><strong>对初始值敏感</strong>：初始值选择不当可能导致算法被卡在局部最小值。</li>
-</ol>
-<h2 id="随机梯度下降法的基本思想"><a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">随机梯度下降法</a>的基本思想</h2>
-<p>SGD每次迭代仅<strong>使用一个样本</strong>的<strong>损失值</strong>来计算梯度，而不是全数据集损失值的求和平均来计算梯度。</p>
-    
-    <a class="article-more-a" href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/2.SGD/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">优化算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/2.SGD/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1703,11 +1808,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1735,15 +1840,15 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1755,11 +1860,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">

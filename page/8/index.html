@@ -214,6 +214,110 @@
             
 
   
+    <article id="post-python/迭代器（iter、next）&amp;&amp;生成器（yield）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/" target="_blank">迭代器（iter、next）&amp;&amp;生成器（yield）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p># 迭代器（iter、next）&amp;&amp;生成器（yield）</p>
+<h2 id="迭代器iterator">迭代器（Iterator）</h2>
+<p>Python 中的 <strong>迭代器（Iterator）</strong>
+是一个可以记住遍历位置的
+<strong>对象</strong>，用于迭代列表、元组、字典、集合和字符串等
+<strong>可迭代（Iterable）对象</strong>，迭代器从集合的第一个元素开始访问，直到所有的元素被访问完结束，并且只能往前不会后退。使用
+<code>collections.abc</code> 库中的 <code>Iterable</code> 和
+<code>Iterator</code> 可以判断对象是否可迭代和是否为迭代器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterable</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="number">100</span>, Iterable)</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterator</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>([]), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>(<span class="string">&#x27;abc&#x27;</span>), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<p>正如上面代码所示，列表、字典和字符串都是
+<strong>可迭代的</strong>，而数字就不是可迭代的。但列表、字典和字符串都
+<strong>不是迭代器</strong>，因为可迭代的对象（如列表、元组、字典、集合和字符串），得先使用
+<code>iter()</code> 方法把它们 <strong>初始化</strong>
+为迭代器对象之后，才能使用 <code>next()</code> 方法对其进行
+<strong>迭代</strong>。所以 <code>iter([])</code> 和
+<code>iter('abc')</code> 都是迭代器。</p>
+    
+    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-python/【numpy】/100 numpy exercises" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -517,7 +621,7 @@ operations的缩写（<strong>s表复数</strong>），意指<strong>浮点运�
 
 
   
-    <article id="post-AI/AI 集群基础设施" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-AI/throughput" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -525,7 +629,7 @@ operations的缩写（<strong>s表复数</strong>），意指<strong>浮点运�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" target="_blank">AI 集群基础设施</a>
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" target="_blank">throughput</a>
   
     </h1>
   
@@ -533,7 +637,7 @@ operations的缩写（<strong>s表复数</strong>），意指<strong>浮点运�
 
   
   
-<a href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" class="archive-article-date">
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" class="archive-article-date">
         <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
 </a>
 
@@ -546,19 +650,17 @@ operations的缩写（<strong>s表复数</strong>），意指<strong>浮点运�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="ai-集群基础设施">AI 集群基础设施</h1>
-<p>GPU在高性能计算和深度学习加速中扮演着非常重要的角色，
-GPU的强大的并行计算能力，大大提升了运算性能。随着运算数据量的不断攀升，GPU间需要大量的交换数据，因此，GPU通信性能成为了非常重要的指标。</p>
-<p>在 AI
-集群中进行分布式训练时，通信是必要环节，同时也是相比于单机训练而言多出来的系统开销。通信与计算的时间比例往往决定了分布式机器学习系统加速比的上限。</p>
-<p>因此，分布式机器学习的关键是设计通信机制，从而降低通信与计算的时间比例，更加高效地训练出高精度模型。</p>
-<p>下面给大家介绍AI集群通信的软硬件、NCLL集合通信库、InfiniBand网络通信技术协议、AI集群和AI框架中对于InfiniBand的应用。</p>
-<blockquote>
-<p>文章较长，建议先点赞收藏，后续再慢慢观看。另外，我撰写的<strong>大模型相关的博客及配套代码</strong>均整理放置在Github：<strong><a
-href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-action/tree/main">llm-action</a></strong>，有需要的朋友自取。</p>
-</blockquote>
+    <h1 id="throughput">throughput</h1>
+<p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>真的是到处都是呢！！</p>
     
-    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/#more">more >></a>
     
     
 
@@ -585,7 +687,7 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/">展开全文 >></a>
     </p>
     
 
@@ -707,7 +809,7 @@ multiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩�
 
 
   
-    <article id="post-AI/throughput" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-AI/AI 集群基础设施" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -715,7 +817,7 @@ multiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" target="_blank">throughput</a>
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" target="_blank">AI 集群基础设施</a>
   
     </h1>
   
@@ -723,7 +825,7 @@ multiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩�
 
   
   
-<a href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/" class="archive-article-date">
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" class="archive-article-date">
         <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
 </a>
 
@@ -736,17 +838,19 @@ multiplication）</strong>是一种根据两个矩阵得到<strong>第三个矩�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="throughput">throughput</h1>
-<p>哟哟哟！！看图了。大模型性能比较指标中，到处都是throughput！到处都是！！！</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202404061752165.webp"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>真的是到处都是呢！！</p>
+    <h1 id="ai-集群基础设施">AI 集群基础设施</h1>
+<p>GPU在高性能计算和深度学习加速中扮演着非常重要的角色，
+GPU的强大的并行计算能力，大大提升了运算性能。随着运算数据量的不断攀升，GPU间需要大量的交换数据，因此，GPU通信性能成为了非常重要的指标。</p>
+<p>在 AI
+集群中进行分布式训练时，通信是必要环节，同时也是相比于单机训练而言多出来的系统开销。通信与计算的时间比例往往决定了分布式机器学习系统加速比的上限。</p>
+<p>因此，分布式机器学习的关键是设计通信机制，从而降低通信与计算的时间比例，更加高效地训练出高精度模型。</p>
+<p>下面给大家介绍AI集群通信的软硬件、NCLL集合通信库、InfiniBand网络通信技术协议、AI集群和AI框架中对于InfiniBand的应用。</p>
+<blockquote>
+<p>文章较长，建议先点赞收藏，后续再慢慢观看。另外，我撰写的<strong>大模型相关的博客及配套代码</strong>均整理放置在Github：<strong><a
+href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-action/tree/main">llm-action</a></strong>，有需要的朋友自取。</p>
+</blockquote>
     
-    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/#more">more >></a>
     
     
 
@@ -773,7 +877,7 @@ alt="img" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/throughput/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/">展开全文 >></a>
     </p>
     
 
@@ -1124,104 +1228,6 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 
 
   
-    <article id="post-STL/stringstream类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/" target="_blank">stringstream</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/" class="archive-article-date">
-        <time datetime="2024-03-30T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-30</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># stringstream类</p>
-<h2 id="概述">概述</h2>
-<p><strong><sstream></strong>
-定义了三个<strong>类</strong>：<strong>istringstream</strong>、<strong>ostringstream</strong>
-和
-<strong>stringstream</strong>，分别用来进行流的输入、输出和输入输出操作。本文以
-stringstream 为主，介绍流的输入和输出操作。</p>
-<p><sstream> 主要用来进行数据类型转换，由于 <sstream> 使用
-<strong>string 对象</strong>来代替字符数组（snprintf
-方式），避免了缓冲区溢出的危险；而且，因为传入参数和目标对象的类型会被自动推导出来，所以不存在错误的格式化符号的问题。简单说，相比
-C 编程语言库的数据类型转换，<sstream> 更加安全、自动和直接。</p>
-    
-    <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/30/%5Bobject%20Object%5D/STL/stringstream%E7%B1%BB/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/7/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/9/">Next &amp;raquo;</a>
@@ -1380,11 +1386,11 @@ C 编程语言库的数据类型转换，<sstream> 更加安全、自动和直�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1412,15 +1418,15 @@ C 编程语言库的数据类型转换，<sstream> 更加安全、自动和直�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1432,11 +1438,11 @@ C 编程语言库的数据类型转换，<sstream> 更加安全、自动和直�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">

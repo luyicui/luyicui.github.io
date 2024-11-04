@@ -509,6 +509,162 @@ id="文件路径中和的区别">文件路径中<code>/</code>、<code>\</code>�
 
 
   
+    <article id="post-python/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" target="_blank">HuggingFace 缓存路径</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="huggingface-缓存路径">HuggingFace 缓存路径</h1>
+<h2 id="缓存路径和缓存文件结构">缓存路径和缓存文件结构</h2>
+<h3 id="缓存路径">缓存路径</h3>
+<p>首先，你需要先了解 Transformers
+库对于它默认下载的缓存路径和文件结构，这样能让你更清楚的明白，Transformers
+库的.cache 系统以及如何更改缓存路径。</p>
+<p>通过 Hugging Face 的 Transformers
+库自动下载模型，会先缓存在默认路径：
+<strong>Linux</strong>：<code>'~/.cache/huggingface/hub'</code>
+<strong>Windows</strong>
+：<code>C:\Users\username\.cache\huggingface\hub</code>
+缓存的模型文件以哈希值形式储存，文件结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; <span class="comment"># 缓存路径</span></span><br><span class="line">├─ &lt;MODELS&gt;<span class="comment"># 模型路径</span></span><br><span class="line">├─ &lt;DATASETS&gt;<span class="comment"># 数据集路径</span></span><br><span class="line">├─ &lt;SPACES&gt;<span class="comment"># 空间路径</span></span><br></pre></td></tr></table></figure>
+<p><code>&lt;CACHE_DIR&gt;</code> 通常由 <code>HF_HOME</code> 或
+<code>HF_HUB_CACHE</code> 指定，具体看第二节</p>
+<h3 id="缓存文件结构">缓存文件结构</h3>
+<p>模型，数据集，空间，他们的存放格式如下：
+<code>models/datasets/spaces--模型名称</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; </span><br><span class="line">├─ models--julien-c--EsperBERTo-small</span><br><span class="line">├─ models--lysandrejik--arxiv-nlp</span><br><span class="line">├─ models--bert-base-cased</span><br><span class="line">├─ datasets--glue</span><br><span class="line">├─ datasets--huggingface--DataMeasurementsFiles</span><br><span class="line">├─ spaces--dalle-mini--dalle-mini</span><br></pre></td></tr></table></figure>
+<p>其中，不管是 <code>models</code>、<code>datasets</code> 还是
+<code>spaces</code>，他们子目录的文件结构也一样，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt;</span><br><span class="line">├─ datasets--glue</span><br><span class="line">│ 	├─ refs</span><br><span class="line">│ 	├─ blobs</span><br><span class="line">│ 	├─ snapshots</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>refs</code>：是一个指针文件，使用 Hugging Face
+的模型或数据集时，系统会通过检查 refs
+文件夹中的信息，确定是否需要更新本地缓存的文件。
+<code>blobs</code>：文件夹包含已下载的实际文件。每个文件的名称就是它们的哈希值。
+<code>snapshots</code>: 文件夹包含指向上述 blob
+的符号链接。它本身由多个文件夹组成：每个已知版本一个！该文件夹中不具有实体属性，是连接到
+blobs
+中哈希值文件的连接。通过这种方式创建的框架，实现了文件共享的机制。如果在修订版本
+bbbbbb
+中获取的同一个文件具有相同的哈希值，那么该文件就不需要被重新下载。这意味着，即使在不同的修订版本中，只要文件内容没有变化，就可以复用之前下载的文件，避免了不必要的重复下载。
+如下图所示，我展示了我 <code>blobs文件</code>
+里的模型文件，他们都自动是以哈希值命名的，我猜是为了防止调用模型是出现重复的情况。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411010840348.png"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="清理缓存模型文件">清理缓存模型文件</h2>
+<p>在 <strong>Python 你想用的环境中</strong> 安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install huggingface_hub[<span class="string">&quot;cli&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>然后运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">huggingface-cli delete-cache	<span class="comment"># 此命令也可以用来查看已经缓存的模型列表。</span></span><br></pre></td></tr></table></figure>
+<p>出现如下图：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411021633069.png"
+alt="缓存查看" /> 比如我图上的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Model google/flan-t5-xxl (45.1G, used 3 weeks ago)</span><br><span class="line">○ ae7c9136: main <span class="comment"># modified 3 weeks ago</span></span><br></pre></td></tr></table></figure>
+<p><code>google/flan-t5-xxl</code> 是我下载的模型名称；
+<code>45.1G</code> 是模型大小; <code>used 3 weeks ago</code>
+是最后使用时间; <code>○ ae7c9136: main</code> 最后修改的版本。</p>
+<p>最后选择你想要的操作:</p>
+<ul>
+<li>按键盘箭头键 <code>&lt;up&gt;小键盘 ↑ 方向键</code> 和
+<code>&lt;down&gt;小键盘 ↓ 方向键</code> 移动光标。</li>
+<li>按 <code>&lt;space&gt;(空格键)</code>
+切换（选择/取消选择）项目，可以多选。</li>
+<li>按 <code>&lt;Enter&gt;(回车)</code> 确认您的选择。</li>
+<li>如果要取消操作并退出，按 <code>&lt;ctrl+c&gt;</code> 退出 TUI。</li>
+</ul>
+<h2 id="保存模型文件">保存模型文件</h2>
+<p>在第一节中，我们展示了 Transformers
+库模型下载后自动缓存的路径，但是这些模型都是以哈希值进行缓存的，我们人类看不懂，所以，如何转化为我们人类看得懂的文件格式呢?
+很简单，我们调用 transformers 库的这个函数就行： 例如： 我首先从
+transformers 库下载模型 <code>bigscience/T0_3B</code> 到缓存路径。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSeq2SeqLM</span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bigscience/T0_3B&quot;</span>)</span><br><span class="line">model = AutoModelForSeq2SeqLM.from_pretrained(<span class="string">&quot;bigscience/T0_3B&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后将缓存的模型保存在到本，采用 <code>.save_pretrained</code>
+方法就行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;./your/path/bigscience_t0&quot;</span>)</span><br><span class="line">model = AutoModel.from_pretrained(<span class="string">&quot;./your/path/bigscience_t0&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-python/【huggingface】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -579,6 +735,107 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Tokenizer&a
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/Errors/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-命令操作/git/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2
+id="failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server">Failed
+to connect to github.com port 443 after 21090 ms: Couldn‘t connect to
+server</h2>
+<blockquote>
+<p>fatal: unable to access 'https://github.com/xxx/******.git/': Failed
+to connect to github.com port 443 after 21090 ms: Couldn't connect to
+server</p>
+</blockquote>
+<p>先试试你能直接访问 <a target="_blank" rel="noopener" href="https://github.com/"
+title="GitHub: Let’s build from here · GitHub">GitHub: Let’s build from
+here · GitHub</a> 吗？</p>
+<p>你是直接就可以访问成功还是挂梯子之后访问成功的呢？</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/">展开全文 >></a>
     </p>
     
 
@@ -1280,364 +1537,6 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410270026322.png" /></p
 
 
   
-    <article id="post-python/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" target="_blank">HuggingFace 缓存路径</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="huggingface-缓存路径">HuggingFace 缓存路径</h1>
-<h2 id="缓存路径和缓存文件结构">缓存路径和缓存文件结构</h2>
-<h3 id="缓存路径">缓存路径</h3>
-<p>首先，你需要先了解 Transformers
-库对于它默认下载的缓存路径和文件结构，这样能让你更清楚的明白，Transformers
-库的.cache 系统以及如何更改缓存路径。</p>
-<p>通过 Hugging Face 的 Transformers
-库自动下载模型，会先缓存在默认路径：
-<strong>Linux</strong>：<code>'~/.cache/huggingface/hub'</code>
-<strong>Windows</strong>
-：<code>C:\Users\username\.cache\huggingface\hub</code>
-缓存的模型文件以哈希值形式储存，文件结构如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; <span class="comment"># 缓存路径</span></span><br><span class="line">├─ &lt;MODELS&gt;<span class="comment"># 模型路径</span></span><br><span class="line">├─ &lt;DATASETS&gt;<span class="comment"># 数据集路径</span></span><br><span class="line">├─ &lt;SPACES&gt;<span class="comment"># 空间路径</span></span><br></pre></td></tr></table></figure>
-<p><code>&lt;CACHE_DIR&gt;</code> 通常由 <code>HF_HOME</code> 或
-<code>HF_HUB_CACHE</code> 指定，具体看第二节</p>
-<h3 id="缓存文件结构">缓存文件结构</h3>
-<p>模型，数据集，空间，他们的存放格式如下：
-<code>models/datasets/spaces--模型名称</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; </span><br><span class="line">├─ models--julien-c--EsperBERTo-small</span><br><span class="line">├─ models--lysandrejik--arxiv-nlp</span><br><span class="line">├─ models--bert-base-cased</span><br><span class="line">├─ datasets--glue</span><br><span class="line">├─ datasets--huggingface--DataMeasurementsFiles</span><br><span class="line">├─ spaces--dalle-mini--dalle-mini</span><br></pre></td></tr></table></figure>
-<p>其中，不管是 <code>models</code>、<code>datasets</code> 还是
-<code>spaces</code>，他们子目录的文件结构也一样，如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt;</span><br><span class="line">├─ datasets--glue</span><br><span class="line">│ 	├─ refs</span><br><span class="line">│ 	├─ blobs</span><br><span class="line">│ 	├─ snapshots</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p><code>refs</code>：是一个指针文件，使用 Hugging Face
-的模型或数据集时，系统会通过检查 refs
-文件夹中的信息，确定是否需要更新本地缓存的文件。
-<code>blobs</code>：文件夹包含已下载的实际文件。每个文件的名称就是它们的哈希值。
-<code>snapshots</code>: 文件夹包含指向上述 blob
-的符号链接。它本身由多个文件夹组成：每个已知版本一个！该文件夹中不具有实体属性，是连接到
-blobs
-中哈希值文件的连接。通过这种方式创建的框架，实现了文件共享的机制。如果在修订版本
-bbbbbb
-中获取的同一个文件具有相同的哈希值，那么该文件就不需要被重新下载。这意味着，即使在不同的修订版本中，只要文件内容没有变化，就可以复用之前下载的文件，避免了不必要的重复下载。
-如下图所示，我展示了我 <code>blobs文件</code>
-里的模型文件，他们都自动是以哈希值命名的，我猜是为了防止调用模型是出现重复的情况。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411010840348.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h2 id="清理缓存模型文件">清理缓存模型文件</h2>
-<p>在 <strong>Python 你想用的环境中</strong> 安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install huggingface_hub[<span class="string">&quot;cli&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>然后运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">huggingface-cli delete-cache	<span class="comment"># 此命令也可以用来查看已经缓存的模型列表。</span></span><br></pre></td></tr></table></figure>
-<p>出现如下图：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411021633069.png"
-alt="缓存查看" /> 比如我图上的：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Model google/flan-t5-xxl (45.1G, used 3 weeks ago)</span><br><span class="line">○ ae7c9136: main <span class="comment"># modified 3 weeks ago</span></span><br></pre></td></tr></table></figure>
-<p><code>google/flan-t5-xxl</code> 是我下载的模型名称；
-<code>45.1G</code> 是模型大小; <code>used 3 weeks ago</code>
-是最后使用时间; <code>○ ae7c9136: main</code> 最后修改的版本。</p>
-<p>最后选择你想要的操作:</p>
-<ul>
-<li>按键盘箭头键 <code>&lt;up&gt;小键盘 ↑ 方向键</code> 和
-<code>&lt;down&gt;小键盘 ↓ 方向键</code> 移动光标。</li>
-<li>按 <code>&lt;space&gt;(空格键)</code>
-切换（选择/取消选择）项目，可以多选。</li>
-<li>按 <code>&lt;Enter&gt;(回车)</code> 确认您的选择。</li>
-<li>如果要取消操作并退出，按 <code>&lt;ctrl+c&gt;</code> 退出 TUI。</li>
-</ul>
-<h2 id="保存模型文件">保存模型文件</h2>
-<p>在第一节中，我们展示了 Transformers
-库模型下载后自动缓存的路径，但是这些模型都是以哈希值进行缓存的，我们人类看不懂，所以，如何转化为我们人类看得懂的文件格式呢?
-很简单，我们调用 transformers 库的这个函数就行： 例如： 我首先从
-transformers 库下载模型 <code>bigscience/T0_3B</code> 到缓存路径。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSeq2SeqLM</span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bigscience/T0_3B&quot;</span>)</span><br><span class="line">model = AutoModelForSeq2SeqLM.from_pretrained(<span class="string">&quot;bigscience/T0_3B&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>然后将缓存的模型保存在到本，采用 <code>.save_pretrained</code>
-方法就行：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;./your/path/bigscience_t0&quot;</span>)</span><br><span class="line">model = AutoModel.from_pretrained(<span class="string">&quot;./your/path/bigscience_t0&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/python/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-命令操作/Anaconda/linux-conda环境安装教程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" target="_blank">linux-conda环境安装教程</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># linux-conda 环境安装教程</p>
-<h2 id="背景">背景</h2>
-<p>最近被 python 各个版本环境整的头晕目眩，本来就不是专长做 python
-的，切换各种版本着实不好操作，因此想到了 conda 这个好工具，以下是对
-conda 的相关理解和搭建的详细过程，做个记录。</p>
-<h3 id="conda-简介">Conda 简介</h3>
-<p>Conda 是在 Windows、<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=macOS&amp;spm=1001.2101.3001.7020">macOS</a>
-和 Linux
-上运行的开源软件包管理系统和环境管理系统。可以快速安装、运行和更新软件包及其依赖项。可以轻松地在本地计算机上的环境中创建，保存，加载和切换。它是为
-Python 程序创建的，但可以打包和分发适用于任何语言的软件。   目前 conda
-的发行版本分为 anaconda、miniconda 两种，安装了 ananconda 或 miniconda
-的完整版，就默认安装了 conda。anaconda 会包含一些常用包的版本，miniconda
-则是精简版，两者安装均可。</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Anaconda</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-命令操作/git/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/" target="_blank">Errors</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="errors">Errors</h1>
-<h2
-id="failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server">Failed
-to connect to github.com port 443 after 21090 ms: Couldn‘t connect to
-server</h2>
-<blockquote>
-<p>fatal: unable to access 'https://github.com/xxx/******.git/': Failed
-to connect to github.com port 443 after 21090 ms: Couldn't connect to
-server</p>
-</blockquote>
-<p>先试试你能直接访问 <a target="_blank" rel="noopener" href="https://github.com/"
-title="GitHub: Let’s build from here · GitHub">GitHub: Let’s build from
-here · GitHub</a> 吗？</p>
-<p>你是直接就可以访问成功还是挂梯子之后访问成功的呢？</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/Errors/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-命令操作/git/git 分支" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1881,6 +1780,107 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
 
 
   
+    <article id="post-命令操作/Anaconda/linux-conda环境安装教程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" target="_blank">linux-conda环境安装教程</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p># linux-conda 环境安装教程</p>
+<h2 id="背景">背景</h2>
+<p>最近被 python 各个版本环境整的头晕目眩，本来就不是专长做 python
+的，切换各种版本着实不好操作，因此想到了 conda 这个好工具，以下是对
+conda 的相关理解和搭建的详细过程，做个记录。</p>
+<h3 id="conda-简介">Conda 简介</h3>
+<p>Conda 是在 Windows、<a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=macOS&amp;spm=1001.2101.3001.7020">macOS</a>
+和 Linux
+上运行的开源软件包管理系统和环境管理系统。可以快速安装、运行和更新软件包及其依赖项。可以轻松地在本地计算机上的环境中创建，保存，加载和切换。它是为
+Python 程序创建的，但可以打包和分发适用于任何语言的软件。   目前 conda
+的发行版本分为 anaconda、miniconda 两种，安装了 ananconda 或 miniconda
+的完整版，就默认安装了 conda。anaconda 会包含一些常用包的版本，miniconda
+则是精简版，两者安装均可。</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Anaconda</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/11/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/13/">Next &amp;raquo;</a>
@@ -2035,15 +2035,11 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2051,7 +2047,7 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2059,11 +2055,11 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2071,11 +2067,11 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2087,11 +2083,11 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2099,7 +2095,7 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">num</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2107,7 +2103,11 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">num</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2115,7 +2115,7 @@ src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">

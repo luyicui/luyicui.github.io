@@ -214,249 +214,6 @@
             
 
   
-    <article id="post-命令操作/git/git 分支" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/" target="_blank">git 分支</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="git-分支">git 分支</h1>
-<h2 id="概念">概念</h2>
-<p>在任何代码管理工具中，分支都是一个非常重要的概念</p>
-<h3 id="什么是分支">什么是分支</h3>
-<p>首先，我们简单的复习一下什么是分支</p>
-<p>分支(branch)是一个比较抽象的概念，杰哥找了很久也没有一个非常好的确切定义.</p>
-<p>给一个自己的定义</p>
-<blockquote>
-<p>分支是主线某个状态的一个复制，在不影响主线情况下，可以有新的变化</p>
-</blockquote>
-<p>我们通过实际例子来理解</p>
-<p>我们的工作一般都是在一条主线(master)上进行，每一次提交会形成一个
-commit 对象，如下图所示</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246236.jpeg" /></p>
-<p>客户提出了一个新的需求，而这个需求的开发需要一段时间才能完成.</p>
-<p>为了不影响主线的稳定性和持续进行. 我们会怎么做?</p>
-<p>我们可以把整个项目复制一份，在复制的项目上开发新功能，开发完成通过测试后，再将改动的代码整合回主线.</p>
-<p>那么，这个复制出来的项目就是一个分支</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246047.jpeg" /></p>
-<h3 id="分支的作用">分支的作用</h3>
-<p>现在，我们了解到分支的提出主要是为了开发新功能而不影响主线的正常运行</p>
-<p>通过上面的例子，我们大概可以知道</p>
-<ol type="1">
-<li>分支和主线有一部分内容是相同的，有一部分是不同的</li>
-<li>在分支上可以做新的开发，而不会影响到原来的主线</li>
-<li>在分支上开发完成后，通常还是要将改动合并回主线</li>
-</ol>
-<h2 id="相关命令">相关命令</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看已有分支</span></span><br><span class="line">git branch</span><br><span class="line"><span class="comment"># 创建分支</span></span><br><span class="line">git branch 分支名</span><br><span class="line"><span class="comment"># 切换分支</span></span><br><span class="line">git checkout 分支名</span><br><span class="line"><span class="comment"># 合并分支</span></span><br><span class="line">git merge</span><br></pre></td></tr></table></figure>
-<h2 id="分支的本质">分支的本质</h2>
-<p>git branch 可以查看当前所有的分支，本质上是显示
-<code>.git/refs/heads</code> 目录下的文件.</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312244347.jpeg" /></p>
-<p>查看文件具体的内容</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246258.jpeg" /></p>
-<ul>
-<li>文件名(dev，master)表示一个分支</li>
-<li>文件的内容是最近一次 commit 对象的 Hash 串</li>
-</ul>
-<p>因此，我们得出一个重要的结论</p>
-<p>Git 中的分支本质上是一个指针，指向该工作流中最近的一次 commit</p>
-<h2 id="命令详解">命令详解</h2>
-<h3 id="准备">准备</h3>
-<p>先做 3 次提交</p>
-<p>通过 <code>git log --oneline</code> 查看 commit 对象</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246509.jpeg" /></p>
-<blockquote>
-<p>分析</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246650.jpeg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246083.jpeg" /></p>
-<h3 id="创建分支">创建分支</h3>
-<p>使用 <code>git branch 分支名</code> 可以基于现有的 commit 对象，在
-<code>.git/refs/heads</code> 下产生一个文件</p>
-<p>当执行 <code>git branch dev</code> 时创建了一个 dev 分支</p>
-<p>本质上就是在 <code>.git/refs/heads</code> 目录下创建了一个文件</p>
-<ul>
-<li>文件名: dev</li>
-<li>文件内容: d434d9f</li>
-</ul>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246361.jpeg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246828.jpeg" /></p>
-<h3 id="切换分支">切换分支</h3>
-<p>HEAD 指针永远指向当前所在的分支</p>
-<p>执行 <code>git checkout</code> 的作用之一，就是改变 HEAD
-的指向，本质就是修改了 HEAD 文件中的内容</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246385.jpeg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247507.jpeg" /></p>
-<h3 id="在分支上工作">在分支上工作</h3>
-<p>把分支切换到 <code>dev</code> 后，我们就可以在 dev
-分支上进行修改，这些修改是不会影响到原来的 master 分支的</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247361.jpeg" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247994.jpeg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248063.jpeg" /></p>
-<p>此时，我们可以通过 <code>git chekout</code>
-在分支间来回切换，工作区的内容也会随之变化</p>
-<h3 id="fast-forward-合并">Fast-forward 合并</h3>
-<p>此时，如果我们要把在 dev 分支上的改动合并回 master，需要</p>
-<ol type="1">
-<li>切换到 master 分支</li>
-<li>执行 merge</li>
-</ol>
-<blockquote>
-<p>演示</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248153.jpeg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248566.jpeg" /></p>
-<p>像这样的合并是比较快的，叫做
-Fast-forward(快速向前)的合并方式，只是指针的移动</p>
-<h3 id="three-way-合并">Three-way 合并</h3>
-<p>在上面的例子中. 我们基于 master 的 c3 commit 创建了 dev 分支.</p>
-<p>在后面仅仅只在 dev 上改动了代码. master 一直指向 c3 commit.</p>
-<p>这样合并时就非常简单，也很快，只需要将 master 指针指向新的 c4 commit
-就可以. 这种方式就是 Fast-forward</p>
-<p>但是如果，master 和 dev 同时都有改动，将会如何呢?看下面的例子</p>
-<h3 id="步骤一">步骤一</h3>
-<p>在 master 分支创建一个文件，并提交</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249230.jpeg" /></p>
-<h3 id="步骤二"><strong>步骤二</strong></h3>
-<p>切换到 dev 分支，创建 dev.txt 文件并提交</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249108.jpeg" /></p>
-<p>执行命令，查看 log</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline --graph --all</span><br></pre></td></tr></table></figure>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312250729.jpeg" /></p>
-<ul>
-<li>--graph: 以图形展示 log</li>
-<li>--all: 显示所有分支</li>
-</ul>
-<blockquote>
-<p>图解</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249303.jpeg" /></p>
-<h3 id="步骤三">步骤三</h3>
-<p>切换到 master，执行合并</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249745.jpeg" /></p>
-<p>此时，会自动创建一个新的 commit 对象 <code>e02bdf6</code>，同时指向
-<code>99fe8a</code> 和 <code>1740e</code></p>
-<p><img
-src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
-<blockquote>
-<p>图解</p>
-</blockquote>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-命令操作/OpenAI/openai_api_key" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -529,8 +286,7 @@ alt="image-20241102144738603" />
 <p>在 API 密钥管理页面，点击 "Create API key"
 按钮。系统将为您生成一个新的 API
 密钥。请务必妥善保管这个密钥，因为它只会显示一次。如果您遗失了密钥，您需要删除旧密钥并创建一个新的。</p>
-<p>API 密钥的格式通常为一长串字符，如
-<code>sk-abcdefghijklmnopqrstuvwxyz123456</code>。</p>
+<p>API 密钥的格式通常为一长串字符，如下图所示。</p>
 <figure>
 <img
 src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411021449635.png"
@@ -561,7 +317,7 @@ API。如果你将 API
 <li><p><strong>灵活性</strong>：将 API
 密钥存储在环境变量中，使得在不同的开发环境（如本地开发、测试服务器、生产服务器等）使用不同的密钥变得轻而易举。这意味着你可以在不修改代码的情况下轻松切换密钥。</p></li>
 </ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">如果没有设置环境变量，需要在多个代码中进行密钥更改</span><br><span class="line"><span class="keyword">import</span> openai</span><br><span class="line">openai.api_key = <span class="string">&quot;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&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">如果没有设置环境变量，需要在多个代码中进行密钥更改</span><br><span class="line"><span class="keyword">import</span> openai</span><br><span class="line">openai.api_key = <span class="string">&quot;XXX&quot;</span></span><br></pre></td></tr></table></figure>
 <hr />
 <p>现在你已经了解了环境变量的概念以及使用它们的优点。接下来，我们将学习如何在不同的操作系统中设置
 " OPENAI_API_KEY " 环境变量。</p>
@@ -853,6 +609,249 @@ API
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/OpenAI/openai_api_key/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-命令操作/git/git 分支" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/" target="_blank">git 分支</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="git-分支">git 分支</h1>
+<h2 id="概念">概念</h2>
+<p>在任何代码管理工具中，分支都是一个非常重要的概念</p>
+<h3 id="什么是分支">什么是分支</h3>
+<p>首先，我们简单的复习一下什么是分支</p>
+<p>分支(branch)是一个比较抽象的概念，杰哥找了很久也没有一个非常好的确切定义.</p>
+<p>给一个自己的定义</p>
+<blockquote>
+<p>分支是主线某个状态的一个复制，在不影响主线情况下，可以有新的变化</p>
+</blockquote>
+<p>我们通过实际例子来理解</p>
+<p>我们的工作一般都是在一条主线(master)上进行，每一次提交会形成一个
+commit 对象，如下图所示</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246236.jpeg" /></p>
+<p>客户提出了一个新的需求，而这个需求的开发需要一段时间才能完成.</p>
+<p>为了不影响主线的稳定性和持续进行. 我们会怎么做?</p>
+<p>我们可以把整个项目复制一份，在复制的项目上开发新功能，开发完成通过测试后，再将改动的代码整合回主线.</p>
+<p>那么，这个复制出来的项目就是一个分支</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246047.jpeg" /></p>
+<h3 id="分支的作用">分支的作用</h3>
+<p>现在，我们了解到分支的提出主要是为了开发新功能而不影响主线的正常运行</p>
+<p>通过上面的例子，我们大概可以知道</p>
+<ol type="1">
+<li>分支和主线有一部分内容是相同的，有一部分是不同的</li>
+<li>在分支上可以做新的开发，而不会影响到原来的主线</li>
+<li>在分支上开发完成后，通常还是要将改动合并回主线</li>
+</ol>
+<h2 id="相关命令">相关命令</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看已有分支</span></span><br><span class="line">git branch</span><br><span class="line"><span class="comment"># 创建分支</span></span><br><span class="line">git branch 分支名</span><br><span class="line"><span class="comment"># 切换分支</span></span><br><span class="line">git checkout 分支名</span><br><span class="line"><span class="comment"># 合并分支</span></span><br><span class="line">git merge</span><br></pre></td></tr></table></figure>
+<h2 id="分支的本质">分支的本质</h2>
+<p>git branch 可以查看当前所有的分支，本质上是显示
+<code>.git/refs/heads</code> 目录下的文件.</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312244347.jpeg" /></p>
+<p>查看文件具体的内容</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246258.jpeg" /></p>
+<ul>
+<li>文件名(dev，master)表示一个分支</li>
+<li>文件的内容是最近一次 commit 对象的 Hash 串</li>
+</ul>
+<p>因此，我们得出一个重要的结论</p>
+<p>Git 中的分支本质上是一个指针，指向该工作流中最近的一次 commit</p>
+<h2 id="命令详解">命令详解</h2>
+<h3 id="准备">准备</h3>
+<p>先做 3 次提交</p>
+<p>通过 <code>git log --oneline</code> 查看 commit 对象</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246509.jpeg" /></p>
+<blockquote>
+<p>分析</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246650.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246083.jpeg" /></p>
+<h3 id="创建分支">创建分支</h3>
+<p>使用 <code>git branch 分支名</code> 可以基于现有的 commit 对象，在
+<code>.git/refs/heads</code> 下产生一个文件</p>
+<p>当执行 <code>git branch dev</code> 时创建了一个 dev 分支</p>
+<p>本质上就是在 <code>.git/refs/heads</code> 目录下创建了一个文件</p>
+<ul>
+<li>文件名: dev</li>
+<li>文件内容: d434d9f</li>
+</ul>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246361.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246828.jpeg" /></p>
+<h3 id="切换分支">切换分支</h3>
+<p>HEAD 指针永远指向当前所在的分支</p>
+<p>执行 <code>git checkout</code> 的作用之一，就是改变 HEAD
+的指向，本质就是修改了 HEAD 文件中的内容</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312246385.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247507.jpeg" /></p>
+<h3 id="在分支上工作">在分支上工作</h3>
+<p>把分支切换到 <code>dev</code> 后，我们就可以在 dev
+分支上进行修改，这些修改是不会影响到原来的 master 分支的</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247361.jpeg" /></p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312247994.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248063.jpeg" /></p>
+<p>此时，我们可以通过 <code>git chekout</code>
+在分支间来回切换，工作区的内容也会随之变化</p>
+<h3 id="fast-forward-合并">Fast-forward 合并</h3>
+<p>此时，如果我们要把在 dev 分支上的改动合并回 master，需要</p>
+<ol type="1">
+<li>切换到 master 分支</li>
+<li>执行 merge</li>
+</ol>
+<blockquote>
+<p>演示</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248153.jpeg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312248566.jpeg" /></p>
+<p>像这样的合并是比较快的，叫做
+Fast-forward(快速向前)的合并方式，只是指针的移动</p>
+<h3 id="three-way-合并">Three-way 合并</h3>
+<p>在上面的例子中. 我们基于 master 的 c3 commit 创建了 dev 分支.</p>
+<p>在后面仅仅只在 dev 上改动了代码. master 一直指向 c3 commit.</p>
+<p>这样合并时就非常简单，也很快，只需要将 master 指针指向新的 c4 commit
+就可以. 这种方式就是 Fast-forward</p>
+<p>但是如果，master 和 dev 同时都有改动，将会如何呢?看下面的例子</p>
+<h3 id="步骤一">步骤一</h3>
+<p>在 master 分支创建一个文件，并提交</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249230.jpeg" /></p>
+<h3 id="步骤二"><strong>步骤二</strong></h3>
+<p>切换到 dev 分支，创建 dev.txt 文件并提交</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249108.jpeg" /></p>
+<p>执行命令，查看 log</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline --graph --all</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312250729.jpeg" /></p>
+<ul>
+<li>--graph: 以图形展示 log</li>
+<li>--all: 显示所有分支</li>
+</ul>
+<blockquote>
+<p>图解</p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249303.jpeg" /></p>
+<h3 id="步骤三">步骤三</h3>
+<p>切换到 master，执行合并</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410312249745.jpeg" /></p>
+<p>此时，会自动创建一个新的 commit 对象 <code>e02bdf6</code>，同时指向
+<code>99fe8a</code> 和 <code>1740e</code></p>
+<p><img
+src="https://picx.zhimg.com/v2-074939fafaed2a1ae52ff3aa7d8aef29_b.jpg" /></p>
+<blockquote>
+<p>图解</p>
+</blockquote>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/git/git%20%E5%88%86%E6%94%AF/">展开全文 >></a>
     </p>
     
 
@@ -1655,7 +1654,7 @@ x_i,x_{\text i}\\
 
 
   
-    <article id="post-C++/sscanf&amp;&amp;ssprintf" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-C++/scanf的返回值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1663,7 +1662,7 @@ x_i,x_{\text i}\\
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2023/11/11/%5Bobject%20Object%5D/C++/sscanf&&ssprintf/" target="_blank">sscanf&amp;&amp;sprintf</a>
+	  <a class="article-title" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" target="_blank">scanf返回值</a>
   
     </h1>
   
@@ -1671,7 +1670,7 @@ x_i,x_{\text i}\\
 
   
   
-<a href="/2023/11/11/%5Bobject%20Object%5D/C++/sscanf&&ssprintf/" class="archive-article-date">
+<a href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" class="archive-article-date">
         <time datetime="2023-11-11T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-11-11</time>
 </a>
 
@@ -1684,21 +1683,20 @@ x_i,x_{\text i}\\
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="sscanfsprintf">sscanf&amp;&amp;sprintf</h1>
-<h2 id="前言">前言</h2>
-<p><code>sscanf</code>和<code>sprintf</code>在处理<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&amp;spm=1001.2101.3001.7020">字符串</a>问题上很有用！（<code>sscanf</code>和<code>sprintf</code>可以从字面意思上分别理解为string+scanf和string+printf）</p>
-<h2 id="头文件">头文件</h2>
-<ol type="1">
-<li><code>C++</code></li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li><code>C</code></li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br></pre></td></tr></table></figure>
+    <p># scanf返回值</p>
+<h2 id="返回值">返回值</h2>
+<p><code>scanf()</code>
+的返回值是：输入的数据与<strong>格式字符串</strong>中匹配次数</p>
+<blockquote>
+<ul>
+<li><p>简单来说，就是返回已成功赋值的数据项数；出错时则返回 <span
+class="math inline">\(EOF\)</span></p></li>
+<li><p>文件结束符 EOF(End Of File) 是一个预定义的常量，等于 <span
+class="math inline">\(-1\)</span></p></li>
+</ul>
+</blockquote>
     
-    <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/sscanf&&ssprintf/#more">more >></a>
+    <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/#more">more >></a>
     
     
 
@@ -1725,7 +1723,7 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/sscanf&&ssprintf/">展开全文 >></a>
+      <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/">展开全文 >></a>
     </p>
     
 
@@ -1929,11 +1927,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1945,11 +1943,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1969,19 +1967,15 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">num</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1994,6 +1988,10 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">

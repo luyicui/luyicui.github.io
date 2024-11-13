@@ -242,7 +242,7 @@
 
   
     
-      <article id="post-python/【pytorch】/【Tensor广播机制】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-python/【tutorial】/【1.环境搭建与顺序语句】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -250,7 +250,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90pytorch%E3%80%91/%E3%80%90Tensor%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6%E3%80%91/" target="_blank">【Tensor广播机制】</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90tutorial%E3%80%91/%E3%80%901.%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%A1%BA%E5%BA%8F%E8%AF%AD%E5%8F%A5%E3%80%91/" target="_blank">【1.环境搭建与顺序语句】</a>
   
     </h1>
   
@@ -258,7 +258,7 @@
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90pytorch%E3%80%91/%E3%80%90Tensor%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6%E3%80%91/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90tutorial%E3%80%91/%E3%80%901.%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%A1%BA%E5%BA%8F%E8%AF%AD%E5%8F%A5%E3%80%91/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -271,34 +271,67 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p># 【Tensor广播机制】</p>
-<h2 id="定义">定义</h2>
-<p>如果一个 <code>PyTorch</code> 操作支持广播，则其 <code>Tensor</code>
-参数可以自动扩展为相等大小（不需要复制数据）。通常情况下，小一点的数组会被
-<code>broadcast</code> 到大一点的，这样才能保持大小一致。</p>
-<h2 id="规则">规则</h2>
-<ul>
-<li>如果遵守以下规则，则两个 <code>tensor</code> 是“可广播的”：
-<ul>
-<li>每个 <code>tensor</code> 至少有一个维度；</li>
-<li>从尾向前遍历 <code>tensor</code> 的所有维度，两个
-<code>tensor</code> 存在下列情况：
-<ul>
-<li><code>tensor</code> 维数相等</li>
-<li><code>tensor</code> 维数不等且 <strong>其中一个维数为 1 </strong> 或
-<strong>其中一个维数不存在</strong></li>
-</ul></li>
-</ul></li>
-<li>如果两个 <code>tensor</code> 是“可广播的”，则计算过程遵循下列规则：
-<ul>
-<li>如果两个 <code>tensor</code> 的维度不同，则在维度较小的
-<code>tensor</code> 的前面增加维度，使它们维度相等。</li>
-<li>对于每个维度，计算结果的维数取两个 <code>tensor</code>
-中较大的那个值。</li>
-<li>两个 <code>tensor</code> 扩展维度的过程是将数值进行复制。</li>
-</ul>
+    <h1 id="环境搭建与顺序语句">【1.环境搭建与顺序语句】</h1>
+<h2 id="语法基础">语法基础</h2>
+<p><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/tutorial/index.html">Python
+语法官方文档</a></p>
+<h3 id="变量">变量</h3>
+<table>
+<thead>
+<tr class="header">
+<th>类型</th>
+<th>描述</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>int</td>
+<td>整数</td>
+<td>123</td>
+</tr>
+<tr class="even">
+<td>float</td>
+<td>浮点数</td>
+<td>1.23, 1.24e5</td>
+</tr>
+<tr class="odd">
+<td>str</td>
+<td>字符串</td>
+<td>"python", 'acwing'</td>
+</tr>
+<tr class="even">
+<td>bool</td>
+<td>布尔值</td>
+<td>True, False</td>
+</tr>
+<tr class="odd">
+<td>list</td>
+<td>列表</td>
+<td>[1, 2, 3]</td>
+</tr>
+<tr class="even">
+<td>tuple</td>
+<td>元组</td>
+<td>(1, 2, 3)</td>
+</tr>
+<tr class="odd">
+<td>set</td>
+<td>集合</td>
+<td>{1, 2, 3}</td>
+</tr>
+<tr class="even">
+<td>dict</td>
+<td>字典</td>
+<td>{1: "python", "acwing": 2, 3: 4.0}</td>
+</tr>
+</tbody>
+</table>
+<p>注意：<code>int</code> <font color='red'>
+<strong>支持高精度，没有大小限制</strong> </font></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">width = <span class="number">20</span></span><br><span class="line">height = <span class="number">12.3</span></span><br><span class="line">name = <span class="string">&quot;yxc&quot;</span></span><br><span class="line">my_name = name</span><br><span class="line">flag = <span class="literal">True</span></span><br><span class="line">a, b, c = <span class="number">1</span>, <span class="string">&#x27;a&#x27;</span>, <span class="number">3.0</span>  <span class="comment"># 同时给多个变量赋值</span></span><br><span class="line"><span class="comment"># 输出变量类型</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(width))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(name))</span><br></pre></td></tr></table></figure>
     
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90pytorch%E3%80%91/%E3%80%90Tensor%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6%E3%80%91/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90tutorial%E3%80%91/%E3%80%901.%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%A1%BA%E5%BA%8F%E8%AF%AD%E5%8F%A5%E3%80%91/#more">more >></a>
     
     
 
@@ -315,7 +348,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
         		</li>
       		
 		</ul>
@@ -325,7 +358,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90pytorch%E3%80%91/%E3%80%90Tensor%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/python/%E3%80%90tutorial%E3%80%91/%E3%80%901.%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%A1%BA%E5%BA%8F%E8%AF%AD%E5%8F%A5%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1196,7 +1229,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 
 
     
-      <article id="post-AI/AI 集群基础设施" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-AI/FLOPs&amp;&amp;FLOPS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1204,7 +1237,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" target="_blank">AI 集群基础设施</a>
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/FLOPs&&FLOPS/" target="_blank">FLOPs&amp;&amp;FLOPS</a>
   
     </h1>
   
@@ -1212,7 +1245,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 
   
   
-<a href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/" class="archive-article-date">
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/FLOPs&&FLOPS/" class="archive-article-date">
         <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
 </a>
 
@@ -1225,19 +1258,19 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="ai-集群基础设施">AI 集群基础设施</h1>
-<p>GPU在高性能计算和深度学习加速中扮演着非常重要的角色，
-GPU的强大的并行计算能力，大大提升了运算性能。随着运算数据量的不断攀升，GPU间需要大量的交换数据，因此，GPU通信性能成为了非常重要的指标。</p>
-<p>在 AI
-集群中进行分布式训练时，通信是必要环节，同时也是相比于单机训练而言多出来的系统开销。通信与计算的时间比例往往决定了分布式机器学习系统加速比的上限。</p>
-<p>因此，分布式机器学习的关键是设计通信机制，从而降低通信与计算的时间比例，更加高效地训练出高精度模型。</p>
-<p>下面给大家介绍AI集群通信的软硬件、NCLL集合通信库、InfiniBand网络通信技术协议、AI集群和AI框架中对于InfiniBand的应用。</p>
-<blockquote>
-<p>文章较长，建议先点赞收藏，后续再慢慢观看。另外，我撰写的<strong>大模型相关的博客及配套代码</strong>均整理放置在Github：<strong><a
-href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-action/tree/main">llm-action</a></strong>，有需要的朋友自取。</p>
-</blockquote>
+    <h1 id="flopsflops">FLOPs&amp;&amp;FLOPS</h1>
+<h2 id="什么是flops">什么是flops</h2>
+<p>对flops有疑惑，首先得先捋清这个概念：</p>
+<ul>
+<li><strong>FLOPS</strong>：注意全大写，是floating point operations per
+<strong>second</strong>的缩写，意指<strong>每秒浮点运算次数</strong>，理解为<strong>计算速度</strong>。是一个<strong>衡量硬件性能</strong>的指标。</li>
+<li><strong>FLOPs</strong>：注意s小写，是floating point
+operations的缩写（<strong>s表复数</strong>），意指<strong>浮点运算数</strong>，理解为<strong>计算量</strong>。可以用来<strong>衡量算法/模型的复杂度</strong>。</li>
+</ul>
+<p>网上打字很容易全小写，造成混淆，本问题针对模型，应指的是FLOPs。</p>
+<p>我们知道，通常我们去<strong>评价一个模型时，首先看的应该是它的精确度</strong>，当你精确度不行的时候，你和别人说我的模型预测的多么多么的快，部署的时候占的内存多么多么的小，都是白搭。但当你模型达到一定的精确度之后，就需要更<strong>进一步的评价指标来评价你模型</strong>：1）<strong>前向传播时所需的计算力</strong>，它反应了对硬件如GPU性能要求的高低；2）<strong>参数个数</strong>，它反应所占内存大小。为什么要加上这两个指标呢？因为这事关你模型算法的落地。比如你要在手机和汽车上部署深度学习模型，对模型大小和计算力就有严格要求。模型参数想必大家都知道是什么怎么算了，而前向传播时所需的计算力可能还会带有一点点疑问。所以这里总计一下前向传播时所需的计算力。它正是由<strong>FLOPs</strong>体现，那么<strong>FLOPs</strong>该怎么计算呢？</p>
     
-    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/FLOPs&&FLOPS/#more">more >></a>
     
     
 
@@ -1264,7 +1297,7 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/AI%20%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/FLOPs&&FLOPS/">展开全文 >></a>
     </p>
     
 
@@ -1449,19 +1482,11 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1469,11 +1494,15 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1482,6 +1511,10 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1501,31 +1534,11 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1533,7 +1546,7 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1541,7 +1554,27 @@ href="https://link.zhihu.com/?target=https%3A//github.com/liguodongiot/llm-actio
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

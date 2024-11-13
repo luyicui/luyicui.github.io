@@ -242,7 +242,7 @@
 
   
     
-      <article id="post-命令操作/【shell】/Linux/Linux操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【huggingface】/huggingface模型下载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -250,7 +250,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/" target="_blank">Linux操作</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/" target="_blank">huggingface模型下载</a>
   
     </h1>
   
@@ -258,7 +258,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -271,35 +271,192 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="linux操作">Linux操作</h1>
-<h2 id="软件安装">软件安装</h2>
-<ul>
-<li>CentOS系统使用：
-<ul>
-<li>yum [install remove search] [-y] 软件名称
-<ul>
-<li>install 安装</li>
-<li>remove 卸载</li>
-<li>search 搜索</li>
-<li>-y，自动确认</li>
-</ul></li>
-</ul></li>
-<li>Ubuntu系统使用
-<ul>
-<li>apt [install remove search] [-y] 软件名称
-<ul>
-<li>install 安装</li>
-<li>remove 卸载</li>
-<li>search 搜索</li>
-<li>-y，自动确认</li>
-</ul></li>
-</ul></li>
-</ul>
-<blockquote>
-<p>yum 和 apt 均需要root权限</p>
-</blockquote>
+    <h1 id="huggingface-模型下载">huggingface 模型下载</h1>
+<p><strong><em>Update: 推荐 huggingface 镜像站</em></strong>： <a
+href="https://link.zhihu.com/?target=https%3A//hf-mirror.com/">https://hf-mirror.com</a>
+。</p>
+<p><strong><em>Update: 推荐官方的</em></strong> <a
+href="https://link.zhihu.com/?target=https%3A//huggingface.co/docs/huggingface_hub/guides/download%23download-from-the-cli">huggingface-cli</a>
+<strong><em>命令行工具、以及本人开发的</em></strong> <a
+href="https://link.zhihu.com/?target=https%3A//padeoe.com/huggingface-large-models-downloader/%232.1-hfd-%25E8%2584%259A%25E6%259C%25AC">hfd
+脚本</a>。</p>
+<p>AI 开发绕不过一个问题是，<strong>如何从 hugging face
+下载模型/数据集</strong>，相关问题想必大家都没少搜过，方法五花八门，本人也曾在
+stackoverflow 上回答过 <a
+href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595500/how-to-download-model-from-huggingface">类似问题</a>，然而很难见有文章将
+<strong>各类方法一次性讲全</strong>。</p>
+<p>其实网络快、稳的话，随便哪种方法都挺好，然而国内网络问题，<strong>断点续传、多线程下载</strong>
+等特性就显得尤为必要了，否则动辄断掉重来、下载速度慢，浪费生命！基于这个考虑，本文集成官方方法、第三方奇技淫巧，做了个
+<strong>总结排序</strong>，以飨读者：</p>
+<p><strong>（以下方法也适用于数据集下载）</strong></p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>`方法类别</th>
+<th></th>
+<th>推荐程度</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>基于 URL</td>
+<td>浏览器网页下载</td>
+<td>⭐⭐⭐</td>
+<td>通用性好</td>
+<td>手动麻烦/无多线程</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>多线程下载器(hfd/IDM 等)</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>通用性好，鲁棒性好</td>
+<td>手动麻烦</td>
+</tr>
+<tr class="odd">
+<td>CLI 工具</td>
+<td>git clone 命令</td>
+<td>⭐⭐</td>
+<td>简单</td>
+<td>无断点续传/冗余文件/无多线程</td>
+</tr>
+<tr class="even">
+<td>专用 CLI 工具</td>
+<td>huggingface-cli</td>
+<td>⭐⭐⭐⭐</td>
+<td>官方下载工具功能全</td>
+<td>不支持多线程</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>from_pretrained</td>
+<td>⭐</td>
+<td>官方支持，简单</td>
+<td>不方便存储，功能不全</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>hf_hub_download</td>
+<td>⭐</td>
+<td>官方支持</td>
+<td>不支持全量下载/无多线程</td>
+</tr>
+</tbody>
+</table>
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-命令操作/【shell】/Linux/Linux命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E5%91%BD%E4%BB%A4/" target="_blank">Linux命令</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E5%91%BD%E4%BB%A4/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="linux命令">Linux命令</h1>
+<h2 id="windows与linux的区分">windows与linux的区分</h2>
+<ol type="1">
+<li>linux下<strong>文件名区分大小写</strong>，而windows下<strong>文件名不区分大小写</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">abc</span><br><span class="line">ABC</span><br><span class="line">aBc</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li><strong>linux下路径分隔符为<code>/</code>，而windows下路径分隔符为<code>\</code></strong></li>
+</ol>
+<h2 id="linux的目录结构">Linux的目录结构</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202309122142813.png"
+alt="20221027214128_clear_compress" />
+<figcaption
+aria-hidden="true">20221027214128_clear_compress</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E5%91%BD%E4%BB%A4/#more">more >></a>
     
     
 
@@ -326,7 +483,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E5%91%BD%E4%BB%A4/">展开全文 >></a>
     </p>
     
 
@@ -471,7 +628,7 @@ MySQL 环境变量路径：/home/uusama/mysql/bin</a></li>
 
 
     
-      <article id="post-命令操作/【shell】/Linux/nohup命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【shell】/Linux/Linux操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -479,7 +636,7 @@ MySQL 环境变量路径：/home/uusama/mysql/bin</a></li>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/nohup%E5%91%BD%E4%BB%A4/" target="_blank">nohup命令</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/" target="_blank">Linux操作</a>
   
     </h1>
   
@@ -487,7 +644,7 @@ MySQL 环境变量路径：/home/uusama/mysql/bin</a></li>
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/nohup%E5%91%BD%E4%BB%A4/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -500,17 +657,35 @@ MySQL 环境变量路径：/home/uusama/mysql/bin</a></li>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="nohup-命令">nohup 命令</h1>
-<h2 id="前言">前言</h2>
-<p>经常看到一些 jar 包，sh 脚本用 nohup 命令后台启动，今天就讲解一下
-nohup 的用法。</p>
-<p>nohup
-主要作用就是可以在后台运行，并可以选择将日志输出到指定文件。如启动 jar
-包，若使用 <code>java -jar demo.jar</code>
-的方式启动程序当窗口关闭的时候程序也停止了，而且日志会直接输出到控制台非常不直观，nohup
-启动就可以解决这两个问题。</p>
+    <h1 id="linux操作">Linux操作</h1>
+<h2 id="软件安装">软件安装</h2>
+<ul>
+<li>CentOS系统使用：
+<ul>
+<li>yum [install remove search] [-y] 软件名称
+<ul>
+<li>install 安装</li>
+<li>remove 卸载</li>
+<li>search 搜索</li>
+<li>-y，自动确认</li>
+</ul></li>
+</ul></li>
+<li>Ubuntu系统使用
+<ul>
+<li>apt [install remove search] [-y] 软件名称
+<ul>
+<li>install 安装</li>
+<li>remove 卸载</li>
+<li>search 搜索</li>
+<li>-y，自动确认</li>
+</ul></li>
+</ul></li>
+</ul>
+<blockquote>
+<p>yum 和 apt 均需要root权限</p>
+</blockquote>
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/nohup%E5%91%BD%E4%BB%A4/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/#more">more >></a>
     
     
 
@@ -537,7 +712,7 @@ nohup 的用法。</p>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/nohup%E5%91%BD%E4%BB%A4/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/Linux%E6%93%8D%E4%BD%9C/">展开全文 >></a>
     </p>
     
 
@@ -1169,105 +1344,6 @@ x_i, x_{\text i}\\
 
 
     
-      <article id="post-C++/scanf的返回值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" target="_blank">scanf返回值</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" class="archive-article-date">
-        <time datetime="2023-11-11T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-11-11</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># scanf返回值</p>
-<h2 id="返回值">返回值</h2>
-<p><code>scanf()</code>
-的返回值是：输入的数据与<strong>格式字符串</strong>中匹配次数</p>
-<blockquote>
-<ul>
-<li><p>简单来说，就是返回已成功赋值的数据项数；出错时则返回 <span
-class="math inline">\(EOF\)</span></p></li>
-<li><p>文件结束符 EOF(End Of File) 是一个预定义的常量，等于 <span
-class="math inline">\(-1\)</span></p></li>
-</ul>
-</blockquote>
-    
-    <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
     
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/13/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/15/">Next &amp;raquo;</a>
@@ -1431,11 +1507,11 @@ class="math inline">\(-1\)</span></p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1451,19 +1527,19 @@ class="math inline">\(-1\)</span></p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1475,11 +1551,11 @@ class="math inline">\(-1\)</span></p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1487,15 +1563,11 @@ class="math inline">\(-1\)</span></p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1503,7 +1575,7 @@ class="math inline">\(-1\)</span></p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1512,6 +1584,10 @@ class="math inline">\(-1\)</span></p></li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
               </li>
              
               <li class="article-tag-list-item">

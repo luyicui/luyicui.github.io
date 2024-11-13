@@ -10,15 +10,15 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Adam算法详解 Adam算法在RMSProp算法基础上对小批量随机梯度也做了指数加权移动平均 [1]。下面我们来介绍这个算法。  所以Adam算法可以看做是RMSProp算法与动量法的结合。adam算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶moment和二阶moment，并计算滑动平均值，后用来更新当前的参数。这种思想结合了Adagr">
+  <meta name="description" content="Adam 算法详解 Adam 算法在 RMSProp 算法基础上对 小批量 随机梯度也做了指数加权移动平均 [1]。下面我们来介绍这个算法。  所以 Adam 算法可以看做是 RMSProp 算法与动量法的结合。adam 算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶 moment 和二阶 moment，并计算滑动平均值，后用来更新当">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Adam详解">
 <meta property="og:url" content="https://cuiluyi.github.io/2024/08/13/[object%20Object]/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/8.Adam%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="Adam算法详解 Adam算法在RMSProp算法基础上对小批量随机梯度也做了指数加权移动平均 [1]。下面我们来介绍这个算法。  所以Adam算法可以看做是RMSProp算法与动量法的结合。adam算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶moment和二阶moment，并计算滑动平均值，后用来更新当前的参数。这种思想结合了Adagr">
+<meta property="og:description" content="Adam 算法详解 Adam 算法在 RMSProp 算法基础上对 小批量 随机梯度也做了指数加权移动平均 [1]。下面我们来介绍这个算法。  所以 Adam 算法可以看做是 RMSProp 算法与动量法的结合。adam 算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶 moment 和二阶 moment，并计算滑动平均值，后用来更新当">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-08-13T02:02:27.000Z">
-<meta property="article:modified_time" content="2024-11-13T13:36:30.533Z">
+<meta property="article:modified_time" content="2024-11-13T14:14:43.380Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="优化算法">
 <meta name="twitter:card" content="summary">
@@ -290,19 +290,25 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="adam算法详解">Adam算法详解</h1>
-<p>Adam算法在RMSProp算法基础上对<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%B0%8F%E6%89%B9%E9%87%8F&amp;spm=1001.2101.3001.7020">小批量</a>随机梯度也做了指数加权移动平均
-[1]。下面我们来介绍这个算法。</p>
+    <h1 id="adam-算法详解">Adam 算法详解</h1>
+<p>Adam 算法在 RMSProp 算法基础上对 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%B0%8F%E6%89%B9%E9%87%8F&amp;spm=1001.2101.3001.7020">小批量</a>
+随机梯度也做了指数加权移动平均 [1]。下面我们来介绍这个算法。</p>
 <blockquote>
-<p>所以Adam算法可以看做是RMSProp算法与动量法的结合。adam算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶moment和二阶moment，并计算滑动平均值，后用来更新当前的参数。这种思想结合了Adagrad算法的处理稀疏型数据，又结合了RMSProp算法的可以处理非稳态的数据。</p>
+<p>所以 Adam 算法可以看做是 RMSProp 算法与动量法的结合。adam
+算法是一种基于“momentum”思想的随机梯度下降优化方法，通过迭代更新之前每次计算梯度的一阶
+moment 和二阶
+moment，并计算滑动平均值，后用来更新当前的参数。这种思想结合了 Adagrad
+算法的处理稀疏型数据，又结合了 RMSProp 算法的可以处理非稳态的数据。</p>
 </blockquote>
-<p>小tips：跟我一样基础不太好的看起来比较难以理解，建议搭配视频食用，可参考这个<a
+<p>小
+tips：跟我一样基础不太好的看起来比较难以理解，建议搭配视频食用，可参考这个
+<a
 target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1HP4y1g7xN/?spm_id_from=pageDriver&amp;vd_source=12c80a98ec9426002a2f54318421082c">优化算法系列合集</a>，个人觉得比较容易听懂</p>
 <h2 id="算法">算法</h2>
-<p>Adam算法使用了动量变量 <span
-class="math inline">\(\boldsymbol{v}_t\)</span>
-​和RMSProp算法中小批量随机梯度按元素平方的指数加权移动平均变量 <span
+<p>Adam 算法使用了动量变量 <span
+class="math inline">\(\boldsymbol{v}_t\)</span> ​和 RMSProp
+算法中小批量随机梯度按元素平方的指数加权移动平均变量 <span
 class="math inline">\(\boldsymbol{s}_t\)</span> ​，并在时间步 <span
 class="math inline">\(0\)</span> 将它们中每个元素初始化为 <span
 class="math inline">\(0\)</span>。给定超参数 <span
@@ -314,8 +320,9 @@ class="math inline">\(\boldsymbol{g}_t\)</span> ​的指数加权移动平均�
 <p><span class="math display">\[
 \boldsymbol{v}_t \leftarrow \beta_1 \boldsymbol{v}_{t-1} + (1 - \beta_1)
 \boldsymbol{g}_t
-\]</span> 和RMSProp算法中一样，给定超参数 <span class="math inline">\(0
-\leq \beta_2 &lt; 1\)</span> （算法作者建议设为0.999）</p>
+\]</span> 和 RMSProp 算法中一样，给定超参数 <span
+class="math inline">\(0 \leq \beta_2 &lt; 1\)</span> （算法作者建议设为
+0.999）</p>
 <p>将小批量随机梯度按元素平方后的项 <span
 class="math inline">\(\boldsymbol{g}_t \odot \boldsymbol{g}_t\)</span>
 ​做指数加权移动平均得到 <span
@@ -341,8 +348,9 @@ class="math inline">\(\boldsymbol{v}_1 =
 class="math inline">\(t\)</span> ，我们可以将 <span
 class="math inline">\(\boldsymbol{v}_t\)</span> 再除以 <span
 class="math inline">\(1 -
-\beta_1^t\)</span>，从而使过去各时间步小批量随机梯度权值之和为1。这也叫作<strong>偏差修正</strong>。在Adam算法中，我们对变量
-<span class="math inline">\(\boldsymbol{v}_t\)</span> 和 <span
+\beta_1^t\)</span>，从而使过去各时间步小批量随机梯度权值之和为
+1。这也叫作 <strong>偏差修正</strong>。在 Adam 算法中，我们对变量 <span
+class="math inline">\(\boldsymbol{v}_t\)</span> 和 <span
 class="math inline">\(\boldsymbol{s}_t\)</span> 均作偏差修正： <span
 class="math display">\[
 \hat{\boldsymbol{v}}_t \leftarrow \frac{\boldsymbol{v}_t}{1 - \beta_1^t}
@@ -350,7 +358,7 @@ class="math display">\[
 <p><span class="math display">\[
 \hat{\boldsymbol{s}}_t \leftarrow \frac{\boldsymbol{s}_t}{1 - \beta_2^t}
 \]</span></p>
-<p>接下来，Adam算法使用以上偏差修正后的变量 $_t $ 和 <span
+<p>接下来，Adam 算法使用以上偏差修正后的变量 $_t $ 和 <span
 class="math inline">\(\hat{\boldsymbol{s}}_t\)</span>
 ，将模型参数中每个元素的学习率通过按元素运算重新调整：</p>
 <p><span class="math display">\[
@@ -359,8 +367,9 @@ class="math inline">\(\hat{\boldsymbol{s}}_t\)</span>
 \]</span> 其中 <span class="math inline">\(\eta\)</span> 是学习率，<span
 class="math inline">\(\epsilon\)</span>
 是为了维持数值稳定性而添加的常数，如 <span
-class="math inline">\(10^{-8}\)</span>
-。和AdaGrad算法、RMSProp算法以及AdaDelta算法一样，目标函数自变量中每个元素都分别拥有自己的学习率。最后，使用
+class="math inline">\(10^{-8}\)</span> 。和 AdaGrad 算法、RMSProp
+算法以及 AdaDelta
+算法一样，目标函数自变量中每个元素都分别拥有自己的学习率。最后，使用
 <span class="math inline">\(\boldsymbol{g}_t&#39;\)</span>
 ​迭代自变量：</p>
 <p><span class="math display">\[
@@ -368,10 +377,10 @@ class="math inline">\(10^{-8}\)</span>
 \]</span></p>
 <span id="more"></span>
 <h2 id="从零开始实现">从零开始实现</h2>
-<p>我们按照Adam算法中的公式实现该算法。其中时间步 t t
-t通过<code>hyperparams</code>参数传入<code>adam</code>函数。</p>
+<p>我们按照 Adam 算法中的公式实现该算法。其中时间步 t t t 通过
+<code>hyperparams</code> 参数传入 <code>adam</code> 函数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>) </span><br><span class="line"><span class="keyword">import</span> d2lzh_pytorch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line">features, labels = d2l.get_data_ch7()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">init_adam_states</span>():</span><br><span class="line">    v_w, v_b = torch.zeros((features.shape[<span class="number">1</span>], <span class="number">1</span>), dtype=torch.float32), torch.zeros(<span class="number">1</span>, dtype=torch.float32)</span><br><span class="line">    s_w, s_b = torch.zeros((features.shape[<span class="number">1</span>], <span class="number">1</span>), dtype=torch.float32), torch.zeros(<span class="number">1</span>, dtype=torch.float32)</span><br><span class="line">    <span class="keyword">return</span> ((v_w, s_w), (v_b, s_b))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">adam</span>(<span class="params">params, states, hyperparams</span>):</span><br><span class="line">    beta1, beta2, eps = <span class="number">0.9</span>, <span class="number">0.999</span>, <span class="number">1e-6</span></span><br><span class="line">    <span class="keyword">for</span> p, (v, s) <span class="keyword">in</span> <span class="built_in">zip</span>(params, states):</span><br><span class="line">        v[:] = beta1 * v + (<span class="number">1</span> - beta1) * p.grad.data</span><br><span class="line">        s[:] = beta2 * s + (<span class="number">1</span> - beta2) * p.grad.data**<span class="number">2</span></span><br><span class="line">        v_bias_corr = v / (<span class="number">1</span> - beta1 ** hyperparams[<span class="string">&#x27;t&#x27;</span>])</span><br><span class="line">        s_bias_corr = s / (<span class="number">1</span> - beta2 ** hyperparams[<span class="string">&#x27;t&#x27;</span>])</span><br><span class="line">        p.data -= hyperparams[<span class="string">&#x27;lr&#x27;</span>] * v_bias_corr / (torch.sqrt(s_bias_corr) + eps)</span><br><span class="line">    hyperparams[<span class="string">&#x27;t&#x27;</span>] += <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>使用学习率为0.01的Adam算法来训练模型。</p>
+<p>使用学习率为 0.01 的 Adam 算法来训练模型。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d2l.train_ch7(adam, init_adam_states(), &#123;<span class="string">&#x27;lr&#x27;</span>: <span class="number">0.01</span>, <span class="string">&#x27;t&#x27;</span>: <span class="number">1</span>&#125;, features, labels)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss: 0.245370, 0.065155 sec per epoch</span><br></pre></td></tr></table></figure>
@@ -382,7 +391,8 @@ alt="在这里插入图片描述" />
 <figcaption aria-hidden="true">在这里插入图片描述</figcaption>
 </figure>
 <h2 id="简洁实现">简洁实现</h2>
-<p>通过名称为“Adam”的优化器实例，我们便可使用PyTorch提供的Adam算法。</p>
+<p>通过名称为“Adam”的优化器实例，我们便可使用 PyTorch 提供的 Adam
+算法。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d2l.train_pytorch_ch7(torch.optim.Adam, &#123;<span class="string">&#x27;lr&#x27;</span>: <span class="number">0.01</span>&#125;, features, labels)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss: 0.242066, 0.056867 sec per epoch</span><br></pre></td></tr></table></figure>
@@ -394,12 +404,13 @@ alt="在这里插入图片描述" />
 </figure>
 <h2 id="小结">小结</h2>
 <ul>
-<li>Adam算法在RMSProp算法的基础上对小批量随机梯度也做了指数加权移动平均。</li>
-<li>Adam算法使用了偏差修正。</li>
+<li>Adam 算法在 RMSProp
+算法的基础上对小批量随机梯度也做了指数加权移动平均。</li>
+<li>Adam 算法使用了偏差修正。</li>
 </ul>
 <h2 id="参考文献">参考文献</h2>
 <p>[1] Kingma, D. P., &amp; Ba, J. (2014). Adam: A method for stochastic
-optimization. arXiv preprint arXiv:1412.6980.</p>
+optimization. arXiv preprint arXiv: 1412.6980.</p>
 <hr />
 <blockquote>
 <p>注：除代码外本节与原书此节基本相同，<a
@@ -582,7 +593,7 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#adam%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">Adam算法详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">从零开始实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E6%B4%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">简洁实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">1.5.</span> <span class="toc-text">参考文献</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#adam-%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">Adam 算法详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">从零开始实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E6%B4%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">简洁实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">1.5.</span> <span class="toc-text">参考文献</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -765,11 +776,11 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -789,11 +800,11 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -813,11 +824,11 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -825,11 +836,11 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,15 +852,15 @@ target="_blank" rel="noopener" href="https://zh.d2l.ai/chapter_optimization/adam
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
               </li>
              
               <li class="article-tag-list-item">

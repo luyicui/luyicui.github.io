@@ -10,15 +10,15 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="信息熵、交叉熵、相对熵（KL散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵简介">
+  <meta name="description" content="信息熵、交叉熵、相对熵（KL 散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵">
 <meta property="og:type" content="article">
 <meta property="og:title" content="信息熵、交叉熵、相对熵（KL散度）">
 <meta property="og:url" content="https://cuiluyi.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="信息熵、交叉熵、相对熵（KL散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵简介">
+<meta property="og:description" content="信息熵、交叉熵、相对熵（KL 散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-08-12T17:02:27.000Z">
-<meta property="article:modified_time" content="2024-10-28T01:50:09.907Z">
+<meta property="article:modified_time" content="2024-11-13T14:14:18.749Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="损失函数">
 <meta name="twitter:card" content="summary">
@@ -290,7 +290,8 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="信息熵交叉熵相对熵kl散度">信息熵、交叉熵、相对熵（KL散度）</h1>
+    <h1 id="信息熵交叉熵相对熵kl-散度">信息熵、交叉熵、相对熵（KL
+散度）</h1>
 <p>之前在代码中经常看见交叉熵损失函数(CrossEntropy
 Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个
 softmax
@@ -670,7 +671,8 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9B%B8%E5%AF%B9%E7%86%B5kl%E6%95%A3%E5%BA%A6"><span class="toc-number">1.</span> <span class="toc-text">信息熵、交叉熵、相对熵（KL散度）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">交叉熵简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text">信息量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5"><span class="toc-number">1.3.</span> <span class="toc-text">信息熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E7%86%B5kl-%E6%95%A3%E5%BA%A6"><span class="toc-number">1.4.</span> <span class="toc-text">相对熵（KL 散度）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5"><span class="toc-number">1.5.</span> <span class="toc-text">交叉熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E5%9C%A8%E5%8D%95%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">交叉熵在单分类问题中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.8.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9B%B8%E5%AF%B9%E7%86%B5kl-%E6%95%A3%E5%BA%A6"><span class="toc-number">1.</span> <span class="toc-text">信息熵、交叉熵、相对熵（KL
+散度）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">交叉熵简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text">信息量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5"><span class="toc-number">1.3.</span> <span class="toc-text">信息熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E7%86%B5kl-%E6%95%A3%E5%BA%A6"><span class="toc-number">1.4.</span> <span class="toc-text">相对熵（KL 散度）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5"><span class="toc-number">1.5.</span> <span class="toc-text">交叉熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E5%9C%A8%E5%8D%95%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">交叉熵在单分类问题中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.8.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -853,11 +855,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -877,11 +879,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -901,11 +903,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -913,11 +915,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -929,15 +931,15 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -18,7 +18,7 @@
 <meta property="og:description" content="服务器炼丹代码配置 深度学习（Deep Learning）已经成为众多领域中的重要技术，尤其在图像识别、自然语言处理、语音识别等方面表现出色。然而，深度学习模型的训练通常需要大量的计算资源，因此高性能计算（HPC）和 GPU（图形处理单元）显卡变得至关重要。 在大型机构分配的服务器集群中，需要使用 GPU 的程序默认都会在第一张卡上进行，如果第一张卡倍别人占用或者显存不够的情况下，程序就">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
-<meta property="article:modified_time" content="2024-11-12T12:20:10.744Z">
+<meta property="article:modified_time" content="2024-11-13T14:01:38.190Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="命令操作">
 <meta name="twitter:card" content="summary">
@@ -307,7 +307,7 @@ Python 中指定特定的 GPU 显卡来运行代码。</p>
 gpu 是否可用，并确定 CUDA 版本</p>
 <figure>
 <img
-src="https://i-blog.csdnimg.cn/blog_migrate/bc3a9c44800e6f64447f8ed72b014609.png"
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132200835.png"
 alt="在这里插入图片描述" />
 <figcaption aria-hidden="true">在这里插入图片描述</figcaption>
 </figure>
@@ -431,7 +431,7 @@ GPU 设备：</p>
 <h3 id="整合后的代码示例">整合后的代码示例</h3>
 <p>以下是整合后的代码示例，涵盖了从配置
 GPU、定义模型、设置数据加载器到运行训练过程的完整流程。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, Dataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line">os.environ[<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>] = <span class="string">&quot;0,1,6,7&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义设备</span></span><br><span class="line">globalDevice = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义简单的 CNN 模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line"><span class="built_in">super</span>(CNN, self).__init__()</span><br><span class="line">self.conv = nn.Conv2d(<span class="number">3</span>, <span class="number">16</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">self.fc = nn.Linear(<span class="number">16</span> * <span class="number">26</span> * <span class="number">26</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">x = self.conv(x)</span><br><span class="line">x = torch.relu(x)</span><br><span class="line">x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">x = self.fc(x)</span><br><span class="line"><span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化模型</span></span><br><span class="line">cnn = CNN().to(globalDevice)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 GPU 数量并设置 DataParallel</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.device_count() &gt; <span class="number">1</span>:</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Using <span class="subst">&#123;torch.cuda.device_count()&#125;</span> GPUs&quot;</span>)</span><br><span class="line">net = nn.DataParallel(cnn)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Using single GPU or CPU&quot;</span>)</span><br><span class="line">net = cnn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义数据集和数据加载器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, size</span>):</span><br><span class="line">self.size = size</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line"><span class="keyword">return</span> self.size</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line"><span class="keyword">return</span> torch.randn(<span class="number">3</span>, <span class="number">28</span>, <span class="number">28</span>), torch.tensor(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">dataset = SimpleDataset(<span class="number">1000</span>)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size=<span class="number">64</span>, shuffle=<span class="literal">True</span>, num_workers=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.SGD(net.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简单的训练过程</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line"><span class="keyword">for</span> inputs, labels <span class="keyword">in</span> dataloader:</span><br><span class="line">inputs, labels = inputs.to(globalDevice), labels.to(globalDevice)</span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">outputs = net(inputs)</span><br><span class="line">loss = criterion(outputs, labels)</span><br><span class="line">loss.backward()</span><br><span class="line">optimizer.step()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch+<span class="number">1</span>&#125;</span>, Loss: <span class="subst">&#123;loss.item()&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, Dataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line">os.environ[<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>] = <span class="string">&quot;0,1,6,7&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义设备</span></span><br><span class="line">globalDevice = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义简单的CNN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(CNN, self).__init__()</span><br><span class="line">        self.conv = nn.Conv2d(<span class="number">3</span>, <span class="number">16</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">        self.fc = nn.Linear(<span class="number">16</span> * <span class="number">26</span> * <span class="number">26</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = torch.relu(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化模型</span></span><br><span class="line">cnn = CNN().to(globalDevice)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查GPU数量并设置DataParallel</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.device_count() &gt; <span class="number">1</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Using <span class="subst">&#123;torch.cuda.device_count()&#125;</span> GPUs&quot;</span>)</span><br><span class="line">    net = nn.DataParallel(cnn)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Using single GPU or CPU&quot;</span>)</span><br><span class="line">    net = cnn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义数据集和数据加载器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, size</span>):</span><br><span class="line">        self.size = size</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.size</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">        <span class="keyword">return</span> torch.randn(<span class="number">3</span>, <span class="number">28</span>, <span class="number">28</span>), torch.tensor(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">dataset = SimpleDataset(<span class="number">1000</span>)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size=<span class="number">64</span>, shuffle=<span class="literal">True</span>, num_workers=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和损失函数</span></span><br><span class="line">optimizer = optim.SGD(net.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简单的训练过程</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    <span class="keyword">for</span> inputs, labels <span class="keyword">in</span> dataloader:</span><br><span class="line">        inputs, labels = inputs.to(globalDevice), labels.to(globalDevice)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        outputs = net(inputs)</span><br><span class="line">        loss = criterion(outputs, labels)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch+<span class="number">1</span>&#125;</span>, Loss: <span class="subst">&#123;loss.item()&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 
     
 
@@ -571,18 +571,18 @@ GPU、定义模型、设置数据加载器到运行训练过程的完整流程�
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E7%BB%88%E7%AB%AF%E4%BB%A3%E7%90%86%E5%8A%A0%E9%80%9F/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84%E4%B8%AD%60%60%E3%80%81%60%60%E5%92%8C%60%60%E7%9A%84%E5%8C%BA%E5%88%AB/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          终端代理加速
+          文件路径中/、\和\\的区别
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/Anaconda%E5%91%BD%E4%BB%A4/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Anaconda命令</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E7%BB%88%E7%AB%AF%E4%BB%A3%E7%90%86%E5%8A%A0%E9%80%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">终端代理加速</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -794,11 +794,11 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -806,15 +806,11 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -822,15 +818,19 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -850,15 +850,15 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -874,7 +874,7 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -882,7 +882,7 @@ CUDA_VISIBLE_DEVICES</span></a></li><li class="toc-item toc-level-4"><a class="t
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
             
             <div class="clearfix"></div>

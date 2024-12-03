@@ -18,7 +18,7 @@
 <meta property="og:description" content="【LLM解码策略】 在大模型训练好之后，如何对训练好的模型进行解码（decode）是一个火热的研究话题。 在自然语言任务中，我们通常使用一个预训练的大模型（比如GPT）来根据给定的输入文本（比如一个开头或一个问题）生成输出文本（比如一个答案或一个结尾）。为了生成输出文本，我们需要让模型逐个预测每个 token ，直到达到一个终止条件（如一个标点符号或一个最大长度）。在每一步，模型会基于原始">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
-<meta property="article:modified_time" content="2024-11-25T16:09:55.313Z">
+<meta property="article:modified_time" content="2024-12-03T09:16:09.654Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
@@ -336,7 +336,8 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411221154447.jpg" /></p
 <li>随机采样（Random Sampling）</li>
 </ul>
 <p>这些方法是主流的LLM使用的解码方法，可以通过调整解码方法，对输出token达到一定程度的可控性。</p>
-<h2 id="贪婪搜索greedy-search">贪婪搜索（Greedy Search）</h2>
+<h2 id="贪婪搜索解码greedy-searchdecoding">贪婪搜索/解码（Greedy
+Search/Decoding）</h2>
 <p>每个时间步 <span class="math inline">\(t\)</span>
 都简单地选择概率最高的词作为当前输出词 <span class="math display">\[
 w_t = argmax_{w}P(w | w_{1:t-1})
@@ -533,18 +534,18 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/RL%E4%B8%8ELLM%E7%BB%93%E5%90%88/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/In-context%20learning/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          RL与LLM结合
+          In-context learning
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90RLHF%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【RLHF】</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/RL%E4%B8%8ELLM%E7%BB%93%E5%90%88/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RL与LLM结合</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -571,7 +572,8 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#llm%E8%A7%A3%E7%A0%81%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">【LLM解码策略】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E6%90%9C%E7%B4%A2greedy-search"><span class="toc-number">1.1.</span> <span class="toc-text">贪婪搜索（Greedy Search）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A2%E6%9D%9F%E6%90%9C%E7%B4%A2beam-search"><span class="toc-number">1.2.</span> <span class="toc-text">波束搜索(Beam search)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E9%87%87%E6%A0%B7random-sampling"><span class="toc-number">1.3.</span> <span class="toc-text">随机采样（Random Sampling）</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#llm%E8%A7%A3%E7%A0%81%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">【LLM解码策略】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E6%90%9C%E7%B4%A2%E8%A7%A3%E7%A0%81greedy-searchdecoding"><span class="toc-number">1.1.</span> <span class="toc-text">贪婪搜索&#x2F;解码（Greedy
+Search&#x2F;Decoding）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A2%E6%9D%9F%E6%90%9C%E7%B4%A2beam-search"><span class="toc-number">1.2.</span> <span class="toc-text">波束搜索(Beam search)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E9%87%87%E6%A0%B7random-sampling"><span class="toc-number">1.3.</span> <span class="toc-text">随机采样（Random Sampling）</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -754,7 +756,7 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -766,11 +768,7 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">fighting</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -778,11 +776,15 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -802,15 +804,11 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -818,15 +816,7 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -834,15 +824,19 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -854,7 +848,7 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -862,7 +856,15 @@ class="math inline">\(P(w | \text{“The”}, \text{“car”})\)</span> 。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">bash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
             
             <div class="clearfix"></div>

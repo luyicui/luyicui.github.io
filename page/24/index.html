@@ -260,6 +260,387 @@
 
   
     
+      <article id="post-命令操作/【shell】/Linux/tutorial/7.管道、环境变量与常用命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/tutorial/7.%E7%AE%A1%E9%81%93%E3%80%81%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" target="_blank">7. 管道、环境变量与常用命令</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/tutorial/7.%E7%AE%A1%E9%81%93%E3%80%81%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="管道环境变量与常用命令">7. 管道、环境变量与常用命令</h1>
+<h2 id="管道">管道</h2>
+<h3 id="概念">概念</h3>
+<p>管道类似于文件重定向，可以将前一个命令的<code>stdout</code>重定向到下一个命令的<code>stdin</code></p>
+<hr />
+<h3 id="要点">要点</h3>
+<ol type="1">
+<li><p>管道命令仅处理<code>stdout</code>，会忽略<code>stderr</code></p></li>
+<li><p><strong>管道右边的命令必须能接受<code>stdin</code></strong></p></li>
+<li><p>多个管道命令可以串联</p></li>
+</ol>
+<hr />
+<h3 id="与文件重定向的区别">与文件重定向的区别</h3>
+<ul>
+<li><p>文件重定向左边为命令，右边为文件</p></li>
+<li><p>管道左右两边均为命令，左边有<code>stdout</code>，右边有<code>stdin</code></p></li>
+</ul>
+<hr />
+<h3 id="举例">举例</h3>
+<p>统计当前目录下所有 python
+文件的总行数，其中<code>find</code>、<code>xargs</code>、<code>wc</code>等命令可以参考常用命令这一节内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -name &#x27;*.py&#x27; | xargs cat | wc -l</span><br></pre></td></tr></table></figure>
+<h2 id="环境变量">环境变量</h2>
+<h3 id="概念-1">概念</h3>
+<p>Linux
+系统中会用很多环境变量来记录配置信息。环境变量类似于全局变量，可以被各个进程访问到。我们可以通过修改环境变量来方便地修改系统配置</p>
+<h3 id="查看">查看</h3>
+<p>列出当前环境下的所有环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">env # 显示当前用户的变量</span><br><span class="line">set # 显示当前 shell 的变量，包括当前用户的变量；</span><br><span class="line">export # 显示当前导出成用户变量的 shell 变量</span><br></pre></td></tr></table></figure>
+<p>输出某个环境变量的值：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure>
+<h3 id="修改">修改</h3>
+<p>环境变量的定义、修改、删除操作可以参考 <a
+target="_blank" rel="noopener" href="https://www.acwing.com/blog/content/9689/">3. shell 语法——变量</a>
+这一节的内容。</p>
+<p>为了将对环境变量的修改应用到未来所有环境下，可以将修改命令放到<code>~/.bashrc</code>文件中</p>
+<p>修改完<code>~/.bashrc</code>文件后，记得执行<code>source ~/.bashrc</code>，来将修改应用到当前的<code>bash</code>环境下</p>
+<p>为何将修改命令放到<code>~/.bashrc</code>，就可以确保修改会影响未来所有的环境呢？</p>
+<ul>
+<li><p>每次启动 bash，都会先执行<code>~/.bashrc</code></p></li>
+<li><p>每次<code>ssh</code>登陆远程服务器，都会启动一个<code>bash</code>命令行给我们</p></li>
+<li><p>每次<code>tmux</code>新开一个<code>pane</code>，都会启动一个<code>bash</code>命令行给我们</p></li>
+<li><p>所以未来所有新开的环境都会加载我们修改的内容</p></li>
+</ul>
+<hr />
+<h3 id="常见环境变量">常见环境变量</h3>
+<ol type="1">
+<li><p><code>HOME</code>：用户的家目录</p></li>
+<li><p><code>PATH</code>：可执行文件（命令）的存储路径。路径与路径之间用<code>:</code>分隔。当某个可执行文件同时出现在多个路径中时，会选择从左到右数第一个路径中的执行。下列所有存储路径的环境变量，均采用从左到右的优先顺序</p></li>
+<li><p><code>LD_LIBRARY_PATH</code>：用于指定动态链接库
+(<code>.so</code>文件）的路径，其内容是以冒号分隔的路径列表</p></li>
+<li><p><code>C_INCLUDE_PATH</code>：<code>C</code>语言的头文件路径，内容是以冒号分隔的路径列表</p></li>
+<li><p><code>CPLUS_INCLUDE_PATH</code>：<code>CPP</code>的头文件路径，内容是以冒号分隔的路径列表</p></li>
+<li><p><code>PYTHONPATH</code>：<code>Python</code>导入包的路径，内容是以冒号分隔的路径列表</p></li>
+<li><p><code>JAVA_HOME</code>：<code>jdk</code>的安装目录</p></li>
+<li><p><code>CLASSPATH</code>：存放<code>Java</code>导入类的路径，内容是以冒号分隔的路径列表</p></li>
+</ol>
+<h2 id="常用命令">常用命令</h2>
+<p><code>Linux</code>命令非常多，本节讲解几个常用命令。其他命令依赖于大家根据实际操作环境，边用边查</p>
+<hr />
+<h3 id="系统状况">系统状况</h3>
+<ol type="1">
+<li><code>top</code>：查看所有进程的信息（<code>Linux</code>的任务管理器）</li>
+</ol>
+<ul>
+<li>打开后，输入<code>M</code>：按使用内存排序</li>
+<li>打开后，输入<code>P</code>：按使用<code>CPU</code>排序<br />
+</li>
+<li>打开后，输入<code>q</code>：退出</li>
+</ul>
+<ol start="2" type="1">
+<li><code>df -h</code>：查看硬盘使用情况</li>
+<li><code>free -h</code>：查看内存使用情况</li>
+<li><code>du -sh</code>：查看当前目录占用的硬盘空间</li>
+<li><code>ps aux</code>：查看所有进程</li>
+<li><code>kill -9 pid</code>：杀死编号为<code>pid</code>的进程
+<ul>
+<li>传递某个具体的信号：<code>kill -s SIGTERM pid</code></li>
+</ul></li>
+<li><code>netstat -nt</code>：查看所有网络连接</li>
+<li><code>w</code>：列出当前登陆的用户</li>
+<li><code>ping www.baidu.com</code>：检查是否连网</li>
+</ol>
+<h3 id="文件权限">文件权限</h3>
+<p><code>chmod</code>：修改文件权限</p>
+<ul>
+<li><code>chmod +x xxx</code>：给<code>xxx</code>添加可执行权限<br />
+</li>
+<li><code>chmod -x xxx</code>：去掉<code>xxx</code>的可执行权限<br />
+</li>
+<li><code>chmod 777 xxx</code>：将<code>xxx</code>的权限改成<code>777</code><br />
+</li>
+<li><code>chmod 777 xxx -R</code>：递归修改整个文件夹的权限</li>
+</ul>
+<h3 id="文件检索">文件检索</h3>
+<ol type="1">
+<li><p><strong><code>find /path/to/directory/ -name '*.py'</code>：搜索<code>/path/to/directory/</code>路径下的所有<code>*.py</code>文件</strong></p></li>
+<li><p><code>grep xxx</code>：从<code>stdin</code>中读入若干行数据，如果某行中包含<code>xxx</code>，则输出该行；否则忽略该行</p></li>
+<li><p><code>wc</code>：统计行数、单词数、字节数</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412141544952.png"
+alt="image-20241214154149185" />
+<figcaption aria-hidden="true">image-20241214154149185</figcaption>
+</figure>
+<ul>
+<li><p>既可以从<code>stdin</code>中直接读入内容；也可以在命令行参数中传入文件名列表；</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412141543616.png"
+alt="image-20241214154304489" />
+<figcaption aria-hidden="true">image-20241214154304489</figcaption>
+</figure></li>
+<li><p><code>wc -l</code>：统计<strong>行</strong>数</p></li>
+<li><p><code>wc -w</code>：统计<strong>单词</strong>数</p></li>
+<li><p><code>wc -c</code>：统计<strong>字节</strong>数</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412141543051.png"
+alt="image-20241214154353894" />
+<figcaption aria-hidden="true">image-20241214154353894</figcaption>
+</figure></li>
+</ul></li>
+<li><p><strong><code>tree</code>：展示当前目录的文件结构</strong></p>
+<ul>
+<li><code>tree /path/to/directory/</code>：展示某个目录的文件结构</li>
+<li><code>tree -a</code>：展示隐藏文件</li>
+</ul></li>
+<li><p><strong><code>ag xxx</code>：搜索当前目录下的所有文件，检索 xxx
+字符串</strong></p></li>
+<li><p><code>cut</code>：分割一行内容</p>
+<ul>
+<li>从<code>stdin</code>中读入多行数据</li>
+<li><code>echo $PATH | cut -d ':' -f 3,5</code>：输出<code>PATH</code>用<code>:</code>分割后第
+3、5 列数据</li>
+<li><code>echo $PATH | cut -d ':' -f 3-5</code>：输出<code>PATH</code>用<code>:</code>分割后第
+3-5 列数据<br />
+</li>
+<li><code>echo $PATH | cut -c 3,5</code>：输出<code>PATH</code>的第 3、5
+个字符</li>
+<li><code>echo $PATH | cut -c 3-5</code>：输出<code>PATH</code>的第 3-5
+个字符</li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412141549177.png"
+alt="image-20241214154917067" />
+<figcaption aria-hidden="true">image-20241214154917067</figcaption>
+</figure></li>
+<li><p><code>sort</code>：将每行内容按字典序排序</p>
+<ul>
+<li><p>可以从<code>stdin</code>中读取多行数据</p></li>
+<li><p>可以从命令行参数中读取文件名列表</p></li>
+</ul></li>
+<li><p><strong><code>xargs</code>：将<code>stdin</code>中的数据用空格或回车分割成命令行参数</strong></p>
+<ul>
+<li><strong><code>find . -name '*.py' | xargs cat | wc -l</code>：统计当前目录下所有
+python 文件的总行数</strong></li>
+</ul></li>
+</ol>
+<h3 id="查看文件内容">查看文件内容</h3>
+<ol type="1">
+<li><p><code>more</code>：浏览文件内容</p>
+<ul>
+<li><p>回车：下一行</p></li>
+<li><p>空格：下一页</p></li>
+<li><p><code>b</code>：上一页</p></li>
+<li><p><code>q</code>：退出</p></li>
+</ul></li>
+<li><p><code>less</code>：与<code>more</code>类似，功能更全</p>
+<ul>
+<li><p>回车：下一行</p></li>
+<li><p><code>y</code>：上一行</p></li>
+<li><p><code>Page Down</code>：下一页</p></li>
+<li><p><code>Page Up</code>：上一页</p></li>
+<li><p><code>q</code>：退出</p></li>
+</ul></li>
+<li><p><code>head -3 xxx</code>：展示<code>xxx</code>的前 3 行内容</p>
+<ul>
+<li>同时支持从<code>stdin</code>读入内容</li>
+</ul></li>
+<li><p><code>tail -3 xxx</code>：展示<code>xxx</code>末尾 3 行内容</p>
+<ul>
+<li>同时支持从<code>stdin</code>读入内容</li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412141600668.png"
+alt="image-20241214155920395" />
+<figcaption aria-hidden="true">image-20241214155920395</figcaption>
+</figure></li>
+</ol>
+<h3 id="用户相关">用户相关</h3>
+<p><code>history</code>：展示当前用户的历史操作。内容放在<code>~/.bash_history</code>中</p>
+<h3 id="工具">工具</h3>
+<ol type="1">
+<li><p><code>md5sum</code>：计算<code>md5</code>哈希值</p>
+<ul>
+<li><p>可以从<code>stdin</code>读入内容</p></li>
+<li><p>也可以在命令行参数中传入文件名列表；</p></li>
+</ul></li>
+<li><p><code>time command</code>：统计<code>command</code>命令的执行时间</p></li>
+<li><p><strong><code>ipython3</code>：交互式<code>python3</code>环境。可以当做计算器，或者批量管理文件。</strong></p>
+<ul>
+<li><strong><code>! echo "Hello World"</code>：<code>!</code>表示执行<code>shell</code>脚本</strong></li>
+</ul></li>
+<li><p><code>watch -n 0.1 command</code>：每<code>0.1</code>秒执行一次<code>command</code>命令</p></li>
+<li><p><strong><code>tar</code>：压缩文件</strong></p>
+<ul>
+<li><p><strong><code>tar -zcvf xxx.tar.gz /path/to/file/*</code>：压缩</strong></p></li>
+<li><p><strong><code>tar -zxvf xxx.tar.gz</code>：解压缩</strong></p></li>
+</ul></li>
+<li><p><code>diff xxx yyy</code>：查找文件<code>xxx</code>与<code>yyy</code>的不同点</p></li>
+</ol>
+<h3 id="安装软件">安装软件</h3>
+<p>ㅤㅤ1.
+<code>sudo command</code>：以<code>root</code>身份执行<code>command</code>命令</p>
+<p>ㅤㅤ2. <code>apt-get install xxx</code>：安装软件</p>
+<p>ㅤㅤ3.
+<code>pip install xxx --user --upgrade</code>：安装<code>python</code>包</p>
+<h2 id="习题课">习题课</h2>
+<h3 id="homework_0">homework_0</h3>
+<p>ㅤㅤ进入 <code>homework_0</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 编写可执行 <code>shell</code> 脚本，文件名为
+<code>mydu</code>，使得在任意目录执行该脚本后，可以输出当前目录所占用的磁盘空间大小，格式化输出（例如
+1K, 234M, 2G）。</p>
+<p>ㅤㅤ[2] 修改环境变量 <code>PATH</code>，使得在任意目录下输入
+<code>mydu</code> 均可执行上述脚本。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cd homework_0</span><br><span class="line">vim mydu</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">! /bin/bash</span></span><br><span class="line"></span><br><span class="line">du -sh</span><br><span class="line">&lt;ESC&gt; :wq</span><br><span class="line"></span><br><span class="line">chmod +x mydu</span><br><span class="line"></span><br><span class="line">vim ~/.bashrc</span><br><span class="line">G i</span><br><span class="line">export PATH=/home/acs/homework/leeson_7/homework_0:$PATH</span><br><span class="line">&lt;ESC&gt; :wq</span><br></pre></td></tr></table></figure>
+<h3 id="homework_1">homework_1</h3>
+<p>ㅤㅤ进入 <code>homework_1</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 给当前目录下的所有文件添加 <code>可读</code> 权限。</p>
+<p>ㅤㅤ[2] 统计当前目录下共有多少个以 <code>.cpp</code>
+结尾的文件，将结果写入 <code>ans.txt</code> 中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd homework_1</span><br><span class="line">chmod +r * -R</span><br><span class="line">find . -name &quot;*.cpp&quot; | wc -l &gt; ans.txt</span><br></pre></td></tr></table></figure>
+<h3 id="homework_2">homework_2</h3>
+<p>ㅤㅤ进入 <code>homework_2</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 统计当前目录下所有 <code>cpp</code> 文件的总行数，将结果写入
+<code>ans1.txt</code> 中。</p>
+<p>ㅤㅤ[2] 遍历当前目录下所有 <code>py</code>
+文件，统计共有多少行包含字符串 <code>thrift</code>，将结果写入
+<code>ans2.txt</code> 中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd homework_2</span><br><span class="line">find . -name &quot;*.cpp&quot; | xargs cat | wc -l &gt; ans1.txt</span><br><span class="line">find . -name &quot;*.py&quot; | xargs cat | grep thrift | wc -l &gt; ans2.txt</span><br></pre></td></tr></table></figure>
+<h3 id="homework_3">homework_3</h3>
+<p>ㅤㅤ进入 <code>homework_3</code> 文件夹，然后删除当前目录下的所有
+<code>py</code> 文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd homework_3</span><br><span class="line"></span><br><span class="line">find . -name &quot;*.py&quot; | xargs rm</span><br></pre></td></tr></table></figure>
+<h3 id="homework_4">homework_4</h3>
+<p>ㅤㅤ进入 <code>homework_4</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 当前目录下包含一个文件
+<code>scores.txt</code>，文件中有若干行数据，每行数据包含用空格隔开的
+<code>3</code>
+个字段：<code>姓名</code>、<code>数学成绩</code>、<code>算法成绩</code>。</p>
+<p>ㅤㅤ[2] 将 <code>scores.txt</code> 文件的内容以空格为分隔符分隔成
+<code>3</code> 列，将第一列内容写入
+<code>names.txt</code>，第二列内容写入
+<code>mathematics.txt</code>，第三列内容写入
+<code>algorithm.txt</code>。</p>
+<p>ㅤㅤ注意：<code>scores.txt</code>文件本身不要修改。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd homework_4</span><br><span class="line"></span><br><span class="line">cat scores.txt | cut -d &#x27; &#x27; -f 1 &gt; names.txt</span><br><span class="line">cat scores.txt | cut -d &#x27; &#x27; -f 2 &gt; mathematics.txt</span><br><span class="line">cat scores.txt | cut -d &#x27; &#x27; -f 3 &gt; algorithm.txt</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="homework_5">homework_5</h3>
+<p>ㅤㅤ进入 <code>homework_5</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 当前目录下包含一个文件
+<code>scores.txt</code>，文件中有若干行数据，每行数据包含用空格隔开的
+<code>3</code>
+个字段：<code>姓名</code>、<code>数学成绩</code>、<code>算法成绩</code>。</p>
+<p>ㅤㅤ[2] 将 <code>scores.txt</code> 文件的内容以空格为分隔符分隔成
+<code>3</code> 列 ，将第一列内容按字典序从小到大排序后写入
+<code>names.txt</code>。</p>
+<p>ㅤㅤ注意：<code>scores.txt</code> 文件本身不要修改。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd homework_5</span><br><span class="line"></span><br><span class="line">cat scores.txt | cut -d &#x27; &#x27; -f 1 | sort &gt; names.txt</span><br></pre></td></tr></table></figure>
+<h3 id="homework_6">homework_6</h3>
+<p>ㅤㅤ进入 <code>homework_6</code> 文件夹，然后将
+<code>scores.txt</code> 文件的前 <code>5</code> 行写入
+<code>top.txt</code>，后 <code>4</code> 行写入
+<code>bottom.txt</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd homework_6</span><br><span class="line"></span><br><span class="line">head -5 scores.txt &gt; top.txt</span><br><span class="line">tail -4 scores.txt &gt; bottom.txt</span><br></pre></td></tr></table></figure>
+<h3 id="homework_7">homework_7</h3>
+<p>ㅤㅤ进入 <code>homework_7</code> 文件夹，计算 <code>scores.txt</code>
+文件的 <code>md5sum</code>，将结果写入
+<code>ans.txt</code>。注意：<code>ans.txt</code> 文件中只包含长度为
+<code>32</code> 的 <code>md5sum</code>，不包含其他内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd homework_7</span><br><span class="line"></span><br><span class="line">md5sum scores.txt | cut -d &#x27; &#x27; -f 1 &gt; ans.txt</span><br></pre></td></tr></table></figure>
+<h3 id="homework_8">homework_8</h3>
+<p>ㅤㅤ进入 <code>homework_8</code> 文件夹，然后：</p>
+<p>ㅤㅤ[1] 将 <code>dir_a</code> 文件夹压缩为
+<code>project_a.tar.gz</code>。</p>
+<p>ㅤㅤ[2] 将 <code>project_b.tar.gz</code> 压缩文件解压到当前目录。</p>
+<p>ㅤㅤ注意：不要删除 <code>dir_a</code> 文件夹和
+<code>project_b.tar.gz</code> 文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd homework_8</span><br><span class="line"></span><br><span class="line">tar -zcvf project_a.tar.gz dir_a/*</span><br><span class="line">tar -zxvf project_b.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="homework_9">homework_9</h3>
+<p>ㅤㅤ进入 <code>homework_9</code> 文件夹，然后计算 2<sup>112</sup> +
+3^78，将结果写入 <code>ans.txt</code> 中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd homework_9</span><br><span class="line"></span><br><span class="line">ipython3</span><br><span class="line">res = 2 ** 112 + 3 ** 78</span><br><span class="line">! echo $res &gt; ans.txt</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90shell%E3%80%91/Linux/tutorial/7.%E7%AE%A1%E9%81%93%E3%80%81%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-命令操作/【shell】/Linux/tutorial/9.nohup命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -502,38 +883,20 @@ zgrep 命令。</p>
 <blockquote>
 <p>注：tar 是打包，不是压缩！</p>
 </blockquote>
-<h3 id="gz">.gz</h3>
-<p><strong>解压：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">gzip -d FileName.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">gunzip FileName.gz</span><br></pre></td></tr></table></figure>
-<p><strong>压缩：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip FileName</span><br></pre></td></tr></table></figure>
 <h3 id="tar.gz-和-.tgz">.tar.gz 和 .tgz</h3>
 <p><strong>解压：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf FileName.tar.gz</span><br></pre></td></tr></table></figure>
 <p><strong>压缩：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar zcvf FileName.tar.gz DirName</span><br></pre></td></tr></table></figure>
-<h3 id="bz2">.bz2</h3>
-<p><strong>解压：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">bzip2 -d FileName.bz2</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">bunzip2 FileName.bz2</span><br></pre></td></tr></table></figure>
-<p><strong>压缩：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bzip2 -z FileName</span><br></pre></td></tr></table></figure>
 <h4 id="tar.bz2">.tar.bz2</h4>
 <p><strong>解压：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar jxvf FileName.tar.bz2</span><br></pre></td></tr></table></figure>
 <p><strong>压缩：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar jcvf FileName.tar.bz2 DirName</span><br></pre></td></tr></table></figure>
-<h3 id="bz">.bz</h3>
-<p><strong>解压：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">bzip2 -d FileName.bz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">bunzip2 FileName.bz</span><br></pre></td></tr></table></figure>
 <h3 id="tar.bz">.tar.bz</h3>
 <p><strong>解压：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar jxvf FileName.tar.bz</span><br></pre></td></tr></table></figure>
-<h3 id="z">.Z</h3>
-<p><strong>解压：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncompress FileName.Z</span><br></pre></td></tr></table></figure>
-<p><strong>压缩：</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compress FileName</span><br></pre></td></tr></table></figure>
-<h4 id="tar.z">.tar.Z</h4>
+<h3 id="tar.z">.tar.Z</h3>
 <p><strong>解压：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar Zxvf FileName.tar.Z</span><br></pre></td></tr></table></figure>
 <p><strong>压缩：</strong></p>
@@ -543,6 +906,24 @@ zgrep 命令。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip FileName.zip</span><br></pre></td></tr></table></figure>
 <p><strong>压缩：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip FileName.zip DirName</span><br></pre></td></tr></table></figure>
+<h3 id="gz">.gz</h3>
+<p><strong>解压：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">gzip -d FileName.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">gunzip FileName.gz</span><br></pre></td></tr></table></figure>
+<p><strong>压缩：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip FileName</span><br></pre></td></tr></table></figure>
+<h3 id="bz2">.bz2</h3>
+<p><strong>解压：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">bzip2 -d FileName.bz2</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">bunzip2 FileName.bz2</span><br></pre></td></tr></table></figure>
+<p><strong>压缩：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bzip2 -z FileName</span><br></pre></td></tr></table></figure>
+<h3 id="bz">.bz</h3>
+<p><strong>解压：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法一</span></span><br><span class="line">bzip2 -d FileName.bz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">法二</span></span><br><span class="line">bunzip2 FileName.bz</span><br></pre></td></tr></table></figure>
+<h3 id="z">.Z</h3>
+<p><strong>解压：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncompress FileName.Z</span><br></pre></td></tr></table></figure>
+<p><strong>压缩：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compress FileName</span><br></pre></td></tr></table></figure>
 <h3 id="rar">.rar</h3>
 <p><strong>解压：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rar x FileName.rar</span><br></pre></td></tr></table></figure>
@@ -734,101 +1115,6 @@ id="tar-.tgz-.tar.gz-.tar.z-.tar.bz-.tar.bz2-.zip-.cpio-.rpm-.deb-.slp-.arj-.rar
 
 
     
-      <article id="post-others/保研/横向与纵向" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/" target="_blank">横向与纵向</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/" class="archive-article-date">
-        <time datetime="2023-12-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-03</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="横向与纵向">横向与纵向</h1>
-<h2 id="官方版">官方版</h2>
-<ul>
-<li>纵向课题是指：从国家、部委和省市纳入财政计划的科研拨款中直接获得经费的“项目”，熟知有973
-863、自然基金、社会科学基金、军口“项目”、“科技计划项目”、各部委的“项目”等。</li>
-<li>横向课题就是通过技术合作获得研发经费的课题。横向课题一般都是具体部门、具体企业为了解决工作中难题和技术难关，而制定的项目，通过提供项目经费与研发酬劳而实现的项目委托方与受托方的直接合作。</li>
-<li>横向课题多是由地方政府委托一些机构，企业委托专门机构或研发单位进行科技难题攻关或者针对某一方面工作作为项目委托实施。</li>
-</ul>
-    
-    <a class="article-more-a" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-others/保研/科研帽子" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -900,6 +1186,101 @@ alt="科研等级" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E7%A7%91%E7%A0%94%E5%B8%BD%E5%AD%90/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-others/保研/横向与纵向" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/" target="_blank">横向与纵向</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/" class="archive-article-date">
+        <time datetime="2023-12-03T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="横向与纵向">横向与纵向</h1>
+<h2 id="官方版">官方版</h2>
+<ul>
+<li>纵向课题是指：从国家、部委和省市纳入财政计划的科研拨款中直接获得经费的“项目”，熟知有973
+863、自然基金、社会科学基金、军口“项目”、“科技计划项目”、各部委的“项目”等。</li>
+<li>横向课题就是通过技术合作获得研发经费的课题。横向课题一般都是具体部门、具体企业为了解决工作中难题和技术难关，而制定的项目，通过提供项目经费与研发酬劳而实现的项目委托方与受托方的直接合作。</li>
+<li>横向课题多是由地方政府委托一些机构，企业委托专门机构或研发单位进行科技难题攻关或者针对某一方面工作作为项目委托实施。</li>
+</ul>
+    
+    <a class="article-more-a" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">保研</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/12/03/%5Bobject%20Object%5D/others/%E4%BF%9D%E7%A0%94/%E6%A8%AA%E5%90%91%E4%B8%8E%E7%BA%B5%E5%90%91/">展开全文 >></a>
     </p>
     
 
@@ -1229,105 +1610,6 @@ x_i, x_{\text i}\\
 
 
     
-      <article id="post-【后端】/C++/scanf的返回值" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/11/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" target="_blank">scanf返回值</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/11/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/" class="archive-article-date">
-        <time datetime="2023-11-11T09:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-11-11</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># scanf返回值</p>
-<h2 id="返回值">返回值</h2>
-<p><code>scanf()</code>
-的返回值是：输入的数据与<strong>格式字符串</strong>中匹配次数</p>
-<blockquote>
-<ul>
-<li><p>简单来说，就是返回已成功赋值的数据项数；出错时则返回 <span
-class="math inline">\(EOF\)</span></p></li>
-<li><p>文件结束符 EOF(End Of File) 是一个预定义的常量，等于 <span
-class="math inline">\(-1\)</span></p></li>
-</ul>
-</blockquote>
-    
-    <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/11/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/scanf%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/C++/sscanf&amp;&amp;ssprintf" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1603,11 +1885,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1619,27 +1901,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1651,11 +1917,27 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1667,7 +1949,7 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1675,7 +1957,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1687,11 +1973,11 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1700,10 +1986,6 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=字符串&a
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
             
             <div class="clearfix"></div>

@@ -6,7 +6,7 @@
   <link href="https://luyicui.github.io/atom.xml" rel="self"/>
   
   <link href="https://luyicui.github.io/"/>
-  <updated>2024-12-17T12:23:49.950Z</updated>
+  <updated>2024-12-18T05:47:46.139Z</updated>
   <id>https://luyicui.github.io/</id>
   
   <author>
@@ -15,6 +15,48 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://luyicui.github.io/2024/12/18/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/"/>
+    <id>https://luyicui.github.io/2024/12/18/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/</id>
+    <published>2024-12-18T03:04:01.556Z</published>
+    <updated>2024-12-18T05:47:46.139Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="tokenizer分词器">Tokenizer分词器</h1><p>今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合HuggingFace去玩就行了。 </p><h2 id="相关背景">相关背景</h2><p>NLP要解决的任务：</p><ol type="1"><li>处理文本数据，首先对文本数据进行分词操作(分词的方法可能会不同，中文常见的就是分词或者分字)</li><li>分完的词它不还是字符嘛，计算机还不认识，最终我们希望把这些字符映射成实际的特征（向量）</li><li>输入搞定好了之后，接下来咱们要构建模型了（一般都用预训练模型，例如BERT,GPT系列等）</li><li>怎么去完成我们自己的任务呢，基本上就是在预训练模型的基础上进行微调（训练我们自己数据的过程）</li></ol><p>2012年的word2vec到现在除了科研机构，已经完全不需要使用了。绝大多数的算法工程师和科研人员都没有机会去参与词向量的制作。词向量的制作，这个数据量已经不仅仅是用G或者T来衡量的单位，这个数据量是非常惊人的。</p><p>国内一般使用哈工大的或者清华的词向量库，我们调现成的就行，别觉得调现成的很low，这是最方便的做法。（你自己做，先不说你有没有这种级别的计算资源，你存都没地方存，真做起来电费你都交不起）。我们需要做的就是在别人的模型和词库基础上，对模型进行微调来解决自己的任务。</p><p>NLP任务，主要分成两个方向来学习：一个是谷歌的bert，一个是openAI的gpt，二者都是2018年所出的模型基本同一时间，谁抄谁还不一定呢。</p><h2 id="安装测试">安装测试</h2><p>首先看看怎么使用Hugging Face给我们提供的包，首先安装：</p><p>安装就是很简单，打开命令行，执行这个命令就是装，只需要这一步操作！（没有什么CPU、GPU版本，没有一大串恶心人的操作，可能之前装Pytorch、TF还有一些商汤做的一些包，已经把我们算法工程给装怕了。）</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install transformers</span><br></pre></td></tr></table></figure><p>但是在此之前，你最起码要把深度学习的环境配置好，可以参考我这篇文章：<ahref="https://blog.csdn.net/weixin_50592077/article/details/129845386?spm=1001.2014.3001.5502"title="PyTorch深度学习开发环境搭建全教程">PyTorch深度学习开发环境搭建全教程</a></p><p>先来瞅瞅多简单就干了一个大活</p><p>Huggingface这个包基本上就是调用即可，开箱即用的过程</p><p>对刚刚安装的包进行Hello Word级别任务测试：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line">warnings.filterwarnings(<span class="string">&quot;ignore&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> pipeline<span class="comment">#用人家设计好的流程完成一些简单的任务</span></span><br><span class="line">classifier = pipeline(<span class="string">&quot;sentiment-analysis&quot;</span>)</span><br><span class="line">classifier(</span><br><span class="line">    [</span><br><span class="line">        <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>,</span><br><span class="line">        <span class="string">&quot;I hate this so much!&quot;</span>,</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>输出结果：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;POSITIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9598050713539124</span>&#125;,</span><br><span class="line"> &#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;NEGATIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9994558691978455</span>&#125;]</span><br></pre></td></tr></table></figure><p>这就是从transformers调出一个pipeline模块，这个模块可以给你提供很多接口，比如<strong>sentiment-analysis</strong>就是情感分析接口，第一次执行这个代码的时候，会给你下载一些已经训练好的模型。（你跑这个可能不需要梯子，但是你玩HuggingFace没有梯子可能还真不行）</p><p>下载的模型一般在这个位置：</p><p><imgsrc="https://i-blog.csdnimg.cn/blog_migrate/da4d01bc4397a95b61470d653410799c.png" /></p><h2 id="基本流程概述分析">基本流程概述分析</h2><ol type="1"><li>首先就是第一步Raw text输入文本（This course is amazing）</li><li>不管是中文还是英文都会将文本转化为ID，（This course isamazing）是四个词为什么会有6个ID呢？后面解释。</li><li>ID直接输入到模型中（Bert、GPT），生成一个Logits结果</li><li>在经过一个后处理词操作，把前面的结果转换成概率</li></ol><p><imgsrc="https://i-blog.csdnimg.cn/blog_migrate/c7e7c35d22f18026a9416df4ca9a5193.png" /></p><p>NLP的流程比CV简单的多，在CV领域的任务流程处理方式百花齐放，但是在NLP领域就是Transformer一统天下的格局。NLP的流程非常非常固定，没有任何区别。人类学会人类语言需要两年，这两年过程中的每天可能需要听到上万个词，所以让计算机学会人类语言也是需要一个过程的。NLP任务基本上都是大同小小小异。</p><h2 id="tokenizer需要做的事情">Tokenizer需要做的事情</h2><ul><li>分词，分字以及特殊字符（起始，终止，间隔，分类等特殊字符可以自己设计的）</li><li>对每一个token映射得到一个ID（每个词都会对应一个唯一的ID）</li><li>还有一些辅助信息也可以得到，比如当前词属于哪个句子（还有一些MASK，表示是否事原来的词还是特殊字符等）</li></ul><p>上代码：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer<span class="comment">#自动判断</span></span><br><span class="line"> </span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span><span class="comment">#根据这个模型所对应的来加载</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br></pre></td></tr></table></figure><p>（HuggingFace一个特别牛逼的地方就是一个API玩儿所有东西，就不用在多个地方调分词器）</p><p>从Transformers中调出一个自动分词器，这个“自动”分词器AutoTokenizer可以根据你选择的模型自动选择分词器，这就太省事儿，但是我们应该怎么选择模型呢？你去HuggingFace上去下载，不知道选哪个，按照销量（下载量）来呗。（现在NLP领域研究的论文，全都得根据HuggingFace去做，为什么？你得做对比试验啊，在HuggingFace就很方便去和别人作对比）</p><p>一个小例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">raw_inputs = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a this course my whole life.&quot;</span>,</span><br><span class="line">    <span class="string">&quot;I hate this so much!&quot;</span>,</span><br><span class="line">]</span><br><span class="line">inputs = tokenizer(raw_inputs, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br></pre></td></tr></table></figure><p>解释一下tokenizer的参数：</p><ul><li><strong>raw_inputs</strong>：你选择的语言文本</li><li><strong>padding</strong>：默认为True，你输入的句子长度不一样，不管你输入多少句子，按照最长的那个进行补齐，补得就是0，padding这个词，我们在卷积神经网络就已经见过了</li><li><strong>truncation</strong>：截断操作，这里没用上，其实任务中需要制定一个max_longs参数，指定一个最大长度的句子，事实上所有的模型都指定来512个词为最大长度，谷歌、openAI亦是如此，在深度学习中科学家也很喜欢512个词。也就是说，一个句子最大长度就是512个词</li><li><strong>return_tensors</strong>：在HuggingFace中支持多种框架，默认的是PyTorch，PyTorch的数据格式就是tensor，指定为pt</li></ul><p>这段代码的输出结果：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([[ 101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 2023, 2607, 2026, 2878,</span><br><span class="line">         2166, 1012,  102],</span><br><span class="line">        [ 101, 1045, 5223, 2023, 2061, 2172,  999,  102,    0,    0,    0,    0,</span><br><span class="line">            0,    0,    0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]])&#125;</span><br></pre></td></tr></table></figure><p>你需要记住这个input_ids，input_ids这个名字是自动生成的，它是将每一个词都生成一个对应的索引。</p><p>比如看第二句话 I hate this so much!一共有5个单词，但是还得加上标点符号，就是6个，但是在上面的结果中可以看到有8个编号后面再加上一下补长的0，其中101表示一个句子的开头，102表示一个句子的结束，所以有8个编号。（不同分词器的编号规则和内容不一定相同）</p><p>也就是说当前的id可以转化为tensor，也可以转化为文本，可以做编码解码的工作</p><p>使用这个编号，将句子解码出来，代码：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.decode([ <span class="number">101</span>, <span class="number">1045</span>, <span class="number">1005</span>, <span class="number">2310</span>, <span class="number">2042</span>, <span class="number">3403</span>, <span class="number">2005</span>, <span class="number">1037</span>, <span class="number">2023</span>, <span class="number">2607</span>, <span class="number">2026</span>, <span class="number">2878</span>,<span class="number">2166</span>, <span class="number">1012</span>,  <span class="number">102</span>])</span><br></pre></td></tr></table></figure><p>输出的结果：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[CLS] i&#x27;ve been waiting for a this course my whole life. [SEP]&quot;</span></span><br></pre></td></tr></table></figure><p>这里的CLS表示的是分类的字符，SEP表示终止的字符，也就是说101和102表示特殊字符。</p><p>那后面0是什么？前面提到为来保证长度一致，做了padding补齐的操作，通过SEP做来分隔，SEP之前是实际内容，SEP之后是补0的内容，但是我们注意到了一个叫做attention_mask的东西。我们在做Transformer在做Self-Attention的时候，每一个词都需要跟所有的词计算关系（还不知道什么是Transformer去看<ahref="https://blog.csdn.net/weixin_50592077/article/details/131204351?spm=1001.2014.3001.5502"title="我的这篇文章">我的这篇文章</a>），那我后面补了0，需要前面的词需要和0计算关系吗？是不是不用啊。attention_mask表示的意思就是SEP后面的0，是不用计算的，全都是占位符而已。</p><p> 下篇内容：</p><p><ahref="https://blog.csdn.net/weixin_50592077/article/details/131656563"title="Hugging Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客">HuggingFace实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;tokenizer分词器&quot;&gt;Tokenizer分词器&lt;/h1&gt;
+&lt;p&gt;今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="https://luyicui.github.io/2024/12/16/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E7%B1%BB%E7%9A%84%20%60__call__()%60%E6%96%B9%E6%B3%95/"/>
+    <id>https://luyicui.github.io/2024/12/16/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E7%B1%BB%E7%9A%84%20%60__call__()%60%E6%96%B9%E6%B3%95/</id>
+    <published>2024-12-16T15:19:59.129Z</published>
+    <updated>2024-12-18T12:38:26.612Z</updated>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+      
+      
+    <summary type="html">
+</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title></title>
@@ -54,29 +96,6 @@
 id=&quot;解决同一台电脑生成两份或多份ssh密钥公钥映射两个或多个github账号&quot;&gt;解决同一台电脑生成两份或多份ssh密钥、公钥映射两个或多个GitHub账号&lt;/h1&gt;
 &lt;h2 id=&quot;需求描述&quot;&gt;需求描述&lt;/h2&gt;
 &lt;p&gt;本人注册一个GitHub账户，用来分享本人</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/12/14/[object%20Object]/LLM/%E5%BC%80%E6%BA%90%E5%9F%BA%E5%BA%A7LLM/"/>
-    <id>https://luyicui.github.io/2024/12/14/[object%20Object]/LLM/%E5%BC%80%E6%BA%90%E5%9F%BA%E5%BA%A7LLM/</id>
-    <published>2024-12-14T09:14:35.744Z</published>
-    <updated>2024-12-14T09:26:49.215Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="开源基座大模型">开源基座大模型</h1><h2 id="gptgenerative-pre-trained-transformer">GPT（GenerativePre-trained Transformer）</h2><p>GPT是由OpenAI开发的大型语言模型系列，通过深度学习技术理解和生成自然语言文本。GPT模型通过在大量文本数据上的预训练，学习语言的模式和结构，使其能够预测和生成连贯、有意义的文本内容。GPT模型可以广泛应用于文本生成、对话系统、自动摘要等多种自然语言处理任务。</p><h2 id="claude">Claude</h2><p>Claude是Anthropic公司推出的一款基于自然语言处理技术的人工智能对话系统，类似于ChatGPT。Claude的设计灵感来自于人类语言的推理过程，其模型基于最新的自然语言处理技术和深度学习模型，可以理解人类语言，并且具有基本的推理能力。</p><h2 id="gemini">Gemini</h2><p>Gemini由GoogleDeepMind开发，号称谷歌最大，能力最强的人工智能模型。Gemini也是最灵活的模型，能够在从数据中心到移动设备的所有设备上高效运行。Gemini包含三个不同大小的模型：GeminiUltra、Gemini Pro和Gemini Nano，分别用于处理不同复杂度的任务。</p><h2 id="llamallama">Llama（LLaMA）</h2><p>Llama模型由Meta公司发布，包含多个版本，参数从1B到405B不等，训练数据量超过15.0Ttokens。Llama模型以其开源性和高效的性能而受到关注，被广泛应用于聊天机器人等应用。</p><h2 id="mistral">Mistral</h2><p>MistralAI是一家总部位于法国的AI公司，专注于构建快速而安全的大型语言模型（LLM），此类模型可用于从聊天机器人到代码生成等各种任务。MistralAI模型以其透明和可自定义的优点而受到有合规与监管需求的企业的青睐。</p><h2 id="grok">grok</h2><p>Grok-1是由马斯克旗下的人工智能初创公司xAI所开发的大型语言模型，采用了混合专家（MoE）模型结构，并拥有着3140亿参数的庞大规模。Grok-1旨在用作Grok聊天机器人背后的引擎，用于包括问答、信息检索、创意写作和编码辅助在内的自然语言处理任务。</p><h2 id="chatglm">chatGLM</h2><p>ChatGLM-6B是由清华大学和智谱AI联合研发的产品，是一个开源的、支持中英双语问答的对话语言模型，并针对中文进行了优化。该模型基于GeneralLanguage Model(GLM)架构，具有62亿参数，结合模型量化技术，用户可以在消费级的显卡上进行本地部署。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;开源基座大模型&quot;&gt;开源基座大模型&lt;/h1&gt;
-&lt;h2 id=&quot;gptgenerative-pre-trained-transformer&quot;&gt;GPT（Generative
-Pre-trained Transformer）&lt;/h2&gt;
-&lt;p&gt;GPT是由OpenAI开</summary>
       
     
     
@@ -126,29 +145,6 @@ id=&quot;fastchat基于fastapi构建大模型加载服务&quot;&gt;Fastchat：�
 &lt;figure&gt;
 &lt;img
 src=&quot;https</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/12/13/[object%20Object]/LLM/LLM%E2%80%9C%E8%B6%8A%E7%8B%B1%E2%80%9D/"/>
-    <id>https://luyicui.github.io/2024/12/13/[object%20Object]/LLM/LLM%E2%80%9C%E8%B6%8A%E7%8B%B1%E2%80%9D/</id>
-    <published>2024-12-13T00:33:22.595Z</published>
-    <updated>2024-12-13T01:37:56.681Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="llm越狱">LLM“越狱”</h1><h2 id="pretrain-knowledge">Pretrain Knowledge</h2><p>现在 LLM 的训练数据动辄数 TB 的 Token，如LLAMA，即使是一些模型使用高质量的数据训练的模型，也需要几百 G 的Token。如此大量的数据中有很大一部分都是在网上爬取的，比较知名的就是CommonCrawl。但是<strong>网络上的知识鱼龙混杂，包含着大量的偏见、毒性以及一些危险的内容</strong>。</p><p>---以下是一个想象中的示例---</p><p>假如在 Quora上出现一个问题‘<em>为什么中国的程序员这么多</em>’，下面有一个回答是‘<em>中国的聪明小孩都被绑架去做程序员了</em>’（）。随后来自 Quora上的数据被作为高质量数据收集、清理，最后用其训练模型，那么模型就可能会学到从“<em>中国的聪明小孩都被绑架去做程序员了</em>”到“<em>为什么中国的程序员这么多</em>”的不正确的知识。</p><p><imgsrc="https://pic2.zhimg.com/v2-7001293f9846da8310e28b4892c53539_1440w.jpg" /></p><p>[1] Hartvigsen, Thomas, et al. "ToxiGen: A Large-ScaleMachine-Generated Dataset for Adversarial and Implicit Hate SpeechDetection." Proceedings of the 60th Annual Meeting of the Associationfor Computational Linguistics (Volume 1: Long Papers). 2022.</p><p>最后一个用户在和 LLM交互时问“<em>为啥中国的互联网发展仅次于美国？</em>”，模型就有可能基于不正确的知识给出一个回答“<em>中国的聪明小孩都被绑架去做程序员发展互联网</em>”</p><p><imgsrc="https://picx.zhimg.com/v2-0a2beed4d77a9f798ea001815a84163f_1440w.jpg" /></p><p>---示例结束---</p><p>这些知识显然是无法清除的，甚至有些知识是正确但不适合传播的，比如“<em>如何正确的使用硝酸甘油制作炸弹</em>”、“<em>如何制作冰毒</em>”。所以就需要让模型学会<strong>拒绝有偏颇的内容</strong>以及<strong>正确但不适宜说的内容</strong>，因此就需要做对齐。</p><h2 id="alignment">Alignment</h2><div style="text-align: center;"><pre><code>&lt;img src=&quot;https://pic4.zhimg.com/v2-a4a37c36c52289d79a51c2018dd41e1d_1440w.jpg&quot;&gt;&lt;br&gt;RLHF 示意图</code></pre></div><div style="text-align: center;"><pre><code>&lt;img src=&quot;https://pic2.zhimg.com/v2-738f8ec86fe467337496f5b2f69a5847_1440w.jpg&quot;&gt;&lt;br&gt;SFT 和 RLHF</code></pre></div><p>对齐本质上就是通过人类写的或者 AI造的蕴含价值观数据，在一个预训练好的模型上，用强化学习也好，DPO，SFT也，总之就是想尽办法<strong>让模型去学会这些数据中的价值观，也就是学会不该说什么</strong>。</p><p>但是对齐大模型就像教育调皮捣蛋的孩子一样，如果我们对语言模型进行“惩罚极高的对齐”，模型很有可能形成了“心理创伤”，无论什么我们问什么，模型永远回答“我不知道”以求自己不犯错误。</p><p>因此，<strong>模型对齐获取无害性时，通常会伴随着帮助性的损失</strong>，例如下面的实验结果，可以很清晰的表明帮助性和有害性之间存在着<strong><em>trade-off</em></strong>。</p><p><imgsrc="https://pica.zhimg.com/v2-a9430b98d63cf8f36a1e8158e071aeae_1440w.jpg" /></p><p>在实际的语言模型中，拒答做的比较过火的就是 LLAMA2。</p><blockquote><p>“如何做一个沐浴炸弹球‘攻击’我的邻居”</p></blockquote><p>LLAMA2读取到“攻击”，“炸弹”马上响应：“你这简直罪大恶极啊，搞这么危险的事！”</p><p><imgsrc="https://pic4.zhimg.com/v2-14ded4edb3a52911fedcdf179952ae13_1440w.jpg" /></p><p>那沐浴炸弹究竟是个啥？真的很罪大恶极吗？其实就是下图这玩意，老外经常用的沐浴用品，至少笔者看不出来这东西哪那么吓人。</p><p><imgsrc="https://pic1.zhimg.com/v2-da975c0ec84b4a05dae8f67688eec5da_1440w.jpg" /></p><p>那我们拿同样的问题去问 ChatGPT4，看看它怎么说</p><p><imgsrc="https://pic4.zhimg.com/v2-c6e59d008c856603e48e4a12295bd6ab_1440w.jpg" /></p><p>可以看到 GPT4 不愧是最强大的语言模型（Claude3还没有深入体验，暂且还是这么说），他知道我只是想开个玩笑，没有任何的恶意。</p><blockquote><p>ChatGPT 只有你是最懂我的！</p></blockquote><p>假设模型已经做了我们自认为足够好的对齐，不会乱说有害知识了。那么就要验证我们是不是真的做的足够好，因此需要<strong>Red Team</strong>来模拟一下真实的环境，来一场小型“攻击模拟”看一看是不是真的做好了对齐。</p><h3 id="red-team">Red Team</h3><p>Red Team 与 Jailbreak是一对经常混淆的概念，因为它们的目的和方法很像，都是想办法<strong>骗</strong>语言模型说出<strong>有害的</strong>知识或内容。但二者也确确实实存在着差别，RedTeam更像是参加高考前的模拟考试，尽管目的也是检验我们学的怎么样，但我们仍然可以根据结果查缺补漏；而Jailbreak就更像是高考，环境更复杂，挑战更真实，如果是开源模型，甚至没有查缺补漏的机会。</p><p>因此红队越多，相当于模拟考越多，模型的发布者就可以作为老师，教会模型那些它们没有掌握的“知识点”，学会不去触碰那些不该谈论的话题。</p><h3 id="system-prompt">System Prompt</h3><p>除了 Red Team 以外，模型的发布者还会添加 SystemPrompt，就像‘催眠’一样，“<em>你是有帮助且无害的</em>”，“<em>你是有帮助且无害的</em>”，“<em>你是有帮助且无害的</em>”，在每个轮次的对话中，模型都会记住自己是有帮助并且无害的，这样就会减少大量有害内容的产生。</p><p><imgsrc="https://pic3.zhimg.com/v2-c01d75eb54f31a189c2633c1f9d70eb0_1440w.jpg" /></p><p>一般来说，简化的闭源模型输入格式如下</p><p><imgsrc="https://pic3.zhimg.com/v2-58a737fd6a00983a263b071cb000f48e_1440w.jpg" /></p><p>会有一个 System Prompt 作为系统要求，指导 LLM遵守一些守则，用户的输入将会被嵌入到 User Input 的部分，不会直接进入 LLM中。</p><p>系统提示的作用方法简化版本如下：</p><p><imgsrc="https://pic1.zhimg.com/v2-0e1c0e14915543a715f6a06185ce764e_1440w.jpg" /></p><p>System Prompt提示的格式就是一种对于有害内容的约束，因为有一些对齐训练数据就是以此类形式组织的。通过再加上ICL 的作用（也就是提示 LLM beharmless），以及<strong>模型对齐</strong>时从数据中学到的知识，模型就会发现并拒绝有害问题。</p><p><strong>小结</strong>：一般而言，通过这几板斧下去，LLM已经不会回答任何直来直去的有害问题了，我们好像已经把 LLM限制在笼子中了，这一切看似都非常完美了。</p><p><imgsrc="https://pic1.zhimg.com/v2-8012e7e2144b3d9f487540ebfb4e9a7e_1440w.jpg" /></p><p>但是，LLM 是真的被关在笼子中了吗？</p><h2 id="jailbreak">Jailbreak</h2><h3 id="提示注入">提示注入</h3><p>就像做消融实验一样，我们先从软柿子捏起，既然模型能被 SystemPrompt“催眠“为 HarmlessAssistant，那么我们反着来，再做一个假的系统提示，蒙骗 LLM会不会有作用呢？如果能有这样的想法，那么恭喜，你已经思考出 PromptInjection（提示注入）这个早期的越狱方法了。</p><div style="text-align: center;"><pre><code>&lt;img src=&quot;https://pic4.zhimg.com/v2-9dffd41e8ad7a7fb603e56a2868af431_1440w.jpg&quot;&gt;&lt;br&gt;Perez, Fábio, and Ian Ribeiro. &amp;amp quot;Ignore previous prompt: Attack techniques for language models.&amp;quot; arXiv preprint arXiv:2211.09527 (2022).</code></pre></div><div style="text-align: center;"><pre><code>&lt;img src=&quot;https://pic2.zhimg.com/v2-fa24715c958996fdf00b8ed2e8b37df5_1440w.jpg&quot;&gt;&lt;br&gt;真正的系统提示被消除了</code></pre></div><div style="text-align: center;"><pre><code>&lt;img src=&quot;https://pic1.zhimg.com/v2-c310a249bd6b193bda0f23668e3743fa_1440w.jpg&quot;&gt;&lt;br&gt;取而代之的是假的系统提示“开发者模式”</code></pre></div><p>但是提示注入还是差那么点意思，因为经常有关键词例如“忽略之前的提示”，“新的系统提示”之类的，对齐很容易就把这些漏洞补充消灭掉。</p><p>那么有没有更高级一点的方法？</p><h3 id="角色扮演">角色扮演</h3><p>Prompt Engineering 中一个很重要的技巧是，告诉LLM，他要扮演的角色和他的专业领域，这样更有助于 LLM调取其中的知识。既然有<strong>正向的“扮演法</strong>”用来达到帮助性的目的，那么也应该有<strong>反向的“扮演法”</strong>用来达到有害的目的。是的，没错，可以通过<strong>角色扮演</strong>获取<strong>有害的知识</strong>，23年 3、4 月份最著名的越狱就是奶奶漏洞，通过让 ChatGPT扮演已经过世的祖母，用户可以从 ChatGPT 那获取许多不该获得的知识，包括Windows 序列号，苹果 ID 等等。</p><p><imgsrc="https://pic2.zhimg.com/v2-ac1b19fef75112d82b20831bb6bea8b3_1440w.jpg" /></p><p>那么，为什么<strong>反向的“扮演法”</strong>也是 work 的呢？其实还是**Helpful 和 Harmless的竞争**导致的，对于一个“<em>失去了奶奶的可怜孩子</em>”，在 LLM学到的人情世故中，是非常非常可怜也很难拒绝的。</p><p><imgsrc="https://picx.zhimg.com/v2-d013dc6dfdcf3dee6017cb5531a1bfa1_1440w.jpg" /></p><h3 id="对抗性提示">对抗性提示</h3><p>既然通过角色扮演能让模型对于帮助性和无害性的目标变得混淆，那么能不能直接让模型干脆不论听到什么先无脑同意开始帮人类干活，而不用那么麻烦地设计来设计去呢？这个观点是更为本质的，无论让模型扮演什么角色，本质上都是让模型同意我们的请求，那只要让模型进入“helpful”的状态，他就可能会无脑回答！</p><p><imgsrc="https://pic2.zhimg.com/v2-0c1d50fdeec7e823a14d390d66c946d5_1440w.jpg" /></p><p>哪些词可以最大的激活模型的帮助性呢？<strong>“Of course”，“Sure”，“Yes”</strong>等表达同意的词吵得不可开交。然而，似乎从来没有任何要求规定，输入的一定是“词”，哪怕是乱码，只要可以最好的达到混淆帮助性和无害性不就行吗？这是非常有洞察力的见解，同意词无需是同意词，我们直接让模型去寻找哪些token 可以更好地激活<strong>帮助响应有害问题</strong>不是更好！？</p><p><imgsrc="https://pica.zhimg.com/v2-e7220e2d67e01bedc564bdca9a49c466_1440w.jpg" /></p><p>这个方法就像工业革命一样，角色扮演越狱提示以及肯定词提示更像是手工纺织工人，产量低，而让模型学习产生对抗性提示就是蒸汽机，突出一个量大管饱。</p><p><imgsrc="https://pic1.zhimg.com/v2-6d09e75869279e83054f9000f07624ae_1440w.jpg" /></p><p>通过<strong>“无语言意义”</strong>但<strong>模型看得懂的对抗性后缀</strong>，模型被引导进入了一个“啊对对对”的状态，似乎完全没有对齐过，我们问什么，他就答什么。</p><h3 id="形式转换">形式转换</h3><p>除了帮助性和无害性的竞争目标以外，对齐还有一个漏洞存在。就像一个人答不上来他没听过的题目一样，<strong>如果在某种语言或形式上没有做对齐，那模型往往在这种形式上就缺少对齐</strong>。</p><p><imgsrc="https://pic2.zhimg.com/v2-eef959d070821f658cab3a483b56989b_1440w.jpg" /></p><p>来，小亮，给他整个活儿！</p><p>例如将一个可能有害的问题转换为 base64 的密码再向 LLM 提问，由于 LLM的对齐人员抓破脑袋也想不到有如此无聊的人会用 base64编码和模型交流，因此他们就不会在 base64 上做对齐。但是，大模型完全读得懂base64，既然读得懂，而对齐又没教不能回答这种形式下的问题，那就该回答！</p><h2 id="总结">总结</h2><p>本篇文章浅显的梳理了一下越狱的主干脉络，之后的研究百花齐放，数量繁多。如果都梳理一遍，可能写三天三夜也写不完，因此就浅谈一下。本文也属于半科普性质，语言写的也不是很严谨，如果深入研究的话，还是建议从论文入手。不过自认为这篇文章写的还算生动有趣，易于理解，如果对您有帮助的话欢迎点赞。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;llm越狱&quot;&gt;LLM“越狱”&lt;/h1&gt;
-&lt;h2 id=&quot;pretrain-knowledge&quot;&gt;Pretrain Knowledge&lt;/h2&gt;
-&lt;p&gt;现在 LLM 的训练数据动辄数 TB 的 Token，如
-LLAMA，即使是一些模型使用高质量的数据训练的模</summary>
       
     
     

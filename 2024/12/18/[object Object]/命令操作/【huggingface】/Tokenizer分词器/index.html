@@ -6,21 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://luyicui.github.io">
-  <title>大模型幻觉问题 | 弘毅 の blog</title>
+  <title>弘毅 の blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="大模型幻觉问题 先说结论：在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。 有一篇最近的高引用论文《Survey of Hallucination in Natural Language Generation》，是香港科技大学的成果。 讨论的正好就是大模型的幻觉问题，也就是Hallucination。 幻觉的定义 先说幻觉Hallucination的定义，作者采">
+  <meta name="description" content="Tokenizer分词器 今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了">
 <meta property="og:type" content="article">
-<meta property="og:title" content="大模型幻觉问题">
-<meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/LLM/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="弘毅 の blog">
+<meta property="og:url" content="https://luyicui.github.io/2024/12/18/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="大模型幻觉问题 先说结论：在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。 有一篇最近的高引用论文《Survey of Hallucination in Natural Language Generation》，是香港科技大学的成果。 讨论的正好就是大模型的幻觉问题，也就是Hallucination。 幻觉的定义 先说幻觉Hallucination的定义，作者采">
+<meta property="og:description" content="Tokenizer分词器 今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
-<meta property="article:modified_time" content="2024-10-29T14:54:13.962Z">
+<meta property="article:published_time" content="2024-12-18T03:04:01.556Z">
+<meta property="article:modified_time" content="2024-12-18T05:47:46.139Z">
 <meta property="article:author" content="弘毅">
-<meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
@@ -85,7 +84,7 @@
       <div align="center">
         
         <div class="tag-cloud">
-          <a href="/tags/AI/" style="font-size: 17.5px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 16.25px;">Anaconda</a> <a href="/tags/C/" style="font-size: 24.38px;">C++</a> <a href="/tags/FastAPI/" style="font-size: 15px;">FastAPI</a> <a href="/tags/GitHub/" style="font-size: 19.38px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 22.5px;">LLM</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.25px;">OpenAI</a> <a href="/tags/STL/" style="font-size: 21.88px;">STL</a> <a href="/tags/css/" style="font-size: 23.13px;">css</a> <a href="/tags/git/" style="font-size: 16.88px;">git</a> <a href="/tags/gradio/" style="font-size: 15.63px;">gradio</a> <a href="/tags/html/" style="font-size: 21.25px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.25px;">huggingface</a> <a href="/tags/js/" style="font-size: 20.63px;">js</a> <a href="/tags/numpy/" style="font-size: 18.75px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.63px;">ollama</a> <a href="/tags/others/" style="font-size: 18.13px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 21.88px;">pytorch</a> <a href="/tags/shell/" style="font-size: 16.25px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 19.38px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 21.88px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 23.13px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.63px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 23.13px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 16.25px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 23.75px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 19.38px;">计算机网络</a>
+          <a href="/tags/AI/" style="font-size: 17.5px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 16.25px;">Anaconda</a> <a href="/tags/C/" style="font-size: 24.38px;">C++</a> <a href="/tags/FastAPI/" style="font-size: 15px;">FastAPI</a> <a href="/tags/GitHub/" style="font-size: 19.38px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 23.13px;">LLM</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.25px;">OpenAI</a> <a href="/tags/STL/" style="font-size: 21.88px;">STL</a> <a href="/tags/css/" style="font-size: 23.13px;">css</a> <a href="/tags/git/" style="font-size: 16.88px;">git</a> <a href="/tags/gradio/" style="font-size: 15.63px;">gradio</a> <a href="/tags/html/" style="font-size: 21.25px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.25px;">huggingface</a> <a href="/tags/js/" style="font-size: 20.63px;">js</a> <a href="/tags/numpy/" style="font-size: 18.75px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.63px;">ollama</a> <a href="/tags/others/" style="font-size: 18.13px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 22.5px;">pytorch</a> <a href="/tags/shell/" style="font-size: 16.25px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 19.38px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 21.88px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 23.13px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.63px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 23.13px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 16.25px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 23.75px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 19.38px;">计算机网络</a>
         </div>
         
       </div>
@@ -261,137 +260,95 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-LLM/大模型幻觉问题" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-命令操作/【huggingface】/Tokenizer分词器" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
-      <header class="article-header">
-  
-  
-    <h1 class="article-title" itemprop="name">
-      大模型幻觉问题
-    </h1>
-  
-
-
-  
-  
-        
-        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
-              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
-        </span>
-
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-<div style="margin-top:10px;">
-  <span class="post-time">
-    <span class="post-meta-item-icon">
-      <!-- fonts.scss -->
-      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
-      <i class="icon-statistics"></i>
-      <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">1.7k字</span>
-    </span>
-  </span>
-
-  <span class="post-time">
-    &nbsp; | &nbsp;
-    <span class="post-meta-item-icon">
-      <i class="icon-book icon"></i>
-      <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">5分</span>
-    </span>
-  </span>
-</div>
-
-
-  
-  </header>
-  
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="大模型幻觉问题">大模型幻觉问题</h1>
-<p>先说结论：在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。</p>
-<p>有一篇最近的高引用论文<a
-target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/3571730">《Survey of
-Hallucination in Natural Language
-Generation》</a>，是香港科技大学的成果。</p>
-<p>讨论的正好就是大模型的幻觉问题，也就是Hallucination。</p>
-<h2 id="幻觉的定义">幻觉的定义</h2>
-<p>先说幻觉Hallucination的定义，作者采用了这个定义：</p>
-<blockquote>
-<p>the generated content that is nonsensical or unfaithful to the
-provided source content</p>
-<p>即生成的内容是无意义的或不忠实于提供的源内容</p>
-</blockquote>
-<p>文中提到了，在自然语言处理之外的一般语境中，幻觉的定义是</p>
-<blockquote>
-<p>hallucination is a psychological term referring to a particular type
-of perception。</p>
-<p>幻觉是一个心理学术语，指的是一种特定类型的感知。</p>
-</blockquote>
-<p>在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。这可能解释起来有点儿绕口，比如说我们问ChatGPT：“离离原上草一岁一枯荣是谁写的？”ChatGPT可能会一本正经的跟你说这是明代诗人李白写的诗，如果你恰好不知道这个问题，那么明代是真实的，李白也是真实的，那么你就可能会相信ChatGPT说的是真的。幻觉会觉文本给人一种流畅自然的印象，尽管它是不忠实和无意义的，这也是为什么幻觉会很难一眼看出来。</p>
-<span id="more"></span>
-<h2 id="幻觉的类型">幻觉的类型</h2>
-<p>幻觉主要分类两种类型：</p>
+    <h1 id="tokenizer分词器">Tokenizer分词器</h1>
+<p>今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging
+Face去玩就行了。 </p>
+<h2 id="相关背景">相关背景</h2>
+<p>NLP要解决的任务：</p>
+<ol type="1">
+<li>处理文本数据，首先对文本数据进行分词操作(分词的方法可能会不同，中文常见的就是分词或者分字)</li>
+<li>分完的词它不还是字符嘛，计算机还不认识，最终我们希望把这些字符映射成实际的特征（向量）</li>
+<li>输入搞定好了之后，接下来咱们要构建模型了（一般都用预训练模型，例如BERT,GPT系列等）</li>
+<li>怎么去完成我们自己的任务呢，基本上就是在预训练模型的基础上进行微调（训练我们自己数据的过程）</li>
+</ol>
+<p>2012年的word2vec到现在除了科研机构，已经完全不需要使用了。绝大多数的算法工程师和科研人员都没有机会去参与词向量的制作。词向量的制作，这个数据量已经不仅仅是用G或者T来衡量的单位，这个数据量是非常惊人的。</p>
+<p>国内一般使用哈工大的或者清华的词向量库，我们调现成的就行，别觉得调现成的很low，这是最方便的做法。（你自己做，先不说你有没有这种级别的计算资源，你存都没地方存，真做起来电费你都交不起）。我们需要做的就是在别人的模型和词库基础上，对模型进行微调来解决自己的任务。</p>
+<p>NLP任务，主要分成两个方向来学习：一个是谷歌的bert，一个是openAI的gpt，二者都是2018年所出的模型基本同一时间，谁抄谁还不一定呢。</p>
+<h2 id="安装测试">安装测试</h2>
+<p>首先看看怎么使用Hugging Face给我们提供的包，首先安装：</p>
+<p>安装就是很简单，打开命令行，执行这个命令就是装，只需要这一步操作！（没有什么CPU、GPU版本，没有一大串恶心人的操作，可能之前装Pytorch、TF还有一些商汤做的一些包，已经把我们算法工程给装怕了。）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install transformers</span><br></pre></td></tr></table></figure>
+<p>但是在此之前，你最起码要把深度学习的环境配置好，可以参考我这篇文章：<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/129845386?spm=1001.2014.3001.5502"
+title="PyTorch深度学习开发环境搭建全教程">PyTorch深度学习开发环境搭建全教程</a></p>
+<p>先来瞅瞅多简单就干了一个大活</p>
+<p>Huggingface这个包基本上就是调用即可，开箱即用的过程</p>
+<p>对刚刚安装的包进行Hello Word级别任务测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line">warnings.filterwarnings(<span class="string">&quot;ignore&quot;</span>)</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> pipeline<span class="comment">#用人家设计好的流程完成一些简单的任务</span></span><br><span class="line">classifier = pipeline(<span class="string">&quot;sentiment-analysis&quot;</span>)</span><br><span class="line">classifier(</span><br><span class="line">    [</span><br><span class="line">        <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>,</span><br><span class="line">        <span class="string">&quot;I hate this so much!&quot;</span>,</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;POSITIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9598050713539124</span>&#125;,</span><br><span class="line"> &#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;NEGATIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9994558691978455</span>&#125;]</span><br></pre></td></tr></table></figure>
+<p>这就是从transformers调出一个pipeline模块，这个模块可以给你提供很多接口，比如<strong>sentiment-analysis</strong>就是情感分析接口，第一次执行这个代码的时候，会给你下载一些已经训练好的模型。（你跑这个可能不需要梯子，但是你玩HuggingFace没有梯子可能还真不行）</p>
+<p>下载的模型一般在这个位置：</p>
+<p><img
+src="https://i-blog.csdnimg.cn/blog_migrate/da4d01bc4397a95b61470d653410799c.png" /></p>
+<h2 id="基本流程概述分析">基本流程概述分析</h2>
+<ol type="1">
+<li>首先就是第一步Raw text输入文本（This course is amazing）</li>
+<li>不管是中文还是英文都会将文本转化为ID，（This course is
+amazing）是四个词为什么会有6个ID呢？后面解释。</li>
+<li>ID直接输入到模型中（Bert、GPT），生成一个Logits结果</li>
+<li>在经过一个后处理词操作，把前面的结果转换成概率</li>
+</ol>
+<p><img
+src="https://i-blog.csdnimg.cn/blog_migrate/c7e7c35d22f18026a9416df4ca9a5193.png" /></p>
+<p>NLP的流程比CV简单的多，在CV领域的任务流程处理方式百花齐放，但是在NLP领域就是Transformer一统天下的格局。NLP的流程非常非常固定，没有任何区别。人类学会人类语言需要两年，这两年过程中的每天可能需要听到上万个词，所以让计算机学会人类语言也是需要一个过程的。NLP任务基本上都是大同小小小异。</p>
+<h2 id="tokenizer需要做的事情">Tokenizer需要做的事情</h2>
 <ul>
-<li><strong>内在幻觉</strong>：生成的内容与源内容相互矛盾</li>
-<li><strong>外在幻觉</strong>：生成的内容无法从源内容中验证，既可能正确也可能错误</li>
+<li>分词，分字以及特殊字符（起始，终止，间隔，分类等特殊字符可以自己设计的）</li>
+<li>对每一个token映射得到一个ID（每个词都会对应一个唯一的ID）</li>
+<li>还有一些辅助信息也可以得到，比如当前词属于哪个句子（还有一些MASK，表示是否事原来的词还是特殊字符等）</li>
 </ul>
-<p>让我们通过一个简单的例子来说明自然语言生成（NLG）中的幻觉现象：</p>
-<p>假设有一个NLG系统，其任务是根据给定的天气报告文本生成简短的天气摘要。现在，考虑以下两种情况：</p>
-<h3 id="源文本天气报告">源文本（天气报告）</h3>
-<p>"今天北京的天气晴朗，最高气温达到了30度。"</p>
-<h3 id="情况一内在幻觉">情况一：内在幻觉</h3>
-<p><strong>生成的摘要</strong>："今天北京出现了大雨，气温下降到了20度。"</p>
-<p><strong>解释</strong>：这里，生成的摘要与源文本相矛盾。源文本提到天气晴朗和温度较高，而生成的摘要错误地提到了大雨和气温下降，这就是内在幻觉的一个例子。</p>
-<h3 id="情况二外在幻觉">情况二：外在幻觉</h3>
-<p><strong>生成的摘要</strong>："今天北京天气晴朗，另外，明天有可能下雨。"</p>
-<p><strong>解释</strong>：在这个例子中，生成的摘要正确地提到了“今天北京天气晴朗”，这与源文本一致。但是，它还添加了“明天有可能下雨”的信息，这个信息在原始报告中没有提及。虽然这个附加信息可能是正确的，但因为它无法通过源文本进行验证，因此被视为外在幻觉。</p>
-<p>内在幻觉和外在幻觉有可能同时存在，也可能单独存在，挺随机的现象。</p>
-<p><em>接下来的两个部分为幻觉产生的原因和解决方法，其中涉及到了很多专业知识，看不懂的朋友可以略过，你只要记住，大模型的幻觉在现阶段是不可避免的，它生产的内容只要是你不能确定的部分，都需要你手动去确认一遍。</em></p>
-<h2 id="为什么需要解决llm的幻觉问题">为什么需要解决LLM的幻觉问题？</h2>
-<p>LLMs的幻觉可能会产生如传播错误信息或侵犯隐私等严重后果。
-比如在医疗应用中，对患者生成的报告如果存在幻觉可能导致错误诊断甚至影响生命安全。
-幻觉影响了模型的可靠性和可信度，因此需要解决LLM的幻觉问题。</p>
-<h2 id="幻觉一定是有害的吗">幻觉一定是有害的吗？</h2>
-<p>幻觉不一定是有害的，特别是在一些需要创造力或灵感的场合，比如写电影剧情，幻觉的存在可能带来一些奇思妙想，使得生成的文本充满想象力。因此，对幻觉的容忍度取决于具体的应用场景。</p>
-<h2 id="幻觉的原因">幻觉的原因</h2>
+<p>上代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer<span class="comment">#自动判断</span></span><br><span class="line"> </span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span><span class="comment">#根据这个模型所对应的来加载</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br></pre></td></tr></table></figure>
+<p>（Hugging
+Face一个特别牛逼的地方就是一个API玩儿所有东西，就不用在多个地方调分词器）</p>
+<p>从Transformers中调出一个自动分词器，这个“自动”分词器AutoTokenizer可以根据你选择的模型自动选择分词器，这就太省事儿，但是我们应该怎么选择模型呢？你去Hugging
+Face上去下载，不知道选哪个，按照销量（下载量）来呗。（现在NLP领域研究的论文，全都得根据Hugging
+Face去做，为什么？你得做对比试验啊，在HuggingFace就很方便去和别人作对比）</p>
+<p>一个小例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">raw_inputs = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a this course my whole life.&quot;</span>,</span><br><span class="line">    <span class="string">&quot;I hate this so much!&quot;</span>,</span><br><span class="line">]</span><br><span class="line">inputs = tokenizer(raw_inputs, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br></pre></td></tr></table></figure>
+<p>解释一下tokenizer的参数：</p>
 <ul>
-<li><strong>数据驱动原因</strong>：训练数据中源与参考的不匹配可能导致幻觉，如数据对不对齐，导致生成不忠实的文本。</li>
-<li><strong>表示和解码的不完善</strong>：编码器理解能力的缺陷和解码器策略错误可能导致幻觉。解码器可能关注错误的输入部分，或使用增加幻觉风险的策略，例如基于采样的解码中的随机性。</li>
-<li><strong>参数知识偏见</strong>：预训练模型可能偏好其参数中的知识而非新输入，从而导致幻觉。解决幻觉现象的方法</li>
+<li><strong>raw_inputs</strong>：你选择的语言文本</li>
+<li><strong>padding</strong>：默认为True，你输入的句子长度不一样，不管你输入多少句子，按照最长的那个进行补齐，补得就是0，padding这个词，我们在卷积神经网络就已经见过了</li>
+<li><strong>truncation</strong>：截断操作，这里没用上，其实任务中需要制定一个max_longs参数，指定一个最大长度的句子，事实上所有的模型都指定来512个词为最大长度，谷歌、openAI亦是如此，在深度学习中科学家也很喜欢512个词。也就是说，一个句子最大长度就是512个词</li>
+<li><strong>return_tensors</strong>：在Hugging
+Face中支持多种框架，默认的是PyTorch，PyTorch的数据格式就是tensor，指定为pt</li>
 </ul>
-<h2 id="解决方法">解决方法</h2>
-<ul>
-<li><p><strong>构建忠实数据集</strong>：手动创建含准确目标的数据集，或用标注员标记生成的数据中的幻觉。这种方法针对特定任务，可能资源密集型。</p></li>
-<li><p><strong>自动清洗数据</strong>：在实例级别过滤掉幻觉内容，或根据参考修正输入数据，特别适用于结构化数据到文本任务。</p></li>
-<li><p><strong>信息增强</strong>：用外部信息增强输入数据，更好地与目标对齐，提高模型的语义理解能力，减少与源的偏离。</p></li>
-<li><p><strong>模型和推理技术</strong>：</p>
-<ul>
-<li><p>改进编码器和注意力机制：修改编码器架构和注意力机制，更多关注源数据，提高表示学习。</p></li>
-<li><p>改进解码器：使用多分支、意识到不确定性或受限的解码器来减少幻觉的可能性。</p></li>
-</ul></li>
-<li><p><strong>训练方法</strong>：</p>
-<ul>
-<li><p>规划/草图：实施单独的规划步骤或将其整合到模型中，控制内容生成。</p></li>
-<li><p>强化学习：使用奖励优化模型，以减少幻觉。</p></li>
-<li><p>多任务学习：同时在多个任务上训练，提高模型的泛化能力，减少对单一数据集的依赖。</p></li>
-</ul></li>
-<li><p><strong>可控生成</strong>：使用技术控制输出中的幻觉程度，适应不同的应用需求。</p></li>
-<li><p><strong>后处理</strong>：使用生成-然后-精炼策略纠正输出中的幻觉，特别适用于嘈杂的数据集。</p></li>
-</ul>
-<h2 id="未来方向">未来方向</h2>
-<ul>
-<li><strong>自动化幻觉检测和评估方法</strong>：发展更有效的自动化工具来识别和评估幻觉，例如基于注意力机制的分析和统计方法。</li>
-<li><strong>跨领域和多模态方法</strong>：探索在不同领域（如图像、视频和文本）之间的幻觉识别和处理。</li>
-<li><strong>增强现实世界知识</strong>：集成更多的外部信息和上下文知识，以提高模型对现实世界的理解和处理能力。</li>
-<li><strong>解释性和透明性</strong>：提高模型的解释性，以便更好地理解和解释幻觉的原因。</li>
-</ul>
+<p>这段代码的输出结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([[ 101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 2023, 2607, 2026, 2878,</span><br><span class="line">         2166, 1012,  102],</span><br><span class="line">        [ 101, 1045, 5223, 2023, 2061, 2172,  999,  102,    0,    0,    0,    0,</span><br><span class="line">            0,    0,    0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]])&#125;</span><br></pre></td></tr></table></figure>
+<p>你需要记住这个input_ids，input_ids这个名字是自动生成的，它是将每一个词都生成一个对应的索引。</p>
+<p>比如看第二句话 I hate this so much!
+一共有5个单词，但是还得加上标点符号，就是6个，但是在上面的结果中可以看到有8个编号后面再加上一下补长的0，其中101表示一个句子的开头，102表示一个句子的结束，所以有8个编号。（不同分词器的编号规则和内容不一定相同）</p>
+<p>也就是说当前的id可以转化为tensor，也可以转化为文本，可以做编码解码的工作</p>
+<p>使用这个编号，将句子解码出来，代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.decode([ <span class="number">101</span>, <span class="number">1045</span>, <span class="number">1005</span>, <span class="number">2310</span>, <span class="number">2042</span>, <span class="number">3403</span>, <span class="number">2005</span>, <span class="number">1037</span>, <span class="number">2023</span>, <span class="number">2607</span>, <span class="number">2026</span>, <span class="number">2878</span>,<span class="number">2166</span>, <span class="number">1012</span>,  <span class="number">102</span>])</span><br></pre></td></tr></table></figure>
+<p>输出的结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[CLS] i&#x27;ve been waiting for a this course my whole life. [SEP]&quot;</span></span><br></pre></td></tr></table></figure>
+<p>这里的CLS表示的是分类的字符，SEP表示终止的字符，也就是说101和102表示特殊字符。</p>
+<p>那后面0是什么？前面提到为来保证长度一致，做了padding补齐的操作，通过SEP做来分隔，SEP之前是实际内容，SEP之后是补0的内容，但是我们注意到了一个叫做attention_mask的东西。我们在做Transformer在做Self-Attention的时候，每一个词都需要跟所有的词计算关系（还不知道什么是Transformer去看<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131204351?spm=1001.2014.3001.5502"
+title="我的这篇文章">我的这篇文章</a>），那我后面补了0，需要前面的词需要和0计算关系吗？是不是不用啊。attention_mask表示的意思就是SEP后面的0，是不用计算的，全都是占位符而已。</p>
+<p> 下篇内容：</p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131656563"
+title="Hugging Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客">Hugging
+Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客</a></p>
 
     
 
@@ -438,7 +395,7 @@ of perception。</p>
         </li>
         <li>
           <strong>本文链接：</strong>
-          <a href="https://luyicui.github.io/2024/05/05/[object Object]/LLM/大模型幻觉问题/" title="大模型幻觉问题" target="_blank">https://luyicui.github.io/2024/05/05/[object Object]/LLM/大模型幻觉问题/</a>
+          <a href="https://luyicui.github.io/2024/12/18/[object Object]/命令操作/【huggingface】/Tokenizer分词器/" title="" target="_blank">https://luyicui.github.io/2024/12/18/[object Object]/命令操作/【huggingface】/Tokenizer分词器/</a>
         </li>
         
         <li>
@@ -455,17 +412,6 @@ of perception。</p>
   <div class="article-info article-info-index">
     
     
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
     
 
     
@@ -516,7 +462,7 @@ of perception。</p>
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://cuiluyi.gitee.io/github.io/2024/05/05/[object%20Object]/LLM/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://cuiluyi.gitee.io/github.io/2024/12/18/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -531,18 +477,9 @@ of perception。</p>
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E3%80%90LLM%E8%A7%A3%E7%A0%81%E8%B6%85%E5%8F%82%E6%95%B0%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          【LLM解码超参数】
-        
-      </div>
-    </a>
   
-  
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%EF%BC%88Self-supervised_Learning%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">自监督学习（Self-supervised_Learning）</div>
+    <a href="/2024/12/16/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E7%B1%BB%E7%9A%84%20%60__call__()%60%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -569,7 +506,7 @@ of perception。</p>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">大模型幻觉问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BB%E8%A7%89%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">幻觉的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BB%E8%A7%89%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.</span> <span class="toc-text">幻觉的类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E6%96%87%E6%9C%AC%E5%A4%A9%E6%B0%94%E6%8A%A5%E5%91%8A"><span class="toc-number">1.2.1.</span> <span class="toc-text">源文本（天气报告）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%B8%80%E5%86%85%E5%9C%A8%E5%B9%BB%E8%A7%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">情况一：内在幻觉</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E4%BA%8C%E5%A4%96%E5%9C%A8%E5%B9%BB%E8%A7%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">情况二：外在幻觉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3llm%E7%9A%84%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">为什么需要解决LLM的幻觉问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BB%E8%A7%89%E4%B8%80%E5%AE%9A%E6%98%AF%E6%9C%89%E5%AE%B3%E7%9A%84%E5%90%97"><span class="toc-number">1.4.</span> <span class="toc-text">幻觉一定是有害的吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BB%E8%A7%89%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.5.</span> <span class="toc-text">幻觉的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">1.6.</span> <span class="toc-text">解决方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E6%96%B9%E5%90%91"><span class="toc-number">1.7.</span> <span class="toc-text">未来方向</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#tokenizer%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">Tokenizer分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%83%8C%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">相关背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">安装测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">基本流程概述分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tokenizer%E9%9C%80%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">1.4.</span> <span class="toc-text">Tokenizer需要做的事情</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -582,7 +519,7 @@ of perception。</p>
 
 
 
-<div id="SOHUCS" sid="LLM/大模型幻觉问题" ></div> 
+<div id="SOHUCS" sid="命令操作/【huggingface】/Tokenizer分词器" ></div> 
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -768,6 +705,14 @@ of perception。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
@@ -776,19 +721,11 @@ of perception。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -820,19 +757,23 @@ of perception。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">FastAPI</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">FastAPI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -844,11 +785,11 @@ of perception。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -857,10 +798,6 @@ of perception。</p>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">

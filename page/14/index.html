@@ -270,6 +270,217 @@
 
   
     
+      <article id="post-【后端】/python/迭代器（iter、next）&amp;&amp;生成器（yield）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/" target="_blank">迭代器（iter、next）&amp;&amp;生成器（yield）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1
+id="迭代器iternext生成器yield">迭代器（iter、next）&amp;&amp;生成器（yield）</h1>
+<h2 id="迭代器iterator">迭代器（Iterator）</h2>
+<p>Python 中的 <strong>迭代器（Iterator）</strong>
+是一个可以记住遍历位置的
+<strong>对象</strong>，用于迭代列表、元组、字典、集合和字符串等
+<strong>可迭代（Iterable）对象</strong>，迭代器从可迭代对象的第一个元素开始访问，直到所有的元素被访问完结束，并且只能往前不会后退。使用
+<code>collections.abc</code> 库中的
+<strong><code>Iterable</code></strong> 和
+<strong><code>Iterator</code></strong>
+可以判断对象<strong>是否为可迭代对象</strong>和<strong>是否为迭代器</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterable</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>((), Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="number">100</span>, Iterable)</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<p>正如上面代码所示，列表、元组、字典和字符串都是<strong>可迭代的</strong>，而数字就不是可迭代的。但列表、元组、字典和字符串都
+<strong>不是迭代器</strong>，因为<strong>可迭代的对象必须首先使用
+<code>iter()</code> 方法把它们 初始化 为迭代器对象之后，才能使用
+<code>next()</code> 方法对其进行 迭代</strong>。所以
+<code>iter([])</code> 和 <code>iter('abc')</code> 都是迭代器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterator</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>((), Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>([]), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>(<span class="string">&#x27;abc&#x27;</span>), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88iter%E3%80%81next%EF%BC%89&&%E7%94%9F%E6%88%90%E5%99%A8%EF%BC%88yield%EF%BC%89/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Python_Data_Science/Feature Scaling" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/Feature%20Scaling/" target="_blank">Feature Scaling</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/Feature%20Scaling/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="feature-scaling">Feature Scaling</h1>
+<h2 id="特征缩放">特征缩放</h2>
+<p><strong>原因：</strong></p>
+<ul>
+<li>数量级的差异将导致量级较大的属性占据主导地位</li>
+<li>数量级的差异将导致迭代收敛速度减慢</li>
+<li>依赖于样本距离的算法对于数据的数量级非常敏感</li>
+</ul>
+<p><strong>好处：</strong></p>
+<ul>
+<li>提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的
+RBF 内核或线性模型的 <span class="math inline">\(l_1\)</span> 和 <span
+class="math inline">\(l_2\)</span>
+正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差比其他特征大几个数量级，那么它就会在学习算法中占据主导位置，导致学习器并不能像我们期望的那样，从其他特征中学习</li>
+<li>提升收敛速度：对于线性模型来说，数据归一化后，寻找最优解的过程明显会变得平缓，更容易正确地收敛到最优解</li>
+</ul>
+<h3 id="standardization-z-score-normalization">Standardization (Z-score
+normalization)</h3>
+<p>通过减去均值然后除以标准差，将数据按比例缩放，使之落入一个小的特定区间，处理后的数据均值为
+0，标准差为 1</p>
+<p>$$ x=</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/Feature%20Scaling/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【后端】/python/Python_Data_Science/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -336,110 +547,6 @@ pandas 2.2.3 documentation</a></p></li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/Reference/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/Python_Data_Science/【numpy】/100 numpy exercises" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" target="_blank">100 numpy exercises</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="numpy-exercises">100 numpy exercises</h1>
-<p><a
-target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1I-RFqhrOUz0Vq4aZ-iT_CfTNJdLIGdie#scrollTo=1a84bed8">100_Numpy_exercises.ipynb
-- Colab (google.com)</a></p>
-<p>This is a collection of exercises that have been collected in the
-numpy mailing list, on stack overflow and in the numpy documentation.
-The goal of this collection is to offer a quick reference for both old
-and new users but also to provide a set of exercises for those who
-teach.</p>
-<h4 id="import-the-numpy-package-under-the-name-np">1. Import the numpy
-package under the name <code>np</code> (★☆☆)</h4>
-<p><code>hint: import … as</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<h4 id="print-the-numpy-version-and-the-configuration">2. Print the
-numpy version and the configuration (★☆☆)</h4>
-<p><code>hint: np.__version__, np.show_config)</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.__version__)</span><br><span class="line">np.show_config()</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/">展开全文 >></a>
     </p>
     
 
@@ -662,7 +769,7 @@ np.bool_，np.int32，np.float32，等等。</p>
 
 
     
-      <article id="post-【后端】/python/Python_Data_Science/【numpy】/np.clip()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/Python_Data_Science/【numpy】/100 numpy exercises" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -670,7 +777,7 @@ np.bool_，np.int32，np.float32，等等。</p>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" target="_blank">np.clip()</a>
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" target="_blank">100 numpy exercises</a>
   
     </h1>
   
@@ -678,7 +785,7 @@ np.bool_，np.int32，np.float32，等等。</p>
 
   
   
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" class="archive-article-date">
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" class="archive-article-date">
         <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
 </a>
 
@@ -691,14 +798,26 @@ np.bool_，np.int32，np.float32，等等。</p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="np.clip">np.clip()</h1>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412211043839.png"
-alt="image-20241221104319591" />
-<figcaption aria-hidden="true">image-20241221104319591</figcaption>
-</figure>
-
+    <h1 id="numpy-exercises">100 numpy exercises</h1>
+<p><a
+target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1I-RFqhrOUz0Vq4aZ-iT_CfTNJdLIGdie#scrollTo=1a84bed8">100_Numpy_exercises.ipynb
+- Colab (google.com)</a></p>
+<p>This is a collection of exercises that have been collected in the
+numpy mailing list, on stack overflow and in the numpy documentation.
+The goal of this collection is to offer a quick reference for both old
+and new users but also to provide a set of exercises for those who
+teach.</p>
+<h4 id="import-the-numpy-package-under-the-name-np">1. Import the numpy
+package under the name <code>np</code> (★☆☆)</h4>
+<p><code>hint: import … as</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<h4 id="print-the-numpy-version-and-the-configuration">2. Print the
+numpy version and the configuration (★☆☆)</h4>
+<p><code>hint: np.__version__, np.show_config)</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.__version__)</span><br><span class="line">np.show_config()</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/#more">more >></a>
+    
     
 
     
@@ -724,7 +843,7 @@ alt="image-20241221104319591" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/">展开全文 >></a>
     </p>
     
 
@@ -985,6 +1104,198 @@ alt="image-20241125001356867" />
 
 
     
+      <article id="post-【后端】/python/Python_Data_Science/【numpy】/np.clip()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" target="_blank">np.clip()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" class="archive-article-date">
+        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="np.clip">np.clip()</h1>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412211043839.png"
+alt="image-20241221104319591" />
+<figcaption aria-hidden="true">image-20241221104319591</figcaption>
+</figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Python_Data_Science/【numpy】/副本和视图" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" target="_blank">NumPy 副本和视图</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" class="archive-article-date">
+        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="numpy-副本和视图">NumPy 副本和视图</h1>
+<p>副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</p>
+<p>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置。</p>
+<p><strong>视图一般发生在：</strong></p>
+<ul>
+<li>1、numpy 的切片操作返回原数据的视图。</li>
+<li>2、调用 ndarray 的 <code>view()</code> 函数产生一个视图。</li>
+</ul>
+<p><strong>副本一般发生在：</strong></p>
+<ul>
+<li>Python 序列的切片操作，调用<code>deepCopy()</code>函数。</li>
+<li>调用 ndarray 的 <code>copy()</code> 函数产生一个副本。</li>
+</ul>
+    
+    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【后端】/python/Python_Data_Science/【numpy】/order参数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1188,297 +1499,6 @@ aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
 
 
     
-      <article id="post-【后端】/python/Python_Data_Science/【numpy】/副本和视图" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" target="_blank">NumPy 副本和视图</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="numpy-副本和视图">NumPy 副本和视图</h1>
-<p>副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</p>
-<p>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置。</p>
-<p><strong>视图一般发生在：</strong></p>
-<ul>
-<li>1、numpy 的切片操作返回原数据的视图。</li>
-<li>2、调用 ndarray 的 <code>view()</code> 函数产生一个视图。</li>
-</ul>
-<p><strong>副本一般发生在：</strong></p>
-<ul>
-<li>Python 序列的切片操作，调用<code>deepCopy()</code>函数。</li>
-<li>调用 ndarray 的 <code>copy()</code> 函数产生一个副本。</li>
-</ul>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/Python_Data_Science/【numpy】/轴axis" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/" target="_blank">axis 轴</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="axis-轴">axis 轴</h1>
-<p><a
-target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/details/114777623?ops_request_misc=%7B%22request%5Fid%22%3A%22e51c121be6f5816716b045a2ea578b1e%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=e51c121be6f5816716b045a2ea578b1e&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-114777623-null-null.142%5Ev100%5Econtrol&amp;utm_term=axis&amp;spm=1018.2226.3001.4187">Python
-的 numpy 中 axis=0、axis=1、axis=2 解释-CSDN 博客</a></p>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-Courses/算法/【数据结构】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/13/%5Bobject%20Object%5D/Courses/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91/" target="_blank">【数据结构】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/13/%5Bobject%20Object%5D/Courses/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-04-13T01:40:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-13</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <ul>
-<li>以下 <strong>数据结构</strong> 都是采用 <strong>数组</strong>
-模拟实现（而非 C++ STL 容器），效率更高、支持更多操作</li>
-</ul>
-<h1 id="链表">链表</h1>
-<h2 id="单向链表">单(向)链表</h2>
-<ul>
-<li><font color='red'> <strong>空指针用 -1 表示</strong> </font></li>
-<li>【<strong>模板题：</strong> <a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/7966770/">AcWing
-826. 单链表 - AcWing</a>】</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100005</span>;</span><br><span class="line"><span class="comment">// head 表示头结点的下标</span></span><br><span class="line"><span class="comment">// e[i] 表示节点 i 的值</span></span><br><span class="line"><span class="comment">// ne[i] 表示节点 i 的 next 指针是多少</span></span><br><span class="line"><span class="comment">// idx 存储当前已经用到了哪个点</span></span><br><span class="line"><span class="type">int</span> head, e[N], ne[N], idx;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    head = <span class="number">-1</span>;</span><br><span class="line">    idx = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在链表头插入一个数 x</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">insert_to_head</span><span class="params">(<span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    e[idx] = x, ne[idx] = head, head = idx++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 x 插到下标是 k 的点后面</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">int</span> k, <span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    e[idx] = x, ne[idx] = ne[k], ne[k] = idx++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将头结点删除，需要保证头结点存在</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">remove_head</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    head = ne[head];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将下标是 k 的点后面的点删掉</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">remove</span><span class="params">(<span class="type">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ne[k] = ne[ne[k]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/13/%5Bobject%20Object%5D/Courses/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/13/%5Bobject%20Object%5D/Courses/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
     
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/13/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/">33</a><a class="extend next" rel="next" href="/page/15/">Next &amp;raquo;</a>
@@ -1634,11 +1654,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1650,31 +1670,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1686,11 +1690,31 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1702,7 +1726,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1710,23 +1734,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">FastAPI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1742,7 +1758,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1750,11 +1766,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

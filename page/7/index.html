@@ -270,367 +270,6 @@
 
   
     
-      <article id="post-LLM/Basic/自监督学习（Self-supervised_Learning）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%EF%BC%88Self-supervised_Learning%EF%BC%89/" target="_blank">自监督学习（Self-supervised_Learning）</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%EF%BC%88Self-supervised_Learning%EF%BC%89/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1
-id="自监督学习self-supervised_learning">自监督学习（Self-supervised_Learning）</h1>
-<p>前段时间在杭州参加华尔兹，在会场听报告和看 Poster 的时候，我发现 AI
-领域的论文研究不再跟前几年一样专注于某个特定的任务提出全监督的网络模型（比如语义分割、目标检测和风格迁移等）。因为这些年深度学习的发展使得在数据充足情况下，经典任务的模型已经能达到很好的效果了，但是对于数据和标签匮乏的特定任务，这种监督学习的模型的效果就很受限。</p>
-<p>目前 CV
-领域主流的研究一般是结合多任务学习或者基于特定的学习方式，比如域自适应（Domain
-Adaptation）、自监督学习（Self-supervised）、无监督学习（Unsupervised
-Learning）以及增量学习（Incremental
-Learning）等，本文主要来聊一聊自监督学习。</p>
-<h2 id="什么是自监督学习">什么是自监督学习</h2>
-<p>在基于深度学习的模型中，我们一般先对数据通过主干网络 Backbone
-来进行特征提取，比如用 VGG、ResNet、MobileNet 和 Inception
-等，然后再将提取到的 Feature Maps
-送入下游的分类、检测或者分割等任务。Backbone
-之所以有效是因为我们将其事先在 ImageNet
-等数据集上进行了预训练，所以具有很强的特征提取能力。在这里，一个带标签的大数据集（比如
-ImageNet）是至关重要的，但如果我们在面临一个没有大量标注数据的新领域新任务时，要如何提升模型的特征提取能力呢？</p>
-<p>自监督学习的出现回答了这个问题！</p>
-<p><strong>自监督学习 (Self-supervised learning)</strong>
-是这两年比较热门的一个研究领域，它旨在对于<strong>无标签数据</strong>
-，通过设计 <strong>辅助任务（Proxy tasks）</strong>
-来挖掘数据自身的表征特性作为监督信息，来提升模型的特征提取能力（PS：这里获取的监督信息不是指自监督学习所面对的原始任务标签，而是构造的辅助任务标签）。注意这里的两个关键词：无标签数据和辅助信息，这是定义自监督学习的两个关键依据。</p>
-<p>既然说到了自监督，我们这里也顺便将几种学习类型进行一个统一介绍：</p>
-<ul>
-<li><p><strong>有监督（Supervised）：</strong>
-监督学习是从给定的带标签训练数据集中学习出一个函数（模型参数），在输入新的测试数据时，可以根据这个函数预测结果；</p></li>
-<li><p><strong>无监督（Unsupervisedg）：</strong>
-无监督学习是从无标签数据中分析数据本身的规律性等解析特征。无监督学习算法分为两大类：基于概率密度函数估计的方法和基于样本间相似性度量的方法；</p></li>
-<li><p><strong>半监督习（Semi-supervised）：</strong>
-半监督介于监督学习和无监督之间，即训练集中只有一部分数据有标签，需要通过伪标签生成等方式完成模型训练；</p></li>
-<li><p><strong>弱监督（Weakly-supervised）：</strong>
-弱监督是指训练数据只有不确切或者不完全的标签信息，比如在<strong>目标检测</strong>任务中，训练数据只有分类的类别标签，没有包含
-Bounding box 坐标信息。</p></li>
-</ul>
-<p>在上述概念中，无监督和自监督学习相似性最大，两者的训练数据都是无标签，但区别在于：自监督学习会通过构造辅助任务来获取监督信息，这个过程中有学习到新的知识；而无监督学习不会从数据中挖掘新任务的标签信息。</p>
-<h2 id="自监督学习中辅助任务的构造">自监督学习中辅助任务的构造</h2>
-<p>辅助任务（Proxy
-tasks）是自监督学习最关键的内容，我们接下来分别介绍自然语言处理 NLP
-和计算机视觉 CV 两大类任务中的自监督学习辅助任务设计。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934867.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h3 id="自然语言处理nlp">自然语言处理（NLP）</h3>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934834.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>句子的语序有很强的规律性，所以自然语言处理任务中，语序信息是用来设计辅助任务的关键。常见的辅助任务主要分为以下三类：</p>
-<h4 id="单词预测word-prediction">单词预测（Word prediction）</h4>
-<p>通过随机删去训练集句子中的单词来构造辅助任务训练集和标签，来训练网络预测被删去的单词，以提升模型对于语序特征的提取能力。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934350.png"
-alt="在这里插入图片描述" /></p>
-<h4 id="句子序列预测sentence-sequence-prediction">句子序列预测（Sentence
-sequence prediction）</h4>
-<p>通过随机打乱每段话中的句子顺序来构造辅助任务训练集，来训练网络对句子进行正确的排序，标签为原来正确的句子顺序。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934551.png"
-alt="在这里插入图片描述" /></p>
-<h4 id="词序列预测word-sequence-prediction">词序列预测（Word sequence
-prediction）</h4>
-<p>打乱正常语句中的单词顺序，让模型学习组句，标签信息为原来正确的词序。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934923.gif"
-alt="在这里插入图片描述" /></p>
-<h3 id="计算机视觉cv">计算机视觉（CV）</h3>
-<p>我们将计算机视觉任务根据输入信息的不同分为图像任务和视频处理任务，来分别介绍其自监督学习中的辅助任务设计。</p>
-<h4 id="图像任务">图像任务</h4>
-<h5 id="图像重组jigsaw-puzzles">图像重组（Jigsaw Puzzles）</h5>
-<p>将图像分为不同的 patch，比如九宫格，然后让网络预测不同 patch
-的相对位置信息。这个过程中可以提高模型的局部特征提取能力以及全局空间信息提取能力。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934848.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934995.jpeg"
-alt="在这里插入图片描述" /></p>
-<h5 id="图像渲染image-colorization">图像渲染（Image Colorization）</h5>
-<p>将原来数据集中的 RGB
-图像进行灰度化处理，然后通过图像色彩恢复任务来训练网络</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934733.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h5 id="图像旋转角度预测image-colorization">图像旋转角度预测（Image
-Colorization）</h5>
-<p>将训练集中的图像进行随机旋转，然后通过旋转角回归任务来训练网络 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934057.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="图像修复image-in-painting">图像修复（Image In-painting）</h5>
-<p>对图像进行随机裁剪，训练网络修复图像</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934968.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934494.jpeg"
-alt="在这里插入图片描述" /></p>
-<h5 id="多任务学习multi-tasks">多任务学习（Multi-Tasks）</h5>
-<p>结合上述的几种辅助任务一起对模型进行训练 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934039.jpeg"
-alt="在这里插入图片描述" /></p>
-<h4 id="视频处理任务">视频处理任务</h4>
-<p>视频是一系列图像帧的时间序列，哪些信息可用于设计辅助任务呢？</p>
-<p>我们知道，时序相邻帧之间具有很强的关联信息，较远帧之间的关联较弱，所以视频帧的时序信息是我们可以用到的一个重要设计依据；此外，视频中的目标物体在不同时序帧中具有一致性，比如色彩、形状等，所以这也可以作为一个辅助任务设计的重要依据。</p>
-<h5 id="基于视频帧的序列信息">基于视频帧的序列信息</h5>
-<p>这个跟自然语言处理中的语序预测很相似，我们通过随机打乱训练集中视频帧的顺序，来训练网络让其对正确视频时序进行预测
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934486.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934917.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="基于视频中目标的相似性">基于视频中目标的相似性</h5>
-<p>一般来说，视频相邻帧中目标相似性比较高，相隔较远帧中目标相似性比较低，所以可以训练网络判断不同帧中目标的相似性来提升其特征提取能力
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934761.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="基于无监督目标跟踪">基于无监督目标跟踪</h5>
-<p>视频中同一物体在不同帧的特征应该是相似的，而不同物体的特征是不同的。可以根据无监督模型获得目标跟踪框，然后让网络学习同一目标和不同目标在不同帧中的相似性判别来提升特征提取能力
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934900.png"
-alt="在这里插入图片描述" /></p>
-<h2 id="总结">总结</h2>
-<p>以上介绍的主要为自监督学习中一些比较经典的辅助任务设计，在实际的任务中，如何根据自己的数据特点来设计有效辅助任务是自监督学习的关键，也是其难点。</p>
-<p>在设计自监督辅助任务时，以下三点需要考虑：</p>
-<p><strong>1、Shotcuts：</strong>
-根据自己的数据和任务特点设计辅助任务，常常有事半功倍的效果。比如对于镜头检测任务来说，获取成像色差、镜头畸变以及暗角等信息来构造辅助任务是比较有效的</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934332.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p><strong>2、辅助任务的复杂度选择：</strong>
-之前人们的实验结果表明，辅助任务并不是越复杂越有效，比如图像重组任务中，最优的
-patch 数为 9，patch 太多会导致每个 patch 特征过少，并且相邻 patch
-间的差异性不大，导致模型的学习效果并不好</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934531.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p><strong>3、模糊性：</strong>
-模糊性是指设计的辅助任务的标签必须是唯一确定的，不然会给网络学习引入噪声，影响
-<a
-target="_blank" rel="noopener" href="https://edu.csdn.net/cloud/pm_summit?utm_source=blogglc&amp;spm=1001.2101.3001.7020">模型性能</a>。比如在动作预测中，这个半蹲的动作就具有二义性，因为其下个状态有可能是蹲下，也有可能是正在站起，标签不具有唯一性
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934946.jpeg"
-alt="在这里插入图片描述" /></p>
-<p><strong>参考文献</strong></p>
-<p>[1] <a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg3OTYxNjcyMw==&amp;mid=2247484227&amp;idx=1&amp;sn=fcc9ee7e2b928f518ba2305310a046af&amp;chksm=cf00f4fff8777de9ab82f2d4716cad96856ff1ec74475545dfa6560f2028eaab824b37ba7359&amp;token=1255814810&amp;lang=zh_CN#rd">自监督学习（Self-supervised
-Learning）</a> [2] <a target="_blank" rel="noopener" href="https://docdro.id/ABMilFG">EEML summer
-school–self-supervised learning_Zisserman</a></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%EF%BC%88Self-supervised_Learning%EF%BC%89/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-LLM/Metric/Top@k" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/" target="_blank">top@k</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="topk">top@k</h1>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412191940457.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>在这张图中，指标 <strong>top@max</strong>
-通常表示模型在测试集中可以返回多个候选答案时，包含正确答案的最大排名比例。具体来说，top@max
-测量模型是否能够在其所有预测的答案中（可能数量不固定）包含正确答案，并且统计这样的样本比例。</p>
-<p>以下是几个关键点的说明：</p>
-<ul>
-<li><strong>top@1</strong> 表示模型在返回的第一个答案中正确的比例。</li>
-<li><strong>top@5</strong>
-表示模型在返回的前五个候选答案中有正确答案的比例。</li>
-<li><strong>top@max</strong>
-则不限制候选答案数量，只要模型返回的所有答案中包含正确答案，就计为通过。</li>
-</ul>
-<p>在实际应用中，top@max
-通常用于评估一个模型生成多项候选答案时的能力，特别是针对一些生成式任务（如开放域问答或多标签分类）。这个指标越高，意味着模型在所有可能输出的答案中，正确答案总是出现的概率越大。</p>
-<blockquote>
-<p><strong>top1-----</strong> 就是你预测的 label
-取最后概率向量里面<strong>最大的</strong>那一个作为预测结果，如果你的预测结果中概率最大的那个分类正确，则预测正确。否则预测错误
-<strong>top5-----</strong>
-就是最后概率向量<strong>最大的前五名</strong>中，只要出现了正确概率即为预测正确。否则预测错误。</p>
-</blockquote>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412191940015.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-LLM/Metric/pass@k" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -737,7 +376,7 @@ alt="image-20241219194253130" />
 
 
     
-      <article id="post-LLM/Decoding/Decoding Hyperparameters" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-LLM/Fine-Tuning/【RLHF】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -745,7 +384,7 @@ alt="image-20241219194253130" />
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" target="_blank">Decoding Hyperparameters</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/" target="_blank">【RLHF】</a>
   
     </h1>
   
@@ -753,7 +392,7 @@ alt="image-20241219194253130" />
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -766,19 +405,40 @@ alt="image-20241219194253130" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="decoding-hyperparameters">Decoding Hyperparameters</h1>
-<p>你知道生成解码的这些细节吗？</p>
-<ol type="1">
-<li>temperature、top-k、top-p的执行顺序是什么？（不同的执行顺序影响巨大）</li>
-<li>重复惩罚在贪婪解码时还需要处理吗？</li>
-<li>除了这些参数还有哪些，能说出几种？</li>
-<li>它们怎么实现的，难道用几百行放到一起吗？</li>
-<li>如果你想自己额外加一个解码策略怎么加？</li>
-<li>停止生成都有哪些条件，除了碰到就停止还有其他方式吗？</li>
-</ol>
-<p>如果有哪一点不了解的，记得点赞收藏慢慢阅读哦~</p>
+    <h1 id="rlhf">【RLHF】</h1>
+<p>通过人类标注数据训练得到 Reward
+Model（相当于有了人类标注数据，则相信它是不错的，然后反推人类因为什么样的奖励函数公会采取这些行为），有了奖励函数之后，就可以使用一般的强化学习的方法去找出最优策略/动作。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410151652948.png"
+alt="image-20241015165219882" />
+<figcaption aria-hidden="true">image-20241015165219882</figcaption>
+</figure>
+<h2 id="背景">背景</h2>
+<p>过去几年里，以 ChatGPT 为代表的基于 prompt 范式的大型语言模型 (Large
+Language Model，LLM) 取得了巨大的成功。然而，对生成结果的评估是
+<strong>主观和依赖上下文</strong> 的，这些结果难以用现有的基于规则的 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90&amp;spm=1001.2101.3001.7020">文本生成</a>
+指标 (如 BLUE 和 ROUGE)
+来衡量。除了评估指标，现有的模型通常以预测下一个单词的方式和简单的损失函数
+(如交叉熵) 来建模，没有显式地引入人的偏好和主观意见。</p>
+<p>一致性关注的是我们实际上希望模型做什么。它提出的问题是“目标函数是否符合我们的意图”，并且基于模型的目标和行为，在多大程度上与我们人类的价值观和和期望一致。举个简单的例子，假设我们要训练一个鸟类分类器，把鸟类分类为“麻雀”或“知更鸟”，并使用对数损失为训练目标，尽管我们的最终目标是很高的分类精度。该模型可能具有较低的对数损失，即模型的能力较强，但精度较差，这就是一个不一致的例子。模型可以优化培训目标，但与我们的最终目标不一致。</p>
+<p>然而，在实际应用中，这些模型的目的是执行某种形式的有价值的认知工作，这些模型的训练方式与我们希望使用它们的方式之间存在着明显的分歧。尽管从数学上讲，机器计算的单词序列的统计分布可能是一种高效的选择，但实际上，我们会通过选择最适合给定情境的文本序列来生成语言，并使用我们的背景知识和常识来指导这一过程。当语言模型用于需要高度信任或可靠性的应用程序（如对话系统或智能个人助理）时，这可能会成为一个问题。</p>
+<p>虽然在过去几年里，这些基于大量数据训练的模型变得极为复杂、强大，但当应用于实际人们生活生产时，它们往往无法发挥出潜力。大型语言模型中的一致性问题通常表现为：</p>
+<ul>
+<li><p>缺乏有效帮助：没有遵循用户的明确指示。</p></li>
+<li><p>虚构幻象：模型会虚构不存在或错误的事实。</p></li>
+<li><p>缺乏可解读性：人们很难理解模型是如何得出特定决策或预测结果的。</p></li>
+<li><p>训练内容偏见有害：经过有偏见、有害数据训练的语言模型，可能会在输出中重现这些数据，即使没有明确指示这样做。</p></li>
+</ul>
+<p>但具体来说，一致性问题是从何处来的？</p>
+<p>因此，训练阶段，如果直接用人的偏好（或者说人的反馈）来对模型整体的输出结果计算
+reward 或
+loss，显然是要比传统的“给定上下文，预测下一个词”的损失函数合理的多。基于这个思想，便引出了本文要讨论的对象——RLHF（Reinforcement
+Learning from Human
+Feedback）：即使用强化学习的方法，利用人类反馈信号直接优化语言模型。</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/#more">more >></a>
     
     
 
@@ -805,7 +465,7 @@ alt="image-20241219194253130" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -835,7 +495,7 @@ alt="image-20241219194253130" />
 
 
     
-      <article id="post-LLM/SFT/【SFT】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-LLM/Fine-Tuning/【SFT】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -843,7 +503,7 @@ alt="image-20241219194253130" />
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E3%80%90SFT%E3%80%91/" target="_blank">【SFT】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/" target="_blank">【SFT】</a>
   
     </h1>
   
@@ -851,7 +511,7 @@ alt="image-20241219194253130" />
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E3%80%90SFT%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -872,7 +532,7 @@ prediction</a>。</p>
 <p><img
 src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E3%80%90SFT%E3%80%91/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/#more">more >></a>
     
     
 
@@ -899,7 +559,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E3%80%90SFT%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -929,7 +589,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></
 
 
     
-      <article id="post-LLM/SFT/微调框架" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-LLM/Fine-Tuning/微调框架" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -937,7 +597,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/" target="_blank">微调框架</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/" target="_blank">微调框架</a>
   
     </h1>
   
@@ -945,7 +605,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1125,7 +785,7 @@ LLaMA-Factory
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E5%BE%AE%E8%B0%83%E6%A1%86%E6%9E%B6/">展开全文 >></a>
     </p>
     
 
@@ -1155,7 +815,7 @@ LLaMA-Factory
 
 
     
-      <article id="post-LLM/SFT/预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-LLM/Fine-Tuning/预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1163,7 +823,7 @@ LLaMA-Factory
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" target="_blank">预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" target="_blank">预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）</a>
   
     </h1>
   
@@ -1171,7 +831,7 @@ LLaMA-Factory
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1200,7 +860,7 @@ learning）</h1>
 就是指预先训练的一个模型或者指预先训练模型的过程；<strong>微调</strong>
 就是指将预训练过的模型作用于自己的数据集，并使参数适应自己数据集的过程。</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/#more">more >></a>
     
     
 
@@ -1227,7 +887,7 @@ learning）</h1>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/SFT/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/">展开全文 >></a>
     </p>
     
 
@@ -1257,7 +917,7 @@ learning）</h1>
 
 
     
-      <article id="post-【后端】/python/Others" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-LLM/Decoding/Decoding Hyperparameters" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1265,7 +925,7 @@ learning）</h1>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Others/" target="_blank">Others</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" target="_blank">Decoding Hyperparameters</a>
   
     </h1>
   
@@ -1273,7 +933,7 @@ learning）</h1>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Others/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1286,16 +946,142 @@ learning）</h1>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="others">Others</h1>
-<p>## asssert</p>
-<p>使用 assert 是学习 python
-的一个非常好的习惯，在没完善一个程序之前，我们不知道程序在哪里会出错，与其让它在运行时崩溃，不如在出现错误条件时就崩溃。</p>
-<p>用一个程序说明：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span>  <span class="title function_">zero</span>(<span class="params">s</span>):</span><br><span class="line">    a = <span class="built_in">int</span>(s)</span><br><span class="line">    <span class="keyword">assert</span> a &gt; <span class="number">0</span>, <span class="string">&quot;a超出范围&quot;</span>   <span class="comment"># 这句的意思：如果 a 确实大于 0，程序正常往下运行</span></span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line"></span><br><span class="line">zero(<span class="string">&quot;-2&quot;</span>)  <span class="comment"># 但是如果 a 是小于 0 的，程序会抛出 AssertionError 错误，报错为参数内容 &quot;a超出范围&quot;</span></span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;e:\Python_list\class_student\temp.py&quot;</span>, line <span class="number">6</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    zero(<span class="string">&quot;-2&quot;</span>)</span><br><span class="line">  File <span class="string">&quot;e:\Python_list\class_student\temp.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> zero</span><br><span class="line">    <span class="keyword">assert</span> a &gt; <span class="number">0</span>,<span class="string">&quot;a超出范围&quot;</span></span><br><span class="line">AssertionError: a超出范围</span><br></pre></td></tr></table></figure>
+    <h1 id="decoding-hyperparameters">Decoding Hyperparameters</h1>
+<p>你知道生成解码的这些细节吗？</p>
+<ol type="1">
+<li>temperature、top-k、top-p的执行顺序是什么？（不同的执行顺序影响巨大）</li>
+<li>重复惩罚在贪婪解码时还需要处理吗？</li>
+<li>除了这些参数还有哪些，能说出几种？</li>
+<li>它们怎么实现的，难道用几百行放到一起吗？</li>
+<li>如果你想自己额外加一个解码策略怎么加？</li>
+<li>停止生成都有哪些条件，除了碰到就停止还有其他方式吗？</li>
+</ol>
+<p>如果有哪一点不了解的，记得点赞收藏慢慢阅读哦~</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Others/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/ModuleNotFoundError" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/ModuleNotFoundError/" target="_blank">ModuleNotFoundError</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/ModuleNotFoundError/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="modulenotfounderror">ModuleNotFoundError</h1>
+<h2
+id="环境变量用于设置系统的路径查找">环境变量用于设置系统的路径查找</h2>
+<p>在 Linux
+中，有一些常见的环境变量用于设置系统的路径查找。以下是一些常见的环境变量和它们的作用：</p>
+<ul>
+<li><p><strong><code>$PATH</code>：</strong> 用于设置
+<strong>可执行文件</strong> 的查找路径。</p></li>
+<li><p><strong><code>$LD_LIBRARY_PATH</code>：</strong>
+用于设置动态链接库的查找路径。</p></li>
+<li><p><strong><code>$INCLUDE</code> 或
+<code>$C_INCLUDE_PATH</code>：</strong> 用于设置 C
+语言头文件的查找路径。</p></li>
+<li><p><strong><code>$CPLUS_INCLUDE_PATH</code>：</strong> 用于设置 C++
+语言头文件的查找路径。</p></li>
+<li><p><strong><code>$LIBRARY_PATH</code>：</strong>
+用于设置库文件的查找路径。</p></li>
+<li><p><strong><code>$PKG_CONFIG_PATH</code>：</strong> 用于设置
+pkg-config 工具查找 <code>.pc</code> 文件的路径。</p></li>
+<li><p><strong><code>$MANPATH</code>：</strong> 用于设置
+<code>man</code> 命令查找 man 页面的路径。</p></li>
+<li><p><strong><code>$PYTHONPATH</code>：</strong> 用于设置 Python
+查找模块的路径。</p></li>
+</ul>
+<p>这些环境变量的设置取决于系统的具体情况和你的需求。在配置这些环境变量时，确保路径是正确的，以确保系统能够找到所需的文件。</p>
+<h3 id="echo-path">echo $PATH</h3>
+<h4 id="echo">echo</h4>
+<p><code>echo</code>
+是一个在命令行中输出文本的基本命令。它将接受到的参数输出到标准输出。在你的例子中，<code>echo $PATH</code>
+用于显示环境变量 <code>PATH</code> 的值。</p>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> [字符串]</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> Hello, World!</span><br></pre></td></tr></table></figure>
+<p>在上述示例中，<code>echo</code> 会输出字符串 “Hello, World!”
+到标准输出。</p>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/ModuleNotFoundError/#more">more >></a>
     
     
 
@@ -1322,7 +1108,282 @@ learning）</h1>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Others/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/ModuleNotFoundError/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2 id="modulenotfounderror">ModuleNotFoundError</h2>
+<p><a href="./ModuleNotFoundError.md">ModuleNotFoundError</a></p>
+<h2 id="valueerror-not-enough-values-to-unpack">ValueError: not enough
+values to unpack</h2>
+<p>好的，以下是一个简单的示例，展示了在 <code>for</code>
+循环中无法正确解包导致出错的情况。</p>
+<h3 id="示例代码">示例代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设我们有一个列表，其中包含元组和非元组的元素</span></span><br><span class="line">data = [</span><br><span class="line">    (<span class="string">&quot;a&quot;</span>, <span class="number">1</span>, <span class="string">&quot;x&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    (<span class="string">&quot;b&quot;</span>, <span class="number">2</span>),       <span class="comment"># 错误的元组，少了一个元素</span></span><br><span class="line">    (<span class="string">&quot;c&quot;</span>, <span class="number">3</span>, <span class="string">&quot;y&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    <span class="string">&quot;&quot;</span>,            <span class="comment"># 错误的元素，不是元组</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尝试在for循环中解包每个元素</span></span><br><span class="line"><span class="keyword">for</span> i, (letter, num, value) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Index <span class="subst">&#123;i&#125;</span>: <span class="subst">&#123;letter&#125;</span>, <span class="subst">&#123;num&#125;</span>, <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>上面错误的元素通常意味着处理的时候出现了问题</p>
+<h3 id="错误输出">错误输出</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Index 0: a, 1, x</span><br><span class="line">Index 1: b, 2, Traceback (most recent call last):</span><br><span class="line">  File &quot;example.py&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    for i, (letter, num, value) in enumerate(data):</span><br><span class="line">ValueError: not enough values to unpack (expected 3, got 2)</span><br></pre></td></tr></table></figure>
+<h3 id="说明">说明</h3>
+<ul>
+<li>第 1 个和第 3 个元素是正常的元组，包含 3 个元素，可以成功解包。</li>
+<li>第 2 个元素是一个只包含 2 个元素的元组 (<code>("b", 2)</code>)，这时
+<code>for</code> 循环解包时会报错，因为期望解包 3 个元素，但实际上只有 2
+个。</li>
+<li>第 4 个元素是一个字符串 <code>"d"</code>，它不是元组，也无法解包成
+<code>letter, num, value</code>，同样会引发错误。</li>
+</ul>
+<h3 id="错误的原因">错误的原因</h3>
+<ul>
+<li><p>当 <code>for</code> 循环尝试解包时，它期望每个元素都包含 3
+个值，但在某些元素中缺少或不符合这个格式，导致解包失败。</p>
+<p>在这个例子中，代码尝试将每个元素解包为 3 个变量
+(<code>letter, num, value</code>)，但第二个元素是一个只有 2
+个值的元组，而第四个元素根本不是一个元组，因此会报错。</p></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/json文件和jsonl文件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/json%E6%96%87%E4%BB%B6%E5%92%8Cjsonl%E6%96%87%E4%BB%B6/" target="_blank">json 文件和 jsonl 文件</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/json%E6%96%87%E4%BB%B6%E5%92%8Cjsonl%E6%96%87%E4%BB%B6/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="json-文件和-jsonl-文件">json 文件和 jsonl 文件</h1>
+<h2 id="介绍">介绍</h2>
+<p><strong>JSON 文件是使用 JSON（JavaScript Object
+Notation）格式存储数据的文件。它是一种结构化的文本格式，使用键值对的方式表示数据。</strong>
+JSON
+文件通常包含一个根对象，可以包含多个嵌套的对象、数组和基本数据类型。</p>
+<p><strong>JSON 文件的内容示例：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jane&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">40</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>而 <strong>JSONL 文件（JSON Lines），则是一种每行包含一个独立的 JSON
+对象的文本文件格式。</strong> 每行都是一个有效的 JSON 对象，和 json
+的"list dict"不一样，jsonl
+的话没有"list"，只有一行行的“dict”，使用换行符分隔。相比于 JSON
+文件，JSONL 文件更加轻量，每行为独立的 JSON
+对象，没有逗号或其他分隔符。这样的好处是方便一行行读取，而不用像 json
+一样只能一次性把"list"里面的"dict”全部都读出来，节省了内存吧，并且还能增加可读性，普通的
+json 文件打开之后会乱糟糟一团。</p>
+<p>jsonl 的话需要 pip 安装一个 jsonlines 包。</p>
+<p><strong>JSONL 文件的内容示例：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jane&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">40</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="区别">区别</h2>
+<p>JSON 文件：</p>
+<ul>
+<li><strong>使用大括号 {} 表示对象，使用方括号 [ ]
+表示数组。</strong></li>
+<li><strong>整个文件是一个有效的 JSON 对象或数组。</strong></li>
+<li>适合存储结构化的数据，如配置文件、API 响应等。</li>
+<li>一次性读取整个文件，解析成一个 JSON
+对象，可以随机访问其中的数据。</li>
+</ul>
+<p>JSONL 文件：</p>
+<ul>
+<li><strong>每行是一个独立的有效 JSON 对象。</strong></li>
+<li>每行之间没有逗号或其他分隔符。</li>
+<li>适合存储每行为独立记录的数据，如日志、传感器数据、日志行等。</li>
+<li>逐行读取文件，逐行解析 JSON 对象，一次处理一行的数据。</li>
+</ul>
+<p>JSONL 文件适合用于以下情况：</p>
+<ul>
+<li><strong>当数据以行为单位独立存储，并且每行数据之间没有明确的分隔符时。</strong></li>
+<li>当需要逐行处理数据，以节省内存和提高处理速度时。</li>
+<li>当数据量非常大，无法一次性加载到内存中时，JSONL
+格式提供了一种流式处理数据的方式。</li>
+</ul>
+<p>这么对比下来，JSON 文件更适合结构化的数据存储和传输，而 JSONL
+文件更适合每行为独立记录的数据存储和处理。</p>
+<h2 id="常见操作">常见操作</h2>
+<h3 id="json-文件转为-jsonlines">json 文件转为 jsonlines</h3>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"> </span><br><span class="line"><span class="title">with</span> jsonlines.open(write_path, <span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> wfd:</span><br><span class="line">    with open(read_path, <span class="string">&quot;r&quot;</span>, encoding=&#x27;utf-<span class="number">8</span>&#x27;) <span class="keyword">as</span> rfd:</span><br><span class="line">        for <span class="class"><span class="keyword">data</span> in rfd:</span></span><br><span class="line">            <span class="class"><span class="keyword">data</span> = json.loads(<span class="title">data</span>)#注意，这里 json 文件格式不同，写法也不同，具体看文件，注意区别 json.load() 与 json.loads()</span></span><br><span class="line">            wfd.write(<span class="class"><span class="keyword">data</span>)</span></span><br></pre></td></tr></table></figure>
+<h3 id="jsonlines-转为-json-文件">jsonlines 转为 json 文件</h3>
+<p>原因是 jsonlines 虽然好用，但并未通用，很多配置文件等都用的 json
+格式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(read_path, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> rfd:</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(write_path, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> wfd:</span><br><span class="line">        <span class="keyword">for</span> data <span class="keyword">in</span> rfd:</span><br><span class="line">            json.dump(data, wfd, indent=<span class="number">4</span>, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="python-如何读取-jsonl-文件">python 如何读取 jsonl 文件：</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"> </span><br><span class="line">jsonl_file = <span class="string">&quot;data.jsonl&quot;</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(jsonl_file, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> file:</span><br><span class="line">        json_obj = json.loads(line)</span><br><span class="line">        <span class="comment"># 对 JSON 对象进行处理</span></span><br><span class="line">        <span class="built_in">print</span>(json_obj[<span class="string">&quot;name&quot;</span>], json_obj[<span class="string">&quot;age&quot;</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="使用-ijson-库用于流式处理-jsonl-文件">使用 ijson 库用于流式处理
+JSONL 文件</h3>
+<blockquote>
+<p>请注意，在处理大型 JSONL
+文件时，可以使用适当的技术和库进行优化，例如流式处理或批量处理，以减少内存占用和提高性能。这取决于数据量和具体的处理需求。</p>
+</blockquote>
+<blockquote>
+<p>ijson 是一个流式处理 JSON 数据的 Python 库，它可以有效地处理大型
+JSONL 文件。下面是一个示例代码，展示了如何使用 ijson 库来处理 JSONL
+文件：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ijson</span><br><span class="line"> </span><br><span class="line">jsonl_file = <span class="string">&quot;data.jsonl&quot;</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(jsonl_file, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    <span class="comment"># 使用 ijson.items 函数读取 JSONL 文件中的每个 JSON 对象</span></span><br><span class="line">    <span class="keyword">for</span> json_obj <span class="keyword">in</span> ijson.items(file, <span class="string">&quot;item&quot;</span>):</span><br><span class="line">        <span class="comment"># 在这里处理 JSON 对象</span></span><br><span class="line">        <span class="built_in">print</span>(json_obj)</span><br></pre></td></tr></table></figure>
+<p>在示例代码中，我们首先使用 open 函数打开 JSONL
+文件，并以二进制模式打开文件。然后，我们使用 ijson.items 函数来读取
+JSONL 文件中的每个 JSON 对象。第一个参数是打开的文件对象，第二个参数是
+JSON 对象的路径。在这个示例中，我们假设每个 JSON 对象的键是 “item”。</p>
+<p>在循环内部，你可以根据需要对每个 JSON 对象进行处理。json_obj 是一个
+Python 字典，表示当前行的 JSON 对象。</p>
+<p>ijson 库的优势在于它以迭代的方式逐行读取 JSONL
+文件，并在需要时按需解析 JSON
+对象。这样可以大大减少内存的占用，并且适用于处理非常大的 JSONL
+文件。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/json%E6%96%87%E4%BB%B6%E5%92%8Cjsonl%E6%96%87%E4%BB%B6/">展开全文 >></a>
     </p>
     
 
@@ -1410,6 +1471,25 @@ variables）</strong>。它们被广泛应用于内置功能、模块的导入�
 <li><p><strong>示例</strong>：</p></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;当前文件路径：&quot;</span>, __file__)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;文件所在目录：&quot;</span>, os.path.dirname(__file__))</span><br></pre></td></tr></table></figure>
+<p>__file__表示显示文件当前的位置</p>
+<p>但是：</p>
+<p>如果当前文件包含在sys.path里面，那么，__file__返回一个相对路径！</p>
+<p>如果当前文件不包含在sys.path里面，那么__file__返回一个绝对路径！</p>
+<p>先来看测试：记住，下面的测试是假设“”不属于sys.path的情况下！！！</p>
+<p>图1是sys.path的图</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412270018201.jpeg" /></p>
+<p>命令行cd到文件所在目录，执行，你所在的位置实际上是""，所以他返回相对地址</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412270018290.jpeg" /></p>
+<p>操作目录往上返回一层，并在python后面执行的时候添加目录</p>
+<p>这样，文件所在位置并不是操作所在位置，也就是不是""</p>
+<p>而mystuff也不在sys.path里面，所以，他返回绝对路径！</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412270018284.jpeg" /></p>
+<p>包括我们换一种执行方法，他也是返回绝对路径！</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412270018176.jpeg" /></p>
 <hr />
 <h2 id="doc__"><code>__doc__</code></h2>
 <ul>
@@ -1487,121 +1567,6 @@ id="init__和__call__"><code>__init__</code>和<code>__call__</code></h2>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/python项目中的相对路径与绝对路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" target="_blank">python项目中的绝对路径与相对路径</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1
-id="python项目中的绝对路径与相对路径">python项目中的绝对路径与相对路径</h1>
-<p>当前工作目录（<strong>cwd</strong>，Current Working
-Directory）是在程序启动时由操作系统或运行环境设置的，具体由
-<strong>运行程序的上下文</strong>
-决定。以下是对设置时机和机制的详细解释：</p>
-<p>在 Python 项目中，路径的管理是一个常见问题，理解
-<strong>相对路径</strong> 和 <strong>绝对路径</strong>
-的区别非常重要。它们主要用于访问文件、资源或目录。</p>
-<h2 id="绝对路径">绝对路径</h2>
-<ul>
-<li><strong>绝对路径</strong>
-指从<strong>根目录</strong>开始的完整路径。</li>
-<li>绝对路径与当前程序的运行位置无关，始终指向同一个文件或目录。</li>
-</ul>
-<h3 id="特点">特点</h3>
-<ul>
-<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名
-<code>C:\</code>（Windows）开头。</li>
-<li><strong>跨环境不够灵活</strong>，因为不同系统的根路径可能不同。</li>
-</ul>
-<h3 id="示例">示例</h3>
-<ul>
-<li><strong>Windows</strong>：<code>C:\Users\Project\file.txt</code></li>
-<li><strong>Linux/Mac</strong>：<code>/home/user/Project/file.txt</code></li>
-</ul>
-<h3 id="示例-1">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/">展开全文 >></a>
     </p>
     
 
@@ -1802,10 +1767,6 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
@@ -1814,7 +1775,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1826,15 +1787,11 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1846,7 +1803,15 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1866,22 +1831,6 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
@@ -1894,7 +1843,23 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1906,7 +1871,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

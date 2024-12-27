@@ -270,7 +270,7 @@
 
   
     
-      <article id="post-命令操作/【Linux】/如何优雅地监控GPU的使用情况？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Anaconda】/linux-conda环境安装教程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -278,7 +278,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/" target="_blank">服务器炼丹代码配置</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" target="_blank">linux-conda 环境安装教程</a>
   
     </h1>
   
@@ -286,7 +286,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -299,178 +299,25 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="如何优雅地监控-gpu-的使用情况">如何优雅地监控 GPU
-的·使用情况？</h1>
-<p>这是一篇非常基础的记录：如何优雅地监控服务器 GPU 使用情况？下面总结 4
-个最常用的方式：</p>
-<ol type="1">
-<li>nvidia-smi （最有名，没有之一） 🌟🌟</li>
-<li>gpustat （彩色并简约的显示） 🌟🌟🌟🌟</li>
-<li>nvtop （完整的信息，需 root 权限 apt 安装，不是非常方便）
-🌟🌟🌟</li>
-<li>nvitop （完整的信息，可作为 Python 的库安装，非常方便）
-🌟🌟🌟🌟🌟</li>
-</ol>
-<h2 id="工具-1nvidia-smi">工具 1：nvidia-smi</h2>
-<p>直接在终端输入 <code>nvidia-smi</code> 可以得到显卡情况：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221350846.png"
-alt="image-20241222135010770" />
-<figcaption aria-hidden="true">image-20241222135010770</figcaption>
-</figure>
-<p>如果希望自动刷新这个命令，并且只看当前信息，则可以执行如下命令实现每
-1s 刷新一次：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch -n 0.5 nvidia-smi</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<p><code>nvidia-smi</code> 是系统指令</p>
-<h2 id="工具-2gpustat">工具 2：gpustat</h2>
-<p>这个命令相比 <code>nvidia-smi</code> 更加好看一些，命令如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpustat</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221317457.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>显然这种带高亮的显示看起来更舒服，而且可以显示出完整显卡的完整名称，以及正在使用
-GPU 的用户。一个缺点就是不能像 <code>nvidia-smi</code>
-一样显示出各个进程的信息。</p>
-<p>如果希望每秒刷新这个信息，并只显示当前信息，则执行以下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpustat -i</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install gpustat</span><br></pre></td></tr></table></figure>
-<h2 id="工具-3nvtop">工具 3：nvtop</h2>
-<p>网上很多人说这个工具非常好用，能够非常优雅地全面地监控显卡信息，官方图如下（显示显卡使用情况以及详细的折线图）：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221349237.png"
-alt="image-20241222134924101" />
-<figcaption aria-hidden="true">image-20241222134924101</figcaption>
-</figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">nvtop version 3.1.0</span><br><span class="line">Available options:</span><br><span class="line">  -d --delay        : Select the refresh rate (1 == 0.1s)</span><br><span class="line">  -v --version      : Print the version and exit</span><br><span class="line">  -c --config-file  : Provide a custom config file location to load/save preferences</span><br><span class="line">  -p --no-plot      : Disable bar plot</span><br><span class="line">  -r --reverse-abs  : Reverse abscissa: plot the recent data left and older on the right</span><br><span class="line">  -C --no-color     : No colors</span><br><span class="line">line information</span><br><span class="line">  -f --freedom-unit : Use fahrenheit</span><br><span class="line">  -i --gpu-info     : Show bar with additional GPU parametres</span><br><span class="line">  -E --encode-hide  : Set encode/decode auto hide time in seconds (default 30s, negative = always on screen)</span><br><span class="line">  -h --help         : Print help and exit</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::nvtop</span><br></pre></td></tr></table></figure>
-<h2 id="方法-4nvitop">方法 4：nvitop</h2>
-<p>想要拥有 <code>nvtop</code> 那样详细的展示，又想拥有
-<code>gpustat</code> 那样彩色的界面，并且希望能够像 <code>gpustat</code>
-一样通过 <code>pip</code> 快速安装，那就不得不提 <code>nvitop</code>
-工具了。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvitop</span><br></pre></td></tr></table></figure>
-<p>展示的模式有三种：</p>
-<ol type="1">
-<li>auto （默认）</li>
-<li>compact</li>
-<li>full</li>
-</ol>
-<p>如果希望展示超完整的显卡信息，则用如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvitop -m full</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221405175.png"
-alt="image-20241222140529049" />
-<figcaption aria-hidden="true">image-20241222140529049</figcaption>
-</figure>
-<p>我认为这个工具最好用的地方不在于彩色文字和进度条，而在于它能够<strong>完整地显示出每个进程的执行用户、运行时长、执行指令以及每个进程所使用的
-GPU 编号。可谓是集其他工具的优势于一身的实用主义工具了！</strong></p>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install -y conda-forge::nvitop</span><br></pre></td></tr></table></figure>
-
+    <h1 id="linux-conda-环境安装教程">linux-conda 环境安装教程</h1>
+<p>在没有 root 权限的情况下，pip 命令等无法执行，如同在本地电脑上安装
+anaconda 一样，服务器上安装 anaconda
+也能方便我们对不同的深度学习环境进行管理。<strong>实验室的服务器</strong>是很多人都在用的，因此需要自己在
+home 目录下安装
+anaconda，以便在其中<strong>创建</strong>自己需要的<strong>虚拟环境</strong></p>
+<h2 id="背景">背景</h2>
+<p>最近被 python 各个版本环境整的头晕目眩，本来就不是专长做 python
+的，切换各种版本着实不好操作，因此想到了 conda 这个好工具，以下是对
+conda 的相关理解和搭建的详细过程，做个记录。</p>
+<h3 id="conda-简介">Conda 简介</h3>
+<p>Conda 是在 Windows、macOS 和 Linux
+上运行的开源软件包管理系统和环境管理系统。可以快速安装、运行和更新软件包及其依赖项。可以轻松地在本地计算机上的环境中创建，保存，加载和切换。它是为
+Python 程序创建的，但可以打包和分发适用于任何语言的软件。 目前 conda
+的发行版本分为 anaconda、miniconda 两种，安装了 ananconda 或 miniconda
+的完整版，就默认安装了 conda。anaconda 会包含一些常用包的版本，miniconda
+则是精简版，两者安装均可。</p>
     
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【OpenAI】/APIConnectionError" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/" target="_blank">APIConnectionError</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="apiconnectionerror">APIConnectionError</h1>
-<h2 id="场景复现">场景复现</h2>
-<p>代码如下（源自网络）：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openai</span><br><span class="line"> </span><br><span class="line">openai.api_key = <span class="string">&#x27;sk-xxxx&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_gpt</span>(<span class="params">prompt</span>):</span><br><span class="line">     prompt = prompt</span><br><span class="line">     model_engine = <span class="string">&quot;text-davinci-003&quot;</span></span><br><span class="line">     completion = openai.Completion.create(</span><br><span class="line">         engine=model_engine,</span><br><span class="line">         prompt=prompt,</span><br><span class="line">         max_tokens=<span class="number">1024</span>,</span><br><span class="line">         n=<span class="number">1</span>,</span><br><span class="line">         stop=<span class="literal">None</span>,</span><br><span class="line">         temperature=<span class="number">0.5</span>,</span><br><span class="line">         timeout=<span class="number">1000</span>,</span><br><span class="line">     )</span><br><span class="line"> </span><br><span class="line">     response = completion.choices[<span class="number">0</span>].text</span><br><span class="line">     <span class="built_in">print</span>(response)</span><br><span class="line"> </span><br><span class="line">chat_gpt(<span class="string">&quot;现在几点了&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>执行报错：</p>
-<p><img
-src="https://i-blog.csdnimg.cn/blog_migrate/89f31ebb7a1ad9ba3815de9eb8412a6b.png" /></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">APIConnectionError: Error communicating <span class="keyword">with</span> OpenAI: HTTPSConnectionPool(host=<span class="string">&#x27;api.openai.com&#x27;</span>, port=<span class="number">443</span>): Max retries exceeded <span class="keyword">with</span> url: /v1/chat/completions (Caused by SSLError(SSLEOFError(<span class="number">8</span>, <span class="string">&#x27;EOF occurred in violation of protocol (_ssl.c:1125)&#x27;</span>)))</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/#more">more >></a>
     
     
 
@@ -487,7 +334,7 @@ src="https://i-blog.csdnimg.cn/blog_migrate/89f31ebb7a1ad9ba3815de9eb8412a6b.png
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Anaconda</a>
         		</li>
       		
 		</ul>
@@ -497,402 +344,7 @@ src="https://i-blog.csdnimg.cn/blog_migrate/89f31ebb7a1ad9ba3815de9eb8412a6b.png
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【Windows】/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" target="_blank">【Reference】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="reference">【Reference】</h1>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/windows-commands">Windows
-命令 | Microsoft Learn</a></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【OpenAI】/openai_api_key" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/" target="_blank">APIConnectionError</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="openai_api_key">openai_api_key</h1>
-<h2 id="引言">引言</h2>
-<p>欢迎来到这篇关于如何设置 " OPENAI_API_KEY "
-环境变量的博客文章！如果你是 Python 初学者，对 OpenAI 和 GPT-3
-感到好奇，那么你来对地方了。在这篇文章中，我们将一步一步地了解如何设置环境变量，以便在你的
-Python 项目中轻松使用 OpenAI API。</p>
-<p>首先，让我们简单了解一下 OpenAI 和 GPT-3。OpenAI
-是一家专注于人工智能研究的公司，旨在开发和推广友善的
-AI，以造福人类。GPT-3（全称：Generative Pre-trained Transformer 3）是
-OpenAI 开发的一款强大的自然语言处理 AI
-模型。它能够理解和生成自然语言文本，具有许多令人惊叹的用途，如写文章、回答问题、编程等。</p>
-<p>为了使用 OpenAI 的 GPT-3，我们需要通过 OpenAI API
-来与其交互。这就需要一个 API
-密钥，它是一个由字母和数字组成的唯一字符串，用于验证你的身份并记录你的
-API 使用情况。保护 API
-密钥非常重要，因为它关系到你的账户安全和费用。</p>
-<p>接下来，我们将深入了解如何在你的操作系统中设置环境变量 "
-OPENAI_API_KEY "，以便在 Python 项目中使用 OpenAI
-API。让我们开始吧！</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【Windows】/【Windows命令】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" target="_blank">【Windows命令】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="windows-命令">【Windows 命令】</h1>
-<h2 id="前言">前言</h2>
-<p><strong>cmd</strong> 是 <strong>command</strong> 的缩写。即命令行</p>
-<p>虽然随着计算机产业的发展，<strong>Windows</strong> 操作系统
-的应用越来越广泛，<strong>DOS</strong>
-面临着被淘汰的命运，但是因为它运行安全、稳定，有的用户还在使用，所以一般
-Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong>
-系统下运行 <strong>DOS</strong>，中文版 <strong>Windows XP</strong>
-中的命令提示符进一步提高了与 DOS
-下操作命令的兼容性，用户可以在命令提示符直接输入中文调用文件。</p>
-<p>作为一个开发者，我们用的最多的就是 <strong>windows</strong>，但是对于
-<strong>cmd</strong>，我不知道大家熟不熟，反正我是一直不怎么熟悉。平时操作
-<strong>linux</strong> 比较多，反而忽视了 <strong>cmd</strong>
-相关命令，这里大致总结一些常用的命令，作为记录。</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【huggingface】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" target="_blank">Errors</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="errors">Errors</h1>
-<h2 id="httpsconnectionpool-错误">HTTPSConnectionPool 错误</h2>
-<p>在下载 huggingface
-模型的时候，即使你已经有了正确的上网姿势，也经常会出现这个错误：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProxyError: (MaxRetryError(&quot;HTTPSConnectionPool(host=&#x27;huggingface.co&#x27;, port=443): Max retries exceeded with url: /gpt2/resolve/main/config.json (Caused by ProxyError(&#x27;Unable to connect to proxy&#x27;, SSLError(SSLZeroReturnError(6, &#x27;TLS/SSL connection has been closed (EOF) (_ssl.c:1149)&#x27;))))&quot;), &#x27;(Request ID: 0800ad0f-291e-4cc5-9027-80f1427eda89)&#x27;)</span><br></pre></td></tr></table></figure>
-<p>如在下载 Tokenizer 的时候，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;csebuetnlp/mT5_multilingual_XLSum&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>就会出现以上的错误 HTTPSConnectionPool(host =‘huggingface.co‘, port =
-443)。</p>
-<p>解决的办法可以有两种。</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">展开全文 >></a>
     </p>
     
 
@@ -1028,6 +480,304 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=5
 
 
     
+      <article id="post-命令操作/【OpenAI】/openai_api_key" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/" target="_blank">APIConnectionError</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="openai_api_key">openai_api_key</h1>
+<h2 id="引言">引言</h2>
+<p>欢迎来到这篇关于如何设置 " OPENAI_API_KEY "
+环境变量的博客文章！如果你是 Python 初学者，对 OpenAI 和 GPT-3
+感到好奇，那么你来对地方了。在这篇文章中，我们将一步一步地了解如何设置环境变量，以便在你的
+Python 项目中轻松使用 OpenAI API。</p>
+<p>首先，让我们简单了解一下 OpenAI 和 GPT-3。OpenAI
+是一家专注于人工智能研究的公司，旨在开发和推广友善的
+AI，以造福人类。GPT-3（全称：Generative Pre-trained Transformer 3）是
+OpenAI 开发的一款强大的自然语言处理 AI
+模型。它能够理解和生成自然语言文本，具有许多令人惊叹的用途，如写文章、回答问题、编程等。</p>
+<p>为了使用 OpenAI 的 GPT-3，我们需要通过 OpenAI API
+来与其交互。这就需要一个 API
+密钥，它是一个由字母和数字组成的唯一字符串，用于验证你的身份并记录你的
+API 使用情况。保护 API
+密钥非常重要，因为它关系到你的账户安全和费用。</p>
+<p>接下来，我们将深入了解如何在你的操作系统中设置环境变量 "
+OPENAI_API_KEY "，以便在 Python 项目中使用 OpenAI
+API。让我们开始吧！</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/openai_api_key/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/requirements.txt" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/requirements.txt/" target="_blank">requirements.txt</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/requirements.txt/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="requirements.txt">requirements.txt</h1>
+<p>python 项目中必须包含一个 requirements.txt
+文件，用于记录所有依赖包及其精确的版本号，以便新环境部署。</p>
+<h2 id="什么是-requirements.txt">什么是
+<code>requirements.txt</code>？</h2>
+<p><code>requirements.txt</code> 是一个 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6&amp;spm=1001.2101.3001.7020">文本文件</a>，列出了所有必须安装的库，以便于在新环境中复制相同的设置。它通常包括库的名称和版本号，格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flask==1.1.2</span><br><span class="line">requests==2.24.0</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/requirements.txt/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/requirements.txt/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-命令操作/【huggingface】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2 id="httpsconnectionpool-错误">HTTPSConnectionPool 错误</h2>
+<p>在下载 huggingface
+模型的时候，即使你已经有了正确的上网姿势，也经常会出现这个错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProxyError: (MaxRetryError(&quot;HTTPSConnectionPool(host=&#x27;huggingface.co&#x27;, port=443): Max retries exceeded with url: /gpt2/resolve/main/config.json (Caused by ProxyError(&#x27;Unable to connect to proxy&#x27;, SSLError(SSLZeroReturnError(6, &#x27;TLS/SSL connection has been closed (EOF) (_ssl.c:1149)&#x27;))))&quot;), &#x27;(Request ID: 0800ad0f-291e-4cc5-9027-80f1427eda89)&#x27;)</span><br></pre></td></tr></table></figure>
+<p>如在下载 Tokenizer 的时候，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;csebuetnlp/mT5_multilingual_XLSum&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>就会出现以上的错误 HTTPSConnectionPool(host =‘huggingface.co‘, port =
+443)。</p>
+<p>解决的办法可以有两种。</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-命令操作/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1103,6 +853,128 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=5
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-命令操作/【Windows】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2 id="不是内部或外部命令也不是可运行的程序或批处理文件">'.'
+不是内部或外部命令，也不是可运行的程序或批处理文件</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\Document\lab\federated-learning\Codes\leaf-master\data\femnist&gt;./preprocess.sh -s niid --sf 1.0 -k 0 -t sample</span><br><span class="line"><span class="string">&#x27;.&#x27;</span> 不是内部或外部命令，也不是可运行的程序或批处理文件。</span><br></pre></td></tr></table></figure>
+<p>这个错误信息表明你正在尝试在Windows的命令提示符（CMD）或PowerShell中运行一个为Unix或Linux系统（如bash
+shell）编写的shell脚本（<code>preprocess.sh</code>）。Windows默认不支持直接运行<code>.sh</code>脚本，因为它使用的是不同的命令解释器。</p>
+<p>要在Windows上运行这个脚本，你有几个选项：</p>
+<ol type="1">
+<li><strong>使用Windows Subsystem for Linux (WSL):</strong>
+<ol type="1">
+<li>如果你已经安装了WSL（Windows Subsystem for
+Linux），你可以在WSL的bash shell中运行这个脚本。</li>
+<li>确保你的脚本和所有依赖项都在WSL环境中正确安装和配置。</li>
+</ol></li>
+<li><strong>使用Git Bash或Cygwin:</strong>
+<ol type="1">
+<li>如果你没有安装WSL，但安装了Git
+Bash或Cygwin，这些工具也提供了一个bash环境，你可以在其中运行<code>.sh</code>脚本。</li>
+</ol></li>
+<li><strong>重写脚本为Windows批处理文件:</strong>
+<ol type="1">
+<li>你可以将<code>preprocess.sh</code>脚本中的命令转换为Windows
+CMD命令，并将它们保存为<code>.bat</code>文件。但是，这可能需要大量的工作，特别是如果脚本很复杂或使用了许多Unix特有的命令和工具。</li>
+</ol></li>
+<li><strong>使用Docker（如果适用）:</strong>
+<ol type="1">
+<li>如果你的项目支持Docker，并且有一个为Unix环境配置的Dockerfile，你可以在Docker容器中运行你的脚本。这通常是在Windows上运行Unix脚本的最简单和最可靠的方法之一。</li>
+</ol></li>
+<li><strong>使用虚拟机</strong>:
+<ol type="1">
+<li>你可以设置一个虚拟机来运行一个完整的Linux发行版，然后在那个环境中运行你的脚本。</li>
+</ol></li>
+</ol>
+<p>对于你的具体情况，如果你已经安装了WSL或Git
+Bash，你可以尝试在这些环境中导航到<code>D:\Document\lab\federated-learning\Codes\leaf-master\data\femnist</code>目录（注意，在WSL中，你可能需要挂载你的Windows文件系统或使用与Windows路径相对应的Linux路径），然后运行<code>./preprocess.sh -s niid --sf 1.0 -k 0 -t sample</code>命令。</p>
+<p>如果你选择使用WSL或Git
+Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使用了某些在Windows环境中不可用的Unix命令或工具。在这种情况下，你可能需要修改脚本以适应Windows环境，或者寻找替代的命令或工具来完成相同的任务。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/">展开全文 >></a>
     </p>
     
 
@@ -1298,7 +1170,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 
 
     
-      <article id="post-【前端】/js/tutorial/1 JS的调用方式与执行顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Windows】/【Windows命令】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1306,7 +1178,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" target="_blank">1 JS的调用方式与执行顺序</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" target="_blank">【Windows命令】</a>
   
     </h1>
   
@@ -1314,7 +1186,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1327,30 +1199,113 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="js的调用方式与执行顺序">1 JS的调用方式与执行顺序</h1>
-<h2 id="使用方式">使用方式</h2>
-<p>HTML页面中的任意位置加上<code>&lt;script type="module"&gt;&lt;/script&gt;</code>标签即可。</p>
-<p>常见使用方式有以下几种：</p>
+    <h1 id="windows-命令">【Windows 命令】</h1>
+<h2 id="前言">前言</h2>
+<p><strong>cmd</strong> 是 <strong>command</strong> 的缩写。即命令行</p>
+<p>虽然随着计算机产业的发展，<strong>Windows</strong> 操作系统
+的应用越来越广泛，<strong>DOS</strong>
+面临着被淘汰的命运，但是因为它运行安全、稳定，有的用户还在使用，所以一般
+Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong>
+系统下运行 <strong>DOS</strong>，中文版 <strong>Windows XP</strong>
+中的命令提示符进一步提高了与 DOS
+下操作命令的兼容性，用户可以在命令提示符直接输入中文调用文件。</p>
+<p>作为一个开发者，我们用的最多的就是 <strong>windows</strong>，但是对于
+<strong>cmd</strong>，我不知道大家熟不熟，反正我是一直不怎么熟悉。平时操作
+<strong>linux</strong> 比较多，反而忽视了 <strong>cmd</strong>
+相关命令，这里大致总结一些常用的命令，作为记录。</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-命令操作/【Windows】/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" target="_blank">【Reference】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="reference">【Reference】</h1>
 <ul>
-<li><p>直接在<code>&lt;script type="module"&gt;&lt;/script&gt;</code>标签内写JS代码。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">let</span> x = <span class="number">3</span>;</span></span><br><span class="line"><span class="language-javascript">    <span class="variable language_">console</span>.<span class="title function_">log</span>(x);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>直接引入文件：<code>&lt;script type="module" src="/static/js/index.js"&gt;&lt;/script&gt;</code>。例如<code>/static/js/index.js</code>文件中的内容为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">&quot;acwing&quot;</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">print</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Hello World!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> &#123;</span><br><span class="line">    name,</span><br><span class="line">    print</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>将文件中所需的代码，通过<code>import</code>关键字引入到当前作用域。例如<code>&lt;script type="module"&gt;&lt;/script&gt;</code>中的内容为：</p></li>
+<li><a
+target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/windows-commands">Windows
+命令 | Microsoft Learn</a></li>
 </ul>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">import</span> &#123; name, print &#125; <span class="keyword">from</span> <span class="string">&quot;/static/js/index.js&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">console</span>.<span class="title function_">log</span>(name);</span></span><br><span class="line"><span class="language-javascript">	<span class="title function_">print</span>();</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="执行顺序">执行顺序</h2>
-<ol type="1">
-<li>类似于HTML与CSS，按从上到下的顺序执行；</li>
-<li>事件驱动执行；</li>
-</ol>
-<h2 id="html-css-javascript三者之间的关系">HTML, CSS,
-JavaScript三者之间的关系</h2>
-<ol type="1">
-<li>CSS控制HTML</li>
-<li>JavaScript控制HTML与CSS</li>
-<li>为了方便开发与维护，尽量按照上述顺序写代码。例如：不要在HTML中调用JavaScript中的函数。</li>
-</ol>
 
     
 
@@ -1367,7 +1322,7 @@ JavaScript三者之间的关系</h2>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
         		</li>
       		
 		</ul>
@@ -1377,7 +1332,7 @@ JavaScript三者之间的关系</h2>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/">展开全文 >></a>
     </p>
     
 
@@ -1578,10 +1533,6 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
@@ -1590,7 +1541,7 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1602,15 +1553,11 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1622,7 +1569,15 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1642,22 +1597,6 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
@@ -1670,7 +1609,23 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1682,7 +1637,7 @@ JavaScript三者之间的关系</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="基于 \(sketch\) 的高效通信联邦学习客户端选择算法  内容：现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算">
+  <meta name="description" content="基于 $sketch$ 的高效通信联邦学习客户端选择算法  内容：现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算其重要程度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="项目经历">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/09/[object%20Object]/others/%E4%BF%9D%E7%A0%94/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="基于 \(sketch\) 的高效通信联邦学习客户端选择算法  内容：现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算">
+<meta property="og:description" content="基于 $sketch$ 的高效通信联邦学习客户端选择算法  内容：现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算其重要程度">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-08-09T01:46:27.000Z">
 <meta property="article:modified_time" content="2024-11-05T01:11:18.630Z">
@@ -318,22 +318,22 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p>基于 <span class="math inline">\(sketch\)</span>
-的高效通信联邦学习客户端选择算法</p>
+    <p>基于 $sketch$ 的高效通信联邦学习客户端选择算法</p>
 <ul>
-<li><strong>内容：</strong>现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种<strong>随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响</strong>，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算其重要程度，服务端基于客户端重要程度进行选择，在保证随机性的同时算法倾向于选择某些更加重要的客户端；此外我们还基于<span
-class="math inline">\(sketch\)</span>实现了在上行链路与下行链路降低通信开销，同时提出skip
-communication算法并运用周期平均思想减少通信的轮数，实现全面降低联邦学习的通信开销</li>
+<li><strong>内容：</strong>现有的FL系统中，参与每轮更新的客户端通常数量固定且由服务端随机选择，但这种<strong>随机选择客户端的方式会加剧数据异质性（Non-IID）的不利影响</strong>，降低模型的收敛速度和准确率，导致通信代价大幅增加。因此我们提出了一种新的客户端选择算法：在FetchSGD的基础上，算法根据客户端的数据分布、本地损失、与服务器模型参数的差异程度计算其重要程度，服务端基于客户端重要程度进行选择，在保证随机性的同时算法倾向于选择某些更加重要的客户端；此外我们还基于$sketch$实现了在上行链路与下行链路降低通信开销，同时提出skip communication算法并运用周期平均思想减少通信的轮数，实现全面降低联邦学习的通信开销</li>
 <li><strong>贡献</strong>：独立完成，论文在写</li>
 </ul>
 <span id="more"></span>
 <p>对大模型分布式训练技术（如TP、SP、PP）等有一定研究，曾在北京大学数据科学与工程研究所有一段线上的实习经历；此外本人曾对基于sketch解决联邦学习通信效率有一定的研究，以下为个人想法：</p>
-<ol type="1">
-<li><p>设计并实现了基于FetchSGD的客户端选择算法，通过综合考量数据分布、本地损失及模型参数差异，有效缓解了数据异质性问题，预期提升模型收敛速度15%，准确率提高3个百分点。</p></li>
-<li><p>引入sketch技术优化通信链路，在上行与下行传输中显著降低通信数据量，预计减少通信成本约40%，增强联邦学习效率。</p></li>
-<li><p>创新提出skip
-communication算法，结合周期平均策略，灵活调整通信轮次，成功减少不必要通信轮数20%，进一步降低总体通信开销。</p></li>
-<li><p>独立承担从算法设计到实验验证的全过程，目前正处于关键验证阶段，致力于全面评估并优化新算法在联邦学习环境下的性能表现。</p></li>
+<ol>
+<li><p>设计并实现了基于FetchSGD的客户端选择算法，通过综合考量数据分布、本地损失及模型参数差异，有效缓解了数据异质性问题，预期提升模型收敛速度15%，准确率提高3个百分点。</p>
+</li>
+<li><p>引入sketch技术优化通信链路，在上行与下行传输中显著降低通信数据量，预计减少通信成本约40%，增强联邦学习效率。</p>
+</li>
+<li><p>创新提出skip communication算法，结合周期平均策略，灵活调整通信轮次，成功减少不必要通信轮数20%，进一步降低总体通信开销。</p>
+</li>
+<li><p>独立承担从算法设计到实验验证的全过程，目前正处于关键验证阶段，致力于全面评估并优化新算法在联邦学习环境下的性能表现。</p>
+</li>
 </ol>
 
     
@@ -484,8 +484,8 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
     </a>
   
   
-    <a href="/2024/05/19/%5Bobject%20Object%5D/Courses/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP%E4%BE%8B%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">HTTP例题</div>
+    <a href="/2024/05/19/%5Bobject%20Object%5D/Courses/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CRC/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CRC</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -707,7 +707,7 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -715,11 +715,7 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -731,15 +727,11 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -747,15 +739,23 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -771,15 +771,19 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -795,11 +799,11 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -808,10 +812,6 @@ communication算法，结合周期平均策略，灵活调整通信轮次，成�
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

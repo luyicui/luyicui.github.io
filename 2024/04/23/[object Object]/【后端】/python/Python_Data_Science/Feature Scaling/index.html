@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Feature Scaling特征缩放原因：  数量级的差异将导致量级较大的属性占据主导地位 数量级的差异将导致迭代收敛速度减慢 依赖于样本距离的算法对于数据的数量级非常敏感  好处：  提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的 RBF 内核或线性模型的 $l_1$ 和 $l_2$ 正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差">
+  <meta name="description" content="Feature Scaling 特征缩放 原因：  数量级的差异将导致量级较大的属性占据主导地位 数量级的差异将导致迭代收敛速度减慢 依赖于样本距离的算法对于数据的数量级非常敏感  好处：  提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的 RBF 内核或线性模型的 \(l_1\) 和 \(l_2\) 正则化），都是假设所有的特征都是零均值并且具有">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Feature Scaling">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/23/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python_Data_Science/Feature%20Scaling/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="Feature Scaling特征缩放原因：  数量级的差异将导致量级较大的属性占据主导地位 数量级的差异将导致迭代收敛速度减慢 依赖于样本距离的算法对于数据的数量级非常敏感  好处：  提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的 RBF 内核或线性模型的 $l_1$ 和 $l_2$ 正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差">
+<meta property="og:description" content="Feature Scaling 特征缩放 原因：  数量级的差异将导致量级较大的属性占据主导地位 数量级的差异将导致迭代收敛速度减慢 依赖于样本距离的算法对于数据的数量级非常敏感  好处：  提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的 RBF 内核或线性模型的 \(l_1\) 和 \(l_2\) 正则化），都是假设所有的特征都是零均值并且具有">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-23T06:33:49.000Z">
 <meta property="article:modified_time" content="2024-12-24T02:09:29.856Z">
@@ -280,7 +280,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">309字</span>
+      <span class="post-count">308字</span>
     </span>
   </span>
 
@@ -300,7 +300,9 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="Feature-Scaling"><a href="#Feature-Scaling" class="headerlink" title="Feature Scaling"></a>Feature Scaling</h1><h2 id="特征缩放"><a href="#特征缩放" class="headerlink" title="特征缩放"></a>特征缩放</h2><p><strong>原因：</strong></p>
+    <h1 id="feature-scaling">Feature Scaling</h1>
+<h2 id="特征缩放">特征缩放</h2>
+<p><strong>原因：</strong></p>
 <ul>
 <li>数量级的差异将导致量级较大的属性占据主导地位</li>
 <li>数量级的差异将导致迭代收敛速度减慢</li>
@@ -308,11 +310,17 @@
 </ul>
 <p><strong>好处：</strong></p>
 <ul>
-<li>提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的 RBF 内核或线性模型的 $l_1$ 和 $l_2$ 正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差比其他特征大几个数量级，那么它就会在学习算法中占据主导位置，导致学习器并不能像我们期望的那样，从其他特征中学习</li>
+<li>提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的
+RBF 内核或线性模型的 <span class="math inline">\(l_1\)</span> 和 <span
+class="math inline">\(l_2\)</span>
+正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差比其他特征大几个数量级，那么它就会在学习算法中占据主导位置，导致学习器并不能像我们期望的那样，从其他特征中学习</li>
 <li>提升收敛速度：对于线性模型来说，数据归一化后，寻找最优解的过程明显会变得平缓，更容易正确地收敛到最优解</li>
 </ul>
-<h3 id="Standardization-Z-score-normalization"><a href="#Standardization-Z-score-normalization" class="headerlink" title="Standardization (Z-score normalization)"></a>Standardization (Z-score normalization)</h3><p>通过减去均值然后除以标准差，将数据按比例缩放，使之落入一个小的特定区间，处理后的数据均值为 0，标准差为 1</p>
-<p>$$<br>x\prime = </p>
+<h3 id="standardization-z-score-normalization">Standardization (Z-score
+normalization)</h3>
+<p>通过减去均值然后除以标准差，将数据按比例缩放，使之落入一个小的特定区间，处理后的数据均值为
+0，标准差为 1</p>
+<p>$$ x=</p>
 
     
 
@@ -490,7 +498,8 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Feature-Scaling"><span class="toc-number">1.</span> <span class="toc-text">Feature Scaling</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E7%BC%A9%E6%94%BE"><span class="toc-number">1.1.</span> <span class="toc-text">特征缩放</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Standardization-Z-score-normalization"><span class="toc-number">1.1.1.</span> <span class="toc-text">Standardization (Z-score normalization)</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#feature-scaling"><span class="toc-number">1.</span> <span class="toc-text">Feature Scaling</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E7%BC%A9%E6%94%BE"><span class="toc-number">1.1.</span> <span class="toc-text">特征缩放</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#standardization-z-score-normalization"><span class="toc-number">1.1.1.</span> <span class="toc-text">Standardization (Z-score
+normalization)</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -681,11 +690,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -693,19 +702,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -713,7 +710,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -729,10 +738,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -741,11 +746,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -777,11 +786,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

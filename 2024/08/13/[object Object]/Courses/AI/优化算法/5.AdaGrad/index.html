@@ -10,20 +10,18 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="AdaGrad 算法在前面我们讲解了 动量法（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的 AdaGrad 算法。二阶动量的出现，才意味着真正的 自适应学习率 优化算法时代的到来。 AdaGrad 算法的基本思想我们先回顾一下传统的 随机梯度下降法（SGD）及其各种变种。它们都是以 同样的学习率 来">
+  <meta name="description" content="AdaGrad 算法 在前面我们讲解了 动量法（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的 AdaGrad 算法。二阶动量的出现，才意味着真正的 自适应学习率 优化算法时代的到来。 AdaGrad 算法的基本思想 我们先回顾一下传统的 随机梯度下降法（SGD）及其各种变种。它们都是以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AdaGrad">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/13/[object%20Object]/Courses/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/5.AdaGrad/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="AdaGrad 算法在前面我们讲解了 动量法（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的 AdaGrad 算法。二阶动量的出现，才意味着真正的 自适应学习率 优化算法时代的到来。 AdaGrad 算法的基本思想我们先回顾一下传统的 随机梯度下降法（SGD）及其各种变种。它们都是以 同样的学习率 来">
+<meta property="og:description" content="AdaGrad 算法 在前面我们讲解了 动量法（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的 AdaGrad 算法。二阶动量的出现，才意味着真正的 自适应学习率 优化算法时代的到来。 AdaGrad 算法的基本思想 我们先回顾一下传统的 随机梯度下降法（SGD）及其各种变种。它们都是以">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112049596.png">
 <meta property="article:published_time" content="2024-08-13T00:02:27.000Z">
 <meta property="article:modified_time" content="2024-11-13T14:14:34.313Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="优化算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112049596.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -282,7 +280,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">1k字</span>
+      <span class="post-count">1.1k字</span>
     </span>
   </span>
 
@@ -302,45 +300,90 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="AdaGrad-算法"><a href="#AdaGrad-算法" class="headerlink" title="AdaGrad 算法"></a>AdaGrad 算法</h1><p>在前面我们讲解了 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%8A%A8%E9%87%8F%E6%B3%95&amp;spm=1001.2101.3001.7020">动量法</a>（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的 AdaGrad 算法。二阶动量的出现，才意味着真正的 <strong>自适应学习率</strong> 优化算法时代的到来。</p>
-<h2 id="AdaGrad-算法的基本思想"><a href="#AdaGrad-算法的基本思想" class="headerlink" title="AdaGrad 算法的基本思想"></a>AdaGrad 算法的基本思想</h2><p>我们先回顾一下传统的 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">随机梯度下降法</a>（SGD）及其各种变种。它们都是以 <strong>同样的学习率</strong> 来更新 <strong>每一个参数</strong> 的。但深度神经网络往往包含大量参数，这些参数并不总是 <strong>均匀更新</strong> 的。有些参数更新得频繁，有些则很少更新。</p>
+    <h1 id="adagrad-算法">AdaGrad 算法</h1>
+<p>在前面我们讲解了 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%8A%A8%E9%87%8F%E6%B3%95&amp;spm=1001.2101.3001.7020">动量法</a>（Momentum），也就是动量随机梯度下降法。它使用了一阶动量。然而，我们同时也提到了二阶动量。使用二阶动量的梯度下降算法的改进版就是本节要讲的
+AdaGrad 算法。二阶动量的出现，才意味着真正的
+<strong>自适应学习率</strong> 优化算法时代的到来。</p>
+<h2 id="adagrad-算法的基本思想">AdaGrad 算法的基本思想</h2>
+<p>我们先回顾一下传统的 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">随机梯度下降法</a>（SGD）及其各种变种。它们都是以
+<strong>同样的学习率</strong> 来更新 <strong>每一个参数</strong>
+的。但深度神经网络往往包含大量参数，这些参数并不总是
+<strong>均匀更新</strong> 的。有些参数更新得频繁，有些则很少更新。</p>
 <ul>
-<li>对于 <strong>经常更新</strong> 的参数，我们已经积累了大量关于它的知识，希望它不被新的单个样本影响太大，也就是说希望对这些参数的 <strong>学习率小一些</strong></li>
-<li>对于 <strong>偶尔更新</strong> 的参数，我们了解的信息较少，希望从每一个样本中多学一些，即 <strong>学习率大一些</strong></li>
+<li>对于 <strong>经常更新</strong>
+的参数，我们已经积累了大量关于它的知识，希望它不被新的单个样本影响太大，也就是说希望对这些参数的
+<strong>学习率小一些</strong></li>
+<li>对于 <strong>偶尔更新</strong>
+的参数，我们了解的信息较少，希望从每一个样本中多学一些，即
+<strong>学习率大一些</strong></li>
 </ul>
-<p>要动态度量历史更新的频率，我们引入 <strong>二阶动量</strong>。二阶动量通过将每一位各自的历史梯度的 <strong>平方</strong> 叠加起来来计算。具体公式如下：  </p>
-<script type="math/tex; mode=display">
-v_t = v_{t-1} + g_t^2</script><p>其中，$g_t$ 是当前的梯度。</p>
+<p>要动态度量历史更新的频率，我们引入
+<strong>二阶动量</strong>。二阶动量通过将每一位各自的历史梯度的
+<strong>平方</strong> 叠加起来来计算。具体公式如下：</p>
+<p><span class="math display">\[
+v_t = v_{t-1} + g_t^2
+\]</span></p>
+<p>其中，<span class="math inline">\(g_t\)</span> 是当前的梯度。</p>
 <span id="more"></span>
-<h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><ol>
-<li><strong>计算当前梯度 $g_t$ </strong>：  </li>
+<h2 id="算法流程">算法流程</h2>
+<ol type="1">
+<li><strong>计算当前梯度 <span class="math inline">\(g_t\)</span>
+</strong>：</li>
 </ol>
-<script type="math/tex; mode=display">
-g_t = \nabla f(w_t)</script><ol>
-<li><strong>更新二阶动量 $v_t$ </strong>：  </li>
+<p><span class="math display">\[
+g_t = \nabla f(w_t)
+\]</span></p>
+<ol start="2" type="1">
+<li><strong>更新二阶动量 <span class="math inline">\(v_t\)</span>
+</strong>：</li>
 </ol>
-<script type="math/tex; mode=display">
-v_t =  v_{t-1} + g_t^2</script><ol>
-<li><strong>计算当前时刻的下降梯度</strong>：  </li>
+<p><span class="math display">\[
+v_t =  v_{t-1} + g_t^2
+\]</span></p>
+<ol start="3" type="1">
+<li><strong>计算当前时刻的下降梯度</strong>：</li>
 </ol>
-<script type="math/tex; mode=display">
-w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\alpha$ 是学习率，$\epsilon$ 是一个小的平滑项，防止分母为 0。</p>
-<h2 id="稀疏特征处理"><a href="#稀疏特征处理" class="headerlink" title="稀疏特征处理"></a>稀疏特征处理</h2><p>AdaGrad 算法主要针对 <strong>稀疏特征</strong> 进行了优化。<strong>稀疏特征</strong> 在很多样本中只出现少数几次，在训练模型时，这些稀疏特征的更新很少，但每次更新可能带来较大影响。AdaGrad 通过调整每个特征的学习率，针对这种情况进行了优化。</p>
-<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><p><strong>优点</strong>：  </p>
-<ol>
-<li><strong>有效处理稀疏特征</strong>：自动调整每个参数的学习率，使得稀疏特征的更新更少。  </li>
+<p><span class="math display">\[
+w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t
+\]</span></p>
+<p>其中，<span class="math inline">\(\alpha\)</span> 是学习率，<span
+class="math inline">\(\epsilon\)</span> 是一个小的平滑项，防止分母为
+0。</p>
+<h2 id="稀疏特征处理">稀疏特征处理</h2>
+<p>AdaGrad 算法主要针对 <strong>稀疏特征</strong>
+进行了优化。<strong>稀疏特征</strong>
+在很多样本中只出现少数几次，在训练模型时，这些稀疏特征的更新很少，但每次更新可能带来较大影响。AdaGrad
+通过调整每个特征的学习率，针对这种情况进行了优化。</p>
+<h3 id="优缺点">优缺点</h3>
+<p><strong>优点</strong>：</p>
+<ol type="1">
+<li><strong>有效处理稀疏特征</strong>：自动调整每个参数的学习率，使得稀疏特征的更新更少。<br />
+</li>
 <li><strong>加速收敛</strong>：在自动调整学习率的同时，使得模型在训练过程中更快收敛。</li>
 </ol>
-<p><strong>缺点</strong>：  </p>
-<ol>
-<li><strong>学习率逐渐减小</strong>：每次迭代中学习率都会减小，导致训练后期学习率变得非常小，从而使收敛速度变慢。  </li>
-<li><strong>固定调整方式</strong>：对于不同参数，学习率调整方式是固定的，无法根据不同任务自动调整。</li>
-</ol>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>下面是一个简单的 PyTorch 实现 AdaGrad 算法的示例：</p>
+<p><strong>缺点</strong>：<br />
+1.
+<strong>学习率逐渐减小</strong>：每次迭代中学习率都会减小，导致训练后期学习率变得非常小，从而使收敛速度变慢。<br />
+2.
+<strong>固定调整方式</strong>：对于不同参数，学习率调整方式是固定的，无法根据不同任务自动调整。</p>
+<h2 id="代码实现">代码实现</h2>
+<p>下面是一个简单的 PyTorch 实现 AdaGrad 算法的示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义超参数</span></span><br><span class="line">learning_rate = <span class="number">0.01</span></span><br><span class="line">epochs = <span class="number">100</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 随机生成一些数据</span></span><br><span class="line">x = torch.randn(<span class="number">100</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">2</span> * x + <span class="number">3</span> + torch.randn(<span class="number">100</span>, <span class="number">1</span>) * <span class="number">0.5</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 初始化参数</span></span><br><span class="line">w = torch.randn(<span class="number">1</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line">b = torch.zeros(<span class="number">1</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义 AdaGrad 优化器</span></span><br><span class="line">optimizer = torch.optim.Adagrad([w, b], lr=learning_rate)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 记录损失</span></span><br><span class="line">losses = []</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">    <span class="comment"># 预测</span></span><br><span class="line">    y_pred = x * w + b</span><br><span class="line">    <span class="comment"># 计算损失</span></span><br><span class="line">    loss = torch.mean((y_pred - y) ** <span class="number">2</span>)</span><br><span class="line">    losses.append(loss.item())</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 清空梯度</span></span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 可视化训练过程</span></span><br><span class="line">plt.plot(<span class="built_in">range</span>(epochs), losses)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epoch&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Loss&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;Training Loss&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112049596.png" alt="image-20240811204910528"></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本节我们介绍了一种新的梯度下降算法变体——AdaGrad。与动量法相比，它最大的改进在于 <strong>使用二阶动量来动态调整学习率</strong>，能够记住历史上的梯度信息，以动态调整学习率。其主要优点是能够处理稀疏特征问题，但也有学习率逐渐减小和调整方式固定的缺点。</p>
-<p>到目前为止，我们一共讲了五种梯度下降算法。AdaGrad 是 2011 年提出的，而动量法在 1993 年提出，SGD 在 1951 年提出。通过时间轴的对比，我们可以看出人们在不断研究和改进梯度下降算法，从最早的梯度下降法到 SGD，再到动量法、小批量梯度下降，最后到 2011 年的 AdaGrad。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112049596.png"
+alt="image-20240811204910528" />
+<figcaption aria-hidden="true">image-20240811204910528</figcaption>
+</figure>
+<h2 id="总结">总结</h2>
+<p>本节我们介绍了一种新的梯度下降算法变体——AdaGrad。与动量法相比，它最大的改进在于
+<strong>使用二阶动量来动态调整学习率</strong>，能够记住历史上的梯度信息，以动态调整学习率。其主要优点是能够处理稀疏特征问题，但也有学习率逐渐减小和调整方式固定的缺点。</p>
+<p>到目前为止，我们一共讲了五种梯度下降算法。AdaGrad 是 2011
+年提出的，而动量法在 1993 年提出，SGD 在 1951
+年提出。通过时间轴的对比，我们可以看出人们在不断研究和改进梯度下降算法，从最早的梯度下降法到
+SGD，再到动量法、小批量梯度下降，最后到 2011 年的 AdaGrad。</p>
 
     
 
@@ -518,7 +561,7 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AdaGrad-%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">AdaGrad 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AdaGrad-%E7%AE%97%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.</span> <span class="toc-text">AdaGrad 算法的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">算法流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%80%E7%96%8F%E7%89%B9%E5%BE%81%E5%A4%84%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">稀疏特征处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#adagrad-%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">AdaGrad 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#adagrad-%E7%AE%97%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.</span> <span class="toc-text">AdaGrad 算法的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">算法流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%80%E7%96%8F%E7%89%B9%E5%BE%81%E5%A4%84%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">稀疏特征处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -697,19 +740,15 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -725,19 +764,11 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -745,11 +776,15 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -757,7 +792,11 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -765,11 +804,11 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -777,11 +816,11 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -789,11 +828,15 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -802,6 +845,10 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -814,10 +861,6 @@ w_{t+1} = w_t - \frac{\alpha}{\sqrt{v_t} + \epsilon} g_t</script><p>其中，$\a
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
             
             <div class="clearfix"></div>

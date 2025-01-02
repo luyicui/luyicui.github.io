@@ -10,18 +10,21 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="special tokens BERT模型中的特殊标记（Special Tokens）有 [CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下： [PAD] [PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD] 进行填充以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。 这个很简单了，就是占位符，和程序设计有关，和">
+  <meta name="description" content="special tokensBERT模型中的特殊标记（Special Tokens）有 [CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下： [PAD][PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD] 进行填充以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。 这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做">
 <meta property="og:type" content="article">
 <meta property="og:title" content="special tokens">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/LLM/Basic/special%20tokens/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="special tokens BERT模型中的特殊标记（Special Tokens）有 [CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下： [PAD] [PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD] 进行填充以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。 这个很简单了，就是占位符，和程序设计有关，和">
+<meta property="og:description" content="special tokensBERT模型中的特殊标记（Special Tokens）有 [CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下： [PAD][PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD] 进行填充以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。 这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028715.jpeg">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2024-12-19T12:28:31.540Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -300,164 +303,68 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="special-tokens">special tokens</h1>
-<p>BERT模型中的特殊标记（Special Tokens）有
-[CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下：</p>
-<h2 id="pad">[PAD]</h2>
-<p>[PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD]
-进行<strong>填充</strong>以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。</p>
-<p>这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做 padding
-一样，tensorflow 或者 torch 的 bert 之类的预训练 model 的接口 API
-只能接受长度相同的 input，所以用 [PAD]
-让所有短句都能够对齐，长句就直接做截断，[PAD]
-这个符号只是一种约定的用法，看文档：</p>
+    <h1 id="special-tokens"><a href="#special-tokens" class="headerlink" title="special tokens"></a>special tokens</h1><p>BERT模型中的特殊标记（Special Tokens）有 [CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下：</p>
+<h2 id="PAD"><a href="#PAD" class="headerlink" title="[PAD]"></a>[PAD]</h2><p>[PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD] 进行<strong>填充</strong>以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。</p>
+<p>这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做 padding 一样，tensorflow 或者 torch 的 bert 之类的预训练 model 的接口 API 只能接受长度相同的 input，所以用 [PAD] 让所有短句都能够对齐，长句就直接做截断，[PAD] 这个符号只是一种约定的用法，看文档：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch_sentences = [<span class="string">&quot;Hello I&#x27;m a single sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And another sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And the very very last one&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch = tokenizer(batch_sentences, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(batch)</span><br><span class="line">&#123;<span class="string">&#x27;input_ids&#x27;</span>: tensor([[ <span class="number">101</span>, <span class="number">8667</span>,  <span class="number">146</span>,  <span class="number">112</span>,  <span class="number">182</span>,  <span class="number">170</span>, <span class="number">1423</span>, <span class="number">5650</span>,  <span class="number">102</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1330</span>, <span class="number">5650</span>,  <span class="number">102</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1103</span>, <span class="number">1304</span>, <span class="number">1304</span>, <span class="number">1314</span>, <span class="number">1141</span>,  <span class="number">102</span>,    <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>]])&#125;</span><br></pre></td></tr></table></figure>
-<p>这里 padding 部分的 index 都是 0，即在 embedding 矩阵中对应第 0
-行，因为 PAD 在所难免，所以 input 输入的时候，你总得在 embedding
-矩阵里加一行 embedding vector 专门用来代表 [PAD]，否则程序报错，但是这个
-embedding 因为被 mask 后续不会参与到权重更新，所以其实把 bert 原始的
-token embedding 矩阵中这一行对应的权重改成任意的向量都没什么区别；</p>
-<hr />
-<h2 id="unk">[UNK]</h2>
-<p>[UNK] 即
-unknown：此标记用于表示未知或词汇外的单词。当一个模型遇到一个它以前没有见过/无法识别的词时，它会用这个标记替换它。</p>
-<p>这个更多是为了预测服务的，如果为了 input 的句子里有 embedding
-矩阵没有的 token，分 token 的时候，这类 token 都会变成 UNK，同样 bert 的
-embedding 矩阵里也有一行 embedding 向量专门用来表示 UNK，不过具体不知道
-bert pretrained model 里这个 UNK 是怎么设计的，简单的方法就是直接取所有
-embedding vector 的均值作为代替；</p>
-<hr />
-<h2 id="mask">[MASK]</h2>
-<p>[MASK] 主要是为了 MLM 任务，同样 Bert 的 embedding 向量中也有专门存放
-[MASK] 这个 token 的 embedding
-向量，设计的目的也是为了保证程序正常运行，如果 embedding layer 里没有
-[MASK] 则程序报错，</p>
-<p><strong>但是如果 bertmodel 的下游没有设置 MLM 任务之类的和 [MASK]
-相关的预训练任务对应的 layer，把 token 替换成 [MASK]
-啥屁用都没有</strong>，你就真的把这个词变成 [MASK] 了。</p>
-<p>而所谓的预训练任务对应的 layer，可以看看 keras
-官方文档，重头撸到尾：</p>
-<p><a
-href="https://link.zhihu.com/?target=https%3A//keras.io/examples/nlp/masked_language_modeling/">Keras
-documentation: End-to-end Masked Language Modeling with
-BERTkeras.io/examples/nlp/masked_language_modeling/<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png" /></a></p>
+<p>这里 padding 部分的 index 都是 0，即在 embedding 矩阵中对应第 0 行，因为 PAD 在所难免，所以 input 输入的时候，你总得在 embedding 矩阵里加一行 embedding vector 专门用来代表 [PAD]，否则程序报错，但是这个 embedding 因为被 mask 后续不会参与到权重更新，所以其实把 bert 原始的 token embedding 矩阵中这一行对应的权重改成任意的向量都没什么区别；</p>
+<hr>
+<h2 id="UNK"><a href="#UNK" class="headerlink" title="[UNK]"></a>[UNK]</h2><p>[UNK] 即 unknown：此标记用于表示未知或词汇外的单词。当一个模型遇到一个它以前没有见过/无法识别的词时，它会用这个标记替换它。</p>
+<p>这个更多是为了预测服务的，如果为了 input 的句子里有 embedding 矩阵没有的 token，分 token 的时候，这类 token 都会变成 UNK，同样 bert 的 embedding 矩阵里也有一行 embedding 向量专门用来表示 UNK，不过具体不知道 bert pretrained model 里这个 UNK 是怎么设计的，简单的方法就是直接取所有 embedding vector 的均值作为代替；</p>
+<hr>
+<h2 id="MASK"><a href="#MASK" class="headerlink" title="[MASK]"></a>[MASK]</h2><p>[MASK] 主要是为了 MLM 任务，同样 Bert 的 embedding 向量中也有专门存放 [MASK] 这个 token 的 embedding 向量，设计的目的也是为了保证程序正常运行，如果 embedding layer 里没有 [MASK] 则程序报错，</p>
+<p><strong>但是如果 bertmodel 的下游没有设置 MLM 任务之类的和 [MASK] 相关的预训练任务对应的 layer，把 token 替换成 [MASK] 啥屁用都没有</strong>，你就真的把这个词变成 [MASK] 了。</p>
+<p>而所谓的预训练任务对应的 layer，可以看看 keras 官方文档，重头撸到尾：</p>
+<p><a href="https://link.zhihu.com/?target=https%3A//keras.io/examples/nlp/masked_language_modeling/">Keras documentation: End-to-end Masked Language Modeling with BERTkeras.io/examples/nlp/masked_language_modeling/<img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png" alt=""></a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mlm_output = layers.Dense(config.VOCAB_SIZE, name=<span class="string">&quot;mlm_cls&quot;</span>, activation=<span class="string">&quot;softmax&quot;</span>)(</span><br><span class="line">    encoder_output</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>这就是 mlm 任务对应的任务头（layer），就是一个 vocab_size
-大小的超级多分类，这里没法用 word2vec 中用的负采样因为 mask
-可能有多个，也就是输出可能是 [0,0,0,1,0,1,0,....] 这样的向量输出。</p>
-<p>可以看到 [MASK] 除了对 input
-进行替换之外，全程打酱油，最终是根据输出来确定了 [MASK]
-的作用，<strong>注意，bert 中针对 input 的 mask 机制仅仅针对 padding
-部分进行 mask，对 [MASK] 是不做 mask 操作的</strong>。</p>
-<p>所以，当我们把某个 token mask 之后，如果这个句子中没有被 mask 的
-token 都和被 mask 的 token 不相同的话，那么这个被 mask 的 token 的 word
-embedding 不会得到任何训练，因为压根也没有往前传。</p>
-<hr />
-<h2 id="cls">[CLS]</h2>
-<p>[CLS]，huggingface 的 berttokenize 默认是给句子配一个 [CLS] 和一个
-[SEP]，分别在句首和句尾，我看了很多百度知乎和谷歌上的说法：</p>
+<p>这就是 mlm 任务对应的任务头（layer），就是一个 vocab_size 大小的超级多分类，这里没法用 word2vec 中用的负采样因为 mask 可能有多个，也就是输出可能是 [0,0,0,1,0,1,0,….] 这样的向量输出。</p>
+<p>可以看到 [MASK] 除了对 input 进行替换之外，全程打酱油，最终是根据输出来确定了 [MASK] 的作用，<strong>注意，bert 中针对 input 的 mask 机制仅仅针对 padding 部分进行 mask，对 [MASK] 是不做 mask 操作的</strong>。</p>
+<p>所以，当我们把某个 token mask 之后，如果这个句子中没有被 mask 的 token 都和被 mask 的 token 不相同的话，那么这个被 mask 的 token 的 word embedding 不会得到任何训练，因为压根也没有往前传。</p>
+<hr>
+<h2 id="CLS"><a href="#CLS" class="headerlink" title="[CLS]"></a>[CLS]</h2><p>[CLS]，huggingface 的 berttokenize 默认是给句子配一个 [CLS] 和一个 [SEP]，分别在句首和句尾，我看了很多百度知乎和谷歌上的说法：</p>
 <blockquote>
-<p><code>CLS</code>：special classification
-embedding，用于分类的向量，会聚集所有的分类信息</p>
-<p><code>SEP</code>：输入是 QA 或 2
-个句子时，需添加<code>SEP</code>标记以示区别</p>
+<p><code>CLS</code>：special classification embedding，用于分类的向量，会聚集所有的分类信息</p>
+<p><code>SEP</code>：输入是 QA 或 2 个句子时，需添加<code>SEP</code>标记以示区别</p>
 </blockquote>
 <p>基本都是这么解释的。</p>
 <p>这种解释压根难以 make sence。</p>
-<p><strong>首先，如果我们的预训练任务或者是下游的应用的输入都是单个句子，[SEP]
-根本就没用，不用加到分 token 后的句子里</strong>。</p>
+<p><strong>首先，如果我们的预训练任务或者是下游的应用的输入都是单个句子，[SEP] 根本就没用，不用加到分 token 后的句子里</strong>。</p>
 <p>先来理解一下 [CLS]，</p>
 <p>先看下原文的解释：</p>
 <blockquote>
-<p>The first token of every sequence is always a special classification
-token ([CLS]). The final hidden state corresponding to this token is
-used as the aggregate sequence representation for classification
-tasks.</p>
+<p>The first token of every sequence is always a special classification token ([CLS]). The final hidden state corresponding to this token is used as the aggregate sequence representation for classification tasks.</p>
 </blockquote>
 <p>讲了和没讲差不多。</p>
 <p>然后我又看了一下 google bert 的源代码，其中对这部分做了解释：</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/google-research/bert/blob/eedf5716ce1268e56f0a50264a88cafad334ac61/run_classifier.py">bert/run_classifier.py
-at eedf5716ce1268e56f0a50264a88cafad334ac61 ·
-google-research/bert</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google-research/bert/blob/eedf5716ce1268e56f0a50264a88cafad334ac61/run_classifier.py">bert/run_classifier.py at eedf5716ce1268e56f0a50264a88cafad334ac61 · google-research/bert</a></p>
 <blockquote>
-<p>For classification tasks, the first vector (corresponding to [CLS])
-is used as the "sentence vector". Note that this only makes sense
-because the entire model is fine-tuned.</p>
+<p>For classification tasks, the first vector (corresponding to [CLS]) is used as the “sentence vector”. Note that this only makes sense because the entire model is fine-tuned.</p>
 </blockquote>
-<p>翻译过来就是，你要用 [CLS] 去做下游句子分类任务的 fine-tune
-才有意义，反正最后根据下游任务 finetune 之后，bert
-的参数就会发生一定的变化使得 [CLS] 处得到的 hidden state
-包含句子的表征信息，换句话说，你用别的 token 的 last hidden state 来做
-finetune 也没问题。</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/jina-ai/clip-as-service#q-what-are-the-available-pooling-strategies">jina-ai/clip-as-service:
-🏄 Scalable embedding, reasoning, ranking for images and sentences with
-CLIP</a></p>
+<p>翻译过来就是，你要用 [CLS] 去做下游句子分类任务的 fine-tune 才有意义，反正最后根据下游任务 finetune 之后，bert 的参数就会发生一定的变化使得 [CLS] 处得到的 hidden state 包含句子的表征信息，换句话说，你用别的 token 的 last hidden state 来做 finetune 也没问题。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jina-ai/clip-as-service#q-what-are-the-available-pooling-strategies">jina-ai/clip-as-service: 🏄 Scalable embedding, reasoning, ranking for images and sentences with CLIP</a></p>
 <p>在 bert as service 中也提到了这个问题以及作者的回答：</p>
 <blockquote>
-<p><strong>Q:</strong> Why not use the hidden state of the first token
-as default strategy, i.e. the <code>[CLS]</code>? <strong>A:</strong>
-Because a pre-trained model is not fine-tuned on any downstream tasks
-yet. In this case, the hidden state of <code>[CLS]</code> is not a good
-sentence representation. If later you fine-tune the model, you may use
-<code>[CLS]</code> as well.</p>
+<p><strong>Q:</strong> Why not use the hidden state of the first token as default strategy, i.e. the <code>[CLS]</code>?<br><strong>A:</strong> Because a pre-trained model is not fine-tuned on any downstream tasks yet. In this case, the hidden state of <code>[CLS]</code> is not a good sentence representation. If later you fine-tune the model, you may use <code>[CLS]</code> as well.</p>
 </blockquote>
-<p>后续看完 sentence-bert 之后，发现确实 CLS
-这么做效果没有直观的方法——对所有的 input 的 token 的 last hidden state
-做 pooling 效果来的好。<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/348646690">BERT中CLS效果真的好嘛？这篇文章告诉你答案
-- 知乎</a> 篇文章也提到了相应的介绍。</p>
-<p>所以，说老实话，我觉得 [CLS] 加不加没啥太大区别（从 keras 的 mlm
-的官方的实现来看也可以看到，作者从头训练了一个 MLM 的 bert
-model，压根就没有把 [CLS] 这个 special token
-加到词表里。）。无论是预训练 mlm
-任务还是句子分类这样的下游任务，完全可以舍弃 CLS，只不过 huggingface
-以及后续不少开源的 model 的语料训练的时候大家都模仿了最早的 bert
-往里面加 [CLS]，而预训练的模型的输入本身已经将
-[CLS]+句子，这样的输入形式学习到模型的权重中去了（导致<strong>[CLS] 这个
-token 在训练的过程中也被编码了某些知识</strong>，<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52866475">解构BERT:从一亿参数中获取六种pattern
-- 知乎</a> 可以参考这篇，[CLS]
-还是学习到了一些东西的<strong>）</strong>，</p>
-<p>如果你后续 finetune 的时候不这么做，[CLS]+句子 A 和直接使用句子 A
-分别作为输入来 finetune 下游的文本分类任务之类的，可能舍弃了 [CLS]
-就浪费了一部分信息，效果和保持原始输入形式的效果就会有一些差别。</p>
-<hr />
-<h2 id="sep">[SEP]</h2>
-<p>[SEP] 即
-seperation：用于分隔两个句子，例如在文本分类问题中，将两个句子拼接成一个输入序列时，可以使用
-[SEP] 来分隔这两个句子。</p>
-<p>其实前面提到的 [SEP] 和 [CLS]
-的意义几乎差不多，就是预训练的时候一部分的知识被编码到这两个 token
-对应的权重里了，SEP 用来区分句子，因为 bert 中有个 nsp 的任务：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028715.jpeg" /></p>
+<p>后续看完 sentence-bert 之后，发现确实 CLS 这么做效果没有直观的方法——对所有的 input 的 token 的 last hidden state 做 pooling 效果来的好。<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/348646690">BERT中CLS效果真的好嘛？这篇文章告诉你答案 - 知乎</a> 篇文章也提到了相应的介绍。</p>
+<p>所以，说老实话，我觉得 [CLS] 加不加没啥太大区别（从 keras 的 mlm 的官方的实现来看也可以看到，作者从头训练了一个 MLM 的 bert model，压根就没有把 [CLS] 这个 special token 加到词表里。）。无论是预训练 mlm 任务还是句子分类这样的下游任务，完全可以舍弃 CLS，只不过 huggingface 以及后续不少开源的 model 的语料训练的时候大家都模仿了最早的 bert 往里面加 [CLS]，而预训练的模型的输入本身已经将 [CLS]+句子，这样的输入形式学习到模型的权重中去了（导致<strong>[CLS] 这个 token 在训练的过程中也被编码了某些知识</strong>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52866475">解构BERT:从一亿参数中获取六种pattern - 知乎</a> 可以参考这篇，[CLS] 还是学习到了一些东西的<strong>）</strong>，</p>
+<p>如果你后续 finetune 的时候不这么做，[CLS]+句子 A 和直接使用句子 A 分别作为输入来 finetune 下游的文本分类任务之类的，可能舍弃了 [CLS] 就浪费了一部分信息，效果和保持原始输入形式的效果就会有一些差别。</p>
+<hr>
+<h2 id="SEP"><a href="#SEP" class="headerlink" title="[SEP]"></a>[SEP]</h2><p>[SEP] 即 seperation：用于分隔两个句子，例如在文本分类问题中，将两个句子拼接成一个输入序列时，可以使用 [SEP] 来分隔这两个句子。</p>
+<p>其实前面提到的 [SEP] 和 [CLS] 的意义几乎差不多，就是预训练的时候一部分的知识被编码到这两个 token 对应的权重里了，SEP 用来区分句子，因为 bert 中有个 nsp 的任务：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028715.jpeg" alt=""></p>
 <p>这个其实去看下 huggingface 的 bertmodel 的源代码：</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/blob/1c06240e1b3477728129bb58e7b6c7734bb5074e/src/transformers/models/bert/modeling_bert.py">transformers/src/transformers/models/bert/modeling_bert.py
-at 1c06240e1b3477728129bb58e7b6c7734bb5074e ·
-huggingface/transformers</a></p>
-<p>就可以知道，embedding 部分压根就没有关于 [SEP] 的额外处理，就单独对
-PAD 的 index 进行了定义，也就是 [SEP] 也是当作一个字符放进去了。google
-上有不少 train from scratch 的代码，比如这段：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/blob/1c06240e1b3477728129bb58e7b6c7734bb5074e/src/transformers/models/bert/modeling_bert.py">transformers/src/transformers/models/bert/modeling_bert.py at 1c06240e1b3477728129bb58e7b6c7734bb5074e · huggingface/transformers</a></p>
+<p>就可以知道，embedding 部分压根就没有关于 [SEP] 的额外处理，就单独对 PAD 的 index 进行了定义，也就是 [SEP] 也是当作一个字符放进去了。google 上有不少 train from scratch 的代码，比如这段：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">    t1,t2 = self.get_sentence(idx)</span><br><span class="line">    t1_random, t1_label,_ = self.random_word(t1) </span><br><span class="line">    t2_random, t2_label,_ = self.random_word(t1) </span><br><span class="line"></span><br><span class="line">    t1 = [self.vocab[<span class="string">&#x27;[CLS]&#x27;</span>]] + t1_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t2 = t2_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t1_label = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] + t1_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]]</span><br><span class="line">    t2_label = t2_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] </span><br><span class="line"></span><br><span class="line">    segment_label = ([<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t1))] + [<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t2))])[:self.seq_len]</span><br><span class="line">    bert_input = (t1 + t2)[:self.seq_len]</span><br><span class="line"></span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_input))]</span><br><span class="line">    attention_mask = <span class="built_in">len</span>(bert_input) * [<span class="number">1</span>] + <span class="built_in">len</span>(padding) * [<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    bert_input.extend(padding)</span><br><span class="line"></span><br><span class="line">    bert_label = t1_label</span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_label))]</span><br><span class="line">    bert_label.extend(padding)<span class="comment"># , segment_label.extend(padding)</span></span><br><span class="line"></span><br><span class="line">    attention_mask = np.array(attention_mask)</span><br><span class="line">    bert_input = np.array(bert_input)</span><br><span class="line">    segment_label = np.array(segment_label)</span><br><span class="line">    bert_label = np.array(bert_label)</span><br><span class="line">    <span class="comment">#is_next_label = np.array(is_next_label)</span></span><br><span class="line">    output = &#123;<span class="string">&quot;input_ids&quot;</span>: bert_input,</span><br><span class="line">              <span class="string">&quot;token_type_ids&quot;</span>: segment_label, </span><br><span class="line">              <span class="string">&#x27;attention_mask&#x27;</span>: attention_mask,</span><br><span class="line">              <span class="string">&quot;bert_label&quot;</span>: bert_label&#125;<span class="comment">#, is_next_label</span></span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>是关于 nsp 任务准备的，可以发现，句子的先后顺序，也就是 segment
-embedding 对应的</p>
+<p>是关于 nsp 任务准备的，可以发现，句子的先后顺序，也就是 segment embedding 对应的</p>
 <p>segment_label：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">segment_label = ([0 for _ in range(len(t1))] + [1 for _ in range(len(t2))])[:self.seq_len]</span><br></pre></td></tr></table></figure>
 <p>和 [SEP] 没有半毛钱关系。</p>
-<hr />
-<h2 id="总结">总结</h2>
-<p>不是因为 special token 有特殊意义我们才要刻意地使用 special
-token，而是因为开源地预训练模型是在这样地输入形式上训练地，所以我们使用地时候也要尊崇其语料地形式对新语料进行改造，换句话说，如果你有能力自己预训练一个新的
-model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，而
-[CLS]、[SEP] 不加都可以，或者某些开源的预训练模型里也没有 [CLS]、[SEP]
-之类的奇怪的 token，那么就完全不需要加。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>不是因为 special token 有特殊意义我们才要刻意地使用 special token，而是因为开源地预训练模型是在这样地输入形式上训练地，所以我们使用地时候也要尊崇其语料地形式对新语料进行改造，换句话说，如果你有能力自己预训练一个新的 model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，而 [CLS]、[SEP] 不加都可以，或者某些开源的预训练模型里也没有 [CLS]、[SEP] 之类的奇怪的 token，那么就完全不需要加。</p>
 <p>在BERT模型中，这些特殊标记是必不可少的，因为它们能够帮助模型区分输入序列的不同部分，进而更好地理解和处理文本数据。</p>
-<p><font color='red'><strong>请注意：很多模型的vocab.txt文件不一样，它们定义的“特殊标记”也不同</strong></font></p>
-
+<font color='red'>**请注意：很多模型的vocab.txt文件不一样，它们定义的“特殊标记”也不同**</font>
     
 
     
@@ -596,18 +503,18 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/pass@k/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          pass@k
+          【RLHF】
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%EF%BC%88Self-supervised_Learning%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">自监督学习（Self-supervised_Learning）</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【SFT】</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -634,7 +541,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#special-tokens"><span class="toc-number">1.</span> <span class="toc-text">special tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#pad"><span class="toc-number">1.1.</span> <span class="toc-text">[PAD]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#unk"><span class="toc-number">1.2.</span> <span class="toc-text">[UNK]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mask"><span class="toc-number">1.3.</span> <span class="toc-text">[MASK]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cls"><span class="toc-number">1.4.</span> <span class="toc-text">[CLS]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sep"><span class="toc-number">1.5.</span> <span class="toc-text">[SEP]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#special-tokens"><span class="toc-number">1.</span> <span class="toc-text">special tokens</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PAD"><span class="toc-number">1.1.</span> <span class="toc-text">[PAD]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UNK"><span class="toc-number">1.2.</span> <span class="toc-text">[UNK]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MASK"><span class="toc-number">1.3.</span> <span class="toc-text">[MASK]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CLS"><span class="toc-number">1.4.</span> <span class="toc-text">[CLS]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SEP"><span class="toc-number">1.5.</span> <span class="toc-text">[SEP]</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -817,19 +724,19 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,7 +748,11 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -853,23 +764,15 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -877,11 +780,15 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -905,7 +812,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -913,19 +820,11 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -933,7 +832,15 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

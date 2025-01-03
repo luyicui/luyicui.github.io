@@ -10,21 +10,17 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="第五章：模型与分词器本章我们将介绍 Transformers 库中的两个重要组件：模型和分词器。 模型除了像之前使用 AutoModel 根据 checkpoint 自动加载模型以外，我们也可以直接使用模型对应的 Model 类，例如 BERT 对应的就是 BertModel： 123from transformers import BertModelmodel &#x3D; BertModel.from_">
+  <meta name="description" content="第五章：模型与分词器 本章我们将介绍 Transformers 库中的两个重要组件：模型和分词器。 模型 除了像之前使用 AutoModel 根据 checkpoint 自动加载模型以外，我们也可以直接使用模型对应的 Model 类，例如 BERT 对应的就是 BertModel： 123from transformers import BertModelmodel &#x3D; BertMo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="弘毅 の blog">
 <meta property="og:url" content="https://luyicui.github.io/2024/12/31/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="第五章：模型与分词器本章我们将介绍 Transformers 库中的两个重要组件：模型和分词器。 模型除了像之前使用 AutoModel 根据 checkpoint 自动加载模型以外，我们也可以直接使用模型对应的 Model 类，例如 BERT 对应的就是 BertModel： 123from transformers import BertModelmodel &#x3D; BertModel.from_">
+<meta property="og:description" content="第五章：模型与分词器 本章我们将介绍 Transformers 库中的两个重要组件：模型和分词器。 模型 除了像之前使用 AutoModel 根据 checkpoint 自动加载模型以外，我们也可以直接使用模型对应的 Model 类，例如 BERT 对应的就是 BertModel： 123from transformers import BertModelmodel &#x3D; BertMo">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://transformers.run/assets/img/transformers-note-2/word_based_tokenization.png">
-<meta property="og:image" content="https://transformers.run/assets/img/transformers-note-2/character_based_tokenization.png">
-<meta property="og:image" content="https://transformers.run/assets/img/transformers-note-2/bpe_subword.png">
 <meta property="article:published_time" content="2024-12-31T15:49:46.928Z">
 <meta property="article:modified_time" content="2024-12-31T15:49:47.098Z">
 <meta property="article:author" content="弘毅">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://transformers.run/assets/img/transformers-note-2/word_based_tokenization.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -255,216 +251,434 @@
     
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="第五章：模型与分词器"><a href="#第五章：模型与分词器" class="headerlink" title="第五章：模型与分词器"></a>第五章：模型与分词器</h1><p>本章我们将介绍 Transformers 库中的两个重要组件：<strong>模型</strong>和<strong>分词器</strong>。</p>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>除了像之前使用 <code>AutoModel</code> 根据 checkpoint 自动加载模型以外，我们也可以直接使用模型对应的 <code>Model</code> 类，例如 BERT 对应的就是 <code>BertModel</code>：</p>
+    <h1 id="第五章模型与分词器">第五章：模型与分词器</h1>
+<p>本章我们将介绍 Transformers
+库中的两个重要组件：<strong>模型</strong>和<strong>分词器</strong>。</p>
+<h2 id="模型">模型</h2>
+<p>除了像之前使用 <code>AutoModel</code> 根据 checkpoint
+自动加载模型以外，我们也可以直接使用模型对应的 <code>Model</code>
+类，例如 BERT 对应的就是 <code>BertModel</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel</span><br><span class="line"></span><br><span class="line">model = BertModel.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>注意，<strong>在大部分情况下，我们都应该使用 <code>AutoModel</code> 来加载模型。</strong>这样如果我们想要使用另一个模型（比如把 BERT 换成 RoBERTa），只需修改 checkpoint，其他代码可以保持不变。</p>
-<h3 id="加载模型"><a href="#加载模型" class="headerlink" title="加载模型"></a>加载模型</h3><p>所有存储在 HuggingFace <a target="_blank" rel="noopener" href="https://huggingface.co/models">Model Hub</a> 上的模型都可以通过 <code>Model.from_pretrained()</code> 来加载权重，参数可以像上面一样是 checkpoint 的名称，也可以是本地路径（预先下载的模型目录），例如：</p>
+<p>注意，<strong>在大部分情况下，我们都应该使用 <code>AutoModel</code>
+来加载模型。</strong>这样如果我们想要使用另一个模型（比如把 BERT 换成
+RoBERTa），只需修改 checkpoint，其他代码可以保持不变。</p>
+<h3 id="加载模型">加载模型</h3>
+<p>所有存储在 HuggingFace <a target="_blank" rel="noopener" href="https://huggingface.co/models">Model
+Hub</a> 上的模型都可以通过 <code>Model.from_pretrained()</code>
+来加载权重，参数可以像上面一样是 checkpoint
+的名称，也可以是本地路径（预先下载的模型目录），例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel</span><br><span class="line"></span><br><span class="line">model = BertModel.from_pretrained(<span class="string">&quot;./models/bert/&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><code>Model.from_pretrained()</code> 会自动缓存下载的模型权重，默认保存到 <em>~/.cache/huggingface/transformers</em>，我们也可以通过 HF_HOME 环境变量自定义缓存目录。</p>
+<p><code>Model.from_pretrained()</code>
+会自动缓存下载的模型权重，默认保存到
+<em>~/.cache/huggingface/transformers</em>，我们也可以通过 HF_HOME
+环境变量自定义缓存目录。</p>
 <blockquote>
-<p>  由于 checkpoint 名称加载方式需要连接网络，因此在大部分情况下我们都会采用本地路径的方式加载模型。</p>
-<p>  部分模型的 Hub 页面中会包含很多文件，我们通常只需要下载模型对应的 <em>config.json</em> 和 <em>pytorch_model.bin</em>，以及分词器对应的 <em>tokenizer.json</em>、<em>tokenizer_config.json</em> 和 <em>vocab.txt</em>。</p>
+<p>由于 checkpoint
+名称加载方式需要连接网络，因此在大部分情况下我们都会采用本地路径的方式加载模型。</p>
+<p>部分模型的 Hub 页面中会包含很多文件，我们通常只需要下载模型对应的
+<em>config.json</em> 和 <em>pytorch_model.bin</em>，以及分词器对应的
+<em>tokenizer.json</em>、<em>tokenizer_config.json</em> 和
+<em>vocab.txt</em>。</p>
 </blockquote>
-<h3 id="保存模型"><a href="#保存模型" class="headerlink" title="保存模型"></a>保存模型</h3><p>保存模型通过调用 <code>Model.save_pretrained()</code> 函数实现，例如保存加载的 BERT 模型：</p>
+<h3 id="保存模型">保存模型</h3>
+<p>保存模型通过调用 <code>Model.save_pretrained()</code>
+函数实现，例如保存加载的 BERT 模型：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModel</span><br><span class="line"></span><br><span class="line">model = AutoModel.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line">model.save_pretrained(<span class="string">&quot;./models/bert-base-cased/&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>这会在保存路径下创建两个文件：</p>
 <ul>
-<li><em>config.json</em>：模型配置文件，存储模型结构参数，例如 Transformer 层数、特征空间维度等；</li>
-<li><em>pytorch_model.bin</em>：又称为 state dictionary，存储模型的权重。</li>
+<li><em>config.json</em>：模型配置文件，存储模型结构参数，例如
+Transformer 层数、特征空间维度等；</li>
+<li><em>pytorch_model.bin</em>：又称为 state
+dictionary，存储模型的权重。</li>
 </ul>
-<p>简单来说，配置文件记录模型的<strong>结构</strong>，模型权重记录模型的<strong>参数</strong>，这两个文件缺一不可。我们自己保存的模型同样通过 <code>Model.from_pretrained()</code> 加载，只需要传递保存目录的路径。</p>
-<h2 id="分词器"><a href="#分词器" class="headerlink" title="分词器"></a>分词器</h2><p>由于神经网络模型不能直接处理文本，因此我们需要先将文本转换为数字，这个过程被称为<strong>编码 (Encoding)</strong>，其包含两个步骤：</p>
-<ol>
+<p>简单来说，配置文件记录模型的<strong>结构</strong>，模型权重记录模型的<strong>参数</strong>，这两个文件缺一不可。我们自己保存的模型同样通过
+<code>Model.from_pretrained()</code>
+加载，只需要传递保存目录的路径。</p>
+<h2 id="分词器">分词器</h2>
+<p>由于神经网络模型不能直接处理文本，因此我们需要先将文本转换为数字，这个过程被称为<strong>编码
+(Encoding)</strong>，其包含两个步骤：</p>
+<ol type="1">
 <li>使用分词器 (tokenizer) 将文本按词、子词、字符切分为 tokens；</li>
 <li>将所有的 token 映射到对应的 token ID。</li>
 </ol>
-<h3 id="分词策略"><a href="#分词策略" class="headerlink" title="分词策略"></a>分词策略</h3><p>根据切分粒度的不同，分词策略可以分为以下几种：</p>
+<h3 id="分词策略">分词策略</h3>
+<p>根据切分粒度的不同，分词策略可以分为以下几种：</p>
 <ul>
 <li><p><strong>按词切分 (Word-based)</strong></p>
-<p><img src="https://transformers.run/assets/img/transformers-note-2/word_based_tokenization.png" alt="word_based_tokenization"></p>
+<figure>
+<img
+src="https://transformers.run/assets/img/transformers-note-2/word_based_tokenization.png"
+alt="word_based_tokenization" />
+<figcaption aria-hidden="true">word_based_tokenization</figcaption>
+</figure>
 <p>例如直接利用 Python 的 <code>split()</code> 函数按空格进行分词：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tokenized_text = <span class="string">&quot;Jim Henson was a puppeteer&quot;</span>.split()</span><br><span class="line"><span class="built_in">print</span>(tokenized_text)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;Jim&#x27;, &#x27;Henson&#x27;, &#x27;was&#x27;, &#x27;a&#x27;, &#x27;puppeteer&#x27;]</span><br></pre></td></tr></table></figure>
-<p>这种策略的问题是会将文本中所有出现过的独立片段都作为不同的 token，从而产生巨大的词表。而实际上很多词是相关的，例如 “dog” 和 “dogs”、“run” 和 “running”，如果给它们赋予不同的编号就无法表示出这种关联性。</p>
+<p>这种策略的问题是会将文本中所有出现过的独立片段都作为不同的
+token，从而产生巨大的词表。而实际上很多词是相关的，例如 “dog” 和
+“dogs”、“run” 和
+“running”，如果给它们赋予不同的编号就无法表示出这种关联性。</p>
 <blockquote>
-<p>  词表就是一个映射字典，负责将 token 映射到对应的 ID（从 0 开始）。神经网络模型就是通过这些 token ID 来区分每一个 token。</p>
+<p>词表就是一个映射字典，负责将 token 映射到对应的 ID（从 0
+开始）。神经网络模型就是通过这些 token ID 来区分每一个 token。</p>
 </blockquote>
-<p>当遇到不在词表中的词时，分词器会使用一个专门的 [UNK] token 来表示它是 unknown 的。显然，如果分词结果中包含很多 [UNK] 就意味着丢失了很多文本信息，因此一个好的分词策略，应该尽可能不出现 unknown token。</p>
-</li>
+<p>当遇到不在词表中的词时，分词器会使用一个专门的 [UNK] token 来表示它是
+unknown 的。显然，如果分词结果中包含很多 [UNK]
+就意味着丢失了很多文本信息，因此一个好的分词策略，应该尽可能不出现
+unknown token。</p></li>
 <li><p><strong>按字符切分 (Character-based)</strong></p>
-<p><img src="https://transformers.run/assets/img/transformers-note-2/character_based_tokenization.png" alt="character_based_tokenization"></p>
-<p>这种策略把文本切分为字符而不是词语，这样就只会产生一个非常小的词表，并且很少会出现词表外的 tokens。</p>
-<p>但是从直觉上来看，字符本身并没有太大的意义，因此将文本切分为字符之后就会变得不容易理解。这也与语言有关，例如中文字符会比拉丁字符包含更多的信息，相对影响较小。此外，这种方式切分出的 tokens 会很多，例如一个由 10 个字符组成的单词就会输出 10 个 tokens，而实际上它们只是一个词。</p>
-<p>因此现在广泛采用的是一种同时结合了按词切分和按字符切分的方式——按子词切分 (Subword tokenization)。</p>
-</li>
+<figure>
+<img
+src="https://transformers.run/assets/img/transformers-note-2/character_based_tokenization.png"
+alt="character_based_tokenization" />
+<figcaption aria-hidden="true">character_based_tokenization</figcaption>
+</figure>
+<p>这种策略把文本切分为字符而不是词语，这样就只会产生一个非常小的词表，并且很少会出现词表外的
+tokens。</p>
+<p>但是从直觉上来看，字符本身并没有太大的意义，因此将文本切分为字符之后就会变得不容易理解。这也与语言有关，例如中文字符会比拉丁字符包含更多的信息，相对影响较小。此外，这种方式切分出的
+tokens 会很多，例如一个由 10 个字符组成的单词就会输出 10 个
+tokens，而实际上它们只是一个词。</p>
+<p>因此现在广泛采用的是一种同时结合了按词切分和按字符切分的方式——按子词切分
+(Subword tokenization)。</p></li>
 <li><p><strong>按子词切分 (Subword) </strong></p>
-<p>高频词直接保留，低频词被切分为更有意义的子词。例如 “annoyingly” 是一个低频词，可以切分为 “annoying” 和 “ly”，这两个子词不仅出现频率更高，而且词义也得以保留。下图展示了对 “Let’s do tokenization!“ 按子词切分的结果：</p>
-<p><img src="https://transformers.run/assets/img/transformers-note-2/bpe_subword.png" alt="bpe_subword"></p>
-<p>可以看到，“tokenization” 被切分为了 “token” 和 “ization”，不仅保留了语义，而且只用两个 token 就表示了一个长词。这种策略只用一个较小的词表就可以覆盖绝大部分文本，基本不会产生 unknown token。尤其对于土耳其语等黏着语，几乎所有的复杂长词都可以通过串联多个子词构成。</p>
-</li>
+<p>高频词直接保留，低频词被切分为更有意义的子词。例如 “annoyingly”
+是一个低频词，可以切分为 “annoying” 和
+“ly”，这两个子词不仅出现频率更高，而且词义也得以保留。下图展示了对
+“Let’s do tokenization!“ 按子词切分的结果：</p>
+<figure>
+<img
+src="https://transformers.run/assets/img/transformers-note-2/bpe_subword.png"
+alt="bpe_subword" />
+<figcaption aria-hidden="true">bpe_subword</figcaption>
+</figure>
+<p>可以看到，“tokenization” 被切分为了 “token” 和
+“ization”，不仅保留了语义，而且只用两个 token
+就表示了一个长词。这种策略只用一个较小的词表就可以覆盖绝大部分文本，基本不会产生
+unknown
+token。尤其对于土耳其语等黏着语，几乎所有的复杂长词都可以通过串联多个子词构成。</p></li>
 </ul>
-<h3 id="加载与保存分词器"><a href="#加载与保存分词器" class="headerlink" title="加载与保存分词器"></a>加载与保存分词器</h3><p>分词器的加载与保存与模型相似，使用 <code>Tokenizer.from_pretrained()</code> 和 <code>Tokenizer.save_pretrained()</code> 函数。例如加载并保存 BERT 模型的分词器：</p>
+<h3 id="加载与保存分词器">加载与保存分词器</h3>
+<p>分词器的加载与保存与模型相似，使用
+<code>Tokenizer.from_pretrained()</code> 和
+<code>Tokenizer.save_pretrained()</code> 函数。例如加载并保存 BERT
+模型的分词器：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line">tokenizer.save_pretrained(<span class="string">&quot;./models/bert-base-cased/&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>同样地，在大部分情况下我们都应该使用 <code>AutoTokenizer</code> 来加载分词器：</p>
+<p>同样地，在大部分情况下我们都应该使用 <code>AutoTokenizer</code>
+来加载分词器：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line">tokenizer.save_pretrained(<span class="string">&quot;./models/bert-base-cased/&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>调用 <code>Tokenizer.save_pretrained()</code> 函数会在保存路径下创建三个文件：</p>
+<p>调用 <code>Tokenizer.save_pretrained()</code>
+函数会在保存路径下创建三个文件：</p>
 <ul>
-<li><em>special_tokens_map.json</em>：映射文件，里面包含 unknown token 等特殊字符的映射关系；</li>
+<li><em>special_tokens_map.json</em>：映射文件，里面包含 unknown token
+等特殊字符的映射关系；</li>
 <li><em>tokenizer_config.json</em>：分词器配置文件，存储构建分词器需要的参数；</li>
-<li><em>vocab.txt</em>：词表，一行一个 token，行号就是对应的 token ID（从 0 开始）。</li>
+<li><em>vocab.txt</em>：词表，一行一个 token，行号就是对应的 token
+ID（从 0 开始）。</li>
 </ul>
-<h3 id="编码与解码文本"><a href="#编码与解码文本" class="headerlink" title="编码与解码文本"></a>编码与解码文本</h3><p>前面说过，文本编码 (Encoding) 过程包含两个步骤：</p>
-<ol>
-<li><strong>分词：</strong>使用分词器按某种策略将文本切分为 tokens；</li>
+<h3 id="编码与解码文本">编码与解码文本</h3>
+<p>前面说过，文本编码 (Encoding) 过程包含两个步骤：</p>
+<ol type="1">
+<li><strong>分词：</strong>使用分词器按某种策略将文本切分为
+tokens；</li>
 <li><strong>映射：</strong>将 tokens 转化为对应的 token IDs。</li>
 </ol>
 <p>下面我们首先使用 BERT 分词器来对文本进行分词：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line"></span><br><span class="line">sequence = <span class="string">&quot;Using a Transformer network is simple&quot;</span></span><br><span class="line">tokens = tokenizer.tokenize(sequence)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(tokens)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;using&#x27;, &#x27;a&#x27;, &#x27;transform&#x27;, &#x27;##er&#x27;, &#x27;network&#x27;, &#x27;is&#x27;, &#x27;simple&#x27;]</span><br></pre></td></tr></table></figure>
-<p>可以看到，BERT 分词器采用的是子词切分策略，它会不断切分词语直到获得词表中的 token，例如 “transformer” 会被切分为 “transform” 和 “##er”。</p>
-<p>然后，我们通过 <code>convert_tokens_to_ids()</code> 将切分出的 tokens 转换为对应的 token IDs：</p>
+<p>可以看到，BERT
+分词器采用的是子词切分策略，它会不断切分词语直到获得词表中的 token，例如
+“transformer” 会被切分为 “transform” 和 “##er”。</p>
+<p>然后，我们通过 <code>convert_tokens_to_ids()</code> 将切分出的 tokens
+转换为对应的 token IDs：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ids = tokenizer.convert_tokens_to_ids(tokens)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ids)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[7993, 170, 13809, 23763, 2443, 1110, 3014]</span><br></pre></td></tr></table></figure>
-<p>还可以通过 <code>encode()</code> 函数将这两个步骤合并，并且 <code>encode()</code> 会自动添加模型需要的特殊 token，例如 BERT 分词器会分别在序列的首尾添加 [CLS] 和 [SEP]：</p>
+<p>还可以通过 <code>encode()</code> 函数将这两个步骤合并，并且
+<code>encode()</code> 会自动添加模型需要的特殊 token，例如 BERT
+分词器会分别在序列的首尾添加 [CLS] 和 [SEP]：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line"></span><br><span class="line">sequence = <span class="string">&quot;Using a Transformer network is simple&quot;</span></span><br><span class="line">sequence_ids = tokenizer.encode(sequence)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sequence_ids)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[101, 7993, 170, 13809, 23763, 2443, 1110, 3014, 102]</span><br></pre></td></tr></table></figure>
 <p>其中 101 和 102 分别是 [CLS] 和 [SEP] 对应的 token IDs。</p>
-<p>注意，上面这些只是为了演示。<strong>在实际编码文本时，最常见的是直接使用分词器进行处理</strong>，这样不仅会返回分词后的 token IDs，还包含模型需要的其他输入。例如 BERT 分词器还会自动在输入中添加 <code>token_type_ids</code> 和 <code>attention_mask</code>：</p>
+<p>注意，上面这些只是为了演示。<strong>在实际编码文本时，最常见的是直接使用分词器进行处理</strong>，这样不仅会返回分词后的
+token IDs，还包含模型需要的其他输入。例如 BERT
+分词器还会自动在输入中添加 <code>token_type_ids</code> 和
+<code>attention_mask</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line">tokenized_text = tokenizer(<span class="string">&quot;Using a Transformer network is simple&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(tokenized_text)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: [101, 7993, 170, 13809, 23763, 2443, 1110, 3014, 102], </span><br><span class="line"> &#x27;token_type_ids&#x27;: [0, 0, 0, 0, 0, 0, 0, 0, 0], </span><br><span class="line"> &#x27;attention_mask&#x27;: [1, 1, 1, 1, 1, 1, 1, 1, 1]&#125;</span><br></pre></td></tr></table></figure>
-<p>文本解码 (Decoding) 与编码相反，负责将 token IDs 转换回原来的字符串。注意，解码过程不是简单地将 token IDs 映射回 tokens，还需要合并那些被分为多个 token 的单词。下面我们通过 <code>decode()</code> 函数解码前面生成的 token IDs：</p>
+<p>文本解码 (Decoding) 与编码相反，负责将 token IDs
+转换回原来的字符串。注意，解码过程不是简单地将 token IDs 映射回
+tokens，还需要合并那些被分为多个 token 的单词。下面我们通过
+<code>decode()</code> 函数解码前面生成的 token IDs：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;bert-base-cased&quot;</span>)</span><br><span class="line"></span><br><span class="line">decoded_string = tokenizer.decode([<span class="number">7993</span>, <span class="number">170</span>, <span class="number">11303</span>, <span class="number">1200</span>, <span class="number">2443</span>, <span class="number">1110</span>, <span class="number">3014</span>])</span><br><span class="line"><span class="built_in">print</span>(decoded_string)</span><br><span class="line"></span><br><span class="line">decoded_string = tokenizer.decode([<span class="number">101</span>, <span class="number">7993</span>, <span class="number">170</span>, <span class="number">13809</span>, <span class="number">23763</span>, <span class="number">2443</span>, <span class="number">1110</span>, <span class="number">3014</span>, <span class="number">102</span>])</span><br><span class="line"><span class="built_in">print</span>(decoded_string)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Using a transformer network is simple</span><br><span class="line">[CLS] Using a Transformer network is simple [SEP]</span><br></pre></td></tr></table></figure>
-<p>解码文本是一个重要的步骤，在进行文本生成、翻译或者摘要等 Seq2Seq (Sequence-to-Sequence) 任务时都会调用这一函数。</p>
-<h2 id="处理多段文本"><a href="#处理多段文本" class="headerlink" title="处理多段文本"></a>处理多段文本</h2><p>现实场景中，我们往往会同时处理多段文本，而且模型也只接受批 (batch) 数据作为输入，即使只有一段文本，也需要将它组成一个只包含一个样本的 batch，例如：</p>
+<p>解码文本是一个重要的步骤，在进行文本生成、翻译或者摘要等 Seq2Seq
+(Sequence-to-Sequence) 任务时都会调用这一函数。</p>
+<h2 id="处理多段文本">处理多段文本</h2>
+<p>现实场景中，我们往往会同时处理多段文本，而且模型也只接受批 (batch)
+数据作为输入，即使只有一段文本，也需要将它组成一个只包含一个样本的
+batch，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequence = <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span></span><br><span class="line"></span><br><span class="line">tokens = tokenizer.tokenize(sequence)</span><br><span class="line">ids = tokenizer.convert_tokens_to_ids(tokens)</span><br><span class="line"><span class="comment"># input_ids = torch.tensor(ids), This line will fail.</span></span><br><span class="line">input_ids = torch.tensor([ids])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Input IDs:\n&quot;</span>, input_ids)</span><br><span class="line"></span><br><span class="line">output = model(input_ids)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Logits:\n&quot;</span>, output.logits)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Input IDs: </span><br><span class="line">tensor([[ 1045,  1005,  2310,  2042,  3403,  2005,  1037, 17662, 12172,  2607,</span><br><span class="line">          2026,  2878,  2166,  1012]])</span><br><span class="line">Logits: </span><br><span class="line">tensor([[-2.7276,  2.8789]], grad_fn=&lt;AddmmBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>这里我们通过 <code>[ids]</code> 构建了一个只包含一段文本的 batch，更常见的是送入包含多段文本的 batch：</p>
+<p>这里我们通过 <code>[ids]</code> 构建了一个只包含一段文本的
+batch，更常见的是送入包含多段文本的 batch：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">batched_ids = [ids, ids, ids, ...]</span><br></pre></td></tr></table></figure>
 <p>注意，上面的代码仅作为演示。<strong>实际场景中，我们应该直接使用分词器对文本进行处理</strong>，例如对于上面的例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequence = <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span></span><br><span class="line"></span><br><span class="line">tokenized_inputs = tokenizer(sequence, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Inputs Keys:\n&quot;</span>, tokenized_inputs.keys())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nInput IDs:\n&quot;</span>, tokenized_inputs[<span class="string">&quot;input_ids&quot;</span>])</span><br><span class="line"></span><br><span class="line">output = model(**tokenized_inputs)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nLogits:\n&quot;</span>, output.logits)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Inputs Keys:</span><br><span class="line"> dict_keys([&#x27;input_ids&#x27;, &#x27;attention_mask&#x27;])</span><br><span class="line"></span><br><span class="line">Input IDs:</span><br><span class="line">tensor([[  101,  1045,  1005,  2310,  2042,  3403,  2005,  1037, 17662, 12172,</span><br><span class="line">          2607,  2026,  2878,  2166,  1012,   102]])</span><br><span class="line"></span><br><span class="line">Logits:</span><br><span class="line">tensor([[-1.5607,  1.6123]], grad_fn=&lt;AddmmBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>可以看到，分词器输出的结果中不仅包含 token IDs（<code>input_ids</code>），还会包含模型需要的其他输入项。前面我们之所以只输入 token IDs 模型也能正常运行，是因为它自动地补全了其他的输入项，例如 <code>attention_mask</code> 等，后面我们会具体介绍。</p>
+<p>可以看到，分词器输出的结果中不仅包含 token
+IDs（<code>input_ids</code>），还会包含模型需要的其他输入项。前面我们之所以只输入
+token IDs 模型也能正常运行，是因为它自动地补全了其他的输入项，例如
+<code>attention_mask</code> 等，后面我们会具体介绍。</p>
 <blockquote>
-<p>  由于分词器自动在序列的首尾添加了 [CLS] 和 [SEP] token，所以上面两个例子中模型的输出是有差异的。因为 DistilBERT 预训练时是包含 [CLS] 和 [SEP] 的，所以下面的例子才是正确的使用方法。</p>
+<p>由于分词器自动在序列的首尾添加了 [CLS] 和 [SEP]
+token，所以上面两个例子中模型的输出是有差异的。因为 DistilBERT
+预训练时是包含 [CLS] 和 [SEP] 的，所以下面的例子才是正确的使用方法。</p>
 </blockquote>
-<h3 id="Padding-操作"><a href="#Padding-操作" class="headerlink" title="Padding 操作"></a>Padding 操作</h3><p>按批输入多段文本产生的一个直接问题就是：batch 中的文本有长有短，而输入张量必须是严格的二维矩形，维度为 (batch size,sequence length)，即每一段文本编码后的 token IDs 数量必须一样多。例如下面的 ID 列表是无法转换为张量的：</p>
+<h3 id="padding-操作">Padding 操作</h3>
+<p>按批输入多段文本产生的一个直接问题就是：batch
+中的文本有长有短，而输入张量必须是严格的二维矩形，维度为 (batch
+size,sequence length)，即每一段文本编码后的 token IDs
+数量必须一样多。例如下面的 ID 列表是无法转换为张量的：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">batched_ids = [</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>],</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>我们需要通过 Padding 操作，在短序列的结尾填充特殊的 padding token，使得 batch 中所有的序列都具有相同的长度，例如：</p>
+<p>我们需要通过 Padding 操作，在短序列的结尾填充特殊的 padding
+token，使得 batch 中所有的序列都具有相同的长度，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">padding_id = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">batched_ids = [</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>],</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, padding_id],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>模型的 padding token ID 可以通过其分词器的 <code>pad_token_id</code> 属性获得。下面我们尝试将两段文本分别以独立以及 batch 的形式送入到模型中：</p>
+<p>模型的 padding token ID 可以通过其分词器的 <code>pad_token_id</code>
+属性获得。下面我们尝试将两段文本分别以独立以及 batch
+的形式送入到模型中：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequence1_ids = [[<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>]]</span><br><span class="line">sequence2_ids = [[<span class="number">200</span>, <span class="number">200</span>]]</span><br><span class="line">batched_ids = [</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>],</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, tokenizer.pad_token_id],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(model(torch.tensor(sequence1_ids)).logits)</span><br><span class="line"><span class="built_in">print</span>(model(torch.tensor(sequence2_ids)).logits)</span><br><span class="line"><span class="built_in">print</span>(model(torch.tensor(batched_ids)).logits)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tensor([[ 1.5694, -1.3895]], grad_fn=&lt;AddmmBackward0&gt;)</span><br><span class="line">tensor([[ 0.5803, -0.4125]], grad_fn=&lt;AddmmBackward0&gt;)</span><br><span class="line">tensor([[ 1.5694, -1.3895],</span><br><span class="line">        [ 1.3374, -1.2163]], grad_fn=&lt;AddmmBackward0&gt;)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>  问题出现了，使用 padding token 填充的序列的结果竟然与其单独送入模型时不同！</p>
-<p>  这是因为模型默认会编码输入序列中的所有 token 以建模完整的上下文，因此这里会将填充的 padding token 也一同编码进去，从而生成不同的语义表示。</p>
+<p>问题出现了，使用 padding token
+填充的序列的结果竟然与其单独送入模型时不同！</p>
+<p>这是因为模型默认会编码输入序列中的所有 token
+以建模完整的上下文，因此这里会将填充的 padding token
+也一同编码进去，从而生成不同的语义表示。</p>
 </blockquote>
-<p>因此，在进行 Padding 操作时，我们必须明确告知模型哪些 token 是我们填充的，它们不应该参与编码。这就需要使用到 Attention Mask 了，在前面的例子中相信你已经多次见过它了。</p>
-<h3 id="Attention-Mask"><a href="#Attention-Mask" class="headerlink" title="Attention Mask"></a>Attention Mask</h3><p>Attention Mask 是一个尺寸与 input IDs 完全相同，且仅由 0 和 1 组成的张量，0 表示对应位置的 token 是填充符，不参与计算。当然，一些特殊的模型结构也会借助 Attention Mask 来遮蔽掉指定的 tokens。</p>
-<p>对于上面的例子，如果我们通过 <code>attention_mask</code> 标出填充的 padding token 的位置，计算结果就不会有问题了：</p>
+<p>因此，在进行 Padding 操作时，我们必须明确告知模型哪些 token
+是我们填充的，它们不应该参与编码。这就需要使用到 Attention Mask
+了，在前面的例子中相信你已经多次见过它了。</p>
+<h3 id="attention-mask">Attention Mask</h3>
+<p>Attention Mask 是一个尺寸与 input IDs 完全相同，且仅由 0 和 1
+组成的张量，0 表示对应位置的 token
+是填充符，不参与计算。当然，一些特殊的模型结构也会借助 Attention Mask
+来遮蔽掉指定的 tokens。</p>
+<p>对于上面的例子，如果我们通过 <code>attention_mask</code> 标出填充的
+padding token 的位置，计算结果就不会有问题了：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequence1_ids = [[<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>]]</span><br><span class="line">sequence2_ids = [[<span class="number">200</span>, <span class="number">200</span>]]</span><br><span class="line">batched_ids = [</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, <span class="number">200</span>],</span><br><span class="line">    [<span class="number">200</span>, <span class="number">200</span>, tokenizer.pad_token_id],</span><br><span class="line">]</span><br><span class="line">batched_attention_masks = [</span><br><span class="line">    [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(model(torch.tensor(sequence1_ids)).logits)</span><br><span class="line"><span class="built_in">print</span>(model(torch.tensor(sequence2_ids)).logits)</span><br><span class="line">outputs = model(</span><br><span class="line">    torch.tensor(batched_ids), </span><br><span class="line">    attention_mask=torch.tensor(batched_attention_masks))</span><br><span class="line"><span class="built_in">print</span>(outputs.logits)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tensor([[ 1.5694, -1.3895]], grad_fn=&lt;AddmmBackward0&gt;)</span><br><span class="line">tensor([[ 0.5803, -0.4125]], grad_fn=&lt;AddmmBackward0&gt;)</span><br><span class="line">tensor([[ 1.5694, -1.3895],</span><br><span class="line">        [ 0.5803, -0.4125]], grad_fn=&lt;AddmmBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>正如前面强调的那样，在实际使用时，我们应该直接使用分词器对文本进行处理，它不仅会向 token 序列中添加模型需要的特殊字符（例如 [CLS],[SEP]），还会自动生成对应的 Attention Mask。</p>
-<p>目前大部分 Transformer 模型只能接受长度不超过 512 或 1024 的 token 序列，因此对于长序列，有以下三种处理方法：</p>
-<ol>
-<li>使用一个支持长文的 Transformer 模型，例如 <a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/longformer.html">Longformer</a> 和 <a target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/led.html">LED</a>（最大长度 4096）；</li>
-<li>设定最大长度 <code>max_sequence_length</code> 以<strong>截断</strong>输入序列：<code>sequence = sequence[:max_sequence_length]</code>。</li>
-<li>将长文切片为短文本块 (chunk)，然后分别对每一个 chunk 编码。在后面的<a target="_blank" rel="noopener" href="https://transformers.run/nlp/2022-03-08-transformers-note-5.html">快速分词器</a>中，我们会详细介绍。</li>
+<p>正如前面强调的那样，在实际使用时，我们应该直接使用分词器对文本进行处理，它不仅会向
+token 序列中添加模型需要的特殊字符（例如
+[CLS],[SEP]），还会自动生成对应的 Attention Mask。</p>
+<p>目前大部分 Transformer 模型只能接受长度不超过 512 或 1024 的 token
+序列，因此对于长序列，有以下三种处理方法：</p>
+<ol type="1">
+<li>使用一个支持长文的 Transformer 模型，例如 <a
+target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/longformer.html">Longformer</a>
+和 <a
+target="_blank" rel="noopener" href="https://huggingface.co/transformers/model_doc/led.html">LED</a>（最大长度
+4096）；</li>
+<li>设定最大长度 <code>max_sequence_length</code>
+以<strong>截断</strong>输入序列：<code>sequence = sequence[:max_sequence_length]</code>。</li>
+<li>将长文切片为短文本块 (chunk)，然后分别对每一个 chunk
+编码。在后面的<a
+target="_blank" rel="noopener" href="https://transformers.run/nlp/2022-03-08-transformers-note-5.html">快速分词器</a>中，我们会详细介绍。</li>
 </ol>
-<h3 id="直接使用分词器"><a href="#直接使用分词器" class="headerlink" title="直接使用分词器"></a>直接使用分词器</h3><p>正如前面所说，在实际使用时，我们应该直接使用分词器来完成包括分词、转换 token IDs、Padding、构建 Attention Mask、截断等操作。例如：</p>
+<h3 id="直接使用分词器">直接使用分词器</h3>
+<p>正如前面所说，在实际使用时，我们应该直接使用分词器来完成包括分词、转换
+token IDs、Padding、构建 Attention Mask、截断等操作。例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequences = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>, </span><br><span class="line">    <span class="string">&quot;So have I!&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: [</span><br><span class="line">    [101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 17662, 12172, 2607, 2026, 2878, 2166, 1012, 102], </span><br><span class="line">    [101, 2061, 2031, 1045, 999, 102]], </span><br><span class="line"> &#x27;attention_mask&#x27;: [</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], </span><br><span class="line">    [1, 1, 1, 1, 1, 1]]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，分词器的输出包含了模型需要的所有输入项。对于 DistilBERT 模型，就是 input IDs（<code>input_ids</code>）和 Attention Mask（<code>attention_mask</code>）。</p>
-<p><strong>Padding 操作</strong>通过 <code>padding</code> 参数来控制：</p>
+<p>可以看到，分词器的输出包含了模型需要的所有输入项。对于 DistilBERT
+模型，就是 input IDs（<code>input_ids</code>）和 Attention
+Mask（<code>attention_mask</code>）。</p>
+<p><strong>Padding 操作</strong>通过 <code>padding</code>
+参数来控制：</p>
 <ul>
-<li><code>padding=&quot;longest&quot;</code>： 将序列填充到当前 batch 中最长序列的长度；</li>
-<li><code>padding=&quot;max_length&quot;</code>：将所有序列填充到模型能够接受的最大长度，例如 BERT 模型就是 512。</li>
+<li><code>padding="longest"</code>： 将序列填充到当前 batch
+中最长序列的长度；</li>
+<li><code>padding="max_length"</code>：将所有序列填充到模型能够接受的最大长度，例如
+BERT 模型就是 512。</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequences = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>, </span><br><span class="line">    <span class="string">&quot;So have I!&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences, padding=<span class="string">&quot;longest&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences, padding=<span class="string">&quot;max_length&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: [</span><br><span class="line">    [101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 17662, 12172, 2607, 2026, 2878, 2166, 1012, 102], </span><br><span class="line">    [101, 2061, 2031, 1045, 999, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], </span><br><span class="line"> &#x27;attention_mask&#x27;: [</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], </span><br><span class="line">    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#x27;input_ids&#x27;: [</span><br><span class="line">    [101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 17662, 12172, 2607, 2026, 2878, 2166, 1012, 102, 0, 0, 0, 0, 0, 0, 0, 0, ...], </span><br><span class="line">    [101, 2061, 2031, 1045, 999, 102, 0, 0, 0, ...]], </span><br><span class="line"> &#x27;attention_mask&#x27;: [</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, ...], </span><br><span class="line">    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...]]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>截断操作</strong>通过 <code>truncation</code> 参数来控制，如果 <code>truncation=True</code>，那么大于模型最大接受长度的序列都会被截断，例如对于 BERT 模型就会截断长度超过 512 的序列。此外，也可以通过 <code>max_length</code> 参数来控制截断长度：</p>
+<p><strong>截断操作</strong>通过 <code>truncation</code>
+参数来控制，如果
+<code>truncation=True</code>，那么大于模型最大接受长度的序列都会被截断，例如对于
+BERT 模型就会截断长度超过 512 的序列。此外，也可以通过
+<code>max_length</code> 参数来控制截断长度：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequences = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>, </span><br><span class="line">    <span class="string">&quot;So have I!&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences, max_length=<span class="number">8</span>, truncation=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: [</span><br><span class="line">    [101, 1045, 1005, 2310, 2042, 3403, 2005, 102], </span><br><span class="line">    [101, 2061, 2031, 1045, 999, 102]], </span><br><span class="line"> &#x27;attention_mask&#x27;: [</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1], </span><br><span class="line">    [1, 1, 1, 1, 1, 1]]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>分词器还可以通过 <code>return_tensors</code> 参数指定返回的张量格式：设为 <code>pt</code> 则返回 PyTorch 张量；<code>tf</code> 则返回 TensorFlow 张量，<code>np</code> 则返回 NumPy 数组。例如：</p>
+<p>分词器还可以通过 <code>return_tensors</code>
+参数指定返回的张量格式：设为 <code>pt</code> 则返回 PyTorch
+张量；<code>tf</code> 则返回 TensorFlow 张量，<code>np</code> 则返回
+NumPy 数组。例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequences = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>, </span><br><span class="line">    <span class="string">&quot;So have I!&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences, padding=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br><span class="line"></span><br><span class="line">model_inputs = tokenizer(sequences, padding=<span class="literal">True</span>, return_tensors=<span class="string">&quot;np&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(model_inputs)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([</span><br><span class="line">    [  101,  1045,  1005,  2310,  2042,  3403,  2005,  1037, 17662, 12172,</span><br><span class="line">      2607,  2026,  2878,  2166,  1012,   102],</span><br><span class="line">    [  101,  2061,  2031,  1045,   999,   102,     0,     0,     0,     0,</span><br><span class="line">         0,     0,     0,     0,     0,     0]]), </span><br><span class="line"> &#x27;attention_mask&#x27;: tensor([</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#x27;input_ids&#x27;: array([</span><br><span class="line">    [  101,  1045,  1005,  2310,  2042,  3403,  2005,  1037, 17662,</span><br><span class="line">     12172,  2607,  2026,  2878,  2166,  1012,   102],</span><br><span class="line">    [  101,  2061,  2031,  1045,   999,   102,     0,     0,     0,</span><br><span class="line">         0,     0,     0,     0,     0,     0,     0]]), </span><br><span class="line"> &#x27;attention_mask&#x27;: array([</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>实际使用分词器时，我们通常会同时进行 padding 操作和截断操作，并设置返回格式为 Pytorch 张量，这样就可以直接将分词结果送入模型：</p>
+<p>实际使用分词器时，我们通常会同时进行 padding
+操作和截断操作，并设置返回格式为 Pytorch
+张量，这样就可以直接将分词结果送入模型：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sequences = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a HuggingFace course my whole life.&quot;</span>, </span><br><span class="line">    <span class="string">&quot;So have I!&quot;</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">tokens = tokenizer(sequences, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(tokens)</span><br><span class="line">output = model(**tokens)</span><br><span class="line"><span class="built_in">print</span>(output.logits)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([</span><br><span class="line">    [  101,  1045,  1005,  2310,  2042,  3403,  2005,  1037, 17662, 12172,</span><br><span class="line">      2607,  2026,  2878,  2166,  1012,   102],</span><br><span class="line">    [  101,  2061,  2031,  1045,   999,   102,     0,     0,     0,     0,</span><br><span class="line">         0,     0,     0,     0,     0,     0]]), </span><br><span class="line"> &#x27;attention_mask&#x27;: tensor([</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])&#125;</span><br><span class="line"></span><br><span class="line">tensor([[-1.5607,  1.6123],</span><br><span class="line">        [-3.6183,  3.9137]], grad_fn=&lt;AddmmBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>在 <code>padding=True, truncation=True</code> 设置下，同一个 batch 中的序列都会 padding 到相同的长度，并且大于模型最大接受长度的序列会被自动截断。</p>
-<h3 id="编码句子对"><a href="#编码句子对" class="headerlink" title="编码句子对"></a>编码句子对</h3><p>除了对单段文本进行编码以外（batch 只是并行地编码多个单段文本），对于 BERT 等包含“句子对”预训练任务的模型，它们的分词器都支持对“句子对”进行编码，例如：</p>
+<p>在 <code>padding=True, truncation=True</code> 设置下，同一个 batch
+中的序列都会 padding
+到相同的长度，并且大于模型最大接受长度的序列会被自动截断。</p>
+<h3 id="编码句子对">编码句子对</h3>
+<p>除了对单段文本进行编码以外（batch 只是并行地编码多个单段文本），对于
+BERT
+等包含“句子对”预训练任务的模型，它们的分词器都支持对“句子对”进行编码，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">inputs = tokenizer(<span class="string">&quot;This is the first sentence.&quot;</span>, <span class="string">&quot;This is the second one.&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br><span class="line"></span><br><span class="line">tokens = tokenizer.convert_ids_to_tokens(inputs[<span class="string">&quot;input_ids&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(tokens)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: [101, 2023, 2003, 1996, 2034, 6251, 1012, 102, 2023, 2003, 1996, 2117, 2028, 1012, 102], </span><br><span class="line"> &#x27;token_type_ids&#x27;: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], </span><br><span class="line"> &#x27;attention_mask&#x27;: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]&#125;</span><br><span class="line"></span><br><span class="line">[&#x27;[CLS]&#x27;, &#x27;this&#x27;, &#x27;is&#x27;, &#x27;the&#x27;, &#x27;first&#x27;, &#x27;sentence&#x27;, &#x27;.&#x27;, &#x27;[SEP]&#x27;, &#x27;this&#x27;, &#x27;is&#x27;, &#x27;the&#x27;, &#x27;second&#x27;, &#x27;one&#x27;, &#x27;.&#x27;, &#x27;[SEP]&#x27;]</span><br></pre></td></tr></table></figure>
-<p>此时分词器会使用 [SEP] token 拼接两个句子，输出形式为“[CLS] sentence1 [SEP] sentence2 [SEP]”的 token 序列，这也是 BERT 模型预期的“句子对”输入格式。</p>
-<p>返回结果中除了前面我们介绍过的 <code>input_ids</code> 和 <code>attention_mask</code> 之外，还包含了一个 <code>token_type_ids</code> 项，用于标记哪些 token 属于第一个句子，哪些属于第二个句子。如果我们将上面例子中的 <code>token_type_ids</code> 项与 token 序列对齐：</p>
+<p>此时分词器会使用 [SEP] token 拼接两个句子，输出形式为“[CLS] sentence1
+[SEP] sentence2 [SEP]”的 token 序列，这也是 BERT
+模型预期的“句子对”输入格式。</p>
+<p>返回结果中除了前面我们介绍过的 <code>input_ids</code> 和
+<code>attention_mask</code> 之外，还包含了一个
+<code>token_type_ids</code> 项，用于标记哪些 token
+属于第一个句子，哪些属于第二个句子。如果我们将上面例子中的
+<code>token_type_ids</code> 项与 token 序列对齐：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;[CLS]&#x27;, &#x27;this&#x27;, &#x27;is&#x27;, &#x27;the&#x27;, &#x27;first&#x27;, &#x27;sentence&#x27;, &#x27;.&#x27;, &#x27;[SEP]&#x27;, &#x27;this&#x27;, &#x27;is&#x27;, &#x27;the&#x27;, &#x27;second&#x27;, &#x27;one&#x27;, &#x27;.&#x27;, &#x27;[SEP]&#x27;]</span><br><span class="line">[      0,      0,    0,     0,       0,          0,   0,       0,      1,    1,     1,        1,     1,   1,       1]</span><br></pre></td></tr></table></figure>
-<p>就可以看到第一个句子“[CLS] sentence1 [SEP]”所有 token 的 type ID 都为 0，而第二个句子“sentence2 [SEP]”对应的 token type ID 都为 1。</p>
+<p>就可以看到第一个句子“[CLS] sentence1 [SEP]”所有 token 的 type ID 都为
+0，而第二个句子“sentence2 [SEP]”对应的 token type ID 都为 1。</p>
 <blockquote>
-<p>  如果我们选择其他模型，分词器的输出不一定会包含 <code>token_type_ids</code> 项（例如 DistilBERT 模型）。分词器只需保证输出格式与模型预训练时的输入一致即可。</p>
+<p>如果我们选择其他模型，分词器的输出不一定会包含
+<code>token_type_ids</code> 项（例如 DistilBERT
+模型）。分词器只需保证输出格式与模型预训练时的输入一致即可。</p>
 </blockquote>
-<p>实际使用时，我们不需要去关注编码结果中是否包含 <code>token_type_ids</code> 项，分词器会根据 checkpoint 自动调整输出格式，例如：</p>
+<p>实际使用时，我们不需要去关注编码结果中是否包含
+<code>token_type_ids</code> 项，分词器会根据 checkpoint
+自动调整输出格式，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sentence1_list = [<span class="string">&quot;First sentence.&quot;</span>, <span class="string">&quot;This is the second sentence.&quot;</span>, <span class="string">&quot;Third one.&quot;</span>]</span><br><span class="line">sentence2_list = [<span class="string">&quot;First sentence is short.&quot;</span>, <span class="string">&quot;The second sentence is very very very long.&quot;</span>, <span class="string">&quot;ok.&quot;</span>]</span><br><span class="line"></span><br><span class="line">tokens = tokenizer(</span><br><span class="line">    sentence1_list,</span><br><span class="line">    sentence2_list,</span><br><span class="line">    padding=<span class="literal">True</span>,</span><br><span class="line">    truncation=<span class="literal">True</span>,</span><br><span class="line">    return_tensors=<span class="string">&quot;pt&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(tokens)</span><br><span class="line"><span class="built_in">print</span>(tokens[<span class="string">&#x27;input_ids&#x27;</span>].shape)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([</span><br><span class="line">        [ 101, 2034, 6251, 1012,  102, 2034, 6251, 2003, 2460, 1012,  102,    0,</span><br><span class="line">            0,    0,    0,    0,    0,    0],</span><br><span class="line">        [ 101, 2023, 2003, 1996, 2117, 6251, 1012,  102, 1996, 2117, 6251, 2003,</span><br><span class="line">         2200, 2200, 2200, 2146, 1012,  102],</span><br><span class="line">        [ 101, 2353, 2028, 1012,  102, 7929, 1012,  102,    0,    0,    0,    0,</span><br><span class="line">            0,    0,    0,    0,    0,    0]]), </span><br><span class="line"> &#x27;token_type_ids&#x27;: tensor([</span><br><span class="line">        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],</span><br><span class="line">        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">        [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), </span><br><span class="line"> &#x27;attention_mask&#x27;: tensor([</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])</span><br><span class="line">&#125;</span><br><span class="line">torch.Size([3, 18])</span><br></pre></td></tr></table></figure>
-<p>可以看到分词器成功地输出了形式为“[CLS] sentence1 [SEP] sentence2 [SEP]”的 token 序列，并且将三个序列都 padding 到了相同的长度。</p>
-<h2 id="添加-Token"><a href="#添加-Token" class="headerlink" title="添加 Token"></a>添加 Token</h2><p>实际操作中，我们还经常会遇到输入中需要包含特殊标记符的情况，例如使用 [ENT_START] 和 [ENT_END] 标记出文本中的实体。由于这些自定义 token 并不在预训练模型原来的词表中，因此直接运用分词器处理就会出现问题。</p>
+<p>可以看到分词器成功地输出了形式为“[CLS] sentence1 [SEP] sentence2
+[SEP]”的 token 序列，并且将三个序列都 padding 到了相同的长度。</p>
+<h2 id="添加-token">添加 Token</h2>
+<p>实际操作中，我们还经常会遇到输入中需要包含特殊标记符的情况，例如使用
+[ENT_START] 和 [ENT_END] 标记出文本中的实体。由于这些自定义 token
+并不在预训练模型原来的词表中，因此直接运用分词器处理就会出现问题。</p>
 <p>例如直接使用 BERT 分词器处理下面的句子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">sentence = <span class="string">&#x27;Two [ENT_START] cars [ENT_END] collided in a [ENT_START] tunnel [ENT_END] this morning.&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(tokenizer.tokenize(sentence))</span><br><span class="line">[<span class="string">&#x27;two&#x27;</span>, <span class="string">&#x27;[&#x27;</span>, <span class="string">&#x27;en&#x27;</span>, <span class="string">&#x27;##t&#x27;</span>, <span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;start&#x27;</span>, <span class="string">&#x27;]&#x27;</span>, <span class="string">&#x27;cars&#x27;</span>, <span class="string">&#x27;[&#x27;</span>, <span class="string">&#x27;en&#x27;</span>, <span class="string">&#x27;##t&#x27;</span>, <span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;end&#x27;</span>, <span class="string">&#x27;]&#x27;</span>, <span class="string">&#x27;collided&#x27;</span>, <span class="string">&#x27;in&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;[&#x27;</span>, <span class="string">&#x27;en&#x27;</span>, <span class="string">&#x27;##t&#x27;</span>, <span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;start&#x27;</span>, <span class="string">&#x27;]&#x27;</span>, <span class="string">&#x27;tunnel&#x27;</span>, <span class="string">&#x27;[&#x27;</span>, <span class="string">&#x27;en&#x27;</span>, <span class="string">&#x27;##t&#x27;</span>, <span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;end&#x27;</span>, <span class="string">&#x27;]&#x27;</span>, <span class="string">&#x27;this&#x27;</span>, <span class="string">&#x27;morning&#x27;</span>, <span class="string">&#x27;.&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>由于分词器无法识别 [ENT<em>START] 和 [ENT_END] ，因此将它们都当作未知字符处理，例如“[ENT_END]”被切分成了 <code>&#39;[&#39;</code>, <code>&#39;en&#39;</code>, <code>&#39;##t&#39;</code>, `’</em>‘<code>,</code>‘end’<code>,</code>‘]’` 六个 token。</p>
-<p>此外，一些领域的专业词汇，例如使用多个词语的缩写拼接而成的医学术语，同样也不在模型的词表中，因此也会出现上面的问题。此时我们就需要将这些新 token 添加到模型的词表中，让分词器与模型可以识别并处理这些 token。</p>
-<h3 id="添加新-token"><a href="#添加新-token" class="headerlink" title="添加新 token"></a>添加新 token</h3><p>Transformers 库提供了两种方式来添加新 token，分别是：</p>
+<p>由于分词器无法识别 [ENT_START] 和 [ENT_END]
+，因此将它们都当作未知字符处理，例如“[ENT_END]”被切分成了
+<code>'['</code>, <code>'en'</code>, <code>'##t'</code>,
+<code>'_'</code>, <code>'end'</code>, <code>']'</code> 六个 token。</p>
+<p>此外，一些领域的专业词汇，例如使用多个词语的缩写拼接而成的医学术语，同样也不在模型的词表中，因此也会出现上面的问题。此时我们就需要将这些新
+token 添加到模型的词表中，让分词器与模型可以识别并处理这些 token。</p>
+<h3 id="添加新-token">添加新 token</h3>
+<p>Transformers 库提供了两种方式来添加新 token，分别是：</p>
 <ul>
-<li><p><strong><a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/v4.25.1/en/internal/tokenization_utils#transformers.SpecialTokensMixin.add_tokens"><code>add_tokens()</code></a> 添加普通 token：</strong>参数是新 token 列表，如果 token 不在词表中，就会被添加到词表的最后。</p>
+<li><p><strong><a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/v4.25.1/en/internal/tokenization_utils#transformers.SpecialTokensMixin.add_tokens"><code>add_tokens()</code></a>
+添加普通 token：</strong>参数是新 token 列表，如果 token
+不在词表中，就会被添加到词表的最后。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">    </span><br><span class="line">num_added_toks = tokenizer.add_tokens([<span class="string">&quot;new_token1&quot;</span>, <span class="string">&quot;my_new-token2&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;We have added&quot;</span>, num_added_toks, <span class="string">&quot;tokens&quot;</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">We have added 2 tokens</span><br></pre></td></tr></table></figure>
-<p>为了防止 token 已经包含在词表中，我们还可以预先对新 token 列表进行过滤：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">new_tokens = [<span class="string">&quot;new_token1&quot;</span>, <span class="string">&quot;my_new-token2&quot;</span>]</span><br><span class="line">new_tokens = <span class="built_in">set</span>(new_tokens) - <span class="built_in">set</span>(tokenizer.vocab.keys())</span><br><span class="line">tokenizer.add_tokens(<span class="built_in">list</span>(new_tokens))</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong><a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/v4.25.1/en/internal/tokenization_utils#transformers.SpecialTokensMixin.add_special_tokens"><code>add_special_tokens()</code></a> 添加特殊 token：</strong>参数是包含特殊 token 的字典，键值只能从 <code>bos_token</code>, <code>eos_token</code>, <code>unk_token</code>, <code>sep_token</code>, <code>pad_token</code>, <code>cls_token</code>, <code>mask_token</code>, <code>additional_special_tokens</code> 中选择。同样地，如果 token 不在词表中，就会被添加到词表的最后。添加后，还可以通过特殊属性来访问这些 token，例如 <code>tokenizer.cls_token</code> 就指向 cls token。</p>
+<p>为了防止 token 已经包含在词表中，我们还可以预先对新 token
+列表进行过滤：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">new_tokens = [<span class="string">&quot;new_token1&quot;</span>, <span class="string">&quot;my_new-token2&quot;</span>]</span><br><span class="line">new_tokens = <span class="built_in">set</span>(new_tokens) - <span class="built_in">set</span>(tokenizer.vocab.keys())</span><br><span class="line">tokenizer.add_tokens(<span class="built_in">list</span>(new_tokens))</span><br></pre></td></tr></table></figure></li>
+<li><p><strong><a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/v4.25.1/en/internal/tokenization_utils#transformers.SpecialTokensMixin.add_special_tokens"><code>add_special_tokens()</code></a>
+添加特殊 token：</strong>参数是包含特殊 token 的字典，键值只能从
+<code>bos_token</code>, <code>eos_token</code>, <code>unk_token</code>,
+<code>sep_token</code>, <code>pad_token</code>, <code>cls_token</code>,
+<code>mask_token</code>, <code>additional_special_tokens</code>
+中选择。同样地，如果 token
+不在词表中，就会被添加到词表的最后。添加后，还可以通过特殊属性来访问这些
+token，例如 <code>tokenizer.cls_token</code> 就指向 cls token。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">    </span><br><span class="line">special_tokens_dict = &#123;<span class="string">&quot;cls_token&quot;</span>: <span class="string">&quot;[MY_CLS]&quot;</span>&#125;</span><br><span class="line">    </span><br><span class="line">num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;We have added&quot;</span>, num_added_toks, <span class="string">&quot;tokens&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">assert</span> tokenizer.cls_token == <span class="string">&quot;[MY_CLS]&quot;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">We have added 1 tokens</span><br></pre></td></tr></table></figure>
-<p>我们也可以使用 <code>add_tokens()</code> 添加特殊 token，只需要额外设置参数 <code>special_tokens=True</code>：</p>
+<p>我们也可以使用 <code>add_tokens()</code> 添加特殊
+token，只需要额外设置参数 <code>special_tokens=True</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">    </span><br><span class="line">num_added_toks = tokenizer.add_tokens([<span class="string">&quot;[NEW_tok1]&quot;</span>, <span class="string">&quot;[NEW_tok2]&quot;</span>])</span><br><span class="line">num_added_toks = tokenizer.add_tokens([<span class="string">&quot;[NEW_tok3]&quot;</span>, <span class="string">&quot;[NEW_tok4]&quot;</span>], special_tokens=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;We have added&quot;</span>, num_added_toks, <span class="string">&quot;tokens&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(tokenizer.tokenize(<span class="string">&#x27;[NEW_tok1] Hello [NEW_tok2] [NEW_tok3] World [NEW_tok4]!&#x27;</span>))</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">We have added 2 tokens</span><br><span class="line">[&#x27;[new_tok1]&#x27;, &#x27;hello&#x27;, &#x27;[new_tok2]&#x27;, &#x27;[NEW_tok3]&#x27;, &#x27;world&#x27;, &#x27;[NEW_tok4]&#x27;, &#x27;!&#x27;]</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>  特殊 token 的标准化 (normalization) 与普通 token 有一些不同，比如不会被小写。</p>
-<p>  这里我们使用的是不区分大小写的 BERT 模型，因此分词后添加的普通 token [NEW_tok1] 和 [NEW_tok2] 都被处理为了小写，而添加的特殊 token [NEW_tok3] 和 [NEW_tok4] 则保持大写。</p>
-</blockquote>
-</li>
+<p>特殊 token 的标准化 (normalization) 与普通 token
+有一些不同，比如不会被小写。</p>
+<p>这里我们使用的是不区分大小写的 BERT 模型，因此分词后添加的普通 token
+[NEW_tok1] 和 [NEW_tok2] 都被处理为了小写，而添加的特殊 token [NEW_tok3]
+和 [NEW_tok4] 则保持大写。</p>
+</blockquote></li>
 </ul>
-<p>对于前面的例子，很明显实体标记符 [ENT_START] 和 [ENT_END] 属于特殊 token，因此按添加特殊 token 的方式进行：</p>
+<p>对于前面的例子，很明显实体标记符 [ENT_START] 和 [ENT_END] 属于特殊
+token，因此按添加特殊 token 的方式进行：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line">num_added_toks = tokenizer.add_tokens([<span class="string">&#x27;[ENT_START]&#x27;</span>, <span class="string">&#x27;[ENT_END]&#x27;</span>], special_tokens=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># num_added_toks = tokenizer.add_special_tokens(&#123;&#x27;additional_special_tokens&#x27;: [&#x27;[ENT_START]&#x27;, &#x27;[ENT_END]&#x27;]&#125;)</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;We have added&quot;</span>, num_added_toks, <span class="string">&quot;tokens&quot;</span>)</span><br><span class="line"></span><br><span class="line">sentence = <span class="string">&#x27;Two [ENT_START] cars [ENT_END] collided in a [ENT_START] tunnel [ENT_END] this morning.&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(tokenizer.tokenize(sentence))</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">We have added 2 tokens</span><br><span class="line">[&#x27;two&#x27;, &#x27;[ENT_START]&#x27;, &#x27;cars&#x27;, &#x27;[ENT_END]&#x27;, &#x27;collided&#x27;, &#x27;in&#x27;, &#x27;a&#x27;, &#x27;[ENT_START]&#x27;, &#x27;tunnel&#x27;, &#x27;[ENT_END]&#x27;, &#x27;this&#x27;, &#x27;morning&#x27;, &#x27;.&#x27;]</span><br></pre></td></tr></table></figure>
-<p>可以看到，分词器成功地将 [ENT_START] 和 [ENT_END] 识别为 token，并且保持大写。</p>
-<h3 id="调整-embedding-矩阵"><a href="#调整-embedding-矩阵" class="headerlink" title="调整 embedding 矩阵"></a>调整 embedding 矩阵</h3><blockquote>
-<p>  向词表中添加新 token 后，必须重置模型 embedding 矩阵的大小，也就是向矩阵中添加新 token 对应的 embedding，这样模型才可以正常工作，将 token 映射到对应的 embedding。</p>
+<p>可以看到，分词器成功地将 [ENT_START] 和 [ENT_END] 识别为
+token，并且保持大写。</p>
+<h3 id="调整-embedding-矩阵">调整 embedding 矩阵</h3>
+<blockquote>
+<p>向词表中添加新 token 后，必须重置模型 embedding
+矩阵的大小，也就是向矩阵中添加新 token 对应的
+embedding，这样模型才可以正常工作，将 token 映射到对应的 embedding。</p>
 </blockquote>
-<p>调整 embedding 矩阵通过 <code>resize_token_embeddings()</code> 函数来实现，例如对于前面的例子：</p>
+<p>调整 embedding 矩阵通过 <code>resize_token_embeddings()</code>
+函数来实现，例如对于前面的例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModel</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;bert-base-uncased&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModel.from_pretrained(checkpoint)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;vocabulary size:&#x27;</span>, <span class="built_in">len</span>(tokenizer))</span><br><span class="line">num_added_toks = tokenizer.add_tokens([<span class="string">&#x27;[ENT_START]&#x27;</span>, <span class="string">&#x27;[ENT_END]&#x27;</span>], special_tokens=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;After we add&quot;</span>, num_added_toks, <span class="string">&quot;tokens&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;vocabulary size:&#x27;</span>, <span class="built_in">len</span>(tokenizer))</span><br><span class="line"></span><br><span class="line">model.resize_token_embeddings(<span class="built_in">len</span>(tokenizer))</span><br><span class="line"><span class="built_in">print</span>(model.embeddings.word_embeddings.weight.size())</span><br><span class="line"></span><br><span class="line"><span class="comment"># Randomly generated matrix</span></span><br><span class="line"><span class="built_in">print</span>(model.embeddings.word_embeddings.weight[-<span class="number">2</span>:, :])</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vocabulary size: 30522</span><br><span class="line">After we add 2 tokens</span><br><span class="line">vocabulary size: 30524</span><br><span class="line">torch.Size([30524, 768])</span><br><span class="line"></span><br><span class="line">tensor([[-0.0325, -0.0224,  0.0044,  ..., -0.0088, -0.0078, -0.0110],</span><br><span class="line">        [-0.0005, -0.0167, -0.0009,  ...,  0.0110, -0.0282, -0.0013]],</span><br><span class="line">       grad_fn=&lt;SliceBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>可以看到，在添加 [ENT_START] 和 [ENT_END] 之后，分词器的词表大小从 30522 增加到了 30524，模型 embedding 矩阵的大小也成功调整为了 30524×768。</p>
+<p>可以看到，在添加 [ENT_START] 和 [ENT_END] 之后，分词器的词表大小从
+30522 增加到了 30524，模型 embedding 矩阵的大小也成功调整为了
+30524×768。</p>
 <blockquote>
-<p>  在默认情况下，新添加 token 的 embedding 是随机初始化的。</p>
+<p>在默认情况下，新添加 token 的 embedding 是随机初始化的。</p>
 </blockquote>
-<p>我们尝试打印出新添加 token 对应的 embedding（新 token 会添加在词表的末尾，因此只需打印出最后两行）。如果你多次运行上面的代码，就会发现每次打印出的 [ENT_START] 和 [ENT_END] 的 embedding 是不同的。</p>
-<h2 id="Token-embedding-初始化"><a href="#Token-embedding-初始化" class="headerlink" title="Token embedding 初始化"></a>Token embedding 初始化</h2><p>如果有充分的语料对模型进行微调或者继续预训练，那么将新添加 token 初始化为随机向量没什么问题。但是如果训练语料较少，甚至是只有很少语料的 few-shot learning 场景下，这种做法就存在问题。研究表明，在训练数据不够多的情况下，这些新添加 token 的 embedding 只会在初始值附近小幅波动。换句话说，即使经过训练，它们的值事实上还是随机的。</p>
-<h3 id="直接赋值"><a href="#直接赋值" class="headerlink" title="直接赋值"></a>直接赋值</h3><p>因此，在很多情况下，我们需要手工初始化新添加 token 的 embedding，这可以通过直接对 embedding 矩阵赋值来实现。例如我们将上面例子中两个新 token 的 embedding 都初始化为全零向量：</p>
+<p>我们尝试打印出新添加 token 对应的 embedding（新 token
+会添加在词表的末尾，因此只需打印出最后两行）。如果你多次运行上面的代码，就会发现每次打印出的
+[ENT_START] 和 [ENT_END] 的 embedding 是不同的。</p>
+<h2 id="token-embedding-初始化">Token embedding 初始化</h2>
+<p>如果有充分的语料对模型进行微调或者继续预训练，那么将新添加 token
+初始化为随机向量没什么问题。但是如果训练语料较少，甚至是只有很少语料的
+few-shot learning
+场景下，这种做法就存在问题。研究表明，在训练数据不够多的情况下，这些新添加
+token 的 embedding
+只会在初始值附近小幅波动。换句话说，即使经过训练，它们的值事实上还是随机的。</p>
+<h3 id="直接赋值">直接赋值</h3>
+<p>因此，在很多情况下，我们需要手工初始化新添加 token 的
+embedding，这可以通过直接对 embedding
+矩阵赋值来实现。例如我们将上面例子中两个新 token 的 embedding
+都初始化为全零向量：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    model.embeddings.word_embeddings.weight[-<span class="number">2</span>:, :] = torch.zeros([<span class="number">2</span>, model.config.hidden_size], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(model.embeddings.word_embeddings.weight[-<span class="number">2</span>:, :])</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tensor([[0., 0., 0.,  ..., 0., 0., 0.],</span><br><span class="line">        [0., 0., 0.,  ..., 0., 0., 0.]], grad_fn=&lt;SliceBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>注意，初始化 embedding 的过程并不可导，因此这里通过 <code>torch.no_grad()</code> 暂停梯度的计算。</p>
-<p>现实场景中，更为常见的做法是使用已有 token 的 embedding 来初始化新添加 token。例如对于上面的例子，我们可以将 <code>[ENT_START]</code> 和 <code>[ENT_END]</code> 的值都初始化为“entity” token 对应的 embedding。</p>
+<p>注意，初始化 embedding 的过程并不可导，因此这里通过
+<code>torch.no_grad()</code> 暂停梯度的计算。</p>
+<p>现实场景中，更为常见的做法是使用已有 token 的 embedding
+来初始化新添加 token。例如对于上面的例子，我们可以将
+<code>[ENT_START]</code> 和 <code>[ENT_END]</code>
+的值都初始化为“entity” token 对应的 embedding。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">token_id = tokenizer.convert_tokens_to_ids(<span class="string">&#x27;entity&#x27;</span>)</span><br><span class="line">token_embedding = model.embeddings.word_embeddings.weight[token_id]</span><br><span class="line"><span class="built_in">print</span>(token_id)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, num_added_toks+<span class="number">1</span>):</span><br><span class="line">        model.embeddings.word_embeddings.weight[-i:, :] = token_embedding.clone().detach().requires_grad_(<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(model.embeddings.word_embeddings.weight[-<span class="number">2</span>:, :])</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">9178</span><br><span class="line">tensor([[-0.0039, -0.0131, -0.0946,  ..., -0.0223,  0.0107, -0.0419],</span><br><span class="line">        [-0.0039, -0.0131, -0.0946,  ..., -0.0223,  0.0107, -0.0419]],</span><br><span class="line">       grad_fn=&lt;SliceBackward0&gt;)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>  因为 token ID 就是 token 在 embedding 矩阵中的索引，因此这里我们直接通过 <code>weight[token_id]</code> 取出“entity”对应的 embedding。</p>
+<p>因为 token ID 就是 token 在 embedding
+矩阵中的索引，因此这里我们直接通过 <code>weight[token_id]</code>
+取出“entity”对应的 embedding。</p>
 </blockquote>
-<p>可以看到最终结果符合我们的预期，<code>[ENT_START]</code> 和 <code>[ENT_END]</code> 被初始化为相同的 embedding。</p>
-<h3 id="初始化为已有-token-的值"><a href="#初始化为已有-token-的值" class="headerlink" title="初始化为已有 token 的值"></a>初始化为已有 token 的值</h3><p>更为高级的做法是根据新添加 token 的语义来进行初始化。例如将值初始化为 token 语义描述中所有 token 的平均值，假设新 token $t<em>i$ 的语义描述为 $w</em>{i,1},w<em>{i,2},…,w</em>{i,n}$，那么初始化 $t<em>i$ 的 embedding 为：$\boldsymbol{E}(t_i)=\frac{1}{n}\sum</em>{j=1}^n{\boldsymbol{E}(w_{i,j})}$</p>
-<p>这里 $\boldsymbol{E}$ 表示预训练模型的 embedding 矩阵。对于上面的例子，我们可以分别为 [ENT_START] 和 [ENT_END] 编写对应的描述，然后再对它们的值进行初始化：</p>
+<p>可以看到最终结果符合我们的预期，<code>[ENT_START]</code> 和
+<code>[ENT_END]</code> 被初始化为相同的 embedding。</p>
+<h3 id="初始化为已有-token-的值">初始化为已有 token 的值</h3>
+<p>更为高级的做法是根据新添加 token 的语义来进行初始化。例如将值初始化为
+token 语义描述中所有 token 的平均值，假设新 token <span
+class="math inline">\(t_i\)</span> 的语义描述为 <span
+class="math inline">\(w_{i,1},w_{i,2},…,w_{i,n}\)</span>，那么初始化
+<span class="math inline">\(t_i\)</span> 的 embedding 为：<span
+class="math inline">\(\boldsymbol{E}(t_i)=\frac{1}{n}\sum_{j=1}^n{\boldsymbol{E}(w_{i,j})}\)</span></p>
+<p>这里 <span class="math inline">\(\boldsymbol{E}\)</span>
+表示预训练模型的 embedding 矩阵。对于上面的例子，我们可以分别为
+[ENT_START] 和 [ENT_END]
+编写对应的描述，然后再对它们的值进行初始化：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">descriptions = [<span class="string">&#x27;start of entity&#x27;</span>, <span class="string">&#x27;end of entity&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    <span class="keyword">for</span> i, token <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">reversed</span>(descriptions), start=<span class="number">1</span>):</span><br><span class="line">        tokenized = tokenizer.tokenize(token)</span><br><span class="line">        <span class="built_in">print</span>(tokenized)</span><br><span class="line">        tokenized_ids = tokenizer.convert_tokens_to_ids(tokenized)</span><br><span class="line">        new_embedding = model.embeddings.word_embeddings.weight[tokenized_ids].mean(axis=<span class="number">0</span>)</span><br><span class="line">        model.embeddings.word_embeddings.weight[-i, :] = new_embedding.clone().detach().requires_grad_(<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(model.embeddings.word_embeddings.weight[-<span class="number">2</span>:, :])</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;end&#x27;, &#x27;of&#x27;, &#x27;entity&#x27;]</span><br><span class="line">[&#x27;start&#x27;, &#x27;of&#x27;, &#x27;entity&#x27;]</span><br><span class="line">tensor([[-0.0340, -0.0144, -0.0441,  ..., -0.0016,  0.0318, -0.0151],</span><br><span class="line">        [-0.0060, -0.0202, -0.0312,  ..., -0.0084,  0.0193, -0.0296]],</span><br><span class="line">       grad_fn=&lt;SliceBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p>可以看到，这里成功地将 [ENT_START] 的 embedding 初始化为“start”、“of”、“entity”三个 token 的平均值，将 [ENT_END] 初始化为“end”、“of”、“entity”的平均值。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/index">[1]</a> Transformers 官方文档<br><a target="_blank" rel="noopener" href="https://huggingface.co/course/chapter1/1">[2]</a> HuggingFace 在线教程<br><a target="_blank" rel="noopener" href="https://www.depends-on-the-definition.com/how-to-add-new-tokens-to-huggingface-transformers/">[3]</a> How to add new tokens to huggingface transformers vocabulary. <a target="_blank" rel="noopener" href="https://www.depends-on-the-definition.com/about/">Tobias Sterbak</a><br><a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/1413">[4]</a> Github 讨论 Adding New Vocabulary Tokens to the Models</p>
+<p>可以看到，这里成功地将 [ENT_START] 的 embedding
+初始化为“start”、“of”、“entity”三个 token 的平均值，将 [ENT_END]
+初始化为“end”、“of”、“entity”的平均值。</p>
+<h2 id="参考">参考</h2>
+<p>[<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/index">1]</a>
+Transformers 官方文档 [<a
+target="_blank" rel="noopener" href="https://huggingface.co/course/chapter1/1">2]</a> HuggingFace
+在线教程 [<a
+target="_blank" rel="noopener" href="https://www.depends-on-the-definition.com/how-to-add-new-tokens-to-huggingface-transformers/">3]</a>
+How to add new tokens to huggingface transformers vocabulary. <a
+target="_blank" rel="noopener" href="https://www.depends-on-the-definition.com/about/">Tobias
+Sterbak</a> [<a
+target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/1413">4]</a>
+Github 讨论 Adding New Vocabulary Tokens to the Models</p>
 
     
 
@@ -631,7 +845,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">第五章：模型与分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">加载模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.2.</span> <span class="toc-text">保存模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.1.</span> <span class="toc-text">分词策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E4%B8%8E%E4%BF%9D%E5%AD%98%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">加载与保存分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81%E6%96%87%E6%9C%AC"><span class="toc-number">1.2.3.</span> <span class="toc-text">编码与解码文本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%A4%9A%E6%AE%B5%E6%96%87%E6%9C%AC"><span class="toc-number">1.3.</span> <span class="toc-text">处理多段文本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Padding-%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.1.</span> <span class="toc-text">Padding 操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attention-Mask"><span class="toc-number">1.3.2.</span> <span class="toc-text">Attention Mask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">直接使用分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E5%8F%A5%E5%AD%90%E5%AF%B9"><span class="toc-number">1.3.4.</span> <span class="toc-text">编码句子对</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-Token"><span class="toc-number">1.4.</span> <span class="toc-text">添加 Token</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0-token"><span class="toc-number">1.4.1.</span> <span class="toc-text">添加新 token</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E6%95%B4-embedding-%E7%9F%A9%E9%98%B5"><span class="toc-number">1.4.2.</span> <span class="toc-text">调整 embedding 矩阵</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Token-embedding-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.5.</span> <span class="toc-text">Token embedding 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC"><span class="toc-number">1.5.1.</span> <span class="toc-text">直接赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%BA%E5%B7%B2%E6%9C%89-token-%E7%9A%84%E5%80%BC"><span class="toc-number">1.5.2.</span> <span class="toc-text">初始化为已有 token 的值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">第五章：模型与分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">加载模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.2.</span> <span class="toc-text">保存模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%AF%8D%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.1.</span> <span class="toc-text">分词策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E4%B8%8E%E4%BF%9D%E5%AD%98%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">加载与保存分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81%E6%96%87%E6%9C%AC"><span class="toc-number">1.2.3.</span> <span class="toc-text">编码与解码文本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%A4%9A%E6%AE%B5%E6%96%87%E6%9C%AC"><span class="toc-number">1.3.</span> <span class="toc-text">处理多段文本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#padding-%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.1.</span> <span class="toc-text">Padding 操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#attention-mask"><span class="toc-number">1.3.2.</span> <span class="toc-text">Attention Mask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">直接使用分词器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E5%8F%A5%E5%AD%90%E5%AF%B9"><span class="toc-number">1.3.4.</span> <span class="toc-text">编码句子对</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-token"><span class="toc-number">1.4.</span> <span class="toc-text">添加 Token</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0-token"><span class="toc-number">1.4.1.</span> <span class="toc-text">添加新 token</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E6%95%B4-embedding-%E7%9F%A9%E9%98%B5"><span class="toc-number">1.4.2.</span> <span class="toc-text">调整 embedding 矩阵</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#token-embedding-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.5.</span> <span class="toc-text">Token embedding 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC"><span class="toc-number">1.5.1.</span> <span class="toc-text">直接赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%BA%E5%B7%B2%E6%9C%89-token-%E7%9A%84%E5%80%BC"><span class="toc-number">1.5.2.</span> <span class="toc-text">初始化为已有 token 的值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -814,11 +1028,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -826,7 +1044,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -838,7 +1056,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -846,15 +1068,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -870,15 +1084,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -902,15 +1116,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -918,11 +1124,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

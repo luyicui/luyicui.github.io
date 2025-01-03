@@ -10,18 +10,21 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Git 如何忽略大文件并推送至 Git 仓库 今天和大家聊聊.gitignore的作用，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore 在英文当中的意思是忽视、忽略，.gitignore自然就是 git 当中的忽视和忽略，言下之意就是忽略某些文件。所以.gitignore的作用就是帮助我们在 git add 时将我们指定的一些文件自动排除在外，不提交到 git">
+  <meta name="description" content="Git 如何忽略大文件并推送至 Git 仓库今天和大家聊聊.gitignore的作用，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore 在英文当中的意思是忽视、忽略，.gitignore自然就是 git 当中的忽视和忽略，言下之意就是忽略某些文件。所以.gitignore的作用就是帮助我们在 git add 时将我们指定的一些文件自动排除在外，不提交到 git 当中。 ign">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git 如何忽略大文件并推送至 Git 仓库">
 <meta property="og:url" content="https://luyicui.github.io/2024/01/06/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/git/Git%20%E5%A6%82%E4%BD%95%E5%BF%BD%E7%95%A5%E5%A4%A7%E6%96%87%E4%BB%B6%E5%B9%B6%E6%8E%A8%E9%80%81%E8%87%B3Git%E4%BB%93%E5%BA%93/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="Git 如何忽略大文件并推送至 Git 仓库 今天和大家聊聊.gitignore的作用，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore 在英文当中的意思是忽视、忽略，.gitignore自然就是 git 当中的忽视和忽略，言下之意就是忽略某些文件。所以.gitignore的作用就是帮助我们在 git add 时将我们指定的一些文件自动排除在外，不提交到 git">
+<meta property="og:description" content="Git 如何忽略大文件并推送至 Git 仓库今天和大家聊聊.gitignore的作用，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore 在英文当中的意思是忽视、忽略，.gitignore自然就是 git 当中的忽视和忽略，言下之意就是忽略某些文件。所以.gitignore的作用就是帮助我们在 git add 时将我们指定的一些文件自动排除在外，不提交到 git 当中。 ign">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221645637.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221646451.png">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
 <meta property="article:modified_time" content="2024-12-22T08:52:20.429Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221645637.jpeg">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -300,85 +303,34 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="git-如何忽略大文件并推送至-git-仓库">Git 如何忽略大文件并推送至
-Git 仓库</h1>
-<p>今天和大家聊聊<strong><code>.gitignore</code>的作用</strong>，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore
-在英文当中的意思是忽视、忽略，<code>.gitignore</code>自然就是 git
-当中的忽视和忽略，言下之意就是忽略某些文件。所以<code>.gitignore</code>的作用就是帮助我们在
-<code>git add</code> 时将我们指定的一些文件自动排除在外，不提交到 git
-当中。</p>
-<h2 id="ignore-的作用"><strong>ignore 的作用</strong></h2>
-<p>看到这里你可能很疑惑，git
-创造出来就是为了管理代码和文件的，为什么还要禁止一些文件提交呢？</p>
-<p>其实也很简单，举个很简单的例子。比如当我们写一些 编译型语言
-的时候，比如
-C、C++、Java、go。我们在运行之前往往需要编译一下将它们编译成可执行的二进制文件，也称为
-binary 文件。编译之后的 binary
-文件其实是比较大的，要比源码大很多。经常一个几十行的代码编译出来好几百
-KB 甚至 1MB
-这都是很正常的，像是这些二进制文件我们就完全没有必要上传。</p>
-<p>因为<strong>不论是谁拿到源代码编译一下就可以获得一样的结果</strong>，完全没有上传可执行文件的必要。相反它还会在
-git 仓库当中占据大量的空间，以后不论项目经过多少次迭代，它都会一直停留在
-git 仓库当中，占据磁盘资源。</p>
-<p>像是这样没有必要上传的文件还有很多，比如 Java 编译出来的 class
-文件，一些中间结果、配置文件等等。我们往往图方便都是会喜欢在使用 git add
-提交文件的时候使用<code>git add .</code>也就是提交全部的命令来提交。但是如果我们目录下有这些我们不希望提交的内容的话，也一样会全部提交上去，所以我们希望可以在一个地方进行设置，这样当我们使用<code>git add .</code>的时候可以避开一些我们不希望提交上的文件。</p>
+    <h1 id="Git-如何忽略大文件并推送至-Git-仓库"><a href="#Git-如何忽略大文件并推送至-Git-仓库" class="headerlink" title="Git 如何忽略大文件并推送至 Git 仓库"></a>Git 如何忽略大文件并推送至 Git 仓库</h1><p>今天和大家聊聊<strong><code>.gitignore</code>的作用</strong>，其实如果你英文还可以的话，你应该已经基本上猜到它的作用了。ignore 在英文当中的意思是忽视、忽略，<code>.gitignore</code>自然就是 git 当中的忽视和忽略，言下之意就是忽略某些文件。所以<code>.gitignore</code>的作用就是帮助我们在 <code>git add</code> 时将我们指定的一些文件自动排除在外，不提交到 git 当中。</p>
+<h2 id="ignore-的作用"><a href="#ignore-的作用" class="headerlink" title="ignore 的作用"></a><strong>ignore 的作用</strong></h2><p>看到这里你可能很疑惑，git 创造出来就是为了管理代码和文件的，为什么还要禁止一些文件提交呢？</p>
+<p>其实也很简单，举个很简单的例子。比如当我们写一些 编译型语言 的时候，比如 C、C++、Java、go。我们在运行之前往往需要编译一下将它们编译成可执行的二进制文件，也称为 binary 文件。编译之后的 binary 文件其实是比较大的，要比源码大很多。经常一个几十行的代码编译出来好几百 KB 甚至 1MB 这都是很正常的，像是这些二进制文件我们就完全没有必要上传。</p>
+<p>因为<strong>不论是谁拿到源代码编译一下就可以获得一样的结果</strong>，完全没有上传可执行文件的必要。相反它还会在 git 仓库当中占据大量的空间，以后不论项目经过多少次迭代，它都会一直停留在 git 仓库当中，占据磁盘资源。</p>
+<p>像是这样没有必要上传的文件还有很多，比如 Java 编译出来的 class 文件，一些中间结果、配置文件等等。我们往往图方便都是会喜欢在使用 git add 提交文件的时候使用<code>git add .</code>也就是提交全部的命令来提交。但是如果我们目录下有这些我们不希望提交的内容的话，也一样会全部提交上去，所以我们希望可以在一个地方进行设置，这样当我们使用<code>git add .</code>的时候可以避开一些我们不希望提交上的文件。</p>
 <p>这个用来设置的地方就是<code>.gitignore</code>文件。</p>
-<p><strong>阅读更多：<a target="_blank" rel="noopener" href="https://deepinout.com/git">Git
-教程</a></strong></p>
-<h2 id="步骤一创建-.gitignore-文件">步骤一：创建 <code>.gitignore</code>
-文件</h2>
-<p>要忽略大文件，首先需要在 Git
-仓库的根目录下创建一个名为<code>.gitignore</code>的文件。该文件用来列出哪些文件或者目录需要被忽略。你可以使用文本编辑器创建这个文件，然后将你想要忽略的文件或目录名称逐行添加进去。</p>
-<p>以下是一个例子： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 忽略所有的`.txt`文件</span></span><br><span class="line">*.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略`images`目录下的所有内容</span></span><br><span class="line">/images/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略具体的`specific_file.txt`文件</span></span><br><span class="line">specific_file.txt</span><br></pre></td></tr></table></figure></p>
-<p>在以上例子中，根目录下的任何<code>.txt</code>文件，以及<code>images</code>目录下的所有文件，都将被
-Git 忽略。</p>
-<p>我们也没有必要从头开始编写这个<code>.gitignore</code>文件，因为 git
-当中已经替我们写好了很多模板，我们可以直接拿过来参考。</p>
-<p>模板的地址：https://github.com/github/gitignore</p>
-<p>我们打开之后会看到各种 ignore
-文件，这些都是为各个语言定制的<code>.gitignore</code>文件。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221645637.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><strong>阅读更多：<a target="_blank" rel="noopener" href="https://deepinout.com/git">Git 教程</a></strong></p>
+<h2 id="步骤一：创建-gitignore-文件"><a href="#步骤一：创建-gitignore-文件" class="headerlink" title="步骤一：创建 .gitignore 文件"></a>步骤一：创建 <code>.gitignore</code> 文件</h2><p>要忽略大文件，首先需要在 Git 仓库的根目录下创建一个名为<code>.gitignore</code>的文件。该文件用来列出哪些文件或者目录需要被忽略。你可以使用文本编辑器创建这个文件，然后将你想要忽略的文件或目录名称逐行添加进去。</p>
+<p>以下是一个例子：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 忽略所有的`.txt`文件</span></span><br><span class="line">*.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略`images`目录下的所有内容</span></span><br><span class="line">/images/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 忽略具体的`specific_file.txt`文件</span></span><br><span class="line">specific_file.txt</span><br></pre></td></tr></table></figure></p>
+<p>在以上例子中，根目录下的任何<code>.txt</code>文件，以及<code>images</code>目录下的所有文件，都将被 Git 忽略。</p>
+<p>我们也没有必要从头开始编写这个<code>.gitignore</code>文件，因为 git 当中已经替我们写好了很多模板，我们可以直接拿过来参考。</p>
+<p>模板的地址：<a target="_blank" rel="noopener" href="https://github.com/github/gitignore">https://github.com/github/gitignore</a></p>
+<p>我们打开之后会看到各种 ignore 文件，这些都是为各个语言定制的<code>.gitignore</code>文件。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221645637.jpeg" alt="img"></p>
 <p>我们随便打开一个看看。比如打开一个 Python 的：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221646451.png"
-alt="image-20241222164644350" />
-<figcaption aria-hidden="true">image-20241222164644350</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221646451.png" alt="image-20241222164644350"></p>
 <p>从注释上我们可以看出来，<strong>主要都是一些编译之后的结果</strong>。</p>
-<h2
-id="步骤二将大文件添加到.gitignore中">步骤二：将大文件添加到<code>.gitignore</code>中</h2>
-<p>当你希望忽略某个大文件时，只需要将其文件名添加到<code>.gitignore</code>文件中即可。Git
-会自动忽略这些文件，不进行版本控制。</p>
-<p>假设我们有一个名为<code>large_file.txt</code>的大文件，我们想要将其忽略。只需要在<code>.gitignore</code>中添加一行
-<code>large_file.txt</code>。然后，Git 就会自动忽略这个文件。</p>
-<h2 id="步骤三清除已缓存的大文件">步骤三：清除已缓存的大文件</h2>
-<p>如果你之前没有将大文件添加到<code>.gitignore</code>文件中，并且已经将其缓存起来了，Git
-将会继续跟踪这些大文件的改动。为了让 Git
-忽略这些文件，我们还需要清除它们的缓存。</p>
+<h2 id="步骤二：将大文件添加到-gitignore中"><a href="#步骤二：将大文件添加到-gitignore中" class="headerlink" title="步骤二：将大文件添加到.gitignore中"></a>步骤二：将大文件添加到<code>.gitignore</code>中</h2><p>当你希望忽略某个大文件时，只需要将其文件名添加到<code>.gitignore</code>文件中即可。Git 会自动忽略这些文件，不进行版本控制。</p>
+<p>假设我们有一个名为<code>large_file.txt</code>的大文件，我们想要将其忽略。只需要在<code>.gitignore</code>中添加一行 <code>large_file.txt</code>。然后，Git 就会自动忽略这个文件。</p>
+<h2 id="步骤三：清除已缓存的大文件"><a href="#步骤三：清除已缓存的大文件" class="headerlink" title="步骤三：清除已缓存的大文件"></a>步骤三：清除已缓存的大文件</h2><p>如果你之前没有将大文件添加到<code>.gitignore</code>文件中，并且已经将其缓存起来了，Git 将会继续跟踪这些大文件的改动。为了让 Git 忽略这些文件，我们还需要清除它们的缓存。</p>
 <p>可以使用以下命令来清除已缓存的大文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">rm</span> --cached large_file.txt</span><br></pre></td></tr></table></figure>
-<p>该命令将会从 Git
-缓存中移除<code>large_file.txt</code>文件的跟踪。</p>
-<h2 id="步骤四提交并推送到-git-仓库">步骤四：提交并推送到 Git 仓库</h2>
-<p>完成以上步骤后，我们可以将更改提交到 Git
-仓库，并将忽略了大文件的版本推送到远程仓库。</p>
+<p>该命令将会从 Git 缓存中移除<code>large_file.txt</code>文件的跟踪。</p>
+<h2 id="步骤四：提交并推送到-Git-仓库"><a href="#步骤四：提交并推送到-Git-仓库" class="headerlink" title="步骤四：提交并推送到 Git 仓库"></a>步骤四：提交并推送到 Git 仓库</h2><p>完成以上步骤后，我们可以将更改提交到 Git 仓库，并将忽略了大文件的版本推送到远程仓库。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Add .gitignore and ignore large files&quot;</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
-<p>这样一来，Git
-仓库将不再追踪并显示这些大文件，从而节省了存储空间和推送时间。</p>
-<h2 id="总结">总结</h2>
-<p>通过使用<code>.gitignore</code>文件，我们可以很方便地忽略大文件并将其从
-Git 版本控制中排除。这样可以提高代码仓库的整体性能，并确保 Git
-仓库只包含对开发项目有意义的文件。</p>
-<p>希望本文能帮助你更好地理解如何忽略大文件并成功地推送至 Git 仓库。Git
-提供了强大而灵活的工具来帮助我们管理代码版本和项目文件，深入了解 Git
-的使用将会对开发过程带来很大的帮助。</p>
+<p>这样一来，Git 仓库将不再追踪并显示这些大文件，从而节省了存储空间和推送时间。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过使用<code>.gitignore</code>文件，我们可以很方便地忽略大文件并将其从 Git 版本控制中排除。这样可以提高代码仓库的整体性能，并确保 Git 仓库只包含对开发项目有意义的文件。</p>
+<p>希望本文能帮助你更好地理解如何忽略大文件并成功地推送至 Git 仓库。Git 提供了强大而灵活的工具来帮助我们管理代码版本和项目文件，深入了解 Git 的使用将会对开发过程带来很大的帮助。</p>
 
     
 
@@ -518,18 +470,18 @@ Git 版本控制中排除。这样可以提高代码仓库的整体性能，并�
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/command/%E8%A7%A3%E5%8E%8B%E5%92%8C%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/git/Errors/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          解压和压缩命令
+          Errors
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/git/Errors/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Errors</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/git/git%20%E5%88%86%E6%94%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">git 分支</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -556,9 +508,7 @@ Git 版本控制中排除。这样可以提高代码仓库的整体性能，并�
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git-%E5%A6%82%E4%BD%95%E5%BF%BD%E7%95%A5%E5%A4%A7%E6%96%87%E4%BB%B6%E5%B9%B6%E6%8E%A8%E9%80%81%E8%87%B3-git-%E4%BB%93%E5%BA%93"><span class="toc-number">1.</span> <span class="toc-text">Git 如何忽略大文件并推送至
-Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ignore-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">ignore 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%80%E5%88%9B%E5%BB%BA-.gitignore-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">步骤一：创建 .gitignore
-文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%BA%8C%E5%B0%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0.gitignore%E4%B8%AD"><span class="toc-number">1.3.</span> <span class="toc-text">步骤二：将大文件添加到.gitignore中</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%89%E6%B8%85%E9%99%A4%E5%B7%B2%E7%BC%93%E5%AD%98%E7%9A%84%E5%A4%A7%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.</span> <span class="toc-text">步骤三：清除已缓存的大文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E5%9B%9B%E6%8F%90%E4%BA%A4%E5%B9%B6%E6%8E%A8%E9%80%81%E5%88%B0-git-%E4%BB%93%E5%BA%93"><span class="toc-number">1.5.</span> <span class="toc-text">步骤四：提交并推送到 Git 仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Git-%E5%A6%82%E4%BD%95%E5%BF%BD%E7%95%A5%E5%A4%A7%E6%96%87%E4%BB%B6%E5%B9%B6%E6%8E%A8%E9%80%81%E8%87%B3-Git-%E4%BB%93%E5%BA%93"><span class="toc-number">1.</span> <span class="toc-text">Git 如何忽略大文件并推送至 Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ignore-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">ignore 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%80%EF%BC%9A%E5%88%9B%E5%BB%BA-gitignore-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">步骤一：创建 .gitignore 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%BA%8C%EF%BC%9A%E5%B0%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0-gitignore%E4%B8%AD"><span class="toc-number">1.3.</span> <span class="toc-text">步骤二：将大文件添加到.gitignore中</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%89%EF%BC%9A%E6%B8%85%E9%99%A4%E5%B7%B2%E7%BC%93%E5%AD%98%E7%9A%84%E5%A4%A7%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.</span> <span class="toc-text">步骤三：清除已缓存的大文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E5%9B%9B%EF%BC%9A%E6%8F%90%E4%BA%A4%E5%B9%B6%E6%8E%A8%E9%80%81%E5%88%B0-Git-%E4%BB%93%E5%BA%93"><span class="toc-number">1.5.</span> <span class="toc-text">步骤四：提交并推送到 Git 仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -761,14 +711,6 @@ Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a c
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
@@ -777,11 +719,19 @@ Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a c
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -793,11 +743,11 @@ Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a c
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -813,11 +763,11 @@ Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a c
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -849,15 +799,15 @@ Git 仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a c
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

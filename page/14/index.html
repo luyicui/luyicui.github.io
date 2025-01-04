@@ -281,28 +281,56 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="优化模型参数"><a href="#优化模型参数" class="headerlink" title="优化模型参数"></a>优化模型参数</h1><p>在准备好数据、搭建好模型之后，我们就可以开始训练和测试（验证）模型了。正如前面所说，模型训练是一个迭代的过程，每一轮 epoch 迭代中模型都会对输入样本进行预测，然后对预测结果计算损失 (loss)，并求 loss 对每一个模型参数的偏导，最后使用优化器更新所有的模型参数。</p>
+    <h1 id="优化模型参数">优化模型参数</h1>
+<p>在准备好数据、搭建好模型之后，我们就可以开始训练和测试（验证）模型了。正如前面所说，模型训练是一个迭代的过程，每一轮
+epoch 迭代中模型都会对输入样本进行预测，然后对预测结果计算损失
+(loss)，并求 loss
+对每一个模型参数的偏导，最后使用优化器更新所有的模型参数。</p>
 <blockquote>
-<p>  <strong>损失函数 (Loss function)</strong> 用于度量预测值与答案之间的差异，模型的训练过程就是最小化损失函数。Pytorch 实现了很多常见的<a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/nn.html#loss-functions">损失函数</a>，例如用于回归任务的均方误差 (Mean Square Error) <a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss">nn.MSELoss</a>、用于分类任务的负对数似然 (Negative Log Likelihood) <a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html#torch.nn.NLLLoss">nn.NLLLoss</a>、同时结合了 <code>nn.LogSoftmax</code> 和 <code>nn.NLLLoss</code> 的交叉熵损失 (Cross Entropy) <a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html#torch.nn.CrossEntropyLoss">nn.CrossEntropyLoss</a> 等。</p>
-<p>  <strong>优化器 (Optimization)</strong> 使用特定的优化算法（例如随机梯度下降），通过在每一个训练阶段 (step) 减少（基于一个 batch 样本计算的）模型损失来调整模型参数。Pytorch 实现了很多<a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/optim.html">优化器</a>，例如 SGD、ADAM、RMSProp 等。</p>
+<p><strong>损失函数 (Loss function)</strong>
+用于度量预测值与答案之间的差异，模型的训练过程就是最小化损失函数。Pytorch
+实现了很多常见的<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/nn.html#loss-functions">损失函数</a>，例如用于回归任务的均方误差
+(Mean Square Error) <a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss">nn.MSELoss</a>、用于分类任务的负对数似然
+(Negative Log Likelihood) <a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html#torch.nn.NLLLoss">nn.NLLLoss</a>、同时结合了
+<code>nn.LogSoftmax</code> 和 <code>nn.NLLLoss</code> 的交叉熵损失
+(Cross Entropy) <a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html#torch.nn.CrossEntropyLoss">nn.CrossEntropyLoss</a>
+等。</p>
+<p><strong>优化器 (Optimization)</strong>
+使用特定的优化算法（例如随机梯度下降），通过在每一个训练阶段 (step)
+减少（基于一个 batch 样本计算的）模型损失来调整模型参数。Pytorch
+实现了很多<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/optim.html">优化器</a>，例如
+SGD、ADAM、RMSProp 等。</p>
 </blockquote>
 <p>每一轮迭代 (Epoch) 实际上包含了两个步骤：</p>
 <ul>
-<li><strong>训练循环 (The Train Loop)</strong> 在训练集上进行迭代，尝试收敛到最佳的参数；</li>
-<li><strong>验证/测试循环 (The Validation/Test Loop)</strong> 在测试/验证集上进行迭代以检查模型性能有没有提升。</li>
+<li><strong>训练循环 (The Train Loop)</strong>
+在训练集上进行迭代，尝试收敛到最佳的参数；</li>
+<li><strong>验证/测试循环 (The Validation/Test Loop)</strong>
+在测试/验证集上进行迭代以检查模型性能有没有提升。</li>
 </ul>
 <p>具体地，在训练循环中，优化器通过以下三个步骤进行优化：</p>
 <ul>
-<li>调用 <code>optimizer.zero_grad()</code> 重设模型参数的梯度。默认情况下梯度会进行累加，为了防止重复计算，在每个训练阶段开始前都需要清零梯度；</li>
-<li>通过 <code>loss.backwards()</code> 反向传播预测结果的损失，即计算损失对每一个参数的偏导；</li>
+<li>调用 <code>optimizer.zero_grad()</code>
+重设模型参数的梯度。默认情况下梯度会进行累加，为了防止重复计算，在每个训练阶段开始前都需要清零梯度；</li>
+<li>通过 <code>loss.backwards()</code>
+反向传播预测结果的损失，即计算损失对每一个参数的偏导；</li>
 <li>调用 <code>optimizer.step()</code> 根据梯度调整模型的参数。</li>
 </ul>
-<p>下面我们选择交叉熵作为损失函数、选择 AdamW 作为优化器，完整的训练循环和测试循环实现如下：</p>
+<p>下面我们选择交叉熵作为损失函数、选择 AdamW
+作为优化器，完整的训练循环和测试循环实现如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torchvision.transforms <span class="keyword">import</span> ToTensor</span><br><span class="line"></span><br><span class="line">device = <span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;Using <span class="subst">&#123;device&#125;</span> device&#x27;</span>)</span><br><span class="line"></span><br><span class="line">training_data = datasets.FashionMNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">True</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">test_data = datasets.FashionMNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">False</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">learning_rate = <span class="number">1e-3</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">epochs = <span class="number">3</span></span><br><span class="line"></span><br><span class="line">train_dataloader = DataLoader(training_data, batch_size=batch_size)</span><br><span class="line">test_dataloader = DataLoader(test_data, batch_size=batch_size)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NeuralNetwork</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(NeuralNetwork, self).__init__()</span><br><span class="line">        self.flatten = nn.Flatten()</span><br><span class="line">        self.linear_relu_stack = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">28</span>*<span class="number">28</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, <span class="number">10</span>),</span><br><span class="line">            nn.Dropout(p=<span class="number">0.2</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        logits = self.linear_relu_stack(x)</span><br><span class="line">        <span class="keyword">return</span> logits</span><br><span class="line"></span><br><span class="line">model = NeuralNetwork().to(device)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_loop</span>(<span class="params">dataloader, model, loss_fn, optimizer</span>):</span><br><span class="line">    size = <span class="built_in">len</span>(dataloader.dataset)</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> batch, (X, y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(dataloader, start=<span class="number">1</span>):</span><br><span class="line">        X, y = X.to(device), y.to(device)</span><br><span class="line">        <span class="comment"># Compute prediction and loss</span></span><br><span class="line">        pred = model(X)</span><br><span class="line">        loss = loss_fn(pred, y)</span><br><span class="line">        <span class="comment"># Backpropagation</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> batch % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            loss, current = loss.item(), batch * <span class="built_in">len</span>(X)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;loss: <span class="subst">&#123;loss:&gt;7f&#125;</span>  [<span class="subst">&#123;current:&gt;5d&#125;</span>/<span class="subst">&#123;size:&gt;5d&#125;</span>]&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_loop</span>(<span class="params">dataloader, model, loss_fn</span>):</span><br><span class="line">    size = <span class="built_in">len</span>(dataloader.dataset)</span><br><span class="line">    num_batches = <span class="built_in">len</span>(dataloader)</span><br><span class="line">    test_loss, correct = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> dataloader:</span><br><span class="line">            X, y = X.to(device), y.to(device)</span><br><span class="line">            pred = model(X)</span><br><span class="line">            test_loss += loss_fn(pred, y).item()</span><br><span class="line">            correct += (pred.argmax(dim=-<span class="number">1</span>) == y).<span class="built_in">type</span>(torch.<span class="built_in">float</span>).<span class="built_in">sum</span>().item()</span><br><span class="line"></span><br><span class="line">    test_loss /= num_batches</span><br><span class="line">    correct /= size</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Test Error: \n Accuracy: <span class="subst">&#123;(<span class="number">100</span>*correct):&gt;<span class="number">0.1</span>f&#125;</span>%, Avg loss: <span class="subst">&#123;test_loss:&gt;8f&#125;</span> \n&quot;</span>)</span><br><span class="line"></span><br><span class="line">loss_fn = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;t+<span class="number">1</span>&#125;</span>\n-------------------------------&quot;</span>)</span><br><span class="line">    train_loop(train_dataloader, model, loss_fn, optimizer)</span><br><span class="line">    test_loop(test_dataloader, model, loss_fn)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Done!&quot;</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">Using cpu device</span><br><span class="line">Epoch 1</span><br><span class="line">-------------------------------</span><br><span class="line">loss: 0.935758  [ 6400/60000]</span><br><span class="line">loss: 0.991128  [12800/60000]</span><br><span class="line">loss: 0.655021  [19200/60000]</span><br><span class="line">loss: 0.938772  [25600/60000]</span><br><span class="line">loss: 0.480326  [32000/60000]</span><br><span class="line">loss: 0.526776  [38400/60000]</span><br><span class="line">loss: 1.046211  [44800/60000]</span><br><span class="line">loss: 0.749002  [51200/60000]</span><br><span class="line">loss: 0.550378  [57600/60000]</span><br><span class="line">Test Error: </span><br><span class="line"> Accuracy: 83.7%, Avg loss: 0.441249 </span><br><span class="line"></span><br><span class="line">Epoch 2</span><br><span class="line">-------------------------------</span><br><span class="line">loss: 0.596351  [ 6400/60000]</span><br><span class="line">loss: 0.614368  [12800/60000]</span><br><span class="line">loss: 0.588207  [19200/60000]</span><br><span class="line">loss: 0.698899  [25600/60000]</span><br><span class="line">loss: 0.433412  [32000/60000]</span><br><span class="line">loss: 0.533789  [38400/60000]</span><br><span class="line">loss: 0.772370  [44800/60000]</span><br><span class="line">loss: 0.486120  [51200/60000]</span><br><span class="line">loss: 0.534202  [57600/60000]</span><br><span class="line">Test Error: </span><br><span class="line"> Accuracy: 85.4%, Avg loss: 0.396990 </span><br><span class="line"></span><br><span class="line">Epoch 3</span><br><span class="line">-------------------------------</span><br><span class="line">loss: 0.547906  [ 6400/60000]</span><br><span class="line">loss: 0.591556  [12800/60000]</span><br><span class="line">loss: 0.537591  [19200/60000]</span><br><span class="line">loss: 0.722009  [25600/60000]</span><br><span class="line">loss: 0.319590  [32000/60000]</span><br><span class="line">loss: 0.504153  [38400/60000]</span><br><span class="line">loss: 0.797246  [44800/60000]</span><br><span class="line">loss: 0.553834  [51200/60000]</span><br><span class="line">loss: 0.400079  [57600/60000]</span><br><span class="line">Test Error: </span><br><span class="line"> Accuracy: 87.2%, Avg loss: 0.355058 </span><br><span class="line"></span><br><span class="line">Done!</span><br></pre></td></tr></table></figure>
-<p>可以看到，通过 3 轮迭代 (Epoch)，模型在训练集上的损失逐步下降、在测试集上的准确率逐步上升，证明优化器成功地对模型参数进行了调整，而且没有出现过拟合。</p>
+<p>可以看到，通过 3 轮迭代
+(Epoch)，模型在训练集上的损失逐步下降、在测试集上的准确率逐步上升，证明优化器成功地对模型参数进行了调整，而且没有出现过拟合。</p>
 <blockquote>
-<p>  <strong>注意：</strong>一定要在预测之前调用 <code>model.eval()</code> 方法将 dropout 层和 batch normalization 层设置为评估模式，否则会产生不一致的预测结果。</p>
+<p><strong>注意：</strong>一定要在预测之前调用 <code>model.eval()</code>
+方法将 dropout 层和 batch normalization
+层设置为评估模式，否则会产生不一致的预测结果。</p>
 </blockquote>
 
     
@@ -360,7 +388,7 @@
 
 
     
-      <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/nn.module如何自动调用forward()方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/torch.set_grad_enabled(False) 与 torch.no_grad() " class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -368,7 +396,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/" target="_blank">nn.module 如何自动调用 forward() 方法</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" target="_blank">torch.set_grad_enabled(False) 与 torch.no_grad()</a>
   
     </h1>
   
@@ -376,7 +404,7 @@
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -389,51 +417,104 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="nn-module-如何自动调用-forward-方法"><a href="#nn-module-如何自动调用-forward-方法" class="headerlink" title="nn.module 如何自动调用 forward() 方法"></a>nn.module 如何自动调用 forward() 方法</h1><p>当我们在使用 pytorch 的时候，观察以下例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Net</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;init&#x27;</span>)</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        output = <span class="built_in">input</span> + <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;forward&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br><span class="line">net = Net()</span><br><span class="line">x = torch.tensor(<span class="number">1.0</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># init</span></span><br><span class="line"><span class="comment"># forward</span></span><br><span class="line"><span class="comment"># tensord(2.)</span></span><br></pre></td></tr></table></figure>
-<p>定义一个神经网络 Net 后实现 forward 方法，后续实例化为 net 网络后直接传入 x 即可自动调用 forward 方法，可明明我们并未调用 forward() 方法，具体如何实现的呢？</p>
-<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p><strong>原因在于 Net 继承于 nn.Module，而 nn.Module 内部实现了、<em>_call</em>_() 方法</strong>，</p>
-<p>在 Python 中，__call__() 是一个特殊方法（也称为魔术方法或魔法方法），用于使对象实例可以像函数一样被调用。当一个类定义了 __call__() 方法时，它的实例可以像调用函数一样被调用，而不仅仅是通过类中的其他方法来调用。如下例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;init&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self,a</span>):</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;call&#x27;</span>)</span><br><span class="line">      <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">test = Test()</span><br><span class="line"><span class="built_in">print</span>(test(<span class="string">&#x27;test&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># init</span></span><br><span class="line"><span class="comment"># call</span></span><br><span class="line"><span class="comment"># test</span></span><br></pre></td></tr></table></figure>
-<p>而在 pytorch 中，__call__() 方法会自动调用 forward() 方法。</p>
-<p>具体说：当你调用 net(x) 后，net 会自动调用、<em>_call\</em>_() 方法，相当于 net.__call__(x), 而、<em>_call\</em>_() 又会自动调用 forward() 方法。</p>
-<p>相当于：net(x) —&gt; net.__call__(x) —&gt;net.forward(x)</p>
-<p>了解到这里基本够了，后面是 pytorch 的源码分析，可以不看。</p>
-<h2 id="pytorch-源码分析"><a href="#pytorch-源码分析" class="headerlink" title="pytorch 源码分析"></a>pytorch 源码分析</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Callable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Module</span>():</span><br><span class="line">  __call__ : <span class="type">Callable</span>[..., <span class="type">Any</span>] = _wrapped_call_impl</span><br></pre></td></tr></table></figure>
-<p>可以看到虽然有、<em>_call\</em>_() 方法，但他并没有像我们上面写的那样定义一个 def __call__() 方法，分析一下这句话：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__call__ : <span class="type">Callable</span>[..., <span class="type">Any</span>] = _wrapped_call_impl</span><br></pre></td></tr></table></figure>
-<p>这里 Callable[…, Any] 是一个<strong>类型提示</strong>，来源于 type 库，用来表示一个可调用对象的类型。</p>
-<ol>
-<li><p>[…]: 这个省略号 … 表示可接受任意数量的参数，即函数或方法可以接受任意数量的参数，包括零个参数。</p>
-</li>
-<li><p>Any: 这个关键字表示函数或方法可以返回任意类型的值。</p>
-<p>综合起来，<strong>__call<em>\</em> : Callable[…, Any] 表示这个类型可以是一个接受任意数量参数的可调用对象，并且可以返回任意类型的值。</strong>在类型提示中，这种方式用于表达灵活的函数签名，特别是当函数可能具有不固定参数数量或不确定返回类型时。</p>
-</li>
-</ol>
-<p>而后面的 <strong>\= _wrapped_call_impl 相当于给这个、<em>_call\</em>_() 方法取了一个别名，</strong> 接下来我们去找这个方法，源码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_wrapped_call_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">if</span> self._compiled_call_impl <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> self._compiled_call_impl(*args, **kwargs)  <span class="comment"># type: ignore[misc]</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> self._call_impl(*args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>可以看到这里根据对象实例中的 _compiled_call_impl 属性是否不为 None 执行不同的方法，</p>
-<p>当 _compiled_call_impl 不为 None 时，执行 self._compiled_call_impl(*args, **kwargs)</p>
-<p>否则执行 self._call_impl(*args, **kwargs)</p>
-<p>观看源码，可以发现 <strong>一般情况下，_compiled_call_impl 都是 None 的，除非你调用了 Module 里的 compile 方法，否则都是执行 self._call_impl(*args,**kwargs) 的</strong> ，先看看 Module 里的 compile 方法是干嘛的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">compile</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Compile this Module&#x27;s forward using :func:`torch.compile`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    This Module&#x27;s `__call__` method is compiled and all arguments are passed as-is</span></span><br><span class="line"><span class="string">    to :func:`torch.compile`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    See :func:`torch.compile` for details on the arguments for this function.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    self._compiled_call_impl = torch.<span class="built_in">compile</span>(self._call_impl, *args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>根据源码的注释，可以看到这段代码使用 torch.compile 编译模块的、<em>_call\</em>_() 方法，其效果是将当前模块的 __call__ 方法进行编译或者优化，并将优化后的实现保存在 _compiled_call_impl 属性中。编译后的实现可以提升执行效率或者改进其他方面的性能，具体取决于 torch.compile 函数的实现和参数设置。</p>
-<p>如果你未调用过该 compile 方法，那么 _compiled_call_impl 就是 None 的，那么 _wrapped_call_impl() 接下来就会执行 _call_impl()，_call_impl() 的源码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_call_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    forward_call = (self._slow_forward <span class="keyword">if</span> torch._C._get_tracing_state() <span class="keyword">else</span> self.forward)</span><br><span class="line">    <span class="comment"># If we don&#x27;t have any hooks, we want to skip the rest of the logic in</span></span><br><span class="line">    <span class="comment"># this function, and just call forward.</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> (self._backward_hooks <span class="keyword">or</span> self._backward_pre_hooks <span class="keyword">or</span> self._forward_hooks <span class="keyword">or</span> self._forward_pre_hooks</span><br><span class="line">            <span class="keyword">or</span> _global_backward_pre_hooks <span class="keyword">or</span> _global_backward_hooks</span><br><span class="line">            <span class="keyword">or</span> _global_forward_hooks <span class="keyword">or</span> _global_forward_pre_hooks):</span><br><span class="line">        <span class="keyword">return</span> forward_call(*args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = <span class="literal">None</span></span><br><span class="line">    ... 后面的太长省略</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>可以看到，分析 forward_call = (self._slow_forward if torch._C._get_tracing_state() else self.forward)</p>
-<p><strong>torch._C._get_tracing_state() 函数用来检查当前是否处于追踪状态（tracing state）</strong>：</p>
+    <h1
+id="torch.set_grad_enabledfalse-与-torch.no_grad">torch.set_grad_enabled(False)
+与 torch.no_grad()</h1>
+<p><code>torch.set_grad_enabled(False)</code> 和
+<code>torch.no_grad()</code> 都是 PyTorch
+中用于控制梯度计算行为的工具，但它们的适用范围和使用场景略有不同。</p>
+<h2 id="相同点">相同点</h2>
+<ol type="1">
+<li><strong>禁用梯度计算</strong>：
 <ul>
-<li><p>如果处于追踪状态，说明在进行模型的图形化表示（例如在 TorchScript 中），此时使用 _slow_forward 方法</p>
-</li>
-<li><p><strong>否则使用 self.forward 方法，至此终于知道、<em>_call\</em>_是怎么调用 self.forward 方法的了</strong></p>
-</li>
+<li>两者都会禁用梯度计算，确保前向传播过程中不记录计算图。</li>
+<li>主要用于推理或验证场景，以减少内存开销和加快运行速度。</li>
+</ul></li>
+<li><strong>性能优化</strong>：
+<ul>
+<li>两者都能有效地降低内存使用和提高运行效率。</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="不同点">不同点</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 47%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>特性</th>
+<th><code>torch.set_grad_enabled(False)</code></th>
+<th><code>torch.no_grad()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>动态性</strong></td>
+<td>可以在代码中根据条件动态控制是否禁用梯度计算</td>
+<td>仅用于禁用梯度计算，不能动态切换</td>
+</tr>
+<tr class="even">
+<td><strong>功能范围</strong></td>
+<td>适用于既可以启用又可以禁用梯度计算的场景</td>
+<td>只能禁用梯度计算</td>
+</tr>
+<tr class="odd">
+<td><strong>典型用法</strong></td>
+<td>用于统一控制梯度计算状态的代码块</td>
+<td>用于明确需要禁用梯度计算的代码块</td>
+</tr>
+<tr class="even">
+<td><strong>显式表达意图</strong></td>
+<td>隐式表达梯度计算的控制逻辑</td>
+<td>明确表达禁用梯度计算的意图</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="代码对比">代码对比</h2>
+<h3
+id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
+<ul>
+<li><p>用于在动态控制代码中设置梯度计算状态。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">training = <span class="literal">False</span>  <span class="comment"># training 是一个动态变量</span></span><br><span class="line">/*</span><br><span class="line">  .........</span><br><span class="line">*/</span><br><span class="line"><span class="keyword">with</span> torch.set_grad_enabled(training):</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 如果 training=True，则记录计算图；否则不记录。</span></span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>至于后面的代码就是输出一些日志啥的。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> (self._backward_hooks <span class="keyword">or</span> self._backward_pre_hooks <span class="keyword">or</span> self._forward_hooks <span class="keyword">or</span> self._forward_pre_hooks</span><br><span class="line">        <span class="keyword">or</span> _global_backward_pre_hooks <span class="keyword">or</span> _global_backward_hooks</span><br><span class="line">        <span class="keyword">or</span> _global_forward_hooks <span class="keyword">or</span> _global_forward_pre_hooks):</span><br><span class="line">    <span class="keyword">return</span> forward_call(*args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>意思是：如果当前模块没有任何的钩子（hooks），则跳过此方法中的其他逻辑，直接调用 forward_call 方法并返回其结果。</p>
-<blockquote>
-<p>  <strong>钩子（hooks）通常用于在模型运行过程中添加额外的操作或者记录信息，例如日志、梯度信息等。</strong></p>
-</blockquote>
+<h3 id="torch.no_grad"><code>torch.no_grad()</code></h3>
+<ul>
+<li><p>直接明确禁用梯度计算，通常用于推理。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 始终禁用梯度计算。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr />
+<h2 id="使用建议">使用建议</h2>
+<ol type="1">
+<li><p><strong>使用
+<code>torch.set_grad_enabled(False)</code></strong>：</p>
+<ul>
+<li><p>适合在包含训练和推理逻辑的统一代码中使用，特别是需要根据条件动态切换梯度计算状态的场景。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> phase <span class="keyword">in</span> [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;val&#x27;</span>]:</span><br><span class="line">    <span class="keyword">with</span> torch.set_grad_enabled(phase == <span class="string">&#x27;train&#x27;</span>):</span><br><span class="line">        outputs = model(inputs)</span><br><span class="line">        <span class="keyword">if</span> phase == <span class="string">&#x27;train&#x27;</span>:</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><p><strong>使用 <code>torch.no_grad()</code></strong>：</p>
+<ul>
+<li><p>适合单纯的推理或测试阶段，不涉及任何动态条件。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="总结">总结</h2>
+<ul>
+<li><strong><code>torch.no_grad()</code></strong>
+更简洁明了，专门用于禁用梯度计算的场景。</li>
+<li><strong><code>torch.set_grad_enabled(False)</code></strong>
+提供了更多灵活性，适合动态控制梯度计算的复杂场景。</li>
+</ul>
+<p>如果仅仅是为了禁用梯度计算，建议使用
+<strong><code>torch.no_grad()</code></strong>，它语义更明确。</p>
 
     
 
@@ -460,7 +541,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/">展开全文 >></a>
     </p>
     
 
@@ -519,15 +600,30 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h1><p>Pytorch 所有的模块（层）都是 <code>nn.Module</code> 的子类，神经网络模型本身就是一个模块，它还包含了很多其他的模块。</p>
-<p>我们还是以前面加载的 FashionMNIST 数据库为例，构建一个神经网络模型来完成图像分类。模型同样继承自 <code>nn.Module</code> 类，通过 <code>__init__()</code> 初始化模型中的层和参数，在 <code>forward()</code> 中定义模型的操作，例如：</p>
+    <h1 id="构建模型">构建模型</h1>
+<p>Pytorch 所有的模块（层）都是 <code>nn.Module</code>
+的子类，神经网络模型本身就是一个模块，它还包含了很多其他的模块。</p>
+<p>我们还是以前面加载的 FashionMNIST
+数据库为例，构建一个神经网络模型来完成图像分类。模型同样继承自
+<code>nn.Module</code> 类，通过 <code>__init__()</code>
+初始化模型中的层和参数，在 <code>forward()</code>
+中定义模型的操作，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line">device = <span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;Using <span class="subst">&#123;device&#125;</span> device&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NeuralNetwork</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(NeuralNetwork, self).__init__()</span><br><span class="line">        self.flatten = nn.Flatten()</span><br><span class="line">        self.linear_relu_stack = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">28</span>*<span class="number">28</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, <span class="number">10</span>),</span><br><span class="line">            nn.Dropout(p=<span class="number">0.2</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        logits = self.linear_relu_stack(x)</span><br><span class="line">        <span class="keyword">return</span> logits</span><br><span class="line"></span><br><span class="line">model = NeuralNetwork().to(device)</span><br><span class="line"><span class="built_in">print</span>(model)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Using cpu device</span><br><span class="line">NeuralNetwork(</span><br><span class="line">  (flatten): Flatten(start_dim=1, end_dim=-1)</span><br><span class="line">  (linear_relu_stack): Sequential(</span><br><span class="line">    (0): Linear(in_features=784, out_features=512, bias=True)</span><br><span class="line">    (1): ReLU()</span><br><span class="line">    (2): Linear(in_features=512, out_features=256, bias=True)</span><br><span class="line">    (3): ReLU()</span><br><span class="line">    (4): Linear(in_features=256, out_features=10, bias=True)</span><br><span class="line">    (5): Dropout(p=0.2, inplace=False)</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>可以看到，我们构建的模型首先将二维图像通过 <code>Flatten</code> 层压成一维向量，然后经过两个带有 <code>ReLU</code> 激活函数的全连接隐藏层，最后送入到一个包含 10 个神经元的分类器以完成 10 分类任务。我们还通过在最终输出前添加 Dropout 层来缓解过拟合。</p>
-<p>最终我们构建的模型会输出一个 10 维向量（每一维对应一个类别的预测值），与先前介绍过的 pipeline 模型一样，这里输出的是 logits 值，我们需要再接一个 Softmax 层来计算最终的概率值。下面我们构建一个包含四个伪二维图像的 mini-batch 来进行预测：</p>
+<p>可以看到，我们构建的模型首先将二维图像通过 <code>Flatten</code>
+层压成一维向量，然后经过两个带有 <code>ReLU</code>
+激活函数的全连接隐藏层，最后送入到一个包含 10 个神经元的分类器以完成 10
+分类任务。我们还通过在最终输出前添加 Dropout 层来缓解过拟合。</p>
+<p>最终我们构建的模型会输出一个 10
+维向量（每一维对应一个类别的预测值），与先前介绍过的 pipeline
+模型一样，这里输出的是 logits 值，我们需要再接一个 Softmax
+层来计算最终的概率值。下面我们构建一个包含四个伪二维图像的 mini-batch
+来进行预测：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">X = torch.rand(<span class="number">4</span>, <span class="number">28</span>, <span class="number">28</span>, device=device)</span><br><span class="line">logits = model(X)</span><br><span class="line">pred_probab = nn.Softmax(dim=<span class="number">1</span>)(logits)</span><br><span class="line"><span class="built_in">print</span>(pred_probab.size())</span><br><span class="line">y_pred = pred_probab.argmax(-<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Predicted class: <span class="subst">&#123;y_pred&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([4, 10])</span><br><span class="line">Predicted class: tensor([3, 8, 3, 3])</span><br></pre></td></tr></table></figure>
-<p>可以看到，模型成功输出了维度为 (4,10) 的预测结果（每个样本输出一个 10 维的概率向量）。最后我们通过 argmax 操作，将输出的概率向量转换为对应的标签。</p>
+<p>可以看到，模型成功输出了维度为 (4,10) 的预测结果（每个样本输出一个 10
+维的概率向量）。最后我们通过 argmax
+操作，将输出的概率向量转换为对应的标签。</p>
 
     
 
@@ -555,6 +651,108 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.matmul()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" target="_blank">torch.matmul()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="torch.matmul">torch.matmul()</h1>
+<h2 id="函数介绍">函数介绍</h2>
+<p>pytorch 中两个张量的乘法可以分为两种：</p>
+<ul>
+<li>两个张量对应元素相乘，在 PyTorch 中可以通过 <strong>torch.mul
+函数</strong>（或*运算符）实现</li>
+<li>两个张量矩阵相乘，在 PyTorch 中可以通过 <strong>torch.matmul
+函数</strong> 实现</li>
+</ul>
+<p><strong>torch.matmul(input, other) → Tensor</strong></p>
+<p>计算两个张量 input 和 other 的矩阵乘积</p>
+<blockquote>
+<p>【注意】：matmul
+函数没有强制规定维度和大小，可以用利用广播机制进行不同维度的相乘操作。</p>
+</blockquote>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/">展开全文 >></a>
     </p>
     
 
@@ -613,72 +811,91 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="torch-max-与-torch-argmax"><a href="#torch-max-与-torch-argmax" class="headerlink" title="torch.max() 与 torch.argmax()"></a>torch.max() 与 torch.argmax()</h1><p>在 PyTorch 中，<code>torch.max()</code> 和 <code>torch.argmax()</code> 是两个常用的函数，但它们的用途和返回值有所不同。以下是它们的详细讲解：</p>
-<hr>
-<h2 id="torch-max"><a href="#torch-max" class="headerlink" title="torch.max()"></a><code>torch.max()</code></h2><h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><ul>
-<li><strong><code>torch.max(input)</code></strong>: 返回输入张量中所有元素的最大值。</li>
-<li><strong><code>torch.max(input, dim)</code></strong>: 返回指定维度上的最大值以及其对应的索引。</li>
+    <h1 id="torch.max-与-torch.argmax">torch.max() 与 torch.argmax()</h1>
+<p>在 PyTorch 中，<code>torch.max()</code> 和
+<code>torch.argmax()</code>
+是两个常用的函数，但它们的用途和返回值有所不同。以下是它们的详细讲解：</p>
+<hr />
+<h2 id="torch.max"><code>torch.max()</code></h2>
+<h3 id="功能">功能</h3>
+<ul>
+<li><strong><code>torch.max(input)</code></strong>:
+返回输入张量中所有元素的最大值。</li>
+<li><strong><code>torch.max(input, dim)</code></strong>:
+返回指定维度上的最大值以及其对应的索引。</li>
 </ul>
-<h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">max_value = torch.<span class="built_in">max</span>(x)</span><br><span class="line"><span class="built_in">print</span>(max_value)  <span class="comment"># 输出：7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">max_values, indices = torch.<span class="built_in">max</span>(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(max_values)  <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(indices)     <span class="comment"># 输出：tensor([1, 0]) 表示每行中最大值的索引</span></span><br></pre></td></tr></table></figure>
-<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><ul>
-<li><p>当不指定 <code>dim</code>：返回整个张量的最大值（标量）</p>
-</li>
-<li><p>当指定 <code>dim</code>：返回两个张量<strong>最大值张量</strong>和<strong>最大值所在的索引张量</strong></p>
-</li>
+<h3 id="用法示例">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">max_value = torch.<span class="built_in">max</span>(x)</span><br><span class="line"><span class="built_in">print</span>(max_value)  <span class="comment"># 输出：7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">max_values, indices = torch.<span class="built_in">max</span>(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(max_values)  <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(indices)     <span class="comment"># 输出：tensor([1, 0]) 表示每行中最大值的索引</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值">返回值</h3>
+<ul>
+<li><p>当不指定 <code>dim</code>：返回整个张量的最大值（标量）</p></li>
+<li><p>当指定
+<code>dim</code>：返回两个张量<strong>最大值张量</strong>和<strong>最大值所在的索引张量</strong></p></li>
 </ul>
-<hr>
-<h2 id="torch-argmax"><a href="#torch-argmax" class="headerlink" title="torch.argmax()"></a><code>torch.argmax()</code></h2><h3 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h3><ul>
+<hr />
+<h2 id="torch.argmax"><code>torch.argmax()</code></h2>
+<h3 id="功能-1">功能</h3>
+<ul>
 <li>返回输入张量中最大值的索引。</li>
 <li>可选择在指定维度中查找最大值的索引。</li>
 </ul>
-<h3 id="用法示例-1"><a href="#用法示例-1" class="headerlink" title="用法示例"></a>用法示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">argmax_index = torch.argmax(x)</span><br><span class="line"><span class="built_in">print</span>(argmax_index)  <span class="comment"># 输出：3 （索引从 0 开始）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">indices = torch.argmax(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
-<h3 id="返回值-1"><a href="#返回值-1" class="headerlink" title="返回值"></a>返回值</h3><ul>
+<h3 id="用法示例-1">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">argmax_index = torch.argmax(x)</span><br><span class="line"><span class="built_in">print</span>(argmax_index)  <span class="comment"># 输出：3 （索引从 0 开始）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">indices = torch.argmax(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值-1">返回值</h3>
+<ul>
 <li>返回最大值的索引，形状与指定维度（如果有的话）相匹配。</li>
 <li>如果不指定维度，返回最大值索引（标量）。</li>
 </ul>
-<hr>
-<h2 id="二者的对比"><a href="#二者的对比" class="headerlink" title="二者的对比"></a>二者的对比</h2><div class="table-container">
+<hr />
+<h2 id="二者的对比">二者的对比</h2>
 <table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 42%" />
+<col style="width: 35%" />
+</colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>功能</strong></th>
 <th><strong><code>torch.max()</code></strong></th>
 <th><strong><code>torch.argmax()</code></strong></th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><strong>主要作用</strong></td>
 <td>返回最大值（可以同时返回索引）。</td>
 <td>返回最大值的索引。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>是否返回最大值的索引</strong></td>
 <td>是，但需要指定 <code>dim</code> 参数。</td>
 <td>是，仅返回索引。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>是否返回最大值本身</strong></td>
 <td>是，默认返回最大值（可同时返回索引）。</td>
 <td>否，仅返回索引。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>支持多维张量</strong></td>
 <td>是，支持在指定维度上计算最大值和索引。</td>
 <td>是，支持在指定维度上查找最大值索引。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>返回值类型</strong></td>
 <td>最大值（标量或张量）和索引（张量，若指定维度）。</td>
 <td>最大值的索引（标量或张量，取决于输入）。</td>
 </tr>
 </tbody>
 </table>
-</div>
-<hr>
-<h2 id="综合示例"><a href="#综合示例" class="headerlink" title="综合示例"></a>综合示例</h2><h3 id="例一"><a href="#例一" class="headerlink" title="例一"></a>例一</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.max()</span></span><br><span class="line">max_values, max_indices = torch.<span class="built_in">max</span>(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值：&quot;</span>, max_values)     <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, max_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.argmax()</span></span><br><span class="line">argmax_indices = torch.argmax(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, argmax_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="例二"><a href="#例二" class="headerlink" title="例二"></a>例二</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="综合示例">综合示例</h2>
+<h3 id="例一">例一</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.max()</span></span><br><span class="line">max_values, max_indices = torch.<span class="built_in">max</span>(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值：&quot;</span>, max_values)     <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, max_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.argmax()</span></span><br><span class="line">argmax_indices = torch.argmax(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, argmax_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="例二">例二</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">output:</span><br><span class="line">tensor([[-<span class="number">1.0214</span>,  <span class="number">0.7577</span>, -<span class="number">0.0481</span>, -<span class="number">1.0252</span>,  <span class="number">0.9443</span>],</span><br><span class="line">        [ <span class="number">0.5071</span>, -<span class="number">1.6073</span>, -<span class="number">0.6960</span>, -<span class="number">0.6066</span>,  <span class="number">1.6297</span>],</span><br><span class="line">        [-<span class="number">0.2776</span>, -<span class="number">1.3551</span>,  <span class="number">0.0036</span>, -<span class="number">0.9210</span>, -<span class="number">0.6517</span>]])</span><br><span class="line">tensor(<span class="number">9</span>)</span><br><span class="line">tensor([<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
     
@@ -768,7 +985,13 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="torch-mul"><a href="#torch-mul" class="headerlink" title="torch.mul"></a>torch.mul</h1><p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501010126077.png" alt="image-20250101012642971"></p>
+    <h1 id="torch.mul">torch.mul</h1>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501010126077.png"
+alt="image-20250101012642971" />
+<figcaption aria-hidden="true">image-20250101012642971</figcaption>
+</figure>
 
     
 
@@ -796,103 +1019,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.mul()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.matmul()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" target="_blank">torch.matmul()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="torch-matmul"><a href="#torch-matmul" class="headerlink" title="torch.matmul()"></a>torch.matmul()</h1><h2 id="函数介绍"><a href="#函数介绍" class="headerlink" title="函数介绍"></a>函数介绍</h2><p>pytorch 中两个张量的乘法可以分为两种：</p>
-<ul>
-<li>两个张量对应元素相乘，在 PyTorch 中可以通过 <strong>torch.mul 函数</strong>（或*运算符）实现</li>
-<li>两个张量矩阵相乘，在 PyTorch 中可以通过 <strong>torch.matmul 函数</strong> 实现</li>
-</ul>
-<p><strong>torch.matmul(input, other) → Tensor</strong>  </p>
-<p>计算两个张量 input 和 other 的矩阵乘积  </p>
-<blockquote>
-<p>  【注意】：matmul 函数没有强制规定维度和大小，可以用利用广播机制进行不同维度的相乘操作。</p>
-</blockquote>
-    
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/">展开全文 >></a>
     </p>
     
 
@@ -951,13 +1077,25 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="torch-softmax"><a href="#torch-softmax" class="headerlink" title="torch.softmax()"></a>torch.softmax()</h1><h2 id="Softmax-函数"><a href="#Softmax-函数" class="headerlink" title="Softmax 函数"></a>Softmax 函数</h2><p>首先说一下 Softmax 函数，公式如下：</p>
-<script type="math/tex; mode=display">
-Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
+    <h1 id="torch.softmax">torch.softmax()</h1>
+<h2 id="softmax-函数">Softmax 函数</h2>
+<p>首先说一下 Softmax 函数，公式如下：</p>
+<p><span class="math display">\[
+Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}
+\]</span></p>
+<p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">1</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.134</span></span><br><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">2</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.365</span></span><br></pre></td></tr></table></figure>
-<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365, 0.365]。</p>
-<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft 形式。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg" alt="36a034ac7464ecd31f8e582b254271c"></p>
+<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365,
+0.365]。</p>
+<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft
+形式。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg"
+alt="36a034ac7464ecd31f8e582b254271c" />
+<figcaption
+aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
+</figure>
     
     <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/#more">more >></a>
     
@@ -1045,9 +1183,19 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="permute"><a href="#permute" class="headerlink" title="permute()"></a>permute()</h1><p><strong>交换维度 <code>permute</code></strong> 与 <code>transpose</code> 函数每次只能交换两个维度不同，<code>permute</code> 可以直接设置新的维度排列方式，参数 <code>dims</code> 是一个元组，表示新的维度顺序：</p>
+    <h1 id="permute">permute()</h1>
+<p><strong>交换维度 <code>permute</code></strong> 与
+<code>transpose</code>
+函数每次只能交换两个维度不同，<code>permute</code>
+可以直接设置新的维度排列方式，参数 <code>dims</code>
+是一个元组，表示新的维度顺序：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">         [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = x.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">4</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">2</span>, <span class="number">5</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">3</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png" alt="image-20250101132035181"></p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png"
+alt="image-20250101132035181" />
+<figcaption aria-hidden="true">image-20250101132035181</figcaption>
+</figure>
 <p><code>(2, 0, 1)</code> 的含义：</p>
 <ul>
 <li>将原来的 <strong>第 2 维</strong> 移到第 0 个位置。</li>
@@ -1144,10 +1292,24 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="tranpose-与t"><a href="#tranpose-与t" class="headerlink" title="tranpose()与t()"></a>tranpose()与t()</h1><h2 id="torch-tranpose"><a href="#torch-tranpose" class="headerlink" title="torch.tranpose()"></a>torch.tranpose()</h2><p><strong>转置 <code>transpose</code></strong> 交换张量中的两个维度，参数为相应的维度：</p>
+    <h1 id="tranpose与t">tranpose()与t()</h1>
+<h2 id="torch.tranpose">torch.tranpose()</h2>
+<p><strong>转置 <code>transpose</code></strong>
+交换张量中的两个维度，参数为相应的维度：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">4</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">5</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">6</span>]])</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011314817.png" alt="image-20250101131446692"></p>
-<h2 id="torch-t"><a href="#torch-t" class="headerlink" title="torch.t()"></a>torch.t()</h2><p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011315079.png" alt="image-20250101131549964"></p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011314817.png"
+alt="image-20250101131446692" />
+<figcaption aria-hidden="true">image-20250101131446692</figcaption>
+</figure>
+<h2 id="torch.t">torch.t()</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011315079.png"
+alt="image-20250101131549964" />
+<figcaption aria-hidden="true">image-20250101131549964</figcaption>
+</figure>
 
     
 
@@ -1233,15 +1395,34 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="view-与reshape"><a href="#view-与reshape" class="headerlink" title="view()与reshape()"></a>view()与reshape()</h1><p>总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
-<h2 id="PyTorch-中-tensor-的存储方式"><a href="#PyTorch-中-tensor-的存储方式" class="headerlink" title="PyTorch 中 tensor 的存储方式"></a>PyTorch 中 tensor 的存储方式</h2><blockquote>
-<p>  想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch 张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区 （Storage）以及 tensor 的步长 Stride</p>
+    <h1 id="view与reshape">view()与reshape()</h1>
+<p>总之，两者都是用来重塑 tensor 的 shape 的。view
+只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
+同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
+能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
+<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
+<blockquote>
+<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
+张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
+（Storage）以及 tensor 的步长 Stride</p>
 </blockquote>
-<h3 id="PyTorch-张量存储的底层原理"><a href="#PyTorch-张量存储的底层原理" class="headerlink" title="PyTorch 张量存储的底层原理"></a>PyTorch 张量存储的底层原理</h3><p>tensor 数据采用头信息区（Tensor）和存储区 （Storage）分开存储的形式，如图 1 所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个 tensor，tensor 名为 A，A 的形状 size、步长 stride、数据的索引等信息都存储在头信息区，而 A 所存储的真实数据则存储在存储区。另外，如果我们对 A 进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A 的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B 的头信息区对数据的索引方式 </font>。如果听说过浅拷贝和深拷贝的话，很容易明白 <strong>这种方式其实就是 <font color='green'> 浅拷贝 </font></strong></p>
+<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
+<p>tensor 数据采用头信息区（Tensor）和存储区
+（Storage）分开存储的形式，如图 1
+所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
+tensor，tensor 名为 A，A 的形状 size、步长
+stride、数据的索引等信息都存储在头信息区，而 A
+所存储的真实数据则存储在存储区。另外，如果我们对 A
+进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
+的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
+的头信息区对数据的索引方式
+</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
+<strong>这种方式其实就是 <font color='green'> 浅拷贝
+</font></strong></p>
 <div style="text-align: center">
-    <img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png">
-    <br>
-    图 1 Torch 中 Tensor 的存储结构
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
+&lt;br&gt;
+图 1 Torch 中 Tensor 的存储结构</code></pre>
 </div>
     
     <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
@@ -1468,27 +1649,11 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1496,7 +1661,19 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1508,11 +1685,15 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1520,7 +1701,7 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1540,15 +1721,11 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1556,11 +1733,7 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1568,7 +1741,15 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1576,7 +1757,7 @@ Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}</script><p>简单例子：比如�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

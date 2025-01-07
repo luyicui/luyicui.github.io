@@ -18,7 +18,7 @@
 <meta property="og:description" content="Linux 配置 Anaconda+PyTorch+CUDA 深度学习环境 前言 本篇文章介绍如何在 Linux 服务器上配置 Python+PyTorch+CUDA 深度学习环境。包含安装 Anaconda、Python 虚拟环境、配置 PyTorch+CUDA 环境、服务器使用教程、conda 命令、等内容。 安装 Anaconda 请参考 linux-conda 环境安装教程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
-<meta property="article:modified_time" content="2024-12-24T01:58:10.970Z">
+<meta property="article:modified_time" content="2025-01-06T07:26:33.461Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="Anaconda">
 <meta name="twitter:card" content="summary">
@@ -461,8 +461,9 @@ alt="image-20241215134000040" />
 <blockquote>
 <p>如果此时提示 <code>nvcc -V</code>
 命令找不到，或者<strong><font color='red'>显示的不是你想要的 cuda
-版本</font></strong>，则原因是 PATH 环境变量的路径中没有你想要的 cuda
-目录</p>
+版本</font></strong>，则原因是 PATH 环境变量的路径中没有你想要的
+<code>cuda/bin</code>
+目录（例如<code>/usr/local/cuda-11.7/bin</code>）</p>
 <figure>
 <img
 src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412151349341.png"
@@ -475,7 +476,7 @@ cuda，指向想用的版本即可，比如我们想使用位于全局的
 <p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/local/cuda-11.7 ~/cuda</span><br></pre></td></tr></table></figure></p>
 <p>此时只需要在你的 HOME 目录下使用命令
 <code>vim ~/.bashrc</code>，在最后一行添加如下内容</p>
-<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export PATH=&quot;~/cuda/bin:$PATH&quot;</span><br><span class="line">export LD_LIBRARY_PATH=&quot;~/cuda/bin/lib64:$LD_LIBRARY_PATH&quot;</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">cuda initialize</span></span><br><span class="line">export PATH=&quot;~/cuda/bin:$PATH&quot;</span><br><span class="line">export LD_LIBRARY_PATH=&quot;~/cuda/bin/lib64:$LD_LIBRARY_PATH&quot;</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p>注意要加在最前面，不要加在最后面，因为后面可能也有设置 cuda
 的文件夹，我们把想要使用的 cuda 文件路径放在最前面可以确保第一个搜索到的
@@ -484,7 +485,7 @@ nvcc 命令就在我们设置的文件夹</p>
 <p>然后使用 <code>source ~/.bashrc</code> 后，即可成功执行
 <code>nvcc -V</code></p>
 </blockquote>
-<h3 id="不同版本-cuda-的切换">不同版本 cuda 的切换</h3>
+<h3 id="切换不同版本-cuda">切换不同版本 cuda</h3>
 <p>如果你想<font color='red'><strong>切换 cuda
 的版本</strong></font>，也非常简单，只需将软链接 <code>~cuda</code>
 指向想用的版本即可，比如我们想切换使用位于全局的
@@ -591,7 +592,7 @@ alt="image-20241215185026978" />
 </blockquote>
 <ol start="5" type="1">
 <li><p>配置环境</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在最下方添加刚刚安装 cuda 的路径：</span></span><br><span class="line">export LD_LIBRARY_PATH=~/cuda/targets/x86_64-linux/lib$&#123;LD_LIBRARY_PATH:+:$&#123;LD_LIBRARY_PATH&#125;&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">保存之后，使配置生效：</span>  </span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在最下方添加刚刚安装 cuda 的路径：</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">cudnn initialize</span></span><br><span class="line">export LD_LIBRARY_PATH=~/cuda/targets/x86_64-linux/lib$&#123;LD_LIBRARY_PATH:+:$&#123;LD_LIBRARY_PATH&#125;&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">保存之后，使配置生效：</span>  </span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h2 id="服务器使用教程">服务器使用教程</h2>
 <h3 id="查看-gpu-使用状态">查看 GPU 使用状态</h3>
@@ -778,18 +779,18 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_28442665/articl
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/ERRORs/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          ERRORs
+          linux-conda 环境安装教程
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Anaconda%E3%80%91/linux-conda%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">linux-conda 环境安装教程</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/requirements.txt/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">requirements.txt</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -817,7 +818,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_28442665/articl
                 <span class="tooltip-content">
                     <div class="toc-article">
                     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux-%E9%85%8D%E7%BD%AE-anacondapytorchcuda-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">Linux 配置
-Anaconda+PyTorch+CUDA 深度学习环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-anaconda"><span class="toc-number">1.2.</span> <span class="toc-text">安装 Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-%E7%AE%A1%E7%90%86%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.</span> <span class="toc-text">conda 管理虚拟环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-python-%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.1.</span> <span class="toc-text">创建 Python 虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.2.</span> <span class="toc-text">查看虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.3.</span> <span class="toc-text">进入虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%80%E5%87%BA%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.4.</span> <span class="toc-text">退出虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.5.</span> <span class="toc-text">删除虚拟环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-pytorchcuda-%E7%8E%AF%E5%A2%83"><span class="toc-number">1.4.</span> <span class="toc-text">配置 PyTorch+CUDA 环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">安装显卡驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-cuda-%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">安装 CUDA 驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B-cuda-%E9%A9%B1%E5%8A%A8%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">检测 CUDA 驱动是否安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">安装步骤</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8-cuda-%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.3.</span> <span class="toc-text">查看服务器 CUDA 版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC-cuda-%E7%9A%84%E5%88%87%E6%8D%A2"><span class="toc-number">1.4.4.</span> <span class="toc-text">不同版本 cuda 的切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-conda-%E7%9A%84%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%AE%89%E8%A3%85-pytorch"><span class="toc-number">1.4.5.</span> <span class="toc-text">在 conda 的虚拟环境下安装
+Anaconda+PyTorch+CUDA 深度学习环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-anaconda"><span class="toc-number">1.2.</span> <span class="toc-text">安装 Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-%E7%AE%A1%E7%90%86%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.</span> <span class="toc-text">conda 管理虚拟环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-python-%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.1.</span> <span class="toc-text">创建 Python 虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.2.</span> <span class="toc-text">查看虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.3.</span> <span class="toc-text">进入虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%80%E5%87%BA%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.4.</span> <span class="toc-text">退出虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.5.</span> <span class="toc-text">删除虚拟环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-pytorchcuda-%E7%8E%AF%E5%A2%83"><span class="toc-number">1.4.</span> <span class="toc-text">配置 PyTorch+CUDA 环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">安装显卡驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-cuda-%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">安装 CUDA 驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B-cuda-%E9%A9%B1%E5%8A%A8%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">检测 CUDA 驱动是否安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">安装步骤</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8-cuda-%E7%89%88%E6%9C%AC"><span class="toc-number">1.4.3.</span> <span class="toc-text">查看服务器 CUDA 版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E6%8D%A2%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC-cuda"><span class="toc-number">1.4.4.</span> <span class="toc-text">切换不同版本 cuda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-conda-%E7%9A%84%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%AE%89%E8%A3%85-pytorch"><span class="toc-number">1.4.5.</span> <span class="toc-text">在 conda 的虚拟环境下安装
 pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-cudnn-%E7%8E%AF%E5%A2%83"><span class="toc-number">1.5.</span> <span class="toc-text">配置 CUDNN 环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5-cudnn-%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85"><span class="toc-number">1.5.1.</span> <span class="toc-text">检查 CUDNN 是否安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-cudnn"><span class="toc-number">1.5.2.</span> <span class="toc-text">安装 CUDNN</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B"><span class="toc-number">1.6.</span> <span class="toc-text">服务器使用教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B-gpu-%E4%BD%BF%E7%94%A8%E7%8A%B6%E6%80%81"><span class="toc-number">1.6.1.</span> <span class="toc-text">查看 GPU 使用状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C-python-%E4%BB%A3%E7%A0%81"><span class="toc-number">1.6.2.</span> <span class="toc-text">运行 Python 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%A3%E7%A0%81%E6%8C%87%E5%AE%9A%E6%98%BE%E5%8D%A1"><span class="toc-number">1.6.3.</span> <span class="toc-text">为代码指定显卡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tmux-%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.4.</span> <span class="toc-text">Tmux 会话管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%95%99%E7%A8%8B"><span class="toc-number">1.7.</span> <span class="toc-text">参考教程</span></a></li></ol></li></ol>
                     </div>
                 </span>
@@ -997,10 +998,6 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
@@ -1009,7 +1006,7 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1017,7 +1014,23 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1029,19 +1042,7 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1057,7 +1058,7 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1065,7 +1066,7 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1105,19 +1106,19 @@ pytorch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

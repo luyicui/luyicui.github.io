@@ -252,192 +252,6 @@
 
   
     
-      <article id="post-【后端】/python/模块/绝对导入与相对导入" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%A8%A1%E5%9D%97/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" target="_blank">绝对导入与相对导入</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%A8%A1%E5%9D%97/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="绝对导入与相对导入">绝对导入与相对导入</h1>
-<h2 id="绝对导入">绝对导入</h2>
-<h3 id="标准库导入">标准库导入</h3>
-<p>假设有一个文件 <code>a.py</code>，其中导入了标准库模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br></pre></td></tr></table></figure>
-<p>这种导入方式称为标准库导入，因为 <code>os</code> 是 Python
-的标准库之一，其它常见的标准库如下：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501041450614.png"
-alt="image-20250104145009446" />
-<figcaption aria-hidden="true">image-20250104145009446</figcaption>
-</figure>
-<h3 id="当前文件目录导入">当前文件目录导入</h3>
-<p>如果在 <code>a.py</code> 所在的目录下有一个 <code>b.py</code>
-文件，其中定义了一个类 <code>B</code>，那么在 <code>a.py</code>
-中可以这样导入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b <span class="keyword">import</span> B</span><br></pre></td></tr></table></figure>
-<p>这是从当前文件目录导入，因为当运行 <code>a.py</code>
-时，当前工作目录就是 <code>a.py</code> 所在的目录。只要
-<code>b.py</code> 在同一目录下，就能成功导入。</p>
-<p>对于嵌套导入，当前文件目录始终是最初执行的文件所在的目录。比如，考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">│  a.py</span><br><span class="line">│  a2.py</span><br><span class="line">│</span><br><span class="line">└─b</span><br><span class="line">        b.py</span><br></pre></td></tr></table></figure>
-<p><strong>a2.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A2</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><strong>b.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p>直接运行 <code>python b/b.py</code> 会失败，报错如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;a2&#x27;</span><br></pre></td></tr></table></figure>
-<p>但是运行 <code>python a.py</code>
-则能成功导入。这是因为执行的顶层文件（在此为
-<code>a.py</code>）决定了工作目录，而工作目录会影响子模块的绝对导入路径。</p>
-<h3 id="site-packages-导入"><code>site-packages</code> 导入</h3>
-<p><code>site-packages</code> 目录包含了通过 <code>pip</code>
-安装的第三方包。当我们安装一个包时，Python
-会将其放置在该目录下。导入这些包时，Python 会优先查找
-<code>site-packages</code> 目录。</p>
-<h3 id="导入顺序">导入顺序</h3>
-<p>Python 导入模块时会按以下顺序查找模块：</p>
-<ol type="1">
-<li><strong>当前目录</strong>：首先检查当前脚本所在的目录。</li>
-<li><strong>标准库目录</strong>：如果当前目录没有找到模块，Python
-会在标准库目录中查找。</li>
-<li><strong><code>site-packages</code> 目录</strong>：最后，Python 会在
-<code>site-packages</code>（即安装的第三方包目录）中查找。</li>
-</ol>
-<h2 id="相对导入">相对导入</h2>
-<p>相对导入只能在一个模块作为子模块被引用时使用，不能直接运行该文件。在使用相对导入时，必须确保引用的文件在一个包中。具体来说，运行的文件所在的目录也必须是一个包，而不能直接在该目录下运行模块。</p>
-<p>考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">│   main.py</span><br><span class="line">│</span><br><span class="line">├───a</span><br><span class="line">│       a.py</span><br><span class="line">│</span><br><span class="line">└───c</span><br><span class="line">        c.py</span><br></pre></td></tr></table></figure>
-<p><strong>main.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ..c.c <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>c.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>运行 <code>python main.py</code> 会报错：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
-<p>原因是 <code>a.py</code> 中的 <code>..</code> 会尝试访问到
-<code>./</code> 目录，而该目录不是一个包。为了解决这个问题，可以将
-<code>a</code> 和 <code>c</code> 文件夹打包成一个包，放到
-<code>main.py</code> 同级目录下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">│  main.py</span><br><span class="line">│</span><br><span class="line">└─top</span><br><span class="line">    ├─a</span><br><span class="line">    │      a.py</span><br><span class="line">    │</span><br><span class="line">    └─c</span><br><span class="line">           c.py</span><br></pre></td></tr></table></figure>
-<p>然后修改 <code>main.py</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> top.a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p>此时可以成功运行。</p>
-<h2 id="使用-sys.path.append-实现相对导入">使用
-<code>sys.path.append</code> 实现相对导入</h2>
-<p>直接使用相对导入时，不能直接运行文件，这使得编写脚本变得不太方便。如果希望在某些情况下能够从其他文件夹导入模块，可以通过
-<code>sys.path.append</code> 将当前工作目录添加到系统路径中。</p>
-<p>假设在工作目录下有两个文件夹：<code>src1</code> 和
-<code>src2</code>，并且 <code>src2</code> 中的文件需要从
-<code>src1</code> 导入模块。可以在 <code>src2</code>
-中的文件中这样做：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;./&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>然后就可以从 <code>src1</code> 中导入模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> src1.xxx <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>另一种方式是通过环境变量设置
-<code>PYTHONPATH</code>，在终端执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPATH=./</span><br></pre></td></tr></table></figure>
-<p>但这样要求工作目录必须是正确的，<code>./</code> 目录应该是
-<code>src1</code> 和 <code>src2</code>
-的父目录。如果想避免在程序中写路径，也可以使用绝对路径，但这样会增加迁移环境的复杂性。</p>
-<p>为了更加灵活地使用 <code>sys.path</code>，可以通过 <code>os</code>
-模块获取当前目录并自动调整路径：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), <span class="string">&#x27;..&#x27;</span>)))</span><br></pre></td></tr></table></figure>
-<h2 id="init__.py-文件的作用"><code>__init__.py</code> 文件的作用</h2>
-<p>通常我们在导入时会看到 <code>from a.a import XXX</code>
-这样的形式，其中第一个 <code>a</code> 是文件夹名，第二个 <code>a</code>
-是文件名。这种形式可能不太方便。如果希望直接使用
-<code>from a import XXX</code>，并且 <code>a</code>
-代表文件夹名，可以在文件夹 <code>a</code> 中创建一个
-<code>__init__.py</code> 文件。</p>
-<p>在 <code>a</code> 文件夹下创建 <code>__init__.py</code>
-文件，并在其中添加如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .a <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>这样就可以简化导入方式，使得我们可以直接使用
-<code>from a import XXX</code>。<code>__init__.py</code>
-文件在这里起到了帮助导入模块的作用。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%A8%A1%E5%9D%97/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/python/第三方库/【collections模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -660,6 +474,113 @@ target="_blank" rel="noopener" href="https://docs.python.org/3/library/collectio
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/第三方库/【argparse模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【argparse模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="argparse-模块">【argparse 模块】</h1>
+<p>当处理 <strong>命令行参数</strong> 时，Python 的
+<code>argparse</code> 模块是一个强大而 灵活的
+工具。它提供了一个简单且一致的方式来定义命令行参数、选项和子命令，并帮助你解析和验证用户提供的输入。本教程将详细介绍
+<code>argparse</code> 模块的使用方法和常见用例。</p>
+<blockquote>
+<p>本文收录于《<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_67276852/article/details/133901855">Python
+入门核心技术</a>》专栏</p>
+</blockquote>
+<hr />
+<h2 id="前言">前言</h2>
+<blockquote>
+<p>在开发命令行工具或需要从命令行接收用户输入的 Python
+程序中，处理命令行参数是一项常见任务。为了简化这一过程，Python 提供了
+<code>argparse</code>
+模块，它能够帮助我们定义和解析命令行参数，并提供用户友好的命令行界面。本教程将详细介绍
+<code>argparse</code>
+模块的使用方法和常见用例，帮助你轻松处理命令行参数，提升程序的灵活性和易用性。</p>
+</blockquote>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1820,6 +1741,164 @@ n)\)</span> 的时间复杂度内对数据进行排序。</p>
 
 
     
+      <article id="post-【后端】/python/第三方库/【importlib模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【importlib模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="importlib模块">【importlib模块】</h1>
+<p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code>
+语句，比如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包
+(Programmatic
+Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
+<h2 id="import_module-用法">import_module 用法</h2>
+<p><code>importlib</code> 是 Python3.1
+增加的系统库，其中最常用的函数是其中的<code>import_module</code>
+，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(name, package=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>参数含义:</strong></p>
+<ul>
+<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如
+<code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或
+<code>..module</code>）</li>
+<li><code>package</code>：
+<ul>
+<li>当前包的上下文，用于处理相对导入</li>
+<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或
+<code>..</code> 开头）时，<code>package</code> 才会生效</li>
+</ul></li>
+</ul>
+<p><strong>导入规则：</strong></p>
+<ul>
+<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code>
+参数，直接导入</li>
+<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或
+<code>..</code> 开头）：
+<ul>
+<li>基于 <code>package</code> 参数的上下文来计算实际路径</li>
+<li>若未指定 <code>package</code> 或 <code>package</code>
+无效，会报错</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import time 效果一样</span></span><br><span class="line">time = importlib.import_module(<span class="string">&#x27;time&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;os.path&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，一级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;.path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，二级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;..path&#x27;</span>, package=<span class="string">&#x27;os.time&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者
+<code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(<span class="string">&#x27;path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line"><span class="comment"># ModuleNotFoundError: No module named &#x27;path&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>如果光看这几个例子的话，貌似跟<code>import</code>
+没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
+<p>其实不是的，<strong>个人认为，<code>importlib</code></strong>
+<strong>的强大之处是将<code>import</code></strong>
+<strong>语句中写死的字面值改成了<code>import_module</code></strong>
+<strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import
+的包或者模块，大大地增加了灵活性。</strong>
+下面会举一个稍微实用一些的例子。</p>
+<h2 id="实例">实例</h2>
+<p>假设我们在设计一个深度学习工具库，里面包含了 N
+个网络模型（ResNet50、HRNet、MobileNet
+等等），每个模型的实现都有一个<code>load_model</code>
+的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际
+load 哪一个模型。</p>
+<p>虽然采用<code>import</code> 语句+<code>if-else</code>
+判断也能完成这个需求，举例实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="keyword">if</span> model_name == <span class="string">&#x27;resnet_50&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> resnet_50.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;hrnet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> hrnet.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;moblienet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> mobilenet.model <span class="keyword">import</span> load_model</span><br><span class="line"></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>这种写法存在下面的两个问题：</p>
+<ol type="1">
+<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p></li>
+<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p></li>
+</ol>
+<p>这时候采用<code>importlib</code> 就能比较简洁地解决这个问题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="comment"># 等价于</span></span><br><span class="line">    <span class="comment"># model = importlib.import_module(f&quot;&#123;model_name&#125;.model&quot;)</span></span><br><span class="line">    <span class="comment"># load_model = model.load_model</span></span><br><span class="line">    load_model = importlib.import_module(<span class="string">f&quot;<span class="subst">&#123;model_name&#125;</span>.model&quot;</span>).load_model</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载模型并进行推理</span></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>可以看到在这种场景下<code>importlib</code> 确实能大大简化代码。</p>
+<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code>
+针对普通用户场景的函数貌似就只有<code>import_module</code>
+这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
+<p>参考</p>
+<ol type="1">
+<li><a
+href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
+</ol>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【后端】/python/第三方库/【hydra-core库】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2195,164 +2274,6 @@ target="_blank" rel="noopener" href="https://wangaaayu.github.io/blog/posts/f5d8
 
 
     
-      <article id="post-【后端】/python/第三方库/【importlib模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【importlib模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="importlib模块">【importlib模块】</h1>
-<p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code>
-语句，比如</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包
-(Programmatic
-Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
-<h2 id="import_module-用法">import_module 用法</h2>
-<p><code>importlib</code> 是 Python3.1
-增加的系统库，其中最常用的函数是其中的<code>import_module</code>
-，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(name, package=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>参数含义:</strong></p>
-<ul>
-<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如
-<code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或
-<code>..module</code>）</li>
-<li><code>package</code>：
-<ul>
-<li>当前包的上下文，用于处理相对导入</li>
-<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或
-<code>..</code> 开头）时，<code>package</code> 才会生效</li>
-</ul></li>
-</ul>
-<p><strong>导入规则：</strong></p>
-<ul>
-<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code>
-参数，直接导入</li>
-<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或
-<code>..</code> 开头）：
-<ul>
-<li>基于 <code>package</code> 参数的上下文来计算实际路径</li>
-<li>若未指定 <code>package</code> 或 <code>package</code>
-无效，会报错</li>
-</ul></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import time 效果一样</span></span><br><span class="line">time = importlib.import_module(<span class="string">&#x27;time&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;os.path&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，一级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;.path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，二级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;..path&#x27;</span>, package=<span class="string">&#x27;os.time&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者
-<code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(<span class="string">&#x27;path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line"><span class="comment"># ModuleNotFoundError: No module named &#x27;path&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>如果光看这几个例子的话，貌似跟<code>import</code>
-没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
-<p>其实不是的，<strong>个人认为，<code>importlib</code></strong>
-<strong>的强大之处是将<code>import</code></strong>
-<strong>语句中写死的字面值改成了<code>import_module</code></strong>
-<strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import
-的包或者模块，大大地增加了灵活性。</strong>
-下面会举一个稍微实用一些的例子。</p>
-<h2 id="实例">实例</h2>
-<p>假设我们在设计一个深度学习工具库，里面包含了 N
-个网络模型（ResNet50、HRNet、MobileNet
-等等），每个模型的实现都有一个<code>load_model</code>
-的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际
-load 哪一个模型。</p>
-<p>虽然采用<code>import</code> 语句+<code>if-else</code>
-判断也能完成这个需求，举例实现如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="keyword">if</span> model_name == <span class="string">&#x27;resnet_50&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> resnet_50.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;hrnet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> hrnet.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;moblienet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> mobilenet.model <span class="keyword">import</span> load_model</span><br><span class="line"></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>这种写法存在下面的两个问题：</p>
-<ol type="1">
-<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p></li>
-<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p></li>
-</ol>
-<p>这时候采用<code>importlib</code> 就能比较简洁地解决这个问题：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="comment"># 等价于</span></span><br><span class="line">    <span class="comment"># model = importlib.import_module(f&quot;&#123;model_name&#125;.model&quot;)</span></span><br><span class="line">    <span class="comment"># load_model = model.load_model</span></span><br><span class="line">    load_model = importlib.import_module(<span class="string">f&quot;<span class="subst">&#123;model_name&#125;</span>.model&quot;</span>).load_model</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载模型并进行推理</span></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>可以看到在这种场景下<code>importlib</code> 确实能大大简化代码。</p>
-<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code>
-针对普通用户场景的函数貌似就只有<code>import_module</code>
-这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
-<p>参考</p>
-<ol type="1">
-<li><a
-href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
-</ol>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/python/第三方库/【jsonlines模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2501,7 +2422,7 @@ Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Pyt
 
 
     
-      <article id="post-【后端】/python/第三方库/【logging模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/第三方库/【json模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -2509,7 +2430,7 @@ Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Pyt
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【logging模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【json模块】</a>
   
     </h1>
   
@@ -2517,7 +2438,7 @@ Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Pyt
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -2530,28 +2451,160 @@ Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Pyt
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p># 【logging模块】</p>
-<p>Python
-日志输出是一种重要的工具，用于记录和跟踪应用程序的关键信息。本文将详细介绍
-Python
-中的日志输出，包括日志级别、日志记录器、日志处理器以及如何配置和定制日志输出。我们还将提供代码示例，帮助您快速上手并充分利用
-Python 日志输出功能。</p>
-<h2 id="前言">前言</h2>
-<ol type="1">
-<li>👻👻相信很多初学 Python
-的小伙伴们，在碰到自己辛辛苦苦码的代码报错的时候，你们自己动手解决 BUG
-的方法大多都是——通过加很多的 print() 函数，一点点缩小范围，直到找到 BUG
-所在位置并解决之！👻👻</li>
-</ol>
-<blockquote>
-<p>比如：下面通过 result1 到 result5
-模拟小伙伴们辛辛苦苦编写的五个函数，结果在最后调用实现终极功能的时候它报错了！这可怎么办——还好有
-print() 函数，一个个打印看看到哪打印不正常：</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">result1 = <span class="string">&#x27;第一个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result1)</span><br><span class="line">result2 = <span class="string">&#x27;第二个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result2)</span><br><span class="line">result3 = <span class="string">&#x27;第三个函数运行不 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result3)</span><br><span class="line">result4 = <span class="string">&#x27;第四个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result4)</span><br><span class="line">result5 = <span class="string">&#x27;第五个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result5)</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
-    
+    <h1 id="json模块">【json模块】</h1>
+<p><strong>JSON 文件是使用 JSON（JavaScript Object
+Notation）格式存储数据的文件。它是一种结构化的文本格式，使用键值对的方式表示数据。</strong>
+JSON
+文件通常包含一个根对象，可以包含多个嵌套的对象、数组和基本数据类型。</p>
+<h2 id="json-格式">JSON 格式</h2>
+<ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li><p><strong>使用大括号 {} 表示对象，使用方括号 [ ]
+表示数组。</strong></p></li>
+<li><p><strong>整个文件是一个有效的 JSON 对象或数组。</strong></p></li>
+<li><p>适合存储结构化的数据，如配置文件、API 响应等。</p></li>
+<li><p>一次性读取整个文件，解析成一个 JSON
+对象，可以随机访问其中的数据。</p></li>
+</ul></li>
+<li><p><strong>示例内容</strong>：</p></li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jane&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">40</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>也可以是下面字典的形式</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yushifu&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">18</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;isStudent&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;hobbies&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;singing&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;jumping&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rapping&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;basketball&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main Street&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;弗洛里达&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;country&quot;</span><span class="punctuation">:</span> <span class="string">&quot;USA&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;spouse&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="序列化">序列化</h2>
+<p>在序列化时，会将 Python 原始类型转化为 JSON
+类型，下面是序列化时数据类型转换的对照表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>Python</th>
+<th>JSON</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dict</td>
+<td>object – 对象</td>
+</tr>
+<tr class="even">
+<td>list, tuple</td>
+<td>array</td>
+</tr>
+<tr class="odd">
+<td>str</td>
+<td>string</td>
+</tr>
+<tr class="even">
+<td>int, float, int 和 float 派生的枚举</td>
+<td>number</td>
+</tr>
+<tr class="odd">
+<td>True</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>False</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>None</td>
+<td>null</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="json.loadjson-文件-转化为-python-对象"><code>json.load()</code>：json
+文件 转化为 python 对象</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;XXX.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br></pre></td></tr></table></figure>
+<h4 id="json-文件表示一个字典">JSON 文件表示一个字典</h4>
+<p>文件 <code>XXX.json</code> 内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hobbies&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;reading&quot;</span><span class="punctuation">,</span> <span class="string">&quot;cycling&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;is_student&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>运行代码后：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data))  <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># &#123;</span></span><br><span class="line"><span class="comment">#     &quot;name&quot;: &quot;Alice&quot;,</span></span><br><span class="line"><span class="comment">#     &quot;age&quot;: 25,</span></span><br><span class="line"><span class="comment">#     &quot;hobbies&quot;: [&quot;reading&quot;, &quot;cycling&quot;],</span></span><br><span class="line"><span class="comment">#     &quot;is_student&quot;: False</span></span><br><span class="line"><span class="comment"># &#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>data</code> 是一个 Python 字典。</li>
+</ul>
+<hr />
+<h4 id="json-文件表示一个字典列表">JSON 文件表示一个字典列表</h4>
+<p>文件 <code>XXX.json</code> 内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>运行代码后：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data))  <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># [</span></span><br><span class="line"><span class="comment">#     &#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25&#125;,</span></span><br><span class="line"><span class="comment">#     &#123;&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30&#125;</span></span><br><span class="line"><span class="comment"># ]</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>data</code> 是一个 Python 列表，列表中的每一项是字典。</li>
+</ul>
+<h3
+id="json.loadsjson-格式的字符串转换为-python-对象"><code>json.loads()</code>：json
+格式的字符串转换为 python 对象</h3>
+<h4 id="json-字符串表示一个字典列表">JSON 字符串表示一个字典列表</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSON 字符串表示一个列表，列表中的每个元素是一个字典</span></span><br><span class="line">s = <span class="string">&#x27;[&#123;&quot;name&quot;: &quot;张大山&quot;, &quot;age&quot;: 11&#125;, &#123;&quot;name&quot;: &quot;王大锤&quot;, &quot;age&quot;: 13&#125;, &#123;&quot;name&quot;: &quot;赵小虎&quot;, &quot;age&quot;: 16&#125;]&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.loads 将 JSON 字符串解析为 Python 对象</span></span><br><span class="line">l = json.loads(s)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(l))</span><br><span class="line"><span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(l)</span><br><span class="line"><span class="comment"># [&#123;&#x27;name&#x27;: &#x27;张大山&#x27;, &#x27;age&#x27;: 11&#125;, &#123;&#x27;name&#x27;: &#x27;王大锤&#x27;, &#x27;age&#x27;: 13&#125;, &#123;&#x27;name&#x27;: &#x27;赵小虎&#x27;, &#x27;age&#x27;: 16&#125;]</span></span><br></pre></td></tr></table></figure>
+<h4 id="json-字符串表示一个字典">JSON 字符串表示一个字典</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSON 字符串表示一个对象，类似于键值对</span></span><br><span class="line">s = <span class="string">&#x27;&#123;&quot;name&quot;: &quot;周杰轮&quot;, &quot;addr&quot;: &quot;台北&quot;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.loads 将 JSON 字符串解析为 Python 字典</span></span><br><span class="line">my_dict = json.loads(s)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(my_dict))  <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(my_dict)        <span class="comment"># &#123;&#x27;name&#x27;: &#x27;周杰轮&#x27;, &#x27;addr&#x27;: &#x27;台北&#x27;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误示例：不能直接使用 dict() 强制转换</span></span><br><span class="line"><span class="comment"># my_dict = dict(s)  # 会报错，因为 `dict()` 需要一个可迭代的键值对序列</span></span><br></pre></td></tr></table></figure>
+<h2 id="反序列化">反序列化</h2>
+<p>在反序列化时，会将 JSON 类型转化为 Python
+原始类型，下面是反序列化时数据类型转换的对照表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>JSON</th>
+<th>Python</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>object – 对象</td>
+<td>dict</td>
+</tr>
+<tr class="even">
+<td>array</td>
+<td>list – 列表</td>
+</tr>
+<tr class="odd">
+<td>string</td>
+<td>str</td>
+</tr>
+<tr class="even">
+<td>number (int)</td>
+<td>int</td>
+</tr>
+<tr class="odd">
+<td>number (real)</td>
+<td>float</td>
+</tr>
+<tr class="even">
+<td>true</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td>false</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>null</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="json.dumppython-对象转化为-json-文件"><code>json.dump()</code>：python
+对象转化为 json 文件</h3>
+<h4 id="python-对象为字典列表">python 对象为字典列表</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;张大山&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">11</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;王大锤&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">13</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;赵小虎&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">16</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;XXX.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将 Python 的字典列表写入文件，格式化为 JSON 格式</span></span><br><span class="line">    json.dump(data, f, indent=<span class="number">4</span>, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p>生成的 <code>XXX.json</code> 文件内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张大山&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">11</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;王大锤&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">13</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;赵小虎&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">16</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<h4 id="python-对象为字典">python 对象为字典</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span>,</span><br><span class="line">    <span class="string">&quot;songs&quot;</span>: [<span class="string">&quot;晴天&quot;</span>, <span class="string">&quot;青花瓷&quot;</span>, <span class="string">&quot;夜曲&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;person.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将 Python 字典写入文件</span></span><br><span class="line">    json.dump(data, f, indent=<span class="number">4</span>, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p>生成的 <code>person.json</code> 文件内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span>,</span><br><span class="line">    <span class="string">&quot;songs&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;晴天&quot;</span>,</span><br><span class="line">        <span class="string">&quot;青花瓷&quot;</span>,</span><br><span class="line">        <span class="string">&quot;夜曲&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3
+id="json.dumps-将-python-对象转换为-json-格式的字符串"><code>json.dumps()</code>
+将 python 对象转换为 <strong>JSON </strong>格式的字符串</h3>
+<h4 id="python-对象为字典列表-1">python 对象为字典列表</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;张大山&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">11</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;王大锤&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">13</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;赵小虎&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">16</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.dumps 将 Python 对象转换为 JSON 字符串</span></span><br><span class="line">json_str = json.dumps(data, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line"><span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="comment"># [&#123;&quot;name&quot;: &quot;张大山&quot;, &quot;age&quot;: 11&#125;, &#123;&quot;name&quot;: &quot;王大锤&quot;, &quot;age&quot;: 13&#125;, &#123;&quot;name&quot;: &quot;赵小虎&quot;, &quot;age&quot;: 16&#125;]</span></span><br></pre></td></tr></table></figure>
+<h4 id="python-对象为字典-1">python 对象为字典</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">d = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为 JSON 字符串</span></span><br><span class="line">json_str = json.dumps(d, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line"><span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="comment"># &#123;&quot;name&quot;: &quot;周杰轮&quot;, &quot;addr&quot;: &quot;台北&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
     
 
     
@@ -2577,7 +2630,7 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -2762,10 +2815,6 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
@@ -2774,7 +2823,7 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2782,7 +2831,23 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2794,19 +2859,7 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2822,7 +2875,7 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2830,7 +2883,7 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2870,19 +2923,19 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

@@ -10,18 +10,22 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="SFT 预训练 现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next token prediction。">
+  <meta name="description" content="SFT预训练现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next token prediction。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【SFT】">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="SFT 预训练 现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next token prediction。">
+<meta property="og:description" content="SFT预训练现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next token prediction。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534272.webp">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534363.webp">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2024-12-13T01:06:28.795Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -300,114 +304,62 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="sft">SFT</h1>
-<h2 id="预训练">预训练</h2>
-<p>现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next <a
-target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=token+prediction&amp;zhida_source=entity">token
-prediction</a>。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></p>
+    <h1 id="SFT"><a href="#SFT" class="headerlink" title="SFT"></a>SFT</h1><h2 id="预训练"><a href="#预训练" class="headerlink" title="预训练"></a>预训练</h2><p>现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=token+prediction&amp;zhida_source=entity">token prediction</a>。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" alt=""></p>
 <span id="more"></span>
 <p><strong>基础概念</strong>:</p>
 <ul>
-<li><p><strong>Token</strong>：在 NLP
-中，一个“token”可以是一个词、一个字或一个标点符号。例如，句子“我爱北京”被切分成三个
-tokens: “我”, “爱” 和 “北京”。</p></li>
-<li><p><strong>Prediction</strong>：预测是指根据模型的当前输入，猜测接下来应该出现的
-token 是什么。</p></li>
+<li><p><strong>Token</strong>：在 NLP 中，一个“token”可以是一个词、一个字或一个标点符号。例如，句子“我爱北京”被切分成三个 tokens: “我”, “爱” 和 “北京”。  </p>
+</li>
+<li><p><strong>Prediction</strong>：预测是指根据模型的当前输入，猜测接下来应该出现的 token 是什么。  </p>
+</li>
 </ul>
 <p><strong>训练</strong>：</p>
 <ul>
-<li><p>在训练过程中，模型通过大量的文本数据来学习文本之间的模式和结构。</p></li>
-<li><p>例如，模型会看到成千上万次的“我爱 X”这样的模式，其中 X
-可以是各种不同的词。通过这样的训练，模型会学会哪些词最有可能出现在“我爱”之后。</p></li>
+<li><p>在训练过程中，模型通过大量的文本数据来学习文本之间的模式和结构。  </p>
+</li>
+<li><p>例如，模型会看到成千上万次的“我爱 X”这样的模式，其中 X 可以是各种不同的词。通过这样的训练，模型会学会哪些词最有可能出现在“我爱”之后。  </p>
+</li>
 </ul>
-<p>要理解清楚这一训练过程，最主要的就是搞清楚
-<strong>预训练的数据怎么构造，数据怎么喂给模型，模型输出的是什么，以及如何计算
-loss</strong>。</p>
+<p>要理解清楚这一训练过程，最主要的就是搞清楚 <strong>预训练的数据怎么构造，数据怎么喂给模型，模型输出的是什么，以及如何计算 loss</strong>。</p>
 <p>这里通过一个完整的例子来介绍一下这个过程，假设现在有一个用来预训练的数据集</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你知道什么是预训练吗？</span><br></pre></td></tr></table></figure>
 <p>假设经过分词后</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">你：<span class="number">9</span></span><br><span class="line">知道：<span class="number">3</span></span><br><span class="line">什么：<span class="number">6</span></span><br><span class="line">是：<span class="number">4</span></span><br><span class="line">预训练：<span class="number">2</span></span><br><span class="line">吗：<span class="number">1</span></span><br><span class="line">？: <span class="number">5</span></span><br></pre></td></tr></table></figure>
-<p>原来的数据变为如下序列，后面补了三个 0（假设我们希望最大 <a
-target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=%E5%BA%8F%E5%88%97%E9%95%BF%E5%BA%A6&amp;zhida_source=entity">序列长度</a>
-是 10）</p>
+<p>原来的数据变为如下序列，后面补了三个 0（假设我们希望最大 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=%E5%BA%8F%E5%88%97%E9%95%BF%E5%BA%A6&amp;zhida_source=entity">序列长度</a> 是 10）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">9</span> <span class="number">3</span> <span class="number">6</span> <span class="number">4</span> <span class="number">2</span> <span class="number">1</span> <span class="number">5</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
-<p>预测下一个 token 就类似于 9 预测 3，93 预测
-6，以此类推，但是如果这样拆成很多个数据段其实比较低效，因此就可以考虑
-<strong>移位</strong> 来构造数据，即</p>
+<p>预测下一个 token 就类似于 9 预测 3，93 预测 6，以此类推，但是如果这样拆成很多个数据段其实比较低效，因此就可以考虑 <strong>移位</strong> 来构造数据，即</p>
 <ul>
 <li>模型输入 X 为 <code>9 3 6 4 2 1 5 0 0 0</code></li>
 <li>模型输出 targets 为 3 6 4 2 1 5 0 0 0 0</li>
 </ul>
-<p>这样就可以一次性把整条序列喂给模型，计算一次就包含了 666 个预测下一个
-token 的损失了。注意这里模型的设计是有讲究的，我们
-<strong>不能让输入看到后面的词</strong>（如果看得到的话就没必要进行预测了），也就是“你”在模型内看不到“知道”，“你
-知道”在模型内看不到“什么”，这个可以通过 <strong>注意力机制</strong>
-实现，不是本文的关注点，这里就不展开了。</p>
-<p>现在模型的输入的维度为 (1,10)(1,10)(1,10)，第一维为
-batch_size，然后经过 embedding 层后变为
-(1,10,768)(1,10,768)(1,10,768)，这里假设 embedding 的维度为 768。</p>
-<p>记住 <strong>进入 transfomer 前后数据的维度不会发生变化，把
-transfomer 当作一个黑盒</strong>，也就是 transformer(X) 的维度还是
-(1,10,768)(1,10,768)(1,10,768)，接下来就是基于它来进行预测了，因为要预测哪个词，词的可能情况就是词表的大小，所以做的就是一个
-<strong>分类任务</strong>，预测下一个 token
-是词表中的哪一个（词表中的每一个词当作一个类别）。</p>
-<p>为了完成分类任务，需要对 transformer
-的输出做一个映射，<strong>映射到跟词表一样大</strong>，也就需要定义这样一个
-线性变换</p>
+<p>这样就可以一次性把整条序列喂给模型，计算一次就包含了 666 个预测下一个 token 的损失了。注意这里模型的设计是有讲究的，我们 <strong>不能让输入看到后面的词</strong>（如果看得到的话就没必要进行预测了），也就是“你”在模型内看不到“知道”，“你 知道”在模型内看不到“什么”，这个可以通过 <strong>注意力机制</strong> 实现，不是本文的关注点，这里就不展开了。</p>
+<p>现在模型的输入的维度为 (1,10)(1,10)(1,10)，第一维为 batch_size，然后经过 embedding 层后变为 (1,10,768)(1,10,768)(1,10,768)，这里假设 embedding 的维度为 768。</p>
+<p>记住 <strong>进入 transfomer 前后数据的维度不会发生变化，把 transfomer 当作一个黑盒</strong>，也就是 transformer(X) 的维度还是 (1,10,768)(1,10,768)(1,10,768)，接下来就是基于它来进行预测了，因为要预测哪个词，词的可能情况就是词表的大小，所以做的就是一个 <strong>分类任务</strong>，预测下一个 token 是词表中的哪一个（词表中的每一个词当作一个类别）。</p>
+<p>为了完成分类任务，需要对 transformer 的输出做一个映射，<strong>映射到跟词表一样大</strong>，也就需要定义这样一个 线性变换</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">output_layer = nn.Linear(<span class="number">768</span>, vocab_size, bias = <span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
-<p>然后 <code>logits=output_layer(transformer(X))</code> 的维度就是
-<code>(1,10,vocab_size)</code>，接下来就可以计算 loss
-了，具体来说就是计算 logits（模型预测）与 targets（真实标签）之间的
-交叉熵 损失，同时忽略了填充值对应的损失。</p>
+<p>然后 <code>logits=output_layer(transformer(X))</code> 的维度就是 <code>(1,10,vocab_size)</code>，接下来就可以计算 loss 了，具体来说就是计算 logits（模型预测）与 targets（真实标签）之间的 交叉熵 损失，同时忽略了填充值对应的损失。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss = F.cross_entropy(logits.view(-<span class="number">1</span>, logits.size(-<span class="number">1</span>)), targets.view(-<span class="number">1</span>), ignore_index = <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="supervised-fine-tuning-sft">Supervised fine-tuning (SFT)</h2>
-<p>“有监督微调”意味着使用 <strong>有标签的</strong> 数据来
-<strong>微调</strong> 一个
-<strong>已预训练好的语言模型（LLM）</strong>，使其更适应某一特定任务。通常
-LLM 的预训练是无监督的，但微调过程往往是有监督的。</p>
-<p>当进行有监督微调时，模型权重
-会根据与真实标签的差异进行调整。通过这个微调过程，模型能够捕捉到
-标签数据
-中特定于某一任务的模式和特点。使得模型更加精确，更好地适应某一特定任务。</p>
-<p>以一个简单的例子来说，你有一个已经预训练好的
-LLM。当输入“我不能登录我的账号，我该怎么办？”时，它可能简单地回答：“尝试使用‘忘记密码’功能来重置你的密码。”</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534272.webp" /></p>
+<h2 id="Supervised-fine-tuning-SFT"><a href="#Supervised-fine-tuning-SFT" class="headerlink" title="Supervised fine-tuning (SFT)"></a>Supervised fine-tuning (SFT)</h2><p>“有监督微调”意味着使用 <strong>有标签的</strong> 数据来 <strong>微调</strong> 一个 <strong>已预训练好的语言模型（LLM）</strong>，使其更适应某一特定任务。通常 LLM 的预训练是无监督的，但微调过程往往是有监督的。</p>
+<p>当进行有监督微调时，模型权重 会根据与真实标签的差异进行调整。通过这个微调过程，模型能够捕捉到 标签数据 中特定于某一任务的模式和特点。使得模型更加精确，更好地适应某一特定任务。</p>
+<p>以一个简单的例子来说，你有一个已经预训练好的 LLM。当输入“我不能登录我的账号，我该怎么办？”时，它可能简单地回答：“尝试使用‘忘记密码’功能来重置你的密码。”</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534272.webp" alt=""></p>
 <p>这个回答很直接，适用于一般问题，但如果是客服场景，可能就不太合适了。一个好的客服回答应该更有同情心，并且可能不会这么直接，甚至可能包含联系信息或其他细节。这时候，有监督微调就显得非常重要了。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534363.webp" /></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534363.webp" alt=""></p>
 <p>经过有监督微调后，你的模型可以提供更加符合特定指导原则的答案。例如，经过一系列专业的培训示例后，你的模型可以更有同情心地回答客服问题。</p>
-<p>接下来我们还是从数据到模型输出，计算 loss 的步骤来看看 SFT
-的实现原理。</p>
-<p>首先还是来看看数据怎么构造，SFT 的每一条样本一般由两部分组成，也就是
-prompt（instruction）+ answer，比如：</p>
+<p>接下来我们还是从数据到模型输出，计算 loss 的步骤来看看 SFT 的实现原理。</p>
+<p>首先还是来看看数据怎么构造，SFT 的每一条样本一般由两部分组成，也就是 prompt（instruction）+ answer，比如：</p>
 <ul>
-<li><p>prompt: <code>翻译以下句子：What is pretrain</code></p></li>
-<li><p>answer: <code>什么是预训练</code></p></li>
+<li><p>prompt: <code>翻译以下句子：What is pretrain</code>  </p>
+</li>
+<li><p>answer: <code>什么是预训练</code>  </p>
+</li>
 </ul>
-<p>也就是我们要给模型提供一些类似于问答形式的答案来学习，有了前面预训练的经验后，SFT
-其实就很好理解的，它本质上也在做 <a
-target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=next+token&amp;zhida_source=entity">next
-token</a> prediction，只是我们更希望模型关注 answer
-部分的预测，这可以通过生成一个 <code>mask</code> 向量来屏蔽不希望计算
-loss 的部分，下面就是数据构造的一个示意：做的事情就是拼接 prompt 和
-answer，并在 answer 两侧添加一个开始和结束的符号，算一下 <a
-target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=4&amp;q=prompt&amp;zhida_source=entity">prompt</a>/instruction
-的长度，以及后面需要 pad 的长度，然后生成一个 mask 向量，answer 部分为
-1，其他部分为 0。</p>
+<p>也就是我们要给模型提供一些类似于问答形式的答案来学习，有了前面预训练的经验后，SFT 其实就很好理解的，它本质上也在做 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=next+token&amp;zhida_source=entity">next token</a> prediction，只是我们更希望模型关注 answer 部分的预测，这可以通过生成一个 <code>mask</code> 向量来屏蔽不希望计算 loss 的部分，下面就是数据构造的一个示意：做的事情就是拼接 prompt 和 answer，并在 answer 两侧添加一个开始和结束的符号，算一下 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=4&amp;q=prompt&amp;zhida_source=entity">prompt</a>/instruction 的长度，以及后面需要 pad 的长度，然后生成一个 mask 向量，answer 部分为 1，其他部分为 0。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_id = prompt + [bos] + answer + [eos]</span><br><span class="line">context_length = input_id.index(bos)</span><br><span class="line">mask_position = context_length - <span class="number">1</span></span><br><span class="line">pad_len = max_length - <span class="built_in">len</span>(input_id)</span><br><span class="line">input_id = input_id + [pad] * pad_len</span><br><span class="line">loss_mask = [<span class="number">0</span>] * context_length + [<span class="number">1</span>] * (<span class="built_in">len</span>(input_id[mask_position + <span class="number">1</span> : ])) + [<span class="number">0</span>] * pad_len</span><br></pre></td></tr></table></figure>
-<p>构造好输入后，<strong>token 转为 embedding，经过 transformer
-的过程跟之前预训练完全一样</strong>，也就是我们又得到了一个维度是
-<code>(1,10,vocab_size)</code> 的输出
-<code>logits=output_layer(transformer(X))</code>，进一步就可以
-<strong>计算 answer 部分的 loss</strong> 了，其实就是通过 mask
-把不希望考虑的地方乘以 0，保留 answer 部分 loss</p>
+<p>构造好输入后，<strong>token 转为 embedding，经过 transformer 的过程跟之前预训练完全一样</strong>，也就是我们又得到了一个维度是 <code>(1,10,vocab_size)</code> 的输出 <code>logits=output_layer(transformer(X))</code>，进一步就可以 <strong>计算 answer 部分的 loss</strong> 了，其实就是通过 mask 把不希望考虑的地方乘以 0，保留 answer 部分 loss</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loss = F.cross_entropy(logits.view(-<span class="number">1</span>, logits.size(-<span class="number">1</span>)), Y.view(-<span class="number">1</span>), ignore_index = <span class="number">0</span>,reduce = <span class="literal">False</span>)</span><br><span class="line">loss_mask = loss_mask.view(-<span class="number">1</span>)</span><br><span class="line">loss = torch.<span class="built_in">sum</span>(loss * loss_mask) / loss_mask.<span class="built_in">sum</span>()	<span class="comment"># loss_mask.sum() 相当于 batch_size()</span></span><br></pre></td></tr></table></figure>
-<p>有了 loss，进行 <a
-target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD&amp;zhida_source=entity">反向传播</a>
-更新模型参数就 OK 啦。</p>
+<p>有了 loss，进行 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD&amp;zhida_source=entity">反向传播</a> 更新模型参数就 OK 啦。</p>
 
     
 
@@ -547,18 +499,18 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/LLM%20Notation/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          LLM Notation
+          top@k
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Qwen2.5-math</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -585,7 +537,7 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sft"><span class="toc-number">1.</span> <span class="toc-text">SFT</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="toc-number">1.1.</span> <span class="toc-text">预训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#supervised-fine-tuning-sft"><span class="toc-number">1.2.</span> <span class="toc-text">Supervised fine-tuning (SFT)</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SFT"><span class="toc-number">1.</span> <span class="toc-text">SFT</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="toc-number">1.1.</span> <span class="toc-text">预训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Supervised-fine-tuning-SFT"><span class="toc-number">1.2.</span> <span class="toc-text">Supervised fine-tuning (SFT)</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -768,11 +720,11 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -784,19 +736,11 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -812,7 +756,23 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -821,14 +781,6 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -856,6 +808,10 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
@@ -864,7 +820,7 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -873,10 +829,6 @@ target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=2
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">

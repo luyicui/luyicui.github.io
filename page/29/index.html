@@ -252,7 +252,7 @@
 
   
     
-      <article id="post-命令操作/【Linux】/tutorial/4.ssh和scp" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Linux】/shell/在bash脚本中引入alias" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -260,7 +260,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/4.ssh%E5%92%8Cscp/" target="_blank">4.ssh</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/shell/%E5%9C%A8bash%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BC%95%E5%85%A5alias/" target="_blank">在 bash 脚本中引入 alias</a>
   
     </h1>
   
@@ -268,7 +268,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/4.ssh%E5%92%8Cscp/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/shell/%E5%9C%A8bash%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BC%95%E5%85%A5alias/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -281,24 +281,198 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="ssh和scp">4.ssh和scp</h1>
-<h2 id="ssh-登录">ssh 登录</h2>
-<h3 id="基本用法">基本用法</h3>
-<p>远程登录服务器：</p>
-<p><code>ssh user@hostname</code></p>
+    <h1 id="在-bash-脚本中引入-alias">在 bash 脚本中引入 alias</h1>
+<h2 id="alias-的使用">alias 的使用</h2>
+<p>在日常开发中，为了提高运维效率，我们会用
+alias（命令别名）来定义命令的简称。比如在 <code>~/.bashrc</code>
+中添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -lrt --color&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> bdebug=<span class="string">&quot;go build -gcflags &#x27;-N -l&#x27;&quot;</span></span><br><span class="line"><span class="built_in">alias</span> py3=<span class="string">&#x27;/usr/bin/python3&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>执行 <code>source ~/.bashrc</code> 之后，这些 alias
+定义便载入到当前终端环境中，我们可以通过 <code>alias &lt;cmd&gt;</code>
+进行查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> ll </span><br><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -alF&#x27;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">alias</span> hfd</span><br><span class="line"><span class="built_in">alias</span> hfd=<span class="string">&#x27;/data/cuiluyi/.cache/huggingface/hub/hfd.sh&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有别名命令</span></span><br><span class="line">$ <span class="built_in">alias</span></span><br><span class="line"><span class="built_in">alias</span> alert=<span class="string">&#x27;notify-send --urgency=low -i &quot;$([ $? = 0 ] &amp;&amp; echo terminal || echo error)&quot; &quot;$(history|tail -n1|sed -e &#x27;</span>\<span class="string">&#x27;&#x27;</span>s/^\s*[0-9]\+\s*//;s/[;&amp;|]\s*alert$//<span class="string">&#x27;\&#x27;</span><span class="string">&#x27;)&quot;&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> egrep=<span class="string">&#x27;egrep --color=auto&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> fgrep=<span class="string">&#x27;fgrep --color=auto&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> grep=<span class="string">&#x27;grep --color=auto&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> hfd=<span class="string">&#x27;/data/cuiluyi/.cache/huggingface/hub/hfd.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> l=<span class="string">&#x27;ls -CF&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> la=<span class="string">&#x27;ls -A&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -alF&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">ls</span>=<span class="string">&#x27;ls --color=auto&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在命令行执行 alias 也能看到预期效果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ll </span><br><span class="line">total 44</span><br><span class="line">-rw-rw-r-- 1 liyang liyang   62 Sep 16 09:38 test.c</span><br><span class="line">-rw-rw-r-- 1 liyang liyang   68 Sep 16 09:38 foo.h</span><br><span class="line">-rw-rw-r-- 1 liyang liyang   74 Sep 16 09:38 foo.c</span><br><span class="line">-rwxrwxr-x 1 liyang liyang 8592 Sep 16 09:44 libfoo.so</span><br><span class="line">-rw-rw-r-- 1 liyang liyang 4347 Sep 16 09:44 o23.s</span><br><span class="line">-rwxrwxr-x 1 liyang liyang 9451 Sep 16 09:45 <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<h2 id="交互式非交互式-shell">交互式&amp;&amp;非交互式 Shell</h2>
+<p>Linux shell 有 <strong>交互式</strong> 与 <strong>非交互式</strong>
+两种工作模式：</p>
 <ul>
-<li><p><code>user</code>：用户名</p></li>
-<li><p><code>hostname</code>：IP 地址或域名</p></li>
+<li>我们日常使用 shell 输入命令得到结果的方式是 <strong>交互式</strong>
+工作模式</li>
+<li>而 shell 脚本 Bash 使用的是非交互式工作模式</li>
 </ul>
-<p>第一次登录时会提示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The authenticity of host &#x27;123.57.47.211 (123.57.47.211)&#x27; can&#x27;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:iy237yysfCe013/l+kpDGfEG9xxHxm0dnxnAbJTPpG8.</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])?</span><br></pre></td></tr></table></figure>
-<p>输入<code>yes</code>，然后回车即可。这样会将该服务器的信息记录在<code>~/.ssh/known_hosts</code>文件中。然后输入密码即可登录到远程服务器中</p>
-<p>输入<code>logout</code>命令可以退出当前服务器，或者直接使用快捷键
-<code>Ctrl + d</code></p>
-<p>默认登录端口号为<code>22</code>，如果想登录某一特定端口：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@hostname -p 22</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="在-bash-脚本中引入-alias-的问题">在 Bash 脚本中引入 alias
+的问题</h2>
+<p>shell 提供了 alias
+功能来简化我们的日常操作，使得我们可以为一个复杂的命令取一个简单的名字，从而提高我们的工作效率。</p>
+<ul>
+<li><p>在交互式模式下，shell 的 alias
+扩展功能是打开的，因此我们可以键入自己定义的 alias
+别名来执行对应的命令。</p></li>
+<li><p>但是，在非交互式模式下 alias
+扩展功能默认是关闭的，此时仍然可以定义 alias 别名，但是 shell 不会将
+alias 别名扩展成对应的命令，而是将 alias 别名本身当作命令执行，如果
+shell 内置命令和 PATH 中均没有与 alias 别名同名的命令，则 shell
+会“抱怨”找不到指定的命令。</p></li>
+</ul>
+<h3 id="在-bash-中临时定义-alias">在 Bash 中临时定义 alias</h3>
+<p>那么，有没有办法在非交互式模式下启用 alias 扩展呢？答案是使用 shell
+内置命令 shopt 命令来开启 alias 扩展选项。shopt 是 shell
+的内置命令，可以控制 shell 功能选项的开启和关闭，从而控制 shell
+的行为。shopt 的使用方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">shopt</span> -s opt_name                 Enable (<span class="built_in">set</span>) opt_name.</span><br><span class="line"><span class="built_in">shopt</span> -u opt_name                 Disable (<span class="built_in">unset</span>) opt_name.</span><br><span class="line"><span class="built_in">shopt</span> opt_name                    Show current status of opt_name.</span><br></pre></td></tr></table></figure>
+<p>alias 扩展功能的选项名称是
+<code>expand_aliases</code>，我们可以在交互式模式下使用
+<code>shopt expand_aliases</code> 命令查看此选项是否开启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cuiluyi@g156:~$ <span class="built_in">shopt</span> expand_aliases</span><br><span class="line">expand_aliases  on</span><br></pre></td></tr></table></figure>
+<p>可见在交互式模式下 alias 扩展功能的确是开启的，因此我们才能使用 alias
+别名。</p>
+<p>我们编写一个脚本来验证一下非交互式模式下 alias 扩展的设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">alias</span> echo_hello=<span class="string">&quot;echo Hello!&quot;</span></span><br><span class="line"><span class="built_in">shopt</span> expand_aliases  </span><br><span class="line">echo_hello</span><br><span class="line"></span><br><span class="line"><span class="built_in">shopt</span> -s  expand_aliases </span><br><span class="line"><span class="built_in">shopt</span> expand_aliases  </span><br><span class="line">echo_hello</span><br></pre></td></tr></table></figure>
+<p>脚本执行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cuiluyi@g156:~$ ./test.sh</span><br><span class="line">expand_aliases  off</span><br><span class="line">./test.sh: line 5: echo_hello: <span class="built_in">command</span> not found</span><br><span class="line">expand_aliases  on</span><br><span class="line">Hello!</span><br></pre></td></tr></table></figure>
+<p>可以看到，在非交互式模式下 alias 扩展功能默认是关闭的，但是我们可以用
+<code>shopt -s  expand_aliases</code> 来将其开启。</p>
+<h3 id="将-.bashrc-中的-alias-引入-bash-脚本中">将
+<code>~/.bashrc</code> 中的 alias 引入 Bash 脚本中</h3>
+<p>另外，alias 别名只在当前 shell 有效，不能被子 shell
+继承，也不能像环境变量一样 export。可以把 alias 别名定义写在
+<code>.bashrc</code> 文件中，这样如果启动交互式的子 shell，则子 shell
+会读取。bashrc，从而得到 alias 别名定义。但是执行 shell 脚本时，启动的子
+shell 处于非交互式模式，是不会读取 <code>.bashrc</code> 的。</p>
+<p>但是有些时候，我们希望将 <code>~/.bashrc</code> 中定义好的 alias 引入
+Bash 脚本中，以便简化命令。例如</p>
+<p>脚本文件 test.sh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">ll</span><br></pre></td></tr></table></figure>
+<p>执行 test.sh 文件却会报错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ bash test.sh </span><br><span class="line">test.sh: line 2: ll: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+<p>不过，如果你一定要让执行 shell 脚本的子 shell 读取。bashrc
+的话，可以给 shell 脚本第一行的解释器加上参数 <code>-i</code>
+修改为非交互式 shell，执行 test.sh 文件正确运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -i</span></span><br><span class="line">ll</span><br></pre></td></tr></table></figure>
+<h3 id="举例">举例</h3>
+<p>以 HuggingFace 下载模型的脚本 bash 为例</p>
+<ul>
+<li>写法 1：不使用别名</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">~/.cache/huggingface/hub/hfd.sh Qwen/Qwen2.5-Math-7B-Instruct --local-dir ~/openr/models/Qwen/Qwen2.5-Math-7B-Instruct</span><br></pre></td></tr></table></figure>
+<ul>
+<li>写法 2：临时定义 alias 别名</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">alias</span> hfd=<span class="string">&quot;~/.cache/huggingface/hub/hfd.sh&quot;</span></span><br><span class="line"><span class="built_in">shopt</span> -s  expand_aliases</span><br><span class="line"></span><br><span class="line">hfd Qwen/Qwen2.5-Math-7B-Instruct --local-dir ~/openr/models/Qwen/Qwen2.5-Math-7B-Instruct</span><br></pre></td></tr></table></figure>
+<ul>
+<li>写法 3：在第一行增加 <code>-i</code> 选项</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -i</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># alias hfd=&quot;~/.cache/huggingface/hub/hfd.sh&quot; 已经添加到 ~/.bashrc 文件中</span></span><br><span class="line"></span><br><span class="line">hfd Qwen/Qwen2.5-Math-7B-Instruct --local-dir ~/openr/models/Qwen/Qwen2.5-Math-7B-Instruct</span><br></pre></td></tr></table></figure>
+
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/4.ssh%E5%92%8Cscp/#more">more >></a>
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shell</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/shell/%E5%9C%A8bash%E8%84%9A%E6%9C%AC%E4%B8%AD%E5%BC%95%E5%85%A5alias/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-命令操作/【Linux】/tutorial/2.tmux和vim" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/2.tmux%E5%92%8Cvim/" target="_blank">2.tmux 和 vim</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/2.tmux%E5%92%8Cvim/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="tmux-和-vim">2.tmux 和 vim</h1>
+<h2 id="tmux-教程">tmux 教程</h2>
+<h3 id="功能">功能</h3>
+<ol type="1">
+<li>分屏</li>
+<li>允许断开<code>Terminal</code>连接后，继续运行进程</li>
+</ol>
+<h3 id="结构">结构</h3>
+<p>在使用 tmux 之前我们先了解关于 tmux 的几个名词：</p>
+<ul>
+<li><code>session</code>，会话（任务）</li>
+<li><code>windows</code>，窗口</li>
+<li><code>pane</code>，窗格</li>
+</ul>
+<p><strong>一个<code>tmux</code>可以包含多个<code>session</code>，一个<code>session</code>可以包含多个<code>window</code>，一个<code>window</code>可以包含多个<code>pane</code></strong>。实例如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">tmux：</span><br><span class="line">    session 0：</span><br><span class="line">        window 0：</span><br><span class="line">            pane 0</span><br><span class="line">            pane 1</span><br><span class="line">            pane 2</span><br><span class="line">            ...</span><br><span class="line">        window 1</span><br><span class="line">        window 2</span><br><span class="line">        ...</span><br><span class="line">    session 1</span><br><span class="line">    session 2</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一般<strong>有多个session，每个session里面就放一个window，一个window有多个pane</strong></p>
+</blockquote>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412071110910.png" /></p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/2.tmux%E5%92%8Cvim/#more">more >></a>
     
     
 
@@ -325,7 +499,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/4.ssh%E5%92%8Cscp/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/tutorial/2.tmux%E5%92%8Cvim/">展开全文 >></a>
     </p>
     
 
@@ -556,6 +730,94 @@ target="_blank" rel="noopener" href="https://git.acwing.com/yxc/thrift_lesson">�
 
 
     
+      <article id="post-【前端】/js/tutorial/11 常用库/11.10 canvas" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/" target="_blank">11.10 canvas</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="canvas">11.10 canvas</h1>
+<p><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial">canvas教程</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【前端】/js/tutorial/11 常用库/11.1 jQuery" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -655,7 +917,7 @@ target="_blank" rel="noopener" href="https://jquery.com/download/">jQuery官网<
 
 
     
-      <article id="post-【前端】/js/tutorial/11 常用库/11.10 canvas" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【前端】/js/tutorial/11 常用库/11.3 requestAnimationFrame" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -663,7 +925,7 @@ target="_blank" rel="noopener" href="https://jquery.com/download/">jQuery官网<
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/" target="_blank">11.10 canvas</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/" target="_blank">11.3 requestAnimationFrame</a>
   
     </h1>
   
@@ -671,7 +933,7 @@ target="_blank" rel="noopener" href="https://jquery.com/download/">jQuery官网<
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -684,9 +946,19 @@ target="_blank" rel="noopener" href="https://jquery.com/download/">jQuery官网<
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="canvas">11.10 canvas</h1>
-<p><a
-target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial">canvas教程</a></p>
+    <h1 id="requestanimationframe">11.3 requestAnimationFrame</h1>
+<h2
+id="requestanimationframefunc"><code>requestAnimationFrame(func)</code></h2>
+<p>该函数会在下次浏览器刷新页面之前执行一次，通常会用递归写法使其每秒执行60次<code>func</code>函数。调用时会传入一个参数，表示函数执行的时间戳，单位为毫秒。</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title function_">step</span> = (<span class="params">timestamp</span>) =&gt; &#123;  <span class="comment">// 每帧将div的宽度增加1像素</span></span><br><span class="line">    <span class="keyword">let</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">    div.<span class="property">style</span>.<span class="property">width</span> = div.<span class="property">clientWidth</span> + <span class="number">1</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(step);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">requestAnimationFrame</span>(step);</span><br></pre></td></tr></table></figure>
+<h2
+id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>setInterval</code>的区别：</h2>
+<ul>
+<li><code>requestAnimationFrame</code>渲染动画的效果更好，性能更加。
+该函数可以保证每两次调用之间的时间间隔相同，但<code>setTimeout</code>与<code>setInterval</code>不能保证这点。<code>setTmeout</code>两次调用之间的间隔包含回调函数的执行时间；<code>setInterval</code>只能保证按固定时间间隔将回调函数压入栈中，但具体的执行时间间隔仍然受回调函数的执行时间影响。</li>
+<li>当页面在后台时，因为页面不再渲染，因此<code>requestAnimationFrame</code>不再执行。但<code>setTimeout</code>与<code>setInterval</code>函数会继续执行。</li>
+</ul>
 
     
 
@@ -713,7 +985,7 @@ target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/We
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.10%20canvas/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/">展开全文 >></a>
     </p>
     
 
@@ -812,104 +1084,6 @@ id="setintervalfunc-delay"><code>setInterval(func, delay)</code></h2>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.2%20setTimeout%E4%B8%8EsetInterval/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【前端】/js/tutorial/11 常用库/11.3 requestAnimationFrame" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/" target="_blank">11.3 requestAnimationFrame</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="requestanimationframe">11.3 requestAnimationFrame</h1>
-<h2
-id="requestanimationframefunc"><code>requestAnimationFrame(func)</code></h2>
-<p>该函数会在下次浏览器刷新页面之前执行一次，通常会用递归写法使其每秒执行60次<code>func</code>函数。调用时会传入一个参数，表示函数执行的时间戳，单位为毫秒。</p>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title function_">step</span> = (<span class="params">timestamp</span>) =&gt; &#123;  <span class="comment">// 每帧将div的宽度增加1像素</span></span><br><span class="line">    <span class="keyword">let</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">    div.<span class="property">style</span>.<span class="property">width</span> = div.<span class="property">clientWidth</span> + <span class="number">1</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(step);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">requestAnimationFrame</span>(step);</span><br></pre></td></tr></table></figure>
-<h2
-id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>setInterval</code>的区别：</h2>
-<ul>
-<li><code>requestAnimationFrame</code>渲染动画的效果更好，性能更加。
-该函数可以保证每两次调用之间的时间间隔相同，但<code>setTimeout</code>与<code>setInterval</code>不能保证这点。<code>setTmeout</code>两次调用之间的间隔包含回调函数的执行时间；<code>setInterval</code>只能保证按固定时间间隔将回调函数压入栈中，但具体的执行时间间隔仍然受回调函数的执行时间影响。</li>
-<li>当页面在后台时，因为页面不再渲染，因此<code>requestAnimationFrame</code>不再执行。但<code>setTimeout</code>与<code>setInterval</code>函数会继续执行。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.3%20requestAnimationFrame/">展开全文 >></a>
     </p>
     
 
@@ -1147,98 +1321,6 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
 
 
     
-      <article id="post-【前端】/js/tutorial/11 常用库/11.6 JSON" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.6%20JSON/" target="_blank">11.6 JSON</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.6%20JSON/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="json">11.6 JSON</h1>
-<p>JSON对象用于序列化对象、数组、数值、字符串、布尔值和<code>null</code>。</p>
-<p>常用API：</p>
-<ul>
-<li><code>JSON.parse()</code>：将字符串解析成对象</li>
-<li><code>JSON.stringify()</code>：将对象转化为字符串</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/11.6%20JSON/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
     
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/28/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/38/">38</a><a class="extend next" rel="next" href="/page/30/">Next &amp;raquo;</a>
@@ -1414,11 +1496,11 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1430,11 +1512,11 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1442,15 +1524,15 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1490,7 +1572,7 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1498,11 +1580,15 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1511,10 +1597,6 @@ id="与settimeout和setinterval的区别">与<code>setTimeout</code>和<code>set
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

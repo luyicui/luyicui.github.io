@@ -10,20 +10,30 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="RL 与 LLM 结合   【RLHF】RL 究竟是如何与 LLM 做结合的？   RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM 结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language Model（GPT）的概念，而做 NLP 的同学又不太了解 RL 是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的">
+  <meta name="description" content="RL 与 LLM 结合  RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM 结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language Model（GPT）的概念，而做 NLP 的同学又不太了解 RL 是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的一些概念，并分析 RL 中的「序列决策」是如何作用到 LM 中的「句子生成」任">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RL与LLM结合">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/LLM/RL%E4%B8%8ELLM%E7%BB%93%E5%90%88/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="RL 与 LLM 结合   【RLHF】RL 究竟是如何与 LLM 做结合的？   RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM 结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language Model（GPT）的概念，而做 NLP 的同学又不太了解 RL 是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的">
+<meta property="og:description" content="RL 与 LLM 结合  RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM 结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language Model（GPT）的概念，而做 NLP 的同学又不太了解 RL 是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的一些概念，并分析 RL 中的「序列决策」是如何作用到 LM 中的「句子生成」任">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150095.png">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150747.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151955.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151923.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151834.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151253.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151492.jpeg">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-3eb287458d7bc6398f87d816fadf953d_1440w.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151056.jpeg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152574.png">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152681.jpeg">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2024-11-18T03:52:30.607Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="LLM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150747.jpeg">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150095.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -91,7 +101,7 @@
       <div align="center">
         
         <div class="tag-cloud">
-          <a href="/tags/AI/" style="font-size: 17px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 17px;">Anaconda</a> <a href="/tags/C/" style="font-size: 23.67px;">C++</a> <a href="/tags/GitHub/" style="font-size: 19px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 23px;">LLM</a> <a href="/tags/Linux/" style="font-size: 20.33px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.33px;">OpenAI</a> <a href="/tags/STL/" style="font-size: 20.33px;">STL</a> <a href="/tags/css/" style="font-size: 21.67px;">css</a> <a href="/tags/git/" style="font-size: 17.67px;">git</a> <a href="/tags/gradio/" style="font-size: 16.33px;">gradio</a> <a href="/tags/html/" style="font-size: 19.67px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.33px;">huggingface</a> <a href="/tags/js/" style="font-size: 24.33px;">js</a> <a href="/tags/numpy/" style="font-size: 18.33px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.67px;">ollama</a> <a href="/tags/others/" style="font-size: 17.67px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 24.33px;">pytorch</a> <a href="/tags/shell/" style="font-size: 16.33px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/transformers/" style="font-size: 17px;">transformers</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 18.33px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 19.67px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 21px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.67px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 21.67px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 16.33px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 22.33px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 18.33px;">计算机网络</a>
+          <a href="/tags/AI/" style="font-size: 16.88px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 16.88px;">Anaconda</a> <a href="/tags/C/" style="font-size: 23.75px;">C++</a> <a href="/tags/GitHub/" style="font-size: 19.38px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 23.13px;">LLM</a> <a href="/tags/Linux/" style="font-size: 20.63px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.25px;">OpenAI</a> <a href="/tags/Others/" style="font-size: 16.25px;">Others</a> <a href="/tags/STL/" style="font-size: 20.63px;">STL</a> <a href="/tags/css/" style="font-size: 21.88px;">css</a> <a href="/tags/git/" style="font-size: 17.5px;">git</a> <a href="/tags/gradio/" style="font-size: 16.25px;">gradio</a> <a href="/tags/html/" style="font-size: 20px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.25px;">huggingface</a> <a href="/tags/js/" style="font-size: 24.38px;">js</a> <a href="/tags/numpy/" style="font-size: 18.75px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.63px;">ollama</a> <a href="/tags/others/" style="font-size: 18.13px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 24.38px;">pytorch</a> <a href="/tags/shell/" style="font-size: 16.25px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15px;">sklearn</a> <a href="/tags/transformers/" style="font-size: 16.88px;">transformers</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 18.75px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 20px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 21.25px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.63px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 21.88px;">数据结构</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 16.25px;">生活</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 22.5px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 18.75px;">计算机网络</a>
         </div>
         
       </div>
@@ -302,236 +312,120 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="rl-与-llm-结合">RL 与 LLM 结合</h1>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150095.png"
-alt="【RLHF】RL 究竟是如何与 LLM 做结合的？" />
-<figcaption aria-hidden="true">【RLHF】RL 究竟是如何与 LLM
-做结合的？</figcaption>
-</figure>
+    <h1 id="RL-与-LLM-结合"><a href="#RL-与-LLM-结合" class="headerlink" title="RL 与 LLM 结合"></a>RL 与 LLM 结合</h1><p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150095.png" alt="【RLHF】RL 究竟是如何与 LLM 做结合的？"></p>
 <blockquote>
-<p>RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM
-结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language
-Model（GPT）的概念，而做 NLP 的同学又不太了解 RL
-是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的一些概念，并分析
-RL 中的「序列决策」是如何作用到 LM
-中的「句子生成」任务中的，希望可以帮助只熟悉 NLP 或只熟悉 RL
-的同学更快理解 RLHF 的概念。</p>
+<p>RLHF 想必今天大家都不陌生，但在 ChatGPT 问世之前，将 RL 和 LM 结合起来的任务非常少见。这就导致此前大多做 RL 的同学不熟悉 Language Model（GPT）的概念，而做 NLP 的同学又不太了解 RL 是如何优化的。在这篇文章中，我们将简单介绍 LM 和 RL 中的一些概念，并分析 RL 中的「序列决策」是如何作用到 LM 中的「句子生成」任务中的，希望可以帮助只熟悉 NLP 或只熟悉 RL 的同学更快理解 RLHF 的概念。</p>
 </blockquote>
 <span id="more"></span>
-<h2 id="rl-policy-based-value-based">RL: Policy-Based &amp; Value
-Based</h2>
-<p>强化学习（Reinforcement Learning,
-RL）的核心概念可简单概括为：一个机器人（Agent）在看到了一些信息（Observation）后，自己做出一个决策（Action），随即根据采取决策后得到的反馈（Reward）来进行自我学习（Learning）的过程。</p>
+<h2 id="RL-Policy-Based-amp-Value-Based"><a href="#RL-Policy-Based-amp-Value-Based" class="headerlink" title="RL: Policy-Based &amp; Value Based"></a>RL: Policy-Based &amp; Value Based</h2><p>强化学习（Reinforcement Learning, RL）的核心概念可简单概括为：一个机器人（Agent）在看到了一些信息（Observation）后，自己做出一个决策（Action），随即根据采取决策后得到的反馈（Reward）来进行自我学习（Learning）的过程。</p>
 <p>光看概念或许有些抽象，我们举个例子：现在有一个机器人找钻石的游戏，机器人每次可以选择走到相邻的格子，如果碰到火焰会被烧死，如果碰到钻石则通关。</p>
 <p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181150747.jpeg" alt="img" style="zoom:33%;" /></p>
 <p>机器人找钻石的例子：碰到火焰则会被烧死</p>
 <p>在这个游戏中，机器人（Agent）会根据当前自己的所在位置（Observation），做出一次行为选择（Action）：</p>
-<ol type="1">
-<li><p>如果它此时选择「往上走」，则会碰到火焰，此时会得到一个来自游戏的负反馈（Reward），于是机器人会根据当前的反馈进行学习（Learning），总结出「在当前的位置」「往上走」是一次错误的决策。</p></li>
-<li><p>如果它此时选择「向右走」，则不会碰到火焰，并且因为离钻石目标更近了一步，此时会得到一个来自游戏的正反馈（Reward），于是机器人会根据当前的反馈进行学习（Learning），总结出「在当前位置」「往右走」是一次相对安全的决策。</p></li>
+<ol>
+<li><p>如果它此时选择「往上走」，则会碰到火焰，此时会得到一个来自游戏的负反馈（Reward），于是机器人会根据当前的反馈进行学习（Learning），总结出「在当前的位置」「往上走」是一次错误的决策。</p>
+</li>
+<li><p>如果它此时选择「向右走」，则不会碰到火焰，并且因为离钻石目标更近了一步，此时会得到一个来自游戏的正反馈（Reward），于是机器人会根据当前的反馈进行学习（Learning），总结出「在当前位置」「往右走」是一次相对安全的决策。</p>
+</li>
 </ol>
-<p>通过这个例子我们可以看出，RL
-的最终目标其实就是要让机器人（Agent）学会：<strong>在一个给定「状态」下，选择哪一个「行为」是最优的。</strong></p>
+<p>通过这个例子我们可以看出，RL 的最终目标其实就是要让机器人（Agent）学会：<strong>在一个给定「状态」下，选择哪一个「行为」是最优的。</strong></p>
 <p>一种很直觉的思路就是：我们让机器人不断的去玩游戏，当它每次选择一个行为后，如果这个行为得到了「正奖励」，那么下次就多选择这个行为；如果选择行为得到了「负惩罚」，那么下次就少选择这个行为。</p>
-<p>为了实现「多选择得分高的行为，少选择得分低的行为」，早期存在 2
-种不同的流派：Policy Based 和 Value Based。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151955.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p>为了实现「多选择得分高的行为，少选择得分低的行为」，早期存在 2 种不同的流派：Policy Based 和 Value Based。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151955.jpeg" alt="img"></p>
 <p>Policy Based 将行为量化为概率；Value Based 将行为量化为值</p>
-<p>其实简单来说，这 2
-种流派的最大区别就是在于将行为量化为「概率」还是「值」，具体来讲：</p>
-<ol type="1">
-<li><p><strong>Policy Based：</strong> 将每一个行为量化为
-<strong>「概率分布」</strong>
-，在训练的时候，好行为的概率值将被不断提高（向右走，0.9），差行为的概率将被不断降低（向上走，0.1）。当机器人在进行行为选择的时候，就会按照当前的概率分布进行采样，这样就实现了「多选择得分高的行为，少选择得分低的行为」。</p></li>
-<li><p><strong>Value Based：</strong> 将每一个行为量化为
-<strong>「值」</strong>
-，在训练的时候，好行为的行为值将被不断提高（向右走，1
-分），差行为的行为值将被不断降低（向上走，-1）。当机器人在进行行为选择的时候会选择「行为值最大的动作」，这样也实现了「多选择得分高的行为，少选择得分低的行为」。</p></li>
+<p>其实简单来说，这 2 种流派的最大区别就是在于将行为量化为「概率」还是「值」，具体来讲：</p>
+<ol>
+<li><p><strong>Policy Based：</strong> 将每一个行为量化为 <strong>「概率分布」</strong> ，在训练的时候，好行为的概率值将被不断提高（向右走，0.9），差行为的概率将被不断降低（向上走，0.1）。当机器人在进行行为选择的时候，就会按照当前的概率分布进行采样，这样就实现了「多选择得分高的行为，少选择得分低的行为」。</p>
+</li>
+<li><p><strong>Value Based：</strong> 将每一个行为量化为 <strong>「值」</strong> ，在训练的时候，好行为的行为值将被不断提高（向右走，1 分），差行为的行为值将被不断降低（向上走，-1）。当机器人在进行行为选择的时候会选择「行为值最大的动作」，这样也实现了「多选择得分高的行为，少选择得分低的行为」。</p>
+</li>
 </ol>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151923.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151923.jpeg" alt="img"></p>
 <p>两种策略输入一样，只是输出的形式不一样（概率 v.s. 值）</p>
-<p>关于这 2
-种流派的更多训练细节在这里就不再展开，如果感兴趣可以看看比较出名的代表算法：[Policy
-Gradient]（Policy Based）和 [Q-Learning]（Value Based）。</p>
-<p>讲到这里，我们可以思考一下，Language Model（GPT）是属于 Policy Based
-还是 Value Based ？</p>
+<p>关于这 2 种流派的更多训练细节在这里就不再展开，如果感兴趣可以看看比较出名的代表算法：[Policy Gradient]（Policy Based）和 [Q-Learning]（Value Based）。</p>
+<p>讲到这里，我们可以思考一下，Language Model（GPT）是属于 Policy Based 还是 Value Based ？</p>
 <p>为了弄明白这个问题，我们下面一起看看 GPT 是怎么工作的。</p>
-<h2
-id="language-modelgpt是一种-policy-based-还是一种-value-based">Language
-Model（GPT）是一种 Policy Based 还是一种 Value Based？</h2>
-<p>GPT 是一种 Next Token
-Prediction（NTP），即：给定一段话的前提下，预测这段话的下一个字是什么。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151834.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<h2 id="Language-Model（GPT）是一种-Policy-Based-还是一种-Value-Based？"><a href="#Language-Model（GPT）是一种-Policy-Based-还是一种-Value-Based？" class="headerlink" title="Language Model（GPT）是一种 Policy Based 还是一种 Value Based？"></a>Language Model（GPT）是一种 Policy Based 还是一种 Value Based？</h2><p>GPT 是一种 Next Token Prediction（NTP），即：给定一段话的前提下，预测这段话的下一个字是什么。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151834.jpeg" alt="img"></p>
 <p>GPT 工作原理（Next Token Prediction，NTP）</p>
-<p>而 GPT
-在进行「下一个字预测」的时候，会计算出所有汉字可能出现的概率，并根据这个概率进行采样。</p>
-<p>在这种情况下，我们完全可以将「给定的一段话」看成是我们上一章提到的
-Observation，</p>
-<p>将「预测的下一个字」看成是上一章提到的 Action，而 GPT 就充当了其中
-Agent 的角色：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151253.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p>而 GPT 在进行「下一个字预测」的时候，会计算出所有汉字可能出现的概率，并根据这个概率进行采样。</p>
+<p>在这种情况下，我们完全可以将「给定的一段话」看成是我们上一章提到的 Observation，</p>
+<p>将「预测的下一个字」看成是上一章提到的 Action，而 GPT 就充当了其中 Agent 的角色：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151253.jpeg" alt="img"></p>
 <p>GPT 生成文本的过程，一个典型的 Policy Based 过程</p>
-<p>如此看来，<strong>Language Model 的采样过程其实和 Policy Based
-的决策过程非常一致</strong>。</p>
-<p>回顾一下我们之前提到过 RL
-的目标：<strong>在一个给定「状态」下，选择哪一个「行为」是最优的，</strong></p>
-<p>迁移到 GPT
-生成任务上就变成了：<strong>在一个给定的「句子」下，选择（续写）哪一个「字」是最优的。</strong></p>
-<p>因此，将 RL 中 Policy Based 的训练过程应用到训练 GPT
-生成任务里，一切都显得非常的自然。</p>
+<p>如此看来，<strong>Language Model 的采样过程其实和 Policy Based 的决策过程非常一致</strong>。</p>
+<p>回顾一下我们之前提到过 RL 的目标：<strong>在一个给定「状态」下，选择哪一个「行为」是最优的，</strong></p>
+<p>迁移到 GPT 生成任务上就变成了：<strong>在一个给定的「句子」下，选择（续写）哪一个「字」是最优的。</strong></p>
+<p>因此，将 RL 中 Policy Based 的训练过程应用到训练 GPT 生成任务里，一切都显得非常的自然。</p>
+<div class="table-container">
 <table>
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 42%" />
-<col style="width: 42%" />
-</colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th></th>
 <th>RL</th>
 <th>GPT</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Observation</td>
 <td>机器人当前所在的位置（状态）</td>
 <td>当前给定的句子</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Action</td>
 <td>往哪里移动</td>
 <td>续写哪一个字</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Reward</td>
 <td>移动后的奖励（遇到火还是钻石？）</td>
 <td>续写后的奖励（句子是否更通顺？）</td>
 </tr>
 </tbody>
 </table>
-<p>通过 RL 对 GPT 进行训练，我们期望 GPT
-能够学会如何续写句子才能够得到更高的得分，</p>
-<p>但现在的问题是：<strong>游戏中机器人每走一步可以通过游戏分数来得到
-reward，GPT 生成了一个字后谁来给它 reward 呢</strong>？</p>
-<h2
-id="序列决策sequence-decision以及单步奖励step-reward的计算">序列决策（Sequence
-Decision）以及单步奖励（Step Reward）的计算</h2>
-<p>在第一章和第二章中，我们其实讨论的都是「单步决策」：机器人只做一次决策，GPT
-也只生成一个字。</p>
+</div>
+<p>通过 RL 对 GPT 进行训练，我们期望 GPT 能够学会如何续写句子才能够得到更高的得分，</p>
+<p>但现在的问题是：<strong>游戏中机器人每走一步可以通过游戏分数来得到 reward，GPT 生成了一个字后谁来给它 reward 呢</strong>？</p>
+<h2 id="序列决策（Sequence-Decision）以及单步奖励（Step-Reward）的计算"><a href="#序列决策（Sequence-Decision）以及单步奖励（Step-Reward）的计算" class="headerlink" title="序列决策（Sequence Decision）以及单步奖励（Step Reward）的计算"></a>序列决策（Sequence Decision）以及单步奖励（Step Reward）的计算</h2><p>在第一章和第二章中，我们其实讨论的都是「单步决策」：机器人只做一次决策，GPT 也只生成一个字。</p>
 <p>但事实上，机器人想要拿到钻石，通常需要做出 N 次行为选择。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151492.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>不同的行为选择序列得到的得分：假设拿到 得 1 分，碰到 得-1
-分，其余情况不加分也不扣分</p>
-<p>在这种情况下我们最终只有 1 个得分和 N 个行为，但是最终 RL
-更新需要每个行为都要有对应的分数，</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151492.jpeg" alt="img"></p>
+<p>不同的行为选择序列得到的得分：假设拿到 得 1 分，碰到 得-1 分，其余情况不加分也不扣分</p>
+<p>在这种情况下我们最终只有 1 个得分和 N 个行为，但是最终 RL 更新需要每个行为都要有对应的分数，</p>
 <p>我们该如何把这 1 个总得分对应的分配给所有的行为呢？</p>
 <p>答案是计算「折扣奖励（discount reward）」。</p>
-<p>我们认为，越靠近最末端的行为对得分的影响越大，于是从后往前，每往前行为就乘以
-1 次折扣因子 γ：</p>
-<figure>
-<img
-src="https://pic4.zhimg.com/v2-3eb287458d7bc6398f87d816fadf953d_1440w.jpg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>根据最终得分（total reward），从后往前倒推出每一个行为的得分（step
-reward）</p>
-<p>同样，GPT 在生成一个完整句子的过程中，也会做出 N 个行为（续写 N
-个字），</p>
-<p>而我们在评分的时候，只会针对
-<strong>最后生成的完整句子进行一个打分</strong>（而不是生成一个字打一个分），</p>
+<p>我们认为，越靠近最末端的行为对得分的影响越大，于是从后往前，每往前行为就乘以 1 次折扣因子 γ：</p>
+<p><img src="https://pic4.zhimg.com/v2-3eb287458d7bc6398f87d816fadf953d_1440w.jpg" alt="img"></p>
+<p>根据最终得分（total reward），从后往前倒推出每一个行为的得分（step reward）</p>
+<p>同样，GPT 在生成一个完整句子的过程中，也会做出 N 个行为（续写 N 个字），</p>
+<p>而我们在评分的时候，只会针对 <strong>最后生成的完整句子进行一个打分</strong>（而不是生成一个字打一个分），</p>
 <p>最后，利用上述方法通过完整句子的得分倒推出每个字的对应得分：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151056.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181151056.jpeg" alt="img"></p>
 <p>注意：在 GPT 的得分计算中，通常折扣因子（γ）取 1.0</p>
-<p>值得注意的是：通常在对 GPT
-生成句子进行得分拆解的时候，折扣因子（γ）会取 1.0，</p>
+<p>值得注意的是：通常在对 GPT 生成句子进行得分拆解的时候，折扣因子（γ）会取 1.0，</p>
 <p>这意味着，在句子生成任务中，<strong>每一个字的生成都会同等重要地影响着最后生成句子的好坏。</strong></p>
 <blockquote>
 <p>我们可以这么理解：在找钻石的游戏中，机器人采取了一些「不当」的行为后是可以通过后续行为来做修正，比如机器人一开始向右走（正确行为），再向左走（不当行为），再向右走（修正行为），再向上走（正确行为），这个序列中通过「修正行为」能够修正「不当行为」带来的影响；但在句子生成任务中，一旦前面生成了一个「错别字」，后面无论怎么生成什么样的字都很难「修正」这个错别字带来的影响，因此在文本生成的任务中，每一个行为都会「同等重要」地影响最后句子质量的好坏。</p>
 </blockquote>
-<h2 id="加入概率差异kl-penalty以稳定-rl-训练">加入概率差异（KL
-Penalty）以稳定 RL 训练</h2>
-<p>除了折扣奖励，在 OpenAI 的 [Learning to summarize from human
-feedback] 这篇工作中指出，</p>
-<p>在最终生成句子的得分基础上，我们还可以在每生成一个字时候，计算 RL
-模型和 SFT 模型在生成当前字的「概率差异」，并以此当作生成当前字的一个
-step reward：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152574.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>通过概率差异（KL）作为 reward 有 2 个好处：1.
-避免模型崩溃到重复输出相同的一个字（模式崩溃）。2. 限制 RL
-不要探索的离一开始的模型（SFT）太远</p>
-<p>通常在进行 RL 训练时，初始都会使用 SFT
-模型做初始化，随即开始探索并学习。</p>
+<h2 id="加入概率差异（KL-Penalty）以稳定-RL-训练"><a href="#加入概率差异（KL-Penalty）以稳定-RL-训练" class="headerlink" title="加入概率差异（KL Penalty）以稳定 RL 训练"></a>加入概率差异（KL Penalty）以稳定 RL 训练</h2><p>除了折扣奖励，在 OpenAI 的 [Learning to summarize from human feedback] 这篇工作中指出，</p>
+<p>在最终生成句子的得分基础上，我们还可以在每生成一个字时候，计算 RL 模型和 SFT 模型在生成当前字的「概率差异」，并以此当作生成当前字的一个 step reward：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152574.png" alt="img"></p>
+<p>通过概率差异（KL）作为 reward 有 2 个好处：1. 避免模型崩溃到重复输出相同的一个字（模式崩溃）。2. 限制 RL 不要探索的离一开始的模型（SFT）太远</p>
+<p>通常在进行 RL 训练时，初始都会使用 SFT 模型做初始化，随即开始探索并学习。</p>
 <p>由于 RL 的训练本质就是：探索 + 试错，</p>
-<p>加上「概率差异」这一限制条件，就相当于限制了 RL
-仅在初始模型（SFT）的附近进行探索，</p>
-<p>这就大大缩小了 RL
-的探索空间：既避免了探索到那些非常差的空间，又缓解了 Reward Model
-可能很快被 Hacking 的问题。</p>
+<p>加上「概率差异」这一限制条件，就相当于限制了 RL 仅在初始模型（SFT）的附近进行探索，</p>
+<p>这就大大缩小了 RL 的探索空间：既避免了探索到那些非常差的空间，又缓解了 Reward Model 可能很快被 Hacking 的问题。</p>
 <p>我们举一个具体的例子：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152681.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411181152681.jpeg" alt="img"></p>
 <p>加上 KL 惩罚（概率差异）约束后的 step reward</p>
-<p>如上图所示，对于「大家好，我是」这个 prompt，Policy（RL）Model
-认为「鸡太美」是一个很好的答案，</p>
-<p>这可能是 Reward Model 打分不准导致的（这很常见），上图中 RM
-给「鸡太美」打出了 2 分的高分（绿色）。</p>
-<p>但是，这样一个不通顺的句子在原始的模型（SFT
-Model）中被生成出来的概率往往是很低的，</p>
-<p>因此，我们可以计算一下「鸡太美」这 3 个字分别在 RL Model 和在 SFT
-Model 中被采样出来的概率，</p>
+<p>如上图所示，对于「大家好，我是」这个 prompt，Policy（RL）Model 认为「鸡太美」是一个很好的答案，</p>
+<p>这可能是 Reward Model 打分不准导致的（这很常见），上图中 RM 给「鸡太美」打出了 2 分的高分（绿色）。</p>
+<p>但是，这样一个不通顺的句子在原始的模型（SFT Model）中被生成出来的概率往往是很低的，</p>
+<p>因此，我们可以计算一下「鸡太美」这 3 个字分别在 RL Model 和在 SFT Model 中被采样出来的概率，</p>
 <p>并将这个「概率差异」加到 RM 给出的「折扣分数」中，</p>
-<p>我们可以看到：尽管对于这个不通顺的句子 RM
-给了一个很高的分数，但是通过「概率差异」的修正，每个字的 reward
-依然被扣除了很大的惩罚值，从而避免了这种「RM
-认为分数很高，但实则并不通顺句子」被生成出来的情况。</p>
-<p>通过加入「概率差异」的限制，我们可以使得 RL 在 LM
-的训练中更加稳定，防止进化为生成某种奇怪的句子，但又能「哄骗」Reward
-Model 给出很高分出的情况（RL 非常擅长这一点）。</p>
-<p>但，如果你的 RM 足够的强大，永远无法被 Policy 给
-Hack，或许你可以完全放开概率限制并让其自由探索。</p>
+<p>我们可以看到：尽管对于这个不通顺的句子 RM 给了一个很高的分数，但是通过「概率差异」的修正，每个字的 reward 依然被扣除了很大的惩罚值，从而避免了这种「RM 认为分数很高，但实则并不通顺句子」被生成出来的情况。</p>
+<p>通过加入「概率差异」的限制，我们可以使得 RL 在 LM 的训练中更加稳定，防止进化为生成某种奇怪的句子，但又能「哄骗」Reward Model 给出很高分出的情况（RL 非常擅长这一点）。</p>
+<p>但，如果你的 RM 足够的强大，永远无法被 Policy 给 Hack，或许你可以完全放开概率限制并让其自由探索。</p>
 
     
 
@@ -709,11 +603,7 @@ Hack，或许你可以完全放开概率限制并让其自由探索。</p>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rl-%E4%B8%8E-llm-%E7%BB%93%E5%90%88"><span class="toc-number">1.</span> <span class="toc-text">RL 与 LLM 结合</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#rl-policy-based-value-based"><span class="toc-number">1.1.</span> <span class="toc-text">RL: Policy-Based &amp; Value
-Based</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#language-modelgpt%E6%98%AF%E4%B8%80%E7%A7%8D-policy-based-%E8%BF%98%E6%98%AF%E4%B8%80%E7%A7%8D-value-based"><span class="toc-number">1.2.</span> <span class="toc-text">Language
-Model（GPT）是一种 Policy Based 还是一种 Value Based？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%86%B3%E7%AD%96sequence-decision%E4%BB%A5%E5%8F%8A%E5%8D%95%E6%AD%A5%E5%A5%96%E5%8A%B1step-reward%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">1.3.</span> <span class="toc-text">序列决策（Sequence
-Decision）以及单步奖励（Step Reward）的计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5%E6%A6%82%E7%8E%87%E5%B7%AE%E5%BC%82kl-penalty%E4%BB%A5%E7%A8%B3%E5%AE%9A-rl-%E8%AE%AD%E7%BB%83"><span class="toc-number">1.4.</span> <span class="toc-text">加入概率差异（KL
-Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RL-%E4%B8%8E-LLM-%E7%BB%93%E5%90%88"><span class="toc-number">1.</span> <span class="toc-text">RL 与 LLM 结合</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#RL-Policy-Based-amp-Value-Based"><span class="toc-number">1.1.</span> <span class="toc-text">RL: Policy-Based &amp; Value Based</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Language-Model%EF%BC%88GPT%EF%BC%89%E6%98%AF%E4%B8%80%E7%A7%8D-Policy-Based-%E8%BF%98%E6%98%AF%E4%B8%80%E7%A7%8D-Value-Based%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">Language Model（GPT）是一种 Policy Based 还是一种 Value Based？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%86%B3%E7%AD%96%EF%BC%88Sequence-Decision%EF%BC%89%E4%BB%A5%E5%8F%8A%E5%8D%95%E6%AD%A5%E5%A5%96%E5%8A%B1%EF%BC%88Step-Reward%EF%BC%89%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">1.3.</span> <span class="toc-text">序列决策（Sequence Decision）以及单步奖励（Step Reward）的计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5%E6%A6%82%E7%8E%87%E5%B7%AE%E5%BC%82%EF%BC%88KL-Penalty%EF%BC%89%E4%BB%A5%E7%A8%B3%E5%AE%9A-RL-%E8%AE%AD%E7%BB%83"><span class="toc-number">1.4.</span> <span class="toc-text">加入概率差异（KL Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -912,19 +802,19 @@ Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color2">Others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -932,15 +822,7 @@ Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -949,6 +831,18 @@ Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -992,11 +886,11 @@ Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1008,11 +902,11 @@ Penalty）以稳定 RL 训练</span></a></li></ol></li></ol>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

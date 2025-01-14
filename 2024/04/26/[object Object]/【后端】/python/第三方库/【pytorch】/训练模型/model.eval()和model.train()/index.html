@@ -10,20 +10,18 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="model.eval() 和 model.train()model.train() 和 model.eval() 用法和区别    模式 前向传播 反向传播 参数更新 Dropout 层行为 BatchNorm 层行为     训练模式（Training Mode） 是 是 是 随机将一部分神经元关闭，以防止过拟合 使用每一批数据的均值和方差进行归一化处理   评估模式（Evaluation Mo">
+  <meta name="description" content="model.eval() 和 model.train() model.train() 和 model.eval() 用法和区别            模式 前向传播 反向传播 参数更新 Dropout 层行为 BatchNorm 层行为     训练模式（Training Mode） 是 是 是 随机将一部分神经元关闭，以防止过拟合 使用每">
 <meta property="og:type" content="article">
 <meta property="og:title" content="model.eval() 和 model.train()">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/26/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/model.eval()%E5%92%8Cmodel.train()/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="model.eval() 和 model.train()model.train() 和 model.eval() 用法和区别    模式 前向传播 反向传播 参数更新 Dropout 层行为 BatchNorm 层行为     训练模式（Training Mode） 是 是 是 随机将一部分神经元关闭，以防止过拟合 使用每一批数据的均值和方差进行归一化处理   评估模式（Evaluation Mo">
+<meta property="og:description" content="model.eval() 和 model.train() model.train() 和 model.eval() 用法和区别            模式 前向传播 反向传播 参数更新 Dropout 层行为 BatchNorm 层行为     训练模式（Training Mode） 是 是 是 随机将一部分神经元关闭，以防止过拟合 使用每">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412220028888.png">
 <meta property="article:published_time" content="2024-04-26T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-01T05:10:19.934Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="pytorch">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412220028888.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -302,101 +300,169 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="model-eval-和-model-train"><a href="#model-eval-和-model-train" class="headerlink" title="model.eval() 和 model.train()"></a>model.eval() 和 model.train()</h1><h2 id="model-train-和-model-eval-用法和区别"><a href="#model-train-和-model-eval-用法和区别" class="headerlink" title="model.train() 和 model.eval() 用法和区别"></a>model.train() 和 model.eval() 用法和区别</h2><div class="table-container">
-<table>
+    <h1 id="model.eval-和-model.train">model.eval() 和 model.train()</h1>
+<h2 id="model.train-和-model.eval-用法和区别">model.train() 和
+model.eval() 用法和区别</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 25%" />
+<col style="width: 37%" />
+</colgroup>
 <thead>
-<tr>
-<th style="text-align:center">模式</th>
-<th style="text-align:center">前向传播</th>
-<th style="text-align:center">反向传播</th>
-<th style="text-align:center">参数更新</th>
-<th style="text-align:center">Dropout 层行为</th>
-<th style="text-align:center">BatchNorm 层行为</th>
+<tr class="header">
+<th style="text-align: center;">模式</th>
+<th style="text-align: center;">前向传播</th>
+<th style="text-align: center;">反向传播</th>
+<th style="text-align: center;">参数更新</th>
+<th style="text-align: center;">Dropout 层行为</th>
+<th style="text-align: center;">BatchNorm 层行为</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center">训练模式（Training Mode）</td>
-<td style="text-align:center">是</td>
-<td style="text-align:center">是</td>
-<td style="text-align:center">是</td>
-<td style="text-align:center">随机将一部分神经元关闭，以防止过拟合</td>
-<td style="text-align:center">使用每一批数据的均值和方差进行归一化处理</td>
+<tr class="odd">
+<td style="text-align: center;">训练模式（Training Mode）</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td
+style="text-align: center;">随机将一部分神经元关闭，以防止过拟合</td>
+<td
+style="text-align: center;">使用每一批数据的均值和方差进行归一化处理</td>
 </tr>
-<tr>
-<td style="text-align:center">评估模式（Evaluation Mode）</td>
-<td style="text-align:center">是</td>
-<td style="text-align:center"><strong>否</strong></td>
-<td style="text-align:center"><strong>否</strong></td>
-<td style="text-align:center">关闭所有神经元，不再进行随机舍弃</td>
-<td style="text-align:center">使用在训练阶段计算得到的全局统计数据进行归一化处理。</td>
+<tr class="even">
+<td style="text-align: center;">评估模式（Evaluation Mode）</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;"><strong>否</strong></td>
+<td style="text-align: center;"><strong>否</strong></td>
+<td style="text-align: center;">关闭所有神经元，不再进行随机舍弃</td>
+<td
+style="text-align: center;">使用在训练阶段计算得到的全局统计数据进行归一化处理。</td>
 </tr>
 </tbody>
 </table>
-</div>
-<h3 id="model-train"><a href="#model-train" class="headerlink" title="model.train()"></a>model.train()</h3><p><code>model.train()</code> 的作用是<strong>启用 Batch Normalization 和 Dropout。</strong></p>
-<p><strong>如果模型中有 BN 层和 Dropout 层，需要在训练时添加 <code>model.train()</code>。</strong></p>
+<h3 id="model.train">model.train()</h3>
+<p><code>model.train()</code> 的作用是<strong>启用 Batch Normalization
+和 Dropout。</strong></p>
+<p><strong>如果模型中有 BN 层和 Dropout 层，需要在训练时添加
+<code>model.train()</code>。</strong></p>
 <ul>
-<li><p>对于 Batch Normalization：<code>model.train()</code> 保证 BN 层能够用到每一批数据的均值和方差。</p>
-</li>
-<li><p>对于 Dropout：<code>model.train()</code> 是随机取一部分网络连接来训练更新参数。</p>
-</li>
+<li><p>对于 Batch Normalization：<code>model.train()</code> 保证 BN
+层能够用到每一批数据的均值和方差。</p></li>
+<li><p>对于 Dropout：<code>model.train()</code>
+是随机取一部分网络连接来训练更新参数。</p></li>
 </ul>
-<h3 id="model-eval"><a href="#model-eval" class="headerlink" title="model.eval()"></a>model.eval()</h3><p><code>model.eval()</code> 的作用是<strong>不启用 Batch Normalization 和 Dropout。</strong></p>
-<p><strong>如果模型中有 BN 层 (Batch Normalization）和 Dropout，在测试时添加 <code>model.eval()</code>。</strong></p>
+<h3 id="model.eval">model.eval()</h3>
+<p><code>model.eval()</code> 的作用是<strong>不启用 Batch Normalization
+和 Dropout。</strong></p>
+<p><strong>如果模型中有 BN 层 (Batch Normalization）和
+Dropout，在测试时添加 <code>model.eval()</code>。</strong></p>
 <ul>
-<li>对于 Batch Normalization：<code>model.eval()</code>是保证 BN 层能够用全部训练数据的均值和方差，即测试过程中要保证 BN 层的均值和方差不变。</li>
-<li>对于 Dropout：<code>model.eval()</code>是利用到了所有网络连接，即不进行随机舍弃神经元。</li>
+<li>对于 Batch Normalization：<code>model.eval()</code>是保证 BN
+层能够用全部训练数据的均值和方差，即测试过程中要保证 BN
+层的均值和方差不变。</li>
+<li>对于
+Dropout：<code>model.eval()</code>是利用到了所有网络连接，即不进行随机舍弃神经元。</li>
 </ul>
-<p>在深度学习中，当模型完成对训练集（train 样本）的训练后，我们通常需要使用该模型来评估测试集（test 样本）的性能。在将模型应用于测试集之前，必须调用 model.eval() 方法将模型设置为评估模式。这样做是必要的，因为模型中可能包含 Batch Normalization（BN）层和 Dropout 层，这些层在训练和评估时的行为有所不同：</p>
-<ol>
-<li><strong>Batch Normalization（BN）层</strong>：在训练模式下，BN 层会根据当前批次的数据动态计算均值和方差，并使用这些统计量来标准化输入数据。而在评估模式下，BN 层则使用训练过程中累积的均值和方差的移动平均值来标准化输入数据，以保持模型在不同数据批次间的一致性。</li>
-<li><strong>Dropout 层</strong>：在训练模式下，Dropout 层会随机地将一部分神经元的输出设置为零，以减少模型的过拟合。但在评估模式下，Dropout 层不会随机丢弃任何神经元的输出，以确保模型能够充分利用所有神经元的信息。</li>
+<p>在深度学习中，当模型完成对训练集（train
+样本）的训练后，我们通常需要使用该模型来评估测试集（test
+样本）的性能。在将模型应用于测试集之前，必须调用 model.eval()
+方法将模型设置为评估模式。这样做是必要的，因为模型中可能包含 Batch
+Normalization（BN）层和 Dropout
+层，这些层在训练和评估时的行为有所不同：</p>
+<ol type="1">
+<li><strong>Batch Normalization（BN）层</strong>：在训练模式下，BN
+层会根据当前批次的数据动态计算均值和方差，并使用这些统计量来标准化输入数据。而在评估模式下，BN
+层则使用训练过程中累积的均值和方差的移动平均值来标准化输入数据，以保持模型在不同数据批次间的一致性。</li>
+<li><strong>Dropout 层</strong>：在训练模式下，Dropout
+层会随机地将一部分神经元的输出设置为零，以减少模型的过拟合。但在评估模式下，Dropout
+层不会随机丢弃任何神经元的输出，以确保模型能够充分利用所有神经元的信息。</li>
 </ol>
-<p>如果不将模型设置为评估模式，即使在没有梯度更新的情况下（即不进行训练），含有 BN 层和 Dropout 层的模型在处理输入数据时仍然可能会改变其内部参数或行为，这可能会导致模型的评估结果不准确。因此，为了确保模型在测试时能够提供准确的性能评估，必须在模型应用于测试数据之前，将其设置为评估模式。</p>
+<p>如果不将模型设置为评估模式，即使在没有梯度更新的情况下（即不进行训练），含有
+BN 层和 Dropout
+层的模型在处理输入数据时仍然可能会改变其内部参数或行为，这可能会导致模型的评估结果不准确。因此，为了确保模型在测试时能够提供准确的性能评估，必须在模型应用于测试数据之前，将其设置为评估模式。</p>
 <blockquote>
-<p>  在做 one classification 的时候，训练集和测试集的样本分布是不一样的，尤其需要注意这一点。</p>
+<p>在做 one classification
+的时候，训练集和测试集的样本分布是不一样的，尤其需要注意这一点。</p>
 </blockquote>
-<h3 id="分析原因"><a href="#分析原因" class="headerlink" title="分析原因"></a>分析原因</h3><p>使用 PyTorch 进行训练和测试时一定注意要把实例化的 model 指定 train/eval。<code>model.eval()</code> 时，框架会自动把 BN 和 Dropout 固定住，不会取平均，而是用训练好的值，不然的话，一旦测试集的 <code>batch_size</code> 过小，很容易就会被 BN 层导致生成图片颜色失真极大！！！！！！</p>
+<h3 id="分析原因">分析原因</h3>
+<p>使用 PyTorch 进行训练和测试时一定注意要把实例化的 model 指定
+train/eval。<code>model.eval()</code> 时，框架会自动把 BN 和 Dropout
+固定住，不会取平均，而是用训练好的值，不然的话，一旦测试集的
+<code>batch_size</code> 过小，很容易就会被 BN
+层导致生成图片颜色失真极大！！！！！！</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"># 定义一个网络</span><br><span class="line">class Net(nn.Module):</span><br><span class="line">    def __init__(self, l1=120, l2=84):</span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(3, 6, 5)</span><br><span class="line">        self.pool = nn.MaxPool2d(2, 2)</span><br><span class="line">        self.conv2 = nn.Conv2d(6, 16, 5)</span><br><span class="line">        self.fc1 = nn.Linear(16 * 5 * 5, l1)</span><br><span class="line">        self.fc2 = nn.Linear(l1, l2)</span><br><span class="line">        self.fc3 = nn.Linear(l2, 10)</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.pool(F.relu(self.conv1(x)))</span><br><span class="line">        x = self.pool(F.relu(self.conv2(x)))</span><br><span class="line">        x = x.view(-1, 16 * 5 * 5)</span><br><span class="line">        x = F.relu(self.fc1(x))</span><br><span class="line">        x = F.relu(self.fc2(x))</span><br><span class="line">        x = self.fc3(x)</span><br><span class="line">        return x</span><br><span class="line"></span><br><span class="line">    # 实例化这个网络</span><br><span class="line">    Model = Net()</span><br><span class="line">     </span><br><span class="line">    # 训练模式使用。train()</span><br><span class="line">    Model.train(mode=True)</span><br><span class="line">    </span><br><span class="line">    # 测试模型使用。eval()</span><br><span class="line">    Model.eval()</span><br></pre></td></tr></table></figure>
 <div style="text-align: center">
-    <img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412220028888.png">
-    <br>
-    dropout
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412220028888.png&quot;&gt;
+&lt;br&gt;
+dropout</code></pre>
 </div>
-
 <p><strong>下面我们看一个我们写代码的时候常遇见的错误写法：</strong></p>
 <p>在这个特定的例子中，似乎每 50 次迭代就会降低准确度。</p>
-<p>如果我们检查一下代码， 我们看到确实在 train 函数中设置了训练模式。</p>
+<p>如果我们检查一下代码， 我们看到确实在 train
+函数中设置了训练模式。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">def train(model, optimizer, epoch, train_loader, validation_loader):</span><br><span class="line">    model.train() # ???????????? 错误的位置</span><br><span class="line">    for batch_idx, (data, target) in experiment.batch_loop(iterable=train_loader):</span><br><span class="line">    	# model.train() # 正确的位置，保证每一个 batch 都能进入 model.train() 的模式</span><br><span class="line">        data, target = Variable(data), Variable(target)</span><br><span class="line">        # Inference</span><br><span class="line">        output = model(data)</span><br><span class="line">        loss_t = F.nll_loss(output, target)</span><br><span class="line">        # The iconic grad-back-step trio</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss_t.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        if batch_idx % args.log_interval == 0:</span><br><span class="line">            train_loss = loss_t.item()</span><br><span class="line">            train_accuracy = get_correct_count(output, target) * 100.0 / len(target)</span><br><span class="line">            experiment.add_metric(LOSS_METRIC, train_loss)</span><br><span class="line">            experiment.add_metric(ACC_METRIC, train_accuracy)</span><br><span class="line">            print(&#x27;Train Epoch: &#123;&#125; [&#123;&#125;/&#123;&#125; (&#123;:.0f&#125;%)]\tLoss: &#123;:.6f&#125;&#x27;.format(</span><br><span class="line">                epoch, batch_idx, len(train_loader),</span><br><span class="line">                100. * batch_idx / len(train_loader), train_loss))</span><br><span class="line">            with experiment.validation():</span><br><span class="line">                val_loss, val_accuracy = test(model, validation_loader) # ????????????</span><br><span class="line">                experiment.add_metric(LOSS_METRIC, val_loss)</span><br><span class="line">                experiment.add_metric(ACC_METRIC, val_accuracy)</span><br></pre></td></tr></table></figure>
 <p>这个问题不太容易注意到，在循环中我们调用了 test 函数。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def test(model, test_loader):</span><br><span class="line">    model.eval()</span><br><span class="line">    # ...</span><br></pre></td></tr></table></figure>
-<p>在 <code>test()</code> 函数内部，我们将模式设置为 <code>model.eval()</code>。这意味着，如果我们在训练过程中调用了 <code>test()</code> 函数，我们就会进 eval 模式，直到下一次 train() 函数被调用。这就导致了每一个 epoch 中只有一个 batch 使用了 dropout ，这就导致了我们看到的性能下降。</p>
-<p>修复很简单我们将 <code>model.train()</code> 向下移动一行，让其在训练循环中。理想的模式设置是尽可能接近推理步骤，以避免忘记设置它。修正后，我们的训练过程看起来更合理，没有中间的峰值出现。</p>
-<h2 id="在实战中使用-model-train-和-model-eval"><a href="#在实战中使用-model-train-和-model-eval" class="headerlink" title="在实战中使用 model.train() 和 model.eval()"></a>在实战中使用 model.train() 和 model.eval()</h2><p>在 PyTorch 实战中，你可以通过以下方式将模型设置为训练模式或评估模式：</p>
+<p>在 <code>test()</code> 函数内部，我们将模式设置为
+<code>model.eval()</code>。这意味着，如果我们在训练过程中调用了
+<code>test()</code> 函数，我们就会进 eval 模式，直到下一次 train()
+函数被调用。这就导致了每一个 epoch 中只有一个 batch 使用了 dropout
+，这就导致了我们看到的性能下降。</p>
+<p>修复很简单我们将 <code>model.train()</code>
+向下移动一行，让其在训练循环中。理想的模式设置是尽可能接近推理步骤，以避免忘记设置它。修正后，我们的训练过程看起来更合理，没有中间的峰值出现。</p>
+<h2 id="在实战中使用-model.train-和-model.eval">在实战中使用
+model.train() 和 model.eval()</h2>
+<p>在 PyTorch
+实战中，你可以通过以下方式将模型设置为训练模式或评估模式：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将模型设置为训练模式</span></span><br><span class="line">model.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将模型设置为评估模式</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br></pre></td></tr></table></figure>
 <p>需要注意的是，<strong>每当你开始一个新的训练或评估阶段时</strong>，你都应该明确地设置模型的模式。这是因为模型的模式不会随着你的操作自动切换。</p>
 <p><strong>示例代码</strong></p>
 <p>下面是一个简单的例子，展示了如何在训练和评估阶段使用<code>model.train()</code>和<code>model.eval()</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个简单的模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SimpleModel, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">10</span>, <span class="number">1</span>)</span><br><span class="line">        self.dropout = nn.Dropout(<span class="number">0.5</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = self.relu(x)</span><br><span class="line">        x = self.dropout(x)  <span class="comment"># 在训练和评估阶段行为不同</span></span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化模型、优化器和损失函数</span></span><br><span class="line">model = SimpleModel()</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些训练数据和测试数据</span></span><br><span class="line">train_data = torch.randn((<span class="number">100</span>, <span class="number">10</span>))  <span class="comment"># 训练数据，大小为 (100, 10)</span></span><br><span class="line">train_labels = torch.randn((<span class="number">100</span>, <span class="number">1</span>))  <span class="comment"># 训练标签，大小为 (100, 1)</span></span><br><span class="line">test_data = torch.randn((<span class="number">20</span>, <span class="number">10</span>))  <span class="comment"># 测试数据，大小为 (20, 10)</span></span><br><span class="line">test_labels = torch.randn((<span class="number">20</span>, <span class="number">1</span>))  <span class="comment"># 测试标签，大小为 (20, 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练阶段</span></span><br><span class="line">model.train()  <span class="comment"># 设置模型为训练模式</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):  <span class="comment"># 进行 10 个 epoch 的训练</span></span><br><span class="line">    optimizer.zero_grad()  <span class="comment"># 清空之前的梯度信息（如果有的话）</span></span><br><span class="line">    outputs = model(train_data)  <span class="comment"># 前向传播</span></span><br><span class="line">    loss = criterion(outputs, train_labels)  <span class="comment"># 计算损失</span></span><br><span class="line">    loss.backward()  <span class="comment"># 反向传播，计算梯度</span></span><br><span class="line">    optimizer.step()  <span class="comment"># 更新权重参数</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Epoch <span class="subst">&#123;epoch+<span class="number">1</span>&#125;</span>, Loss: <span class="subst">&#123;loss.item()&#125;</span>&#x27;</span>)  <span class="comment"># 打印损失信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 评估阶段</span></span><br><span class="line">model.<span class="built_in">eval</span>()  <span class="comment"># 设置模型为评估模式</span></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():  <span class="comment"># 确保不会进行反向传播计算梯度，节省内存和计算资源</span></span><br><span class="line">    test_outputs = model(test_data)  <span class="comment"># 前向传播获取测试集的预测结果</span></span><br><span class="line">    test_loss = criterion(test_outputs, test_labels)  <span class="comment"># 计算测试集上的损失值</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Test Loss: <span class="subst">&#123;test_loss.item()&#125;</span>&#x27;</span>)  <span class="comment"># 打印测试损失信息</span></span><br></pre></td></tr></table></figure>
 <p>在上述代码中，我们首先定义了一个简单的神经网络模型<code>SimpleModel</code>，并在训练和测试阶段分别使用<code>model.train()</code>和<code>model.eval()</code>来切换模型的模式。注意在评估阶段我们使用了<code>with torch.no_grad():</code>上下文管理器，以确保在评估阶段不会进行不必要的反向传播计算。</p>
-<h2 id="model-eval-和-torch-no-grad-的区别"><a href="#model-eval-和-torch-no-grad-的区别" class="headerlink" title="model.eval() 和 torch.no_grad() 的区别"></a><code>model.eval()</code> 和 <code>torch.no_grad()</code> 的区别</h2><p>在 PyTorch 中进行 validation/test 时，会使用 <code>model.eval()</code> 切换到测试模式，在该模式下：</p>
-<ol>
-<li>主要用于通知 dropout 层和 BN 层在 train 和 validation/test 模式间切换：</li>
+<h2 id="model.eval-和-torch.no_grad-的区别"><code>model.eval()</code> 和
+<code>torch.no_grad()</code> 的区别</h2>
+<p>在 PyTorch 中进行 validation/test 时，会使用
+<code>model.eval()</code> 切换到测试模式，在该模式下：</p>
+<ol type="1">
+<li>主要用于通知 dropout 层和 BN 层在 train 和 validation/test
+模式间切换：</li>
 </ol>
 <ul>
-<li>在 train 模式下，dropout 网络层会按照设定的参数 $p$ 设置保留激活单元的概率（保留概率=$p$); BN 层会继续计算数据的 mean 和 var 等参数并更新。</li>
-<li>在 eval 模式下，dropout 层会让所有的激活单元都通过，而 BN 层会停止计算和更新 mean 和 var，直接使用在训练阶段已经学出的 mean 和 var 值。</li>
+<li>在 train 模式下，dropout 网络层会按照设定的参数 <span
+class="math inline">\(p\)</span> 设置保留激活单元的概率（保留概率=<span
+class="math inline">\(p\)</span>); BN 层会继续计算数据的 mean 和 var
+等参数并更新。</li>
+<li>在 eval 模式下，dropout 层会让所有的激活单元都通过，而 BN
+层会停止计算和更新 mean 和 var，直接使用在训练阶段已经学出的 mean 和 var
+值。</li>
 </ul>
-<ol>
-<li>该模式不会影响各层的 gradient 计算行为，即 gradient 计算和存储与 training 模式一样，只是不进行反向传播（back probagation)。</li>
+<ol start="2" type="1">
+<li>该模式不会影响各层的 gradient 计算行为，即 gradient 计算和存储与
+training 模式一样，只是不进行反向传播（back probagation)。</li>
 </ol>
-<p>而 <code>with torch.no_grad()</code> 则主要是用于停止 autograd 模块的工作，以起到加速和节省显存的作用。它的作用是将该 with 语句包裹起来的部分停止梯度的更新，从而节省了 GPU 算力和显存，但是并不会影响 dropout 和 BN 层的行为。</p>
-<p>如果不在意显存大小和计算时间的话，仅仅使用 <code>model.eval()</code> 已足够得到正确的 validation/test 的结果；而 <code>with torch.no_grad()</code> 则是更进一步加速和节省 gpu 空间（因为不用计算和存储梯度），从而可以更快计算，也可以跑更大的 batch 来测试。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<p>而 <code>with torch.no_grad()</code> 则主要是用于停止 autograd
+模块的工作，以起到加速和节省显存的作用。它的作用是将该 with
+语句包裹起来的部分停止梯度的更新，从而节省了 GPU
+算力和显存，但是并不会影响 dropout 和 BN 层的行为。</p>
+<p>如果不在意显存大小和计算时间的话，仅仅使用 <code>model.eval()</code>
+已足够得到正确的 validation/test 的结果；而
+<code>with torch.no_grad()</code> 则是更进一步加速和节省 gpu
+空间（因为不用计算和存储梯度），从而可以更快计算，也可以跑更大的 batch
+来测试。</p>
+<h2 id="总结">总结</h2>
+<ol type="1">
 <li><strong>模式切换</strong>：每次开始训练或评估前，确保调用<code>model.train()</code>或<code>model.eval()</code>。不恰当的模式可能导致性能下降或错误的结果。</li>
-<li><strong>Batch Normalization</strong>：BatchNorm 层在训练和评估模式下的行为不同。在训练模式下，它使用 mini-batch 的统计数据进行标准化；在评估模式下，它使用在训练过程中计算得到的全局统计数据。</li>
-<li><strong>Dropout</strong>：Dropout 层仅在训练期间随机将输入的一部分设置为 0。在评估模式下，它不会进行 dropout。</li>
+<li><strong>Batch Normalization</strong>：BatchNorm
+层在训练和评估模式下的行为不同。在训练模式下，它使用 mini-batch
+的统计数据进行标准化；在评估模式下，它使用在训练过程中计算得到的全局统计数据。</li>
+<li><strong>Dropout</strong>：Dropout
+层仅在训练期间随机将输入的一部分设置为 0。在评估模式下，它不会进行
+dropout。</li>
 <li><strong>不需要梯度</strong>：在评估模式下，通常使用<code>with torch.no_grad():</code>上下文管理器来确保不计算不必要的梯度，从而节省内存和计算资源。</li>
 </ol>
 
@@ -538,11 +604,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B%E6%9D%83%E9%87%8D/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          加载数据
+          保存和加载模型权重
         
       </div>
     </a>
@@ -576,7 +642,10 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#model-eval-%E5%92%8C-model-train"><span class="toc-number">1.</span> <span class="toc-text">model.eval() 和 model.train()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#model-train-%E5%92%8C-model-eval-%E7%94%A8%E6%B3%95%E5%92%8C%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.</span> <span class="toc-text">model.train() 和 model.eval() 用法和区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#model-train"><span class="toc-number">1.1.1.</span> <span class="toc-text">model.train()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#model-eval"><span class="toc-number">1.1.2.</span> <span class="toc-text">model.eval()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.1.3.</span> <span class="toc-text">分析原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%AE%9E%E6%88%98%E4%B8%AD%E4%BD%BF%E7%94%A8-model-train-%E5%92%8C-model-eval"><span class="toc-number">1.2.</span> <span class="toc-text">在实战中使用 model.train() 和 model.eval()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model-eval-%E5%92%8C-torch-no-grad-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.</span> <span class="toc-text">model.eval() 和 torch.no_grad() 的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#model.eval-%E5%92%8C-model.train"><span class="toc-number">1.</span> <span class="toc-text">model.eval() 和 model.train()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#model.train-%E5%92%8C-model.eval-%E7%94%A8%E6%B3%95%E5%92%8C%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.</span> <span class="toc-text">model.train() 和
+model.eval() 用法和区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#model.train"><span class="toc-number">1.1.1.</span> <span class="toc-text">model.train()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#model.eval"><span class="toc-number">1.1.2.</span> <span class="toc-text">model.eval()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.1.3.</span> <span class="toc-text">分析原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E5%AE%9E%E6%88%98%E4%B8%AD%E4%BD%BF%E7%94%A8-model.train-%E5%92%8C-model.eval"><span class="toc-number">1.2.</span> <span class="toc-text">在实战中使用
+model.train() 和 model.eval()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model.eval-%E5%92%8C-torch.no_grad-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.</span> <span class="toc-text">model.eval() 和
+torch.no_grad() 的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -767,11 +836,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -783,19 +852,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color2">Others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -807,15 +876,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -835,15 +904,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -871,15 +940,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

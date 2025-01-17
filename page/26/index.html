@@ -252,7 +252,7 @@
 
   
     
-      <article id="post-命令操作/【huggingface】/huggingface模型下载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Windows】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -260,7 +260,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/" target="_blank">huggingface模型下载</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/" target="_blank">Errors</a>
   
     </h1>
   
@@ -268,7 +268,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -281,485 +281,34 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="huggingface-模型下载"><a href="#huggingface-模型下载" class="headerlink" title="huggingface 模型下载"></a>huggingface 模型下载</h1><p><strong><em>Update: 推荐 huggingface 镜像站</em></strong>： <a target="_blank" rel="noopener" href="https://hf-mirror.com/">HF-Mirror</a></p>
-<p><strong><em>Update: 推荐官方的</em></strong> <a href="https://link.zhihu.com/?target=https%3A//huggingface.co/docs/huggingface_hub/guides/download%23download-from-the-cli">huggingface-cli</a> <strong><em>命令行工具、以及本人开发的</em></strong> <a href="https://link.zhihu.com/?target=https%3A//padeoe.com/huggingface-large-models-downloader/%232.1-hfd-%25E8%2584%259A%25E6%259C%25AC">hfd 脚本</a>。</p>
-<p>AI 开发绕不过一个问题是，<strong>如何从 hugging face 下载模型/数据集</strong>，相关问题想必大家都没少搜过，方法五花八门，本人也曾在 stackoverflow 上回答过 <a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595500/how-to-download-model-from-huggingface">类似问题</a>，然而很难见有文章将 <strong>各类方法一次性讲全</strong>。</p>
-<p>其实网络快、稳的话，随便哪种方法都挺好，然而国内网络问题，<strong>断点续传、多线程下载</strong> 等特性就显得尤为必要了，否则动辄断掉重来、下载速度慢，浪费生命！基于这个考虑，本文集成官方方法、第三方奇技淫巧，做了个 <strong>总结排序</strong>，以飨读者：</p>
-<p><strong>（以下方法也适用于数据集下载）</strong></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>`方法类别</th>
-<th></th>
-<th>推荐程度</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>基于 URL</td>
-<td>浏览器网页下载</td>
-<td>⭐⭐⭐</td>
-<td>通用性好</td>
-<td>手动麻烦/无多线程</td>
-</tr>
-<tr>
-<td></td>
-<td>多线程下载器(hfd/IDM 等)</td>
-<td>⭐⭐⭐⭐⭐</td>
-<td>通用性好，鲁棒性好</td>
-<td>手动麻烦</td>
-</tr>
-<tr>
-<td>CLI 工具</td>
-<td>git clone 命令</td>
-<td>⭐⭐</td>
-<td>简单</td>
-<td>无断点续传/冗余文件/无多线程</td>
-</tr>
-<tr>
-<td>专用 CLI 工具</td>
-<td>huggingface-cli</td>
-<td>⭐⭐⭐⭐</td>
-<td>官方下载工具功能全</td>
-<td>不支持多线程</td>
-</tr>
-<tr>
-<td></td>
-<td>from_pretrained</td>
-<td>⭐</td>
-<td>官方支持，简单</td>
-<td>不方便存储，功能不全</td>
-</tr>
-<tr>
-<td></td>
-<td>hf_hub_download</td>
-<td>⭐</td>
-<td>官方支持</td>
-<td>不支持全量下载/无多线程</td>
-</tr>
-</tbody>
-</table>
-</div>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/huggingface%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" target="_blank">HuggingFace 缓存路径</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="HuggingFace-缓存路径"><a href="#HuggingFace-缓存路径" class="headerlink" title="HuggingFace 缓存路径"></a>HuggingFace 缓存路径</h1><h2 id="缓存路径和缓存文件结构"><a href="#缓存路径和缓存文件结构" class="headerlink" title="缓存路径和缓存文件结构"></a>缓存路径和缓存文件结构</h2><h3 id="缓存路径"><a href="#缓存路径" class="headerlink" title="缓存路径"></a>缓存路径</h3><p>首先，你需要先了解 Transformers 库对于它默认下载的缓存路径和文件结构，这样能让你更清楚的明白，Transformers 库的.cache 系统以及如何更改缓存路径。</p>
-<p>通过 Hugging Face 的 Transformers 库自动下载模型，会先缓存在默认路径：</p>
-<ul>
-<li><strong>Linux</strong>：<code>&#39;~/.cache/huggingface/hub&#39;</code></li>
-<li><strong>Windows</strong> ：<code>C:\Users\username\.cache\huggingface\hub</code><br>缓存的模型文件以哈希值形式储存，文件结构如下：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; <span class="comment"># 缓存路径</span></span><br><span class="line">├─ &lt;MODELS&gt;<span class="comment"># 模型路径</span></span><br><span class="line">├─ &lt;DATASETS&gt;<span class="comment"># 数据集路径</span></span><br><span class="line">├─ &lt;SPACES&gt;<span class="comment"># 空间路径</span></span><br></pre></td></tr></table></figure>
-<p><code>&lt;CACHE_DIR&gt;</code> 通常由 <code>HF_HOME</code> 或 <code>HF_HUB_CACHE</code> 指定，具体看第二节</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-命令操作/【fastchat】/Fastchat：基于fastapi构建大模型加载服务" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90fastchat%E3%80%91/Fastchat%EF%BC%9A%E5%9F%BA%E4%BA%8Efastapi%E6%9E%84%E5%BB%BA%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E6%9C%8D%E5%8A%A1/" target="_blank">Fastchat：基于 fastapi 构建大模型加载服务</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90fastchat%E3%80%91/Fastchat%EF%BC%9A%E5%9F%BA%E4%BA%8Efastapi%E6%9E%84%E5%BB%BA%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E6%9C%8D%E5%8A%A1/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="Fastchat：基于-fastapi-构建大模型加载服务"><a href="#Fastchat：基于-fastapi-构建大模型加载服务" class="headerlink" title="Fastchat：基于 fastapi 构建大模型加载服务"></a>Fastchat：基于 fastapi 构建大模型加载服务</h1><h2 id="服务架构"><a href="#服务架构" class="headerlink" title="服务架构"></a>服务架构</h2><p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332438.png" alt="请添加图片描述"></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="法一：pip"><a href="#法一：pip" class="headerlink" title="法一：pip"></a>法一：pip</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install &quot;fschat[model_worker,webui]&quot;</span><br></pre></td></tr></table></figure>
-<h3 id="法二：源文件"><a href="#法二：源文件" class="headerlink" title="法二：源文件"></a>法二：源文件</h3><p><strong>Step1 克隆源码并切换到对应的目录下</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/lm-sys/FastChat.git</span><br><span class="line">cd FastChat</span><br></pre></td></tr></table></figure>
-<p>如果是mac，还需要执行如下代码</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rust cmake</span><br></pre></td></tr></table></figure>
-<p><strong>Step2 安装相关的包</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install --upgrade pip  # enable PEP 660 support</span><br><span class="line">pip3 install -e &quot;.[model_worker,webui]&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="使用命令行进行推理"><a href="#使用命令行进行推理" class="headerlink" title="使用命令行进行推理"></a>使用命令行进行推理</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --help</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">usage: cli.py [-h] [--model-path MODEL_PATH] [--revision REVISION] [--device &#123;cpu,cuda,mps,xpu,npu&#125;] [--gpus GPUS] [--num-gpus NUM_GPUS]</span><br><span class="line">              [--max-gpu-memory MAX_GPU_MEMORY] [--dtype &#123;float32,float16,bfloat16&#125;] [--load-8bit] [--cpu-offloading] [--gptq-ckpt GPTQ_CKPT]</span><br><span class="line">              [--gptq-wbits &#123;2,3,4,8,16&#125;] [--gptq-groupsize GPTQ_GROUPSIZE] [--gptq-act-order] [--awq-ckpt AWQ_CKPT] [--awq-wbits &#123;4,16&#125;]</span><br><span class="line">              [--awq-groupsize AWQ_GROUPSIZE] [--enable-exllama] [--exllama-max-seq-len EXLLAMA_MAX_SEQ_LEN] [--exllama-gpu-split EXLLAMA_GPU_SPLIT]</span><br><span class="line">              [--exllama-cache-8bit] [--enable-xft] [--xft-max-seq-len XFT_MAX_SEQ_LEN] [--xft-dtype &#123;fp16,bf16,int8,bf16_fp16,bf16_int8&#125;]</span><br><span class="line">              [--conv-template CONV_TEMPLATE] [--conv-system-msg CONV_SYSTEM_MSG] [--temperature TEMPERATURE] [--repetition_penalty REPETITION_PENALTY]</span><br><span class="line">              [--max-new-tokens MAX_NEW_TOKENS] [--no-history] [--style &#123;simple,rich,programmatic&#125;] [--multiline] [--mouse] [--judge-sent-end] [--debug]</span><br><span class="line"></span><br><span class="line">options:</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  --model-path MODEL_PATH</span><br><span class="line">                        The path to the weights. This can be a local folder or a Hugging Face repo ID.</span><br><span class="line">  --revision REVISION   Hugging Face Hub model revision identifier</span><br><span class="line">  --device &#123;cpu,cuda,mps,xpu,npu&#125;</span><br><span class="line">                        The device type</span><br><span class="line">  --gpus GPUS           A single GPU like 1 or multiple GPUs like 0,2</span><br><span class="line">  --num-gpus NUM_GPUS</span><br><span class="line">  --max-gpu-memory MAX_GPU_MEMORY</span><br><span class="line">                        The maximum memory per GPU for storing model weights. Use a string like &#x27;13Gib&#x27;</span><br><span class="line">  --dtype &#123;float32,float16,bfloat16&#125;</span><br><span class="line">                        Override the default dtype. If not set, it will use float16 on GPU and float32 on CPU.</span><br><span class="line">  --load-8bit           Use 8-bit quantization</span><br><span class="line">  --cpu-offloading      Only when using 8-bit quantization: Offload excess weights to the CPU that don&#x27;t fit on the GPU</span><br><span class="line">  --gptq-ckpt GPTQ_CKPT</span><br><span class="line">                        Used for GPTQ. The path to the local GPTQ checkpoint.</span><br><span class="line">  --gptq-wbits &#123;2,3,4,8,16&#125;</span><br><span class="line">                        Used for GPTQ. #bits to use for quantization</span><br><span class="line">  --gptq-groupsize GPTQ_GROUPSIZE</span><br><span class="line">                        Used for GPTQ. Groupsize to use for quantization; default uses full row.</span><br><span class="line">  --gptq-act-order      Used for GPTQ. Whether to apply the activation order GPTQ heuristic</span><br><span class="line">  --awq-ckpt AWQ_CKPT   Used for AWQ. Load quantized model. The path to the local AWQ checkpoint.</span><br><span class="line">  --awq-wbits &#123;4,16&#125;    Used for AWQ. #bits to use for AWQ quantization</span><br><span class="line">  --awq-groupsize AWQ_GROUPSIZE</span><br><span class="line">                        Used for AWQ. Groupsize to use for AWQ quantization; default uses full row.</span><br><span class="line">  --enable-exllama      Used for exllamabv2. Enable exllamaV2 inference framework.</span><br><span class="line">  --exllama-max-seq-len EXLLAMA_MAX_SEQ_LEN</span><br><span class="line">                        Used for exllamabv2. Max sequence length to use for exllamav2 framework; default 4096 sequence length.</span><br><span class="line">  --exllama-gpu-split EXLLAMA_GPU_SPLIT</span><br><span class="line">                        Used for exllamabv2. Comma-separated list of VRAM (in GB) to use per GPU. Example: 20,7,7</span><br><span class="line">  --exllama-cache-8bit  Used for exllamabv2. Use 8-bit cache to save VRAM.</span><br><span class="line">  --enable-xft          Used for xFasterTransformer Enable xFasterTransformer inference framework.</span><br><span class="line">  --xft-max-seq-len XFT_MAX_SEQ_LEN</span><br><span class="line">                        Used for xFasterTransformer. Max sequence length to use for xFasterTransformer framework; default 4096 sequence length.</span><br><span class="line">  --xft-dtype &#123;fp16,bf16,int8,bf16_fp16,bf16_int8&#125;</span><br><span class="line">                        Override the default dtype. If not set, it will use bfloat16 for first token and float16 next tokens on CPU.</span><br><span class="line">  --conv-template CONV_TEMPLATE</span><br><span class="line">                        Conversation prompt template.</span><br><span class="line">  --conv-system-msg CONV_SYSTEM_MSG</span><br><span class="line">                        Conversation system message.</span><br><span class="line">  --temperature TEMPERATURE</span><br><span class="line">  --repetition_penalty REPETITION_PENALTY</span><br><span class="line">  --max-new-tokens MAX_NEW_TOKENS</span><br><span class="line">  --no-history</span><br><span class="line">  --style &#123;simple,rich,programmatic&#125;</span><br><span class="line">                        Display style.</span><br><span class="line">  --multiline           Enable multiline input. Use ESC+Enter for newline.</span><br><span class="line">  --mouse               [Rich Style]: Enable mouse support for cursor positioning.</span><br><span class="line">  --judge-sent-end      Whether enable the correction logic that interrupts the output of sentences due to EOS.</span><br><span class="line">  --debug               Print useful debug information (e.g., prompts)</span><br></pre></td></tr></table></figure>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--model-path</code></td>
-<td>模型路径，可以是本地文件夹或 HuggingFace 的 repo ID</td>
-</tr>
-<tr>
-<td><code>--revision</code></td>
-<td>HuggingFace Hub 模型修订版本标识</td>
-</tr>
-<tr>
-<td><code>--device</code></td>
-<td>设备类型，可选择 cpu/cuda/mps/xpu</td>
-</tr>
-<tr>
-<td><code>--gpus</code></td>
-<td>指定单个或多个 GPU, 如 1 或 0,2</td>
-</tr>
-<tr>
-<td><code>--num-gpus</code></td>
-<td>GPU 数量</td>
-</tr>
-<tr>
-<td><code>--max-gpu-memory</code></td>
-<td>每个 GPU 用于存储模型权重的最大内存，使用字符串表示如’13Gib’</td>
-</tr>
-<tr>
-<td><code>--load-8bit</code></td>
-<td>使用 8 位量化</td>
-</tr>
-<tr>
-<td><code>--cpu-offloading</code></td>
-<td>仅用于 8 位量化：将超出 GPU 容量的权重卸载到 CPU</td>
-</tr>
-<tr>
-<td><code>--gptq-ckpt</code></td>
-<td>GPTQ 检查点路径，用于 GPTQ 量化</td>
-</tr>
-<tr>
-<td><code>--gptq-wbits</code></td>
-<td>GPTQ 量化比特数，可选择 2/3/4/8/16</td>
-</tr>
-<tr>
-<td><code>--gptq-groupsize</code></td>
-<td>GPTQ 量化分组大小，默认为整行</td>
-</tr>
-<tr>
-<td><code>--gptq-act-order</code></td>
-<td>是否应用 GPTQ 激活顺序启发式方法</td>
-</tr>
-<tr>
-<td><code>--awq-ckpt</code></td>
-<td>AWQ 检查点路径，用于 AWQ 量化</td>
-</tr>
-<tr>
-<td><code>--awq-wbits</code></td>
-<td>AWQ 量化比特数，可选择 4/16</td>
-</tr>
-<tr>
-<td><code>--awq-groupsize</code></td>
-<td>AWQ 量化分组大小，默认为整行</td>
-</tr>
-<tr>
-<td><code>--conv-template</code></td>
-<td>对话提示模板</td>
-</tr>
-<tr>
-<td><code>--conv-system-msg</code></td>
-<td>对话系统消息</td>
-</tr>
-<tr>
-<td><code>--temperature</code></td>
-<td>温度参数</td>
-</tr>
-<tr>
-<td><code>--repetition\_penalty</code></td>
-<td>重复惩罚参数</td>
-</tr>
-<tr>
-<td><code>--max-new-tokens</code></td>
-<td>最大新生成词元数量</td>
-</tr>
-<tr>
-<td><code>--no-history</code></td>
-<td>不保留历史记录</td>
-</tr>
-<tr>
-<td><code>--style</code></td>
-<td>显示样式，可选择 simple/rich/programmatic</td>
-</tr>
-<tr>
-<td><code>--multiline</code></td>
-<td>启用多行输入</td>
-</tr>
-<tr>
-<td><code>--mouse</code></td>
-<td>启用鼠标支持光标定位（仅限 rich 样式）</td>
-</tr>
-<tr>
-<td><code>--judge-sent-end</code></td>
-<td>是否启用识别句子结束的逻辑纠正</td>
-</tr>
-<tr>
-<td><code>--debug</code></td>
-<td>打印调试信息（如 prompt)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332325.png" alt="image-20250112130441418"></p>
-<p><strong>PS</strong>：可以使用 <code>--style rich</code> 来启用富文本输出，提高某些非 ASCII 内容的文本流传输质量。在某些终端上可能无法正常工作。</p>
-<h3 id="支持的模型"><a href="#支持的模型" class="headerlink" title="支持的模型"></a><strong>支持的模型</strong></h3><p>支持的模型有LLama 2, Vicuna, Alpaca, Baize, ChatGLM, Dolly, Falcon, FastChat-T5, GPT4ALL, Guanaco, MTP, OpenAssistant, OpenChat, RedPajama, StableLM, WizardLM等。查看支持的全部模型和如何添加新模型可以参考：<a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/model_support.md">https://pypi.org/project/fschat/docs/model_support.md</a></p>
-<h3 id="单GPU"><a href="#单GPU" class="headerlink" title="单GPU"></a>单GPU</h3><p>在单GPU下，执行如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --model-path lmsys/vicuna-7b-v1.5</span><br></pre></td></tr></table></figure>
-<p>对于Vicuna-7B 模型大概需要14G显存，对于Vicuna-13B模型大概需要28G显存，如果显存不够，可以参考：<a target="_blank" rel="noopener" href="https://github.com/lm-sys/FastChat#not-enough-memory">https://github.com/lm-sys/FastChat#not-enough-memory</a></p>
-<h3 id="多GPU"><a href="#多GPU" class="headerlink" title="多GPU"></a>多GPU</h3><p>支持多GPU并行推理，指定使用 1 卡和 3 卡进行训练的 GPU 命令如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --model-path lmsys/vicuna-7b-v1.5 --num-gpus 2 --gpus 1,3</span><br></pre></td></tr></table></figure>
-<p>Tips: 有时候 “auto” 策略在 huggingface/transformers 不能在多 GPU 间平衡，因此<strong>最好增加参数 <code>--max-gpu-memory</code></strong>，该参数可以指定每个 gpu 用于存储模型权重的最大内存。这允许它为 activations 分配更多的内存，因此可以使用更长的上下文长度或更大的批处理大小，例如：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --model-path lmsys/vicuna-7b-v1.5 --num-gpus 2 --gpus 1,3 --max-gpu-memory 8GiB</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332306.png" alt="image-20250112133203734"></p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332309.png" alt="image-20250112133212153"></p>
-<h3 id="仅CPU"><a href="#仅CPU" class="headerlink" title="仅CPU"></a>仅CPU</h3><p>执行如下命令仅在 CPU 上运行，不需要 GPU：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --model-path lmsys/vicuna-7b-v1.5 --device cpu</span><br></pre></td></tr></table></figure>
-<p>对于Vicuna-7B 模型大概需要30G内存，对于Vicuna-13B模型大概需要60G内存。</p>
-<h3 id="显存不足"><a href="#显存不足" class="headerlink" title="显存不足"></a>显存不足</h3><p>对于显存不够的情况，可以参考量化或者 offload 策略来部分解决，比如在命令行加入参数 <code>--load-8bit</code> 或者 <code>--cpu-offloading</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.cli --model-path lmsys/vicuna-7b-v1.5 --load-8bit</span><br></pre></td></tr></table></figure>
-<h3 id="使用-modelscope-中的模型"><a href="#使用-modelscope-中的模型" class="headerlink" title="使用 modelscope 中的模型"></a>使用 modelscope 中的模型</h3><p>For Chinese users, you can use models from <a target="_blank" rel="noopener" href="http://www.modelscope.cn/">www.modelscope.cn</a> via specify the following environment variables.</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export FASTCHAT_USE_MODELSCOPE=True</span><br></pre></td></tr></table></figure>
-<h2 id="使用WEB-GUI进行推理"><a href="#使用WEB-GUI进行推理" class="headerlink" title="使用WEB GUI进行推理"></a>使用WEB GUI进行推理</h2><blockquote>
-<p>要使用 Web UI 提供服务，您需要三个主要 组件：</p>
+    <h1 id="Errors"><a href="#Errors" class="headerlink" title="Errors"></a>Errors</h1><h2 id="‘-’-不是内部或外部命令，也不是可运行的程序或批处理文件"><a href="#‘-’-不是内部或外部命令，也不是可运行的程序或批处理文件" class="headerlink" title="‘.’ 不是内部或外部命令，也不是可运行的程序或批处理文件"></a>‘.’ 不是内部或外部命令，也不是可运行的程序或批处理文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\Document\lab\federated-learning\Codes\leaf-master\data\femnist&gt;./preprocess.sh -s niid --sf 1.0 -k 0 -t sample</span><br><span class="line"><span class="string">&#x27;.&#x27;</span> 不是内部或外部命令，也不是可运行的程序或批处理文件。</span><br></pre></td></tr></table></figure>
+<p>这个错误信息表明你正在尝试在Windows的命令提示符（CMD）或PowerShell中运行一个为Unix或Linux系统（如bash shell）编写的shell脚本（<code>preprocess.sh</code>）。Windows默认不支持直接运行<code>.sh</code>脚本，因为它使用的是不同的命令解释器。</p>
+<p>要在Windows上运行这个脚本，你有几个选项：</p>
 <ol>
-<li><p>web servers that interface with users与用户交互的 Web 服务器</p>
+<li><strong>使用Windows Subsystem for Linux (WSL):</strong><ol>
+<li>如果你已经安装了WSL（Windows Subsystem for Linux），你可以在WSL的bash shell中运行这个脚本。</li>
+<li>确保你的脚本和所有依赖项都在WSL环境中正确安装和配置。</li>
+</ol>
 </li>
-<li><p>model workers that host one or more models托管一个或多个模型的模型工作人员</p>
+<li><strong>使用Git Bash或Cygwin:</strong><ol>
+<li>如果你没有安装WSL，但安装了Git Bash或Cygwin，这些工具也提供了一个bash环境，你可以在其中运行<code>.sh</code>脚本。</li>
+</ol>
 </li>
-<li><p>a controller to coordinate the webserver and model workers协调网络服务器和模型工作人员的控制器</p>
+<li><strong>重写脚本为Windows批处理文件:</strong><ol>
+<li>你可以将<code>preprocess.sh</code>脚本中的命令转换为Windows CMD命令，并将它们保存为<code>.bat</code>文件。但是，这可能需要大量的工作，特别是如果脚本很复杂或使用了许多Unix特有的命令和工具。</li>
+</ol>
+</li>
+<li><strong>使用Docker（如果适用）:</strong><ol>
+<li>如果你的项目支持Docker，并且有一个为Unix环境配置的Dockerfile，你可以在Docker容器中运行你的脚本。这通常是在Windows上运行Unix脚本的最简单和最可靠的方法之一。</li>
+</ol>
+</li>
+<li><strong>使用虚拟机</strong>:<ol>
+<li>你可以设置一个虚拟机来运行一个完整的Linux发行版，然后在那个环境中运行你的脚本。</li>
+</ol>
 </li>
 </ol>
-</blockquote>
-<p>You can learn more about the architecture <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/server_arch.md">here</a>.</p>
-<h3 id="Launch-the-controller"><a href="#Launch-the-controller" class="headerlink" title="Launch the controller"></a>Launch the controller</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.controller</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332335.png" alt="请添加图片描述"></p>
-<p>This controller manages the distributed workers.</p>
-<h3 id="Launch-the-model-worker-s"><a href="#Launch-the-model-worker-s" class="headerlink" title="Launch the model worker(s)"></a>Launch the model worker(s)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.model_worker --model-path lmsys/vicuna-7b-v1.3</span><br></pre></td></tr></table></figure>
-<p>Wait until the process finishes loading the model and you see “Uvicorn running on …”. The model worker will register itself to the controller .</p>
-<p>等到进程完成加载模型，您会看到“Uvicorn running on …”。模型工作器将自己注册到控制器。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332631.png" alt="请添加图片描述"></p>
-<p>To ensure that your model worker is connected to your controller properly, send a test message using the following command:<br>为确保您的模型工作器已正确连接到控制器，请使用以下命令发送测试消息</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.test_message --model-name vicuna-7b-v1.5</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332811.png" alt="image-20250112113557207"></p>
-<p>成功会有一个简短的输出</p>
-<h3 id="Launch-the-Gradio-web-server"><a href="#Launch-the-Gradio-web-server" class="headerlink" title="Launch the Gradio web server"></a>Launch the Gradio web server</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.gradio_web_server</span><br></pre></td></tr></table></figure>
-<p>这是用户将与之交互的 用户界面。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332262.png" alt="请添加图片描述"></p>
-<p>打开 <a target="_blank" rel="noopener" href="http://0.0.0.0:7860">http://0.0.0.0:7860</a> ，可以看到交互界面</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121332943.png" alt="image-20250112121049387"></p>
-<h3 id="Optional-Advanced-Features"><a href="#Optional-Advanced-Features" class="headerlink" title="(Optional): Advanced Features"></a>(Optional): Advanced Features</h3><p>You can register multiple model workers to a single controller, which can be used for serving a single model with higher throughput or serving multiple models at the same time. When doing so, please allocate different GPUs and ports for different model workers.</p>
-<p>您可以将多个模型工作人员注册到单个控制器，该控制器可用于为具有更高吞吐量的单个模型提供服务或同时为多个模型提供服务。执行此操作时，请为不同的模型工作人员分配不同的 GPU 和端口。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">worker 0</span></span><br><span class="line">CUDA_VISIBLE_DEVICES=0 python3 -m fastchat.serve.model_worker --model-path lmsys/vicuna-7b-v1.3 --controller http://localhost:21001 --port 31000 --worker http://localhost:31000</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">worker 1</span></span><br><span class="line">CUDA_VISIBLE_DEVICES=1 python3 -m fastchat.serve.model_worker --model-path lmsys/fastchat-t5-3b-v1.0 --controller http://localhost:21001 --port 31001 --worker http://localhost:31001</span><br></pre></td></tr></table></figure>
-<p>您还可以启动多选项卡 gradio 服务器，其中包括 Chatbot Arena 选项卡。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.gradio_web_server_multi</span><br></pre></td></tr></table></figure>
-<p>The default model worker based on huggingface/transformers has great compatibility but can be slow. If you want high-throughput batched serving, you can try <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/vllm_integration.md">vLLM integration</a>.</p>
-<p>基于 huggingface/transformers 的默认模型工作程序具有很好的兼容性，但速度可能较慢。如果您需要高吞吐量的批量服务，可以尝试 vLLM 集成。</p>
-<p>If you want to host it on your own UI or third party UI, see <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/third_party_ui.md">Third Party UI</a>.<br>如果想自行托管或在第三方 UI 上托管，请参阅第三方 UI 部分。</p>
-<h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><h3 id="OpenAI-Compatible-RESTful-APIs-amp-SDK"><a href="#OpenAI-Compatible-RESTful-APIs-amp-SDK" class="headerlink" title="OpenAI-Compatible RESTful APIs &amp; SDK"></a>OpenAI-Compatible RESTful APIs &amp; SDK</h3><p>FastChat 为其支持的模型提供了与 OpenAI 兼容的 API，因此您可以使用 FastChat 作为 OpenAI API 的本地替代品。FastChat 服务器兼容 openai-python 库和 cURL 命令。REST API 能够在 Google Colab 免费版中执行，如我们代码库中提供的 FastChat_API_GoogleColab.ipynb 笔记本所示。参见 docs/openai_api.md。</p>
-<p>FastChat provides OpenAI-compatible APIs for its supported models, so you can use FastChat as a local drop-in replacement for OpenAI APIs. The FastChat server is compatible with both <a target="_blank" rel="noopener" href="https://github.com/openai/openai-python">openai-python</a> library and cURL commands. The REST API is capable of being executed from Google Colab free tier, as demonstrated in the <a target="_blank" rel="noopener" href="https://github.com/lm-sys/FastChat/blob/main/playground/FastChat_API_GoogleColab.ipynb">FastChat_API_GoogleColab.ipynb</a> notebook, available in our repository. See <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/openai_api.md">docs/openai_api.md</a>.</p>
-<h3 id="Hugging-Face-Generation-APIs"><a href="#Hugging-Face-Generation-APIs" class="headerlink" title="Hugging Face Generation APIs"></a>Hugging Face Generation APIs</h3><p>See <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/fastchat/serve/huggingface_api.py">fastchat/serve/huggingface_api.py</a>.</p>
-<h3 id="LangChain-Integration"><a href="#LangChain-Integration" class="headerlink" title="LangChain Integration"></a>LangChain Integration</h3><p>See <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/langchain_integration.md">docs/langchain_integration</a>.</p>
-<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>我们使用 MT-bench，这是一套具有挑战性的多轮开放式问题来评估模型。为了自动化评估过程，我们提示强大的 LLMs（例如 GPT-4）充当评委并评估模型响应的质量。有关运行 MT-bench 的说明，请参见 fastchat/llm_judge。</p>
-<p>We use MT-bench, a set of challenging multi-turn open-ended questions to evaluate models. To automate the evaluation process, we prompt strong LLMs like GPT-4 to act as judges and assess the quality of the models’ responses. See instructions for running MT-bench at <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/fastchat/llm_judge">fastchat/llm_judge</a>.</p>
-<p>MT-bench 是推荐的模型基准测试新方法。如果您仍在寻找 vicuna 博客文章中使用的旧的 80 个问题，请访问 vicuna-blog-eval。</p>
-<p>MT-bench is the new recommended way to benchmark your models. If you are still looking for the old 80 questions used in the vicuna blog post, please go to <a target="_blank" rel="noopener" href="https://github.com/lm-sys/vicuna-blog-eval">vicuna-blog-eval</a>.</p>
-<h2 id="Fine-tuning"><a href="#Fine-tuning" class="headerlink" title="Fine-tuning"></a>Fine-tuning</h2><h3 id="Data"><a href="#Data" class="headerlink" title="Data"></a>Data</h3><p>Vicuna 是通过使用从 ShareGPT.com 通过公共 API 收集的大约 12.5 万次用户共享对话微调 Llama 基础模型而创建的。为了确保数据质量，我们将 HTML 转换回 markdown 并过滤掉一些不当或低质量的样本。此外，我们将冗长的对话分成更小的片段，以适应模型的最大上下文长度。有关 ShareGPT 数据清理的详细说明，请查看此处。</p>
-<p>Vicuna is created by fine-tuning a Llama base model using approximately 125K user-shared conversations gathered from ShareGPT.com with public APIs. To ensure data quality, we convert the HTML back to markdown and filter out some inappropriate or low-quality samples. Additionally, we divide lengthy conversations into smaller segments that fit the model’s maximum context length. For detailed instructions to clean the ShareGPT data, check out <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/commands/data_cleaning.md">here</a>.</p>
-<p>我们不会发布 ShareGPT 数据集。如果您想尝试微调代码，您可以使用 dummy_conversation.json 中的一些虚拟对话运行它。您可以遵循相同的格式并插入您自己的数据。</p>
-<p>We will not release the ShareGPT dataset. If you would like to try the fine-tuning code, you can run it with some dummy conversations in <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/data/dummy_conversation.json">dummy_conversation.json</a>. You can follow the same format and plug in your own data.</p>
-<h3 id="Code-and-Hyperparameters"><a href="#Code-and-Hyperparameters" class="headerlink" title="Code and Hyperparameters"></a>Code and Hyperparameters</h3><p>Our code is based on <a target="_blank" rel="noopener" href="https://github.com/tatsu-lab/stanford_alpaca">Stanford Alpaca</a> with additional support for multi-turn conversations. We use similar hyperparameters as the Stanford Alpaca.</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>Hyperparameter</th>
-<th>Global Batch Size</th>
-<th>Learning rate</th>
-<th>Epochs</th>
-<th>Max length</th>
-<th>Weight decay</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Vicuna-13B</td>
-<td>128</td>
-<td>2e-5</td>
-<td>3</td>
-<td>2048</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="Fine-tuning-Vicuna-7B-with-Local-GPUs"><a href="#Fine-tuning-Vicuna-7B-with-Local-GPUs" class="headerlink" title="Fine-tuning Vicuna-7B with Local GPUs"></a>Fine-tuning Vicuna-7B with Local GPUs</h3><ul>
-<li>Install dependency</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install -e <span class="string">&quot;.[train]&quot;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>You can use the following command to train Vicuna-7B with 4 x A100 (40GB). Update <code>--model_name_or_path</code> with the actual path to Llama weights and <code>--data_path</code> with the actual path to data.</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">torchrun --nproc_per_node=4 --master_port=20001 fastchat/train/train_mem.py \</span><br><span class="line">    --model_name_or_path meta-llama/Llama-2-7b-hf \</span><br><span class="line">    --data_path data/dummy_conversation.json \</span><br><span class="line">    --bf16 True \</span><br><span class="line">    --output_dir output_vicuna \</span><br><span class="line">    --num_train_epochs 3 \</span><br><span class="line">    --per_device_train_batch_size 2 \</span><br><span class="line">    --per_device_eval_batch_size 2 \</span><br><span class="line">    --gradient_accumulation_steps 16 \</span><br><span class="line">    --evaluation_strategy <span class="string">&quot;no&quot;</span> \</span><br><span class="line">    --save_strategy <span class="string">&quot;steps&quot;</span> \</span><br><span class="line">    --save_steps 1200 \</span><br><span class="line">    --save_total_limit 10 \</span><br><span class="line">    --learning_rate 2e-5 \</span><br><span class="line">    --weight_decay 0. \</span><br><span class="line">    --warmup_ratio 0.03 \</span><br><span class="line">    --lr_scheduler_type <span class="string">&quot;cosine&quot;</span> \</span><br><span class="line">    --logging_steps 1 \</span><br><span class="line">    --fsdp <span class="string">&quot;full_shard auto_wrap&quot;</span> \</span><br><span class="line">    --fsdp_transformer_layer_cls_to_wrap <span class="string">&#x27;LlamaDecoderLayer&#x27;</span> \</span><br><span class="line">    --tf32 True \</span><br><span class="line">    --model_max_length 2048 \</span><br><span class="line">    --gradient_checkpointing True \</span><br><span class="line">    --lazy_preprocess True</span><br></pre></td></tr></table></figure>
-<p>Tips:</p>
-<ul>
-<li>If you are using V100 which is not supported by FlashAttention, you can use the <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2112.05682">memory-efficient attention</a> implemented in <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/xformers">xFormers</a>. Install xformers and replace <code>fastchat/train/train_mem.py</code> above with <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/fastchat/train/train_xformers.py">fastchat/train/train_xformers.py</a>.</li>
-<li>If you meet out-of-memory due to “FSDP Warning: When using FSDP, it is efficient and recommended… “, see solutions <a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/issues/24724#issuecomment-1645189539">here</a>.</li>
-<li>If you meet out-of-memory during model saving, see solutions <a target="_blank" rel="noopener" href="https://github.com/pytorch/pytorch/issues/98823">here</a>.</li>
-<li>To turn on logging to popular experiment tracking tools such as Tensorboard, MLFlow or Weights &amp; Biases, use the <code>report_to</code> argument, e.g. pass <code>--report_to wandb</code> to turn on logging to Weights &amp; Biases.</li>
-</ul>
-<h3 id="Other-models-platforms-and-LoRA-support"><a href="#Other-models-platforms-and-LoRA-support" class="headerlink" title="Other models, platforms and LoRA support"></a>Other models, platforms and LoRA support</h3><p>More instructions to train other models (e.g., FastChat-T5) and use LoRA are in <a target="_blank" rel="noopener" href="https://pypi.org/project/fschat/docs/training.md">docs/training.md</a>.</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://github.com/lm-sys/FastChat">lm-sys/FastChat: An open platform for training, serving, and evaluating large language models. Release repo for Vicuna and Chatbot Arena.</a></p>
+<p>对于你的具体情况，如果你已经安装了WSL或Git Bash，你可以尝试在这些环境中导航到<code>D:\Document\lab\federated-learning\Codes\leaf-master\data\femnist</code>目录（注意，在WSL中，你可能需要挂载你的Windows文件系统或使用与Windows路径相对应的Linux路径），然后运行<code>./preprocess.sh -s niid --sf 1.0 -k 0 -t sample</code>命令。</p>
+<p>如果你选择使用WSL或Git Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使用了某些在Windows环境中不可用的Unix命令或工具。在这种情况下，你可能需要修改脚本以适应Windows环境，或者寻找替代的命令或工具来完成相同的任务。</p>
 
     
 
@@ -786,7 +335,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90fastchat%E3%80%91/Fastchat%EF%BC%9A%E5%9F%BA%E4%BA%8Efastapi%E6%9E%84%E5%BB%BA%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E6%9C%8D%E5%8A%A1/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Errors/">展开全文 >></a>
     </p>
     
 
@@ -816,7 +365,7 @@
 
 
     
-      <article id="post-【前端】/js/tutorial/10 事件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【OpenAI】/APIConnectionError" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -824,7 +373,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/" target="_blank">10 事件</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/" target="_blank">APIConnectionError</a>
   
     </h1>
   
@@ -832,7 +381,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -845,41 +394,13 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="10-事件"><a href="#10-事件" class="headerlink" title="10 事件"></a>10 事件</h1><p>JavaScript的代码一般通过事件触发。</p>
-<p>可以通过<code>addEventListener</code>函数为元素绑定事件的触发函数。</p>
-<p>常见的触发函数有：</p>
-<h2 id="鼠标"><a href="#鼠标" class="headerlink" title="鼠标"></a>鼠标</h2><ul>
-<li><code>click</code>：鼠标左键在一个元素上被按下和放开时，<code>click</code> 事件就会被触发。</li>
-<li><code>dblclick</code>：鼠标左键双击</li>
-<li><code>contextmenu</code>：鼠标右键点击</li>
-<li><code>mousedown</code>：鼠标按下，包括左键、滚轮、右键<ul>
-<li><code>event.button</code>：0表示左键，1表示中键，2表示右键</li>
-</ul>
-</li>
-<li><code>mouseup</code>：鼠标弹起，包括左键、滚轮、右键<ul>
-<li><code>event.button</code>：0表示左键，1表示中键，2表示右键</li>
-</ul>
-</li>
-</ul>
-<h2 id="键盘"><a href="#键盘" class="headerlink" title="键盘"></a>键盘</h2><ul>
-<li><code>keydown</code>：某个键是否被按住，事件会连续触发<ul>
-<li><code>event.code</code>：返回按的是哪个键</li>
-<li><code>event.altKey</code>、<code>event.ctrlKey</code>、<code>event.shiftKey</code>分别表示是否同时按下了alt、ctrl、shift键。</li>
-</ul>
-</li>
-<li><code>keyup</code>：某个按键是否被释放<ul>
-<li><code>event</code>常用属性同上</li>
-</ul>
-</li>
-<li><code>keypress</code>：紧跟在<code>keydown</code>事件后触发，只有按下字符键时触发。适用于判定用户<strong>输入的字符</strong><ul>
-<li><code>event</code>常用属性同上</li>
-<li>功能键如 F1、ESC键不会触发 <code>keypress</code> 事件</li>
-</ul>
-</li>
-</ul>
-<p><code>keydown</code>、<code>keyup</code>、<code>keypress</code>的关系类似于鼠标的<code>mousedown</code>、<code>mouseup</code>、<code>click</code></p>
+    <h1 id="APIConnectionError"><a href="#APIConnectionError" class="headerlink" title="APIConnectionError"></a>APIConnectionError</h1><h2 id="场景复现"><a href="#场景复现" class="headerlink" title="场景复现"></a>场景复现</h2><p>代码如下（源自网络）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openai</span><br><span class="line"> </span><br><span class="line">openai.api_key = <span class="string">&#x27;sk-xxxx&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_gpt</span>(<span class="params">prompt</span>):</span><br><span class="line">     prompt = prompt</span><br><span class="line">     model_engine = <span class="string">&quot;text-davinci-003&quot;</span></span><br><span class="line">     completion = openai.Completion.create(</span><br><span class="line">         engine=model_engine,</span><br><span class="line">         prompt=prompt,</span><br><span class="line">         max_tokens=<span class="number">1024</span>,</span><br><span class="line">         n=<span class="number">1</span>,</span><br><span class="line">         stop=<span class="literal">None</span>,</span><br><span class="line">         temperature=<span class="number">0.5</span>,</span><br><span class="line">         timeout=<span class="number">1000</span>,</span><br><span class="line">     )</span><br><span class="line"> </span><br><span class="line">     response = completion.choices[<span class="number">0</span>].text</span><br><span class="line">     <span class="built_in">print</span>(response)</span><br><span class="line"> </span><br><span class="line">chat_gpt(<span class="string">&quot;现在几点了&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>执行报错：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/89f31ebb7a1ad9ba3815de9eb8412a6b.png" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">APIConnectionError: Error communicating <span class="keyword">with</span> OpenAI: HTTPSConnectionPool(host=<span class="string">&#x27;api.openai.com&#x27;</span>, port=<span class="number">443</span>): Max retries exceeded <span class="keyword">with</span> url: /v1/chat/completions (Caused by SSLError(SSLEOFError(<span class="number">8</span>, <span class="string">&#x27;EOF occurred in violation of protocol (_ssl.c:1125)&#x27;</span>)))</span><br></pre></td></tr></table></figure>
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/#more">more >></a>
     
     
 
@@ -896,7 +417,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
         		</li>
       		
 		</ul>
@@ -906,7 +427,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/APIConnectionError/">展开全文 >></a>
     </p>
     
 
@@ -936,7 +457,7 @@
 
 
     
-      <article id="post-【前端】/js/tutorial/1 JS的调用方式与执行顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【OpenAI】/如何利用 ChatGPT 帮助开展日常科研工作？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -944,7 +465,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" target="_blank">1 JS的调用方式与执行顺序</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/" target="_blank">如何利用 ChatGPT 帮助开展日常科研工作？</a>
   
     </h1>
   
@@ -952,7 +473,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -965,221 +486,116 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="1-JS的调用方式与执行顺序"><a href="#1-JS的调用方式与执行顺序" class="headerlink" title="1 JS的调用方式与执行顺序"></a>1 JS的调用方式与执行顺序</h1><h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><p>HTML页面中的任意位置加上<code>&lt;script type=&quot;module&quot;&gt;&lt;/script&gt;</code>标签即可。</p>
-<p>常见使用方式有以下几种：</p>
+    <h1 id="如何利用-ChatGPT-帮助开展日常科研工作？"><a href="#如何利用-ChatGPT-帮助开展日常科研工作？" class="headerlink" title="如何利用 ChatGPT 帮助开展日常科研工作？"></a>如何利用 ChatGPT 帮助开展日常科研工作？</h1><h2 id="论文搜集助理"><a href="#论文搜集助理" class="headerlink" title="论文搜集助理"></a>论文搜集助理</h2><p>指定论文主题和时间范围，ChatGPT 会自动给出一些代表性论文，根据论文顺藤摸瓜，可以对相关领域有大概了解。</p>
+<blockquote>
+<p>  重要提醒：ChatGPT 可能会编造不存在的论文，而且论文数据库与谷歌学术等平台差距较大，大家在使用的时候注意甄别和交叉验证。</p>
+</blockquote>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411081911822.webp" alt="img"></p>
+<p>举个例子，我们让 ChatGPT 搜索过去一年 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=554951561&amp;content_type=Answer&amp;match_order=1&amp;q=脉冲神经网络&amp;zhida_source=entity">脉冲神经网络</a> 的文章。通过上图可以看出，ChatGPT 不仅给出了脉冲神经网络过去一年这一领域的代表性文章，还给出了进一步搜索论文的方法，对科研小白很友好。</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【前端】/css/tutorial/【1.样式定义方式】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/" target="_blank">【1. 样式定义方式】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="【1-样式定义方式】"><a href="#【1-样式定义方式】" class="headerlink" title="【1. 样式定义方式】"></a>【1. 样式定义方式】</h1><h2 id="行内样式表（inline-style-sheet）"><a href="#行内样式表（inline-style-sheet）" class="headerlink" title="行内样式表（inline style sheet）"></a>行内样式表（inline style sheet）</h2><p>直接定义在标签的<code>style</code>属性中。</p>
 <ul>
-<li><p>直接在<code>&lt;script type=&quot;module&quot;&gt;&lt;/script&gt;</code>标签内写JS代码。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">let</span> x = <span class="number">3</span>;</span></span><br><span class="line"><span class="language-javascript">    <span class="variable language_">console</span>.<span class="title function_">log</span>(x);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>直接引入文件：<code>&lt;script type=&quot;module&quot; src=&quot;/static/js/index.js&quot;&gt;&lt;/script&gt;</code>。例如<code>/static/js/index.js</code>文件中的内容为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">&quot;acwing&quot;</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">print</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Hello World!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> &#123;</span><br><span class="line">    name,</span><br><span class="line">    print</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将文件中所需的代码，通过<code>import</code>关键字引入到当前作用域。例如<code>&lt;script type=&quot;module&quot;&gt;&lt;/script&gt;</code>中的内容为：</p>
-</li>
-</ul>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">import</span> &#123; name, print &#125; <span class="keyword">from</span> <span class="string">&quot;/static/js/index.js&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">console</span>.<span class="title function_">log</span>(name);</span></span><br><span class="line"><span class="language-javascript">	<span class="title function_">print</span>();</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【前端】/js/tutorial/11 常用库" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/" target="_blank">11 常用库</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="11-常用库"><a href="#11-常用库" class="headerlink" title="11 常用库"></a>11 常用库</h1><ul>
-<li><a href="./11 常用库/11.1 jQuery.md">11.1 jQuery</a></li>
-<li><a href="./11 常用库/11.2 setTimeout与setInterval.md">11.2 setTimeout与setInterval</a></li>
-<li><a href="./11 常用库/11.3 requestAnimationFrame.md">11.3 requestAnimationFrame</a></li>
-<li><a href="./11 常用库/11.4 Map与Set.md">11.4 Map与Set</a></li>
-<li><a href="./11 常用库/11.5 localStorage.md">11.5 localStorage</a></li>
-<li><a href="./11 常用库/11.6 JSON.md">11.6 JSON</a></li>
-<li><a href="./11 常用库/11.7 日期.md">11.7 日期</a></li>
-<li><a href="./11 常用库/11.8 WebSocket.md">11.8 WebSocket</a></li>
-<li><a href="./11 常用库/11.9 window.md">11.9 window</a></li>
-<li><a href="./11 常用库/11.10 canvas.md">11.10 canvas</a></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/11%20%E5%B8%B8%E7%94%A8%E5%BA%93/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【前端】/js/tutorial/2 变量与运算符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/2%20%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/" target="_blank">2 变量与运算符</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/2%20%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="2-变量与运算符"><a href="#2-变量与运算符" class="headerlink" title="2 变量与运算符"></a>2 变量与运算符</h1><h2 id="let与const"><a href="#let与const" class="headerlink" title="let与const"></a><code>let</code>与<code>const</code></h2><p>用来声明变量，作用范围为当前作用域。</p>
-<ul>
-<li><code>let</code>用来定义变量；</li>
-<li><code>const</code>用来定义常量；</li>
+<li>作用范围：仅对当前标签产生影响。</li>
 </ul>
 <p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s = <span class="string">&quot;acwing&quot;</span>, x = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> d = &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>,</span><br><span class="line">    <span class="attr">age</span>: <span class="number">18</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> n = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="变量类型"><a href="#变量类型" class="headerlink" title="变量类型"></a>变量类型</h2><ul>
-<li><code>number</code>：数值变量，例如<code>1</code>, <code>2.5</code></li>
-<li><code>string</code>：字符串，例如<code>&quot;acwing&quot;</code>, <code>&#39;yxc&#39;</code>，单引号与双引号均可。字符串中的每个字符为只读类型。</li>
-<li><code>boolean</code>：布尔值，例如<code>true</code>, <code>false</code></li>
-<li><code>object</code>：对象，类似于<code>C++</code>中的指针，例如<code>[1, 2, 3]</code>，<code>&#123;name: &quot;yxc&quot;, age: 18&#125;</code>，<code>null</code></li>
-<li><code>undefined</code>：未定义的变量</li>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/images/mountain.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 300px; height: 200px;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="内部样式表（internal-style-sheet）"><a href="#内部样式表（internal-style-sheet）" class="headerlink" title="内部样式表（internal style sheet）"></a>内部样式表（internal style sheet）</h2><p>定义在<code>style</code>标签中，通过选择器影响对应的标签。</p>
+<ul>
+<li>作用范围：可以对同一个页面中的多个元素产生影响。</li>
 </ul>
-<p>类似于Python，JavaScript中的变量类型可以动态变化。</p>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/2%20%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/#more">more >></a>
-    
+<h2 id="外部样式表（external-style-sheet）"><a href="#外部样式表（external-style-sheet）" class="headerlink" title="外部样式表（external style sheet）"></a>外部样式表（external style sheet）</h2><p>定义在 css 样式文件中，通过选择器影响对应的标签。可以用 link 标签引入某些页面。</p>
+<ul>
+<li>作用范围：可以对多个页面产生影响。</li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p>注意不能使用//。</p>
+<p>只有：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 注释 */</span> </span><br></pre></td></tr></table></figure>
     
 
     
@@ -1195,7 +611,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
         		</li>
       		
 		</ul>
@@ -1205,7 +621,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/2%20%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1235,7 +651,7 @@
 
 
     
-      <article id="post-【前端】/js/tutorial/3 输入与输出" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Windows】/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1243,7 +659,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/3%20%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA/" target="_blank">3 输入与输出</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" target="_blank">【Reference】</a>
   
     </h1>
   
@@ -1251,7 +667,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/3%20%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1264,31 +680,10 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="3-输入与输出"><a href="#3-输入与输出" class="headerlink" title="3 输入与输出"></a>3 输入与输出</h1><h2 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h2><ul>
-<li>从HTML与用户的交互中输入信息，例如通过<code>input</code>、<code>textarea</code>等标签获取用户的键盘输入，通过<code>click</code>、<code>hover</code>等事件获取用户的鼠标输入。</li>
-<li>通过<code>Ajax</code>与<code>WebSocket</code>从服务器端获取输入</li>
-<li>标准输入，参考<a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/729/">AcWing 1. A + B</a></li>
+    <h1 id="【Reference】"><a href="#【Reference】" class="headerlink" title="【Reference】"></a>【Reference】</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/windows-commands">Windows 命令 | Microsoft Learn</a></li>
 </ul>
-<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><ul>
-<li>调试用<code>console.log</code>，会将信息输出到浏览器控制台</li>
-<li>改变当前页面的HTML与CSS</li>
-<li>通过<code>Ajax</code>与<code>WebSocket</code>将结果返回到服务器</li>
-</ul>
-<h2 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h2><ul>
-<li>字符串中填入数值：</li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">&#x27;yxc&#x27;</span>, age = <span class="number">18</span>;</span><br><span class="line"><span class="keyword">let</span> s = <span class="string">`My name is <span class="subst">$&#123;name&#125;</span>, I&#x27;m <span class="subst">$&#123;age&#125;</span> years old.`</span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义多行字符串：</li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s = </span><br><span class="line"><span class="string">`&lt;div&gt;</span></span><br><span class="line"><span class="string">	&lt;h2&gt;标题&lt;/h2&gt;</span></span><br><span class="line"><span class="string">    &lt;p&gt;段落&lt;/p&gt;</span></span><br><span class="line"><span class="string">&lt;/div&gt;`</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>保留两位小数如何输出</li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="number">1.234567</span>;</span><br><span class="line"><span class="keyword">let</span> s = <span class="string">`<span class="subst">$&#123;x.toFixed(<span class="number">2</span>)&#125;</span>`</span>;</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/3%20%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA/#more">more >></a>
-    
+
     
 
     
@@ -1304,7 +699,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
         		</li>
       		
 		</ul>
@@ -1314,7 +709,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/3%20%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/">展开全文 >></a>
     </p>
     
 
@@ -1344,7 +739,7 @@
 
 
     
-      <article id="post-【前端】/js/tutorial/4 判断语句" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【前端】/css/tutorial/【10.盒子模型】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1352,7 +747,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/4%20%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5/" target="_blank">4 判断语句</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/" target="_blank">【10. 盒子模型】</a>
   
     </h1>
   
@@ -1360,7 +755,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/4%20%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1373,18 +768,12 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="4-判断语句"><a href="#4-判断语句" class="headerlink" title="4 判断语句"></a>4 判断语句</h1><p>JavaScript中的<code>if-else</code>语句与<code>C++</code>、<code>Python</code>、<code>Java</code>中类似。</p>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> score = <span class="number">90</span>;</span><br><span class="line"><span class="keyword">if</span> (score &gt;= <span class="number">85</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">70</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">60</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;C&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;D&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>JavaScript中的逻辑运算符也与<code>C++</code>、<code>Java</code>中类似：</p>
+    <h1 id="【10-盒子模型】"><a href="#【10-盒子模型】" class="headerlink" title="【10. 盒子模型】"></a>【10. 盒子模型】</h1><h2 id="box-sizing"><a href="#box-sizing" class="headerlink" title="box-sizing"></a><code>box-sizing</code></h2><p>CSS 中的 <code>box-sizing</code> 属性定义了 user agent 应该如何计算一个元素的总宽度和总高度。</p>
 <ul>
-<li><code>&amp;&amp;</code>表示与</li>
-<li><code>||</code>表示或</li>
-<li><code>!</code>表示非</li>
+<li><code>content-box</code>：是默认值，设置<code>border</code>和<code>padding</code>均会增加元素的宽高。</li>
+<li><code>border-box</code>：设置<code>border</code>和<code>padding</code>不会改变元素的宽高，而是挤占内容区域。</li>
 </ul>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/4%20%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5/#more">more >></a>
-    
+
     
 
     
@@ -1400,7 +789,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
         		</li>
       		
 		</ul>
@@ -1410,7 +799,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/4%20%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1440,7 +829,7 @@
 
 
     
-      <article id="post-【前端】/js/tutorial/5 循环语句" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-命令操作/【Windows】/【Windows命令】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1448,7 +837,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/5%20%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/" target="_blank">5 循环语句</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" target="_blank">【Windows命令】</a>
   
     </h1>
   
@@ -1456,7 +845,7 @@
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/5%20%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1469,19 +858,11 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="5-循环语句"><a href="#5-循环语句" class="headerlink" title="5 循环语句"></a>5 循环语句</h1><p>JavaScript中的循环语句与<code>C++</code>中类似，也包含<code>for</code>、<code>while</code>、<code>do while</code>循环。</p>
-<h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a><code>for</code>循环</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>枚举对象或数组时可以使用：</p>
-<ul>
-<li><code>for-in</code>循环，可以枚举数组中的下标，以及对象中的<code>key</code></li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = [<span class="number">100</span>, <span class="number">50</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> p <span class="keyword">in</span> a) &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">输出结果</span></span><br><span class="line"><span class="comment">0</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">2</span></span><br><span class="line"><span class="comment">3</span></span><br><span class="line"><span class="comment">4</span></span><br><span class="line"><span class="comment">5</span></span><br><span class="line"><span class="comment">6</span></span><br><span class="line"><span class="comment">*/</span> </span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>for-of</code>循环，可以枚举数组中的值，以及对象中的<code>value</code></li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = [<span class="number">100</span>, <span class="number">50</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> p <span class="keyword">of</span> a) &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">输出结果</span></span><br><span class="line"><span class="comment">100</span></span><br><span class="line"><span class="comment">50</span></span><br><span class="line"><span class="comment">20</span></span><br><span class="line"><span class="comment">10</span></span><br><span class="line"><span class="comment">5</span></span><br><span class="line"><span class="comment">2</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">*/</span> </span><br></pre></td></tr></table></figure>
+    <h1 id="【Windows-命令】"><a href="#【Windows-命令】" class="headerlink" title="【Windows 命令】"></a>【Windows 命令】</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><strong>cmd</strong> 是 <strong>command</strong> 的缩写。即命令行</p>
+<p>虽然随着计算机产业的发展，<strong>Windows</strong> 操作系统 的应用越来越广泛，<strong>DOS</strong> 面临着被淘汰的命运，但是因为它运行安全、稳定，有的用户还在使用，所以一般 Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong> 系统下运行 <strong>DOS</strong>，中文版 <strong>Windows XP</strong> 中的命令提示符进一步提高了与 DOS 下操作命令的兼容性，用户可以在命令提示符直接输入中文调用文件。</p>
+<p>作为一个开发者，我们用的最多的就是 <strong>windows</strong>，但是对于 <strong>cmd</strong>，我不知道大家熟不熟，反正我是一直不怎么熟悉。平时操作 <strong>linux</strong> 比较多，反而忽视了 <strong>cmd</strong> 相关命令，这里大致总结一些常用的命令，作为记录。</p>
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/5%20%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/#more">more >></a>
     
     
 
@@ -1498,7 +879,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
         		</li>
       		
 		</ul>
@@ -1508,7 +889,346 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/5%20%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/%E3%80%90Windows%E5%91%BD%E4%BB%A4%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【前端】/css/tutorial/【11.位置】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9011.%E4%BD%8D%E7%BD%AE%E3%80%91/" target="_blank">【11. 位置】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9011.%E4%BD%8D%E7%BD%AE%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="【11-位置】"><a href="#【11-位置】" class="headerlink" title="【11. 位置】"></a>【11. 位置】</h1><h2 id="position"><a href="#position" class="headerlink" title="position"></a><code>position</code></h2><p><code>CSS position</code>属性用于指定一个元素在文档中的定位方式。</p>
+<h3 id="定位类型："><a href="#定位类型：" class="headerlink" title="定位类型："></a>定位类型：</h3><ul>
+<li>定位元素（positioned element）是其计算后位置属性为 relative, absolute, fixed 或 sticky 的一个元素（换句话说，除 static 以外的任何东西）。</li>
+<li>相对定位元素（relatively positioned element）是计算后位置属性为 relative 的元素。</li>
+<li>绝对定位元素（absolutely positioned element）是计算后位置属性为 absolute 或 fixed 的元素。</li>
+<li>粘性定位元素（stickily positioned element）是计算后位置属性为 sticky 的元素。</li>
+</ul>
+<h3 id="取值："><a href="#取值：" class="headerlink" title="取值："></a>取值：</h3><ul>
+<li><code>static</code>：该关键字指定元素使用正常的布局行为，即元素在文档常规流中当前的布局位置。此时 <code>top</code>、<code>right</code>、<code>bottom</code>、<code>left</code> 和 <code>z-index</code> 属性无效。</li>
+</ul>
+<blockquote>
+<p>  <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/CSS/x">x - CSS: Cascading Style Sheets | MDN</a>、<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/CSS/y">y - CSS: Cascading Style Sheets | MDN</a>、<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/z-index">z-index - CSS：层叠样式表 | MDN</a></p>
+<p>  <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/top">top - CSS：层叠样式表 | MDN</a>、<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/right">right - CSS：层叠样式表 | MDN</a>、<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/bottom">bottom - CSS：层叠样式表 | MDN</a>、<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/left">left - CSS：层叠样式表 | MDN</a></p>
+</blockquote>
+<ul>
+<li><code>relative</code>：该关键字下，元素先放置在未添加定位时的位置，再在不改变页面布局的前提下调整元素位置（因此会在此元素未添加定位时所在位置留下空白）。top, right, bottom, left 等调整元素相对于初始位置的偏移量。</li>
+<li><code>absolute</code>：元素会被移出正常文档流，并不为元素预留空间，通过指定元素相对于最近的非 static 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（margins），且不会与其他边距合并。</li>
+<li><code>fixed</code>：元素会被移出正常文档流，并不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。</li>
+<li><code>sticky</code>：元素根据正常文档流进行定位，然后相对它的最近滚动祖先（nearest scrolling ancestor）和 containing block （最近块级祖先 nearest block-level ancestor)，包括 table-related 元素，基于 top, right, bottom, 和 left 的值进行偏移。偏移值不会影响任何其他元素的位置。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9011.%E4%BD%8D%E7%BD%AE%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【前端】/css/tutorial/【12.浮动】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9012.%E6%B5%AE%E5%8A%A8%E3%80%91/" target="_blank">【12. 浮动】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9012.%E6%B5%AE%E5%8A%A8%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="【12-浮动】"><a href="#【12-浮动】" class="headerlink" title="【12. 浮动】"></a>【12. 浮动】</h1><h2 id="float"><a href="#float" class="headerlink" title="float"></a><code>float</code></h2><p><code>float</code> CSS 属性指定一个元素应沿其容器的左侧或右侧放置，允许文本和内联元素环绕它。该元素从网页的正常流动（文档流）中移除，尽管仍然保持部分的流动性（与绝对定位相反）。</p>
+<p>由于 float 意味着使用块布局，它在某些情况下修改 display 值的计算值：</p>
+<ul>
+<li><code>display</code>为<code>inline</code>或<code>inline-block</code>时，使用<code>float</code>后会统一变成<code>block</code>。</li>
+</ul>
+<h3 id="取值："><a href="#取值：" class="headerlink" title="取值："></a>取值：</h3><ul>
+<li><code>left</code>：表明元素必须浮动在其所在的块容器左侧的关键字。</li>
+<li><code>right</code>：表明元素必须浮动在其所在的块容器右侧的关键字。</li>
+</ul>
+<h2 id="clear"><a href="#clear" class="headerlink" title="clear"></a><code>clear</code></h2><p>有时，你可能想要强制元素移至任何浮动元素下方。比如说，你可能希望某个段落与浮动元素保持相邻的位置，但又希望这个段落从头开始强制独占一行。此时可以使用<code>clear</code>。</p>
+<ul>
+<li><code>left</code>：清除左侧浮动。</li>
+<li><code>right</code>：清除右侧浮动。</li>
+<li><code>both</code>：清除左右两侧浮动</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9012.%E6%B5%AE%E5%8A%A8%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【前端】/css/tutorial/【13.flex布局】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9013.flex%E5%B8%83%E5%B1%80%E3%80%91/" target="_blank">【13.flex 布局】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9013.flex%E5%B8%83%E5%B1%80%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="【13-flex-布局】"><a href="#【13-flex-布局】" class="headerlink" title="【13.flex 布局】"></a>【13.flex 布局】</h1><p><code>flex</code> CSS 简写属性设置了弹性项目如何增大或缩小以适应其弹性容器中可用的空间。</p>
+<h2 id="flex-direction"><a href="#flex-direction" class="headerlink" title="flex-direction"></a><code>flex-direction</code></h2><p>CSS <code>flex-direction</code> 属性指定了内部元素是如何在 flex 容器中布局的，定义了主轴的方向（正方向或反方向）。</p>
+<ul>
+<li><code>row</code>：flex 容器的主轴被定义为与文本方向相同。 主轴起点和主轴终点与内容方向相同。</li>
+<li><code>row-reverse</code>：表现和 row 相同，但是置换了主轴起点和主轴终点。</li>
+<li><code>column</code>：flex 容器的主轴和块轴相同。主轴起点与主轴终点和书写模式的前后点相同</li>
+<li><code>column-reverse</code>：表现和 column 相同，但是置换了主轴起点和主轴终点</li>
+</ul>
+<h2 id="flex-wrap"><a href="#flex-wrap" class="headerlink" title="flex-wrap"></a><code>flex-wrap</code></h2><p>CSS 的 <code>flex-wrap</code> 属性指定 flex 元素单行显示还是多行显示。如果允许换行，这个属性允许你控制行的堆叠方向。</p>
+<ul>
+<li><code>nowrap</code>：默认值。不换行。</li>
+<li><code>wrap</code>：换行，第一行在上方。</li>
+<li><code>wrap-reverse</code>：换行，第一行在下方。</li>
+</ul>
+<h2 id="flex-flow"><a href="#flex-flow" class="headerlink" title="flex-flow"></a><code>flex-flow</code></h2><p>CSS <code>flex-flow</code> 属性是 <code>flex-direction</code> 和 <code>flex-wrap</code> 的简写。默认值为：<code>row nowrap</code>。</p>
+<h2 id="justify-content"><a href="#justify-content" class="headerlink" title="justify-content"></a><code>justify-content</code></h2><p>CSS <code>justify-content</code> 属性定义了浏览器之间，如何分配顺着弹性容器主轴（或者网格行轴） 的元素之间及其周围的空间。</p>
+<ul>
+<li><code>flex-start</code>：默认值。左对齐。</li>
+<li><code>flex-end</code>：右对齐。</li>
+<li><code>space-between</code>：左右两段对齐。</li>
+<li><code>space-around</code>：在每行上均匀分配弹性元素。相邻元素间距离相同。每行第一个元素到行首的距离和每行最后一个元素到行尾的距离将会是相邻元素之间距离的一半。</li>
+<li><code>space-evenly</code>：flex 项都沿着主轴均匀分布在指定的对齐容器中。相邻 flex 项之间的间距，主轴起始位置到第一个 flex 项的间距，主轴结束位置到最后一个 flex 项的间距，都完全一样。</li>
+</ul>
+<h2 id="align-items"><a href="#align-items" class="headerlink" title="align-items"></a><code>align-items</code></h2><p>CSS <code>align-items</code>属性将所有直接子节点上的 align-self 值设置为一个组。 align-self 属性设置项目在其包含块中在交叉轴方向上的对齐方式。</p>
+<ul>
+<li><code>flex-start</code>：元素向主轴起点对齐。</li>
+<li><code>flex-end</code>：元素向主轴终点对齐。</li>
+<li><code>center</code>：元素在侧轴居中。</li>
+<li><code>stretch</code>：弹性元素被在侧轴方向被拉伸到与容器相同的高度或宽度。</li>
+</ul>
+<h2 id="align-content"><a href="#align-content" class="headerlink" title="align-content"></a><code>align-content</code></h2><p>CSS 的 <code>align-content</code> 属性设置了浏览器如何沿着弹性盒子布局的纵轴和网格布局的主轴在内容项之间和周围分配空间。</p>
+<ul>
+<li><code>flex-start</code>：所有行从垂直轴起点开始填充。第一行的垂直轴起点边和容器的垂直轴起点边对齐。接下来的每一行紧跟前一行。</li>
+<li><code>flex-end</code>：所有行从垂直轴末尾开始填充。最后一行的垂直轴终点和容器的垂直轴终点对齐。同时所有后续行与前一个对齐。</li>
+<li><code>center</code>：所有行朝向容器的中心填充。每行互相紧挨，相对于容器居中对齐。容器的垂直轴起点边和第一行的距离相等于容器的垂直轴终点边和最后一行的距离。</li>
+<li><code>stretch</code>：拉伸所有行来填满剩余空间。剩余空间平均地分配给每一行。</li>
+</ul>
+<h2 id="order"><a href="#order" class="headerlink" title="order"></a><code>order</code></h2><p>定义<code>flex</code>项目的顺序，值越小越靠前。</p>
+<h2 id="flex-grow"><a href="#flex-grow" class="headerlink" title="flex-grow"></a><code>flex-grow</code></h2><p>CSS 属性 <code>flex-grow</code> CSS 设置 flex 项主尺寸 的 flex 增长系数。</p>
+<p>负值无效，默认为 0。</p>
+<h2 id="flex-shrink"><a href="#flex-shrink" class="headerlink" title="flex-shrink"></a><code>flex-shrink</code></h2><p>CSS <code>flex-shrink</code> 属性指定了 flex 元素的收缩规则。flex 元素仅在默认宽度之和大于容器的时候才会发生收缩，其收缩的大小是依据 flex-shrink 的值。</p>
+<p>负值无效，默认为 1。</p>
+<h2 id="flex-basis"><a href="#flex-basis" class="headerlink" title="flex-basis"></a><code>flex-basis</code></h2><p>CSS 属性 flex-basis 指定了 flex 元素在主轴方向上的初始大小。</p>
+<p>width 值可以是 <code>&lt;length&gt;</code>; 该值也可以是一个相对于其父弹性盒容器主轴尺寸的百分数 。负值是不被允许的。默认为 auto。</p>
+<h2 id="flex"><a href="#flex" class="headerlink" title="flex"></a><code>flex</code></h2><p><code>flex-grow</code>、<code>flex-shrink</code>、<code>flex-basis</code>的缩写。</p>
+<ul>
+<li><code>auto</code>：<code>flex: 1 1 auto</code></li>
+<li><code>none</code>：<code>flex: 0 0 auto</code></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9013.flex%E5%B8%83%E5%B1%80%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1693,11 +1413,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1713,11 +1433,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1741,23 +1461,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1769,7 +1473,23 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1793,7 +1513,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1801,11 +1521,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1814,10 +1538,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

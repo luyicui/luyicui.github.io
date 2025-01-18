@@ -214,439 +214,6 @@
 
   
     
-      <article id="post-【后端】/python/Module/绝对导入与相对导入" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" target="_blank">绝对导入与相对导入</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="绝对导入与相对导入">绝对导入与相对导入</h1>
-<h2 id="绝对导入">绝对导入</h2>
-<h3 id="标准库导入">标准库导入</h3>
-<p>假设有一个文件 <code>a.py</code>，其中导入了标准库模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br></pre></td></tr></table></figure>
-<p>这种导入方式称为标准库导入，因为 <code>os</code> 是 Python
-的标准库之一，其它常见的标准库如下：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501041450614.png"
-alt="image-20250104145009446" />
-<figcaption aria-hidden="true">image-20250104145009446</figcaption>
-</figure>
-<h3 id="当前文件目录导入">当前文件目录导入</h3>
-<p>如果在 <code>a.py</code> 所在的目录下有一个 <code>b.py</code>
-文件，其中定义了一个类 <code>B</code>，那么在 <code>a.py</code>
-中可以这样导入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b <span class="keyword">import</span> B</span><br></pre></td></tr></table></figure>
-<p>这是从当前文件目录导入，因为当运行 <code>a.py</code>
-时，当前工作目录就是 <code>a.py</code> 所在的目录。只要
-<code>b.py</code> 在同一目录下，就能成功导入。</p>
-<p>对于嵌套导入，当前文件目录始终是最初执行的文件所在的目录。比如，考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">│  a.py</span><br><span class="line">│  a2.py</span><br><span class="line">│</span><br><span class="line">└─b</span><br><span class="line">        b.py</span><br></pre></td></tr></table></figure>
-<p><strong>a2.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A2</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><strong>b.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p>直接运行 <code>python b/b.py</code> 会失败，报错如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;a2&#x27;</span><br></pre></td></tr></table></figure>
-<p>但是运行 <code>python a.py</code>
-则能成功导入。这是因为执行的顶层文件（在此为
-<code>a.py</code>）决定了工作目录，而工作目录会影响子模块的绝对导入路径。</p>
-<h3 id="site-packages-导入"><code>site-packages</code> 导入</h3>
-<p><code>site-packages</code> 目录包含了通过 <code>pip</code>
-安装的第三方包。当我们安装一个包时，Python
-会将其放置在该目录下。导入这些包时，Python 会优先查找
-<code>site-packages</code> 目录。</p>
-<h3 id="导入顺序">导入顺序</h3>
-<p>Python 导入模块时会按以下顺序查找模块：</p>
-<ol type="1">
-<li><strong>当前目录</strong>：首先检查当前脚本所在的目录。</li>
-<li><strong>标准库目录</strong>：如果当前目录没有找到模块，Python
-会在标准库目录中查找。</li>
-<li><strong><code>site-packages</code> 目录</strong>：最后，Python 会在
-<code>site-packages</code>（即安装的第三方包目录）中查找。</li>
-</ol>
-<h2 id="相对导入">相对导入</h2>
-<p>相对导入只能在一个模块作为子模块被引用时使用，不能直接运行该文件。在使用相对导入时，必须确保引用的文件在一个包中。具体来说，运行的文件所在的目录也必须是一个包，而不能直接在该目录下运行模块。</p>
-<p>考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">│   main.py</span><br><span class="line">│</span><br><span class="line">├───a</span><br><span class="line">│       a.py</span><br><span class="line">│</span><br><span class="line">└───c</span><br><span class="line">        c.py</span><br></pre></td></tr></table></figure>
-<p><strong>main.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ..c.c <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>c.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>运行 <code>python main.py</code> 会报错：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
-<p>原因是 <code>a.py</code> 中的 <code>..</code> 会尝试访问到
-<code>./</code> 目录，而该目录不是一个包。为了解决这个问题，可以将
-<code>a</code> 和 <code>c</code> 文件夹打包成一个包，放到
-<code>main.py</code> 同级目录下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">│  main.py</span><br><span class="line">│</span><br><span class="line">└─top</span><br><span class="line">    ├─a</span><br><span class="line">    │      a.py</span><br><span class="line">    │</span><br><span class="line">    └─c</span><br><span class="line">           c.py</span><br></pre></td></tr></table></figure>
-<p>然后修改 <code>main.py</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> top.a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p>此时可以成功运行。</p>
-<h2 id="使用-sys.path.append-实现相对导入">使用
-<code>sys.path.append</code> 实现相对导入</h2>
-<p>直接使用相对导入时，不能直接运行文件，这使得编写脚本变得不太方便。如果希望在某些情况下能够从其他文件夹导入模块，可以通过
-<code>sys.path.append</code> 将当前工作目录添加到系统路径中。</p>
-<p>假设在工作目录下有两个文件夹：<code>src1</code> 和
-<code>src2</code>，并且 <code>src2</code> 中的文件需要从
-<code>src1</code> 导入模块。可以在 <code>src2</code>
-中的文件中这样做：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;./&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>然后就可以从 <code>src1</code> 中导入模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> src1.xxx <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>另一种方式是通过环境变量设置
-<code>PYTHONPATH</code>，在终端执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPATH=./</span><br></pre></td></tr></table></figure>
-<p>但这样要求工作目录必须是正确的，<code>./</code> 目录应该是
-<code>src1</code> 和 <code>src2</code>
-的父目录。如果想避免在程序中写路径，也可以使用绝对路径，但这样会增加迁移环境的复杂性。</p>
-<p>为了更加灵活地使用 <code>sys.path</code>，可以通过 <code>os</code>
-模块获取当前目录并自动调整路径：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), <span class="string">&#x27;..&#x27;</span>)))</span><br></pre></td></tr></table></figure>
-<h2 id="init__.py-文件的作用"><code>__init__.py</code> 文件的作用</h2>
-<p>通常我们在导入时会看到 <code>from a.a import XXX</code>
-这样的形式，其中第一个 <code>a</code> 是文件夹名，第二个 <code>a</code>
-是文件名。这种形式可能不太方便。如果希望直接使用
-<code>from a import XXX</code>，并且 <code>a</code>
-代表文件夹名，可以在文件夹 <code>a</code> 中创建一个
-<code>__init__.py</code> 文件。</p>
-<p>在 <code>a</code> 文件夹下创建 <code>__init__.py</code>
-文件，并在其中添加如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .a <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>这样就可以简化导入方式，使得我们可以直接使用
-<code>from a import XXX</code>。<code>__init__.py</code>
-文件在这里起到了帮助导入模块的作用。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/OOP/self与cls的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">self与cls的区别</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="self与cls的区别">self与cls的区别</h1>
-<p>在 Python 面向对象编程中，<code>self</code> 和 <code>cls</code>
-是两个常见的关键字，它们分别用于<strong>实例方法</strong>和<strong>类方法</strong>。本文将详细介绍它们的作用、区别及使用场景，并通过代码示例帮助大家理解如何调用这些方法。</p>
-<hr />
-<h2 id="什么是-self">什么是 <code>self</code>？</h2>
-<h3 id="定义与作用">定义与作用</h3>
-<ul>
-<li><code>self</code>
-是<strong>实例方法</strong>的第一个参数，表示方法所属的<strong>实例对象</strong>。</li>
-<li>在实例方法中，<code>self</code>
-用于访问实例变量和其他实例方法。</li>
-</ul>
-<h3 id="示例代码">示例代码</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">bark</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span> is barking!&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">rename</span>(<span class="params">self, new_name</span>):</span><br><span class="line">        self.name = new_name  <span class="comment"># 修改实例变量</span></span><br></pre></td></tr></table></figure>
-<h3 id="调用示例">调用示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">dog1 = Dog(<span class="string">&quot;Buddy&quot;</span>)</span><br><span class="line">dog2 = Dog(<span class="string">&quot;Max&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用实例方法</span></span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Buddy is barking!</span></span><br><span class="line">dog2.bark()  <span class="comment"># 输出: Max is barking!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改实例变量</span></span><br><span class="line">dog1.rename(<span class="string">&quot;Charlie&quot;</span>)</span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Charlie is barking!</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点">注意点</h3>
-<ul>
-<li><code>self</code> 是约定俗成的名称，不是 Python
-的关键字，可以用其他名称替代，但不建议更改。</li>
-<li>调用实例方法时，<code>self</code> 由 Python
-自动传入，无需显式提供。</li>
-</ul>
-<hr />
-<h2 id="什么是-cls">什么是 <code>cls</code>？</h2>
-<h3 id="定义与作用-1">定义与作用</h3>
-<ul>
-<li><code>cls</code>
-是<strong>类方法</strong>的第一个参数，表示方法所属的<strong>类对象</strong>。</li>
-<li>在<strong>类方法</strong>中，<code>cls</code>
-可用于访问和修改<strong>类变量</strong>或调用其他<strong>类方法</strong>。</li>
-<li>类方法通过 <code>@classmethod</code> 装饰器定义。</li>
-</ul>
-<h3 id="示例代码-1">示例代码</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>:</span><br><span class="line">    species = <span class="string">&quot;Feline&quot;</span>  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">change_species</span>(<span class="params">cls, new_species</span>):</span><br><span class="line">        cls.species = new_species  <span class="comment"># 修改类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create</span>(<span class="params">cls, name</span>):</span><br><span class="line">        <span class="comment"># 使用 cls 动态创建实例</span></span><br><span class="line">        <span class="keyword">return</span> cls(name)</span><br></pre></td></tr></table></figure>
-<h3 id="调用示例-1">调用示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改类变量</span></span><br><span class="line">Cat.change_species(<span class="string">&quot;BigCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: BigCat</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">cat1 = Cat.create(<span class="string">&quot;Whiskers&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(cat1.name)  <span class="comment"># 输出: Whiskers</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过实例调用类方法</span></span><br><span class="line">cat1.change_species(<span class="string">&quot;GreenCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: GreenCat</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点-1">注意点</h3>
-<ul>
-<li>类方法可以直接通过<strong>类名</strong>或<strong>实例</strong>调用，例如：<code>Cat.change_species()</code>
-或 <code>cat1.change_species()</code>。</li>
-<li>类方法适合实现<strong>工厂方法</strong>或<strong>类级别的操作</strong>。</li>
-</ul>
-<hr />
-<h2 id="self-与-cls-的区别"><code>self</code> 与 <code>cls</code>
-的区别</h2>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>特点</th>
-<th><code>self</code></th>
-<th><code>cls</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>作用范围</td>
-<td><strong>实例方法</strong>，用于操作实例变量和实例方法</td>
-<td><strong>类方法</strong>，用于操作类变量和类方法</td>
-</tr>
-<tr class="even">
-<td>第一个参数</td>
-<td>代表实例对象</td>
-<td>代表类对象</td>
-</tr>
-<tr class="odd">
-<td>访问的变量类型</td>
-<td>实例变量</td>
-<td>类变量</td>
-</tr>
-<tr class="even">
-<td>调用方式</td>
-<td>必须通过实例调用</td>
-<td>可以通过类或实例调用</td>
-</tr>
-<tr class="odd">
-<td>使用场景</td>
-<td>与具体对象相关的行为</td>
-<td>与类相关的行为（例如创建实例、更新类变量等）</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="实例分析transformers-库的实际应用">实例分析：Transformers
-库的实际应用</h2>
-<h3 id="使用-self-的例子实例方法操作实例变量">使用 <code>self</code>
-的例子：实例方法操作实例变量</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ModelConfig</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name</span>):</span><br><span class="line">        self.model_name = model_name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">show_config</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Model: <span class="subst">&#123;self.model_name&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">config = ModelConfig(<span class="string">&quot;bert-base-uncased&quot;</span>)</span><br><span class="line">config.show_config()  <span class="comment"># 输出: Model: bert-base-uncased</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li><code>self.model_name</code> 是实例变量，不同实例之间互不影响。</li>
-</ul>
-<hr />
-<h3 id="使用-cls-的例子类方法动态创建实例">使用 <code>cls</code>
-的例子：类方法动态创建实例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AutoConfig</span>:</span><br><span class="line">    CONFIG_MAPPING = &#123;&#125;  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">cls, model_type, config</span>):</span><br><span class="line">        cls.CONFIG_MAPPING[model_type] = config  <span class="comment"># 更新类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_config</span>(<span class="params">cls, model_type</span>):</span><br><span class="line">        <span class="keyword">if</span> model_type <span class="keyword">in</span> cls.CONFIG_MAPPING:</span><br><span class="line">            <span class="keyword">return</span> cls.CONFIG_MAPPING[model_type]()</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Invalid model type!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注册模型配置</span></span><br><span class="line">AutoConfig.register(<span class="string">&quot;bert&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;BERT Config&quot;</span>)</span><br><span class="line">AutoConfig.register(<span class="string">&quot;gpt&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;GPT Config&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据配置动态创建实例</span></span><br><span class="line">config = AutoConfig.from_config(<span class="string">&quot;bert&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(config)  <span class="comment"># 输出: BERT Config</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(config))	<span class="comment"># 输出: &lt;class &#x27;str&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li>类变量 <code>CONFIG_MAPPING</code> 用于存储模型配置，可以通过
-<code>cls</code> 动态更新。</li>
-<li>类方法适合需要跨实例共享的数据和逻辑操作。</li>
-</ul>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412251732711.png" alt="image-20241225173205571" style="zoom: 50%;" /></p>
-<hr />
-<h2 id="如何选择-self-或-cls">如何选择 <code>self</code> 或
-<code>cls</code>？</h2>
-<ol type="1">
-<li><p><strong>实例相关逻辑使用 <code>self</code></strong></p>
-<p>如果方法需要访问或操作实例变量，则选择实例方法，并将第一个参数命名为
-<code>self</code>。</p></li>
-<li><p><strong>类相关逻辑使用 <code>cls</code></strong></p>
-<p>如果方法需要操作类变量、定义工厂方法或执行跨实例共享的操作，则选择类方法，并将第一个参数命名为
-<code>cls</code>。</p></li>
-<li><p><strong>通用逻辑使用 <code>@staticmethod</code></strong></p>
-<p>如果方法既不依赖实例，也不依赖类，仅仅是工具函数，可以使用
-<code>@staticmethod</code>。</p></li>
-</ol>
-<hr />
-<h2 id="总结">总结</h2>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>使用场景</th>
-<th>推荐方法类型</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>操作实例变量或实例方法</td>
-<td>实例方法 (<code>self</code>)</td>
-<td>定义对象行为，例如 <code>rename</code> 方法</td>
-</tr>
-<tr class="even">
-<td>操作类变量或动态创建实例</td>
-<td>类方法 (<code>cls</code>)</td>
-<td>修改类级别的配置或注册模型</td>
-</tr>
-<tr class="odd">
-<td>不依赖实例或类，仅做工具操作</td>
-<td>静态方法 (<code>@staticmethod</code>)</td>
-<td>辅助功能，如输入验证或数据格式转换</td>
-</tr>
-</tbody>
-</table>
-<p><strong>建议：</strong> 在编写 Python 类时，合理选择
-<code>self</code> 和 <code>cls</code>
-可以使代码结构更清晰、可维护性更高。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/python/OOP/【Reference】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -973,7 +540,7 @@ data-cites="staticmethod">@staticmethod</span></strong>
 
 
     
-      <article id="post-【后端】/python/Special Variables/&#39;__all__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/OOP/面向过程与面向对象、类和对象、面向对象的基本语法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -981,7 +548,7 @@ data-cites="staticmethod">@staticmethod</span></strong>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/" target="_blank">__all__</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" target="_blank">面向过程与面向对象、类和对象、面向对象的基本语法</a>
   
     </h1>
   
@@ -989,7 +556,7 @@ data-cites="staticmethod">@staticmethod</span></strong>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1002,40 +569,81 @@ data-cites="staticmethod">@staticmethod</span></strong>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="all__"><code>__all__</code></h1>
-<h2 id="作用">作用</h2>
-<p>在 Python
-<strong>模块</strong>中，<strong><code>__all__</code></strong>
-是一个列表，<strong>定义了当使用 <code>from module import *</code>
-语法时，模块中可以导出的函数或类的集合</strong>。它是模块作者提供的一种机制，用来显式控制导出内容。</p>
-<h2 id="示例">示例</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mymodule.py</span></span><br><span class="line">__all__ = [<span class="string">&quot;func1&quot;</span>, <span class="string">&quot;MyClass&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;This is func1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;This is func2&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HiddenClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>在另一个文件中：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mymodule <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">func1()       <span class="comment"># 正常导入，输出 &quot;This is func1&quot;</span></span><br><span class="line">MyClass()     <span class="comment"># 正常导入</span></span><br><span class="line">func2()       <span class="comment"># 报错，未导入</span></span><br><span class="line">HiddenClass() <span class="comment"># 报错，未导入</span></span><br></pre></td></tr></table></figure>
-<h2 id="细节">细节</h2>
-<ol type="1">
-<li><strong>限制导出范围</strong>：
+    <h1
+id="面向过程与面向对象类和对象面向对象的基本语法">面向过程与面向对象、类和对象、面向对象的基本语法</h1>
+<h2 id="面向过程vs面向对象">面向过程vs面向对象</h2>
+<p><strong>面向过程</strong>：1.根据业务逻辑从上到下写代码。
+　　　　　2.开发思路是将数据和函数按照执行的逻辑顺序组织在一起
+　　　　　3.分开考虑数据与函数 优点：复杂度的问题简单化、流程化
+缺点：扩展性差，牵一发而动全身
+特点：1.注重步骤与过程，不注重职责分工，关注点是怎么做
+　　　2.如果需求复杂，代码会变得很复杂
+　　　3.开发复杂项目，没有固定的套路，开发难度很大！</p>
+<p><strong>面向对象</strong>：1.将数据与函数绑定到一起
+　　　　　2.进行封装 　　　　　3.更快速高效地开发程序
+　　　　　4.减少重复代码的重写过程</p>
+<p>优点：可扩展性高 缺点：编程复杂度高，容易出现过度设计问题
+特点：1.注重对象和职责，不同的对象承担不同的职责，关注点是谁来做。
+　　　2.更加适合应对复杂的需求变化，是专门应对复杂项目开发，提供的固定套路。
+　　　3.需要在面向过程基础上，再学习一些面向对象的语法。</p>
+<h2 id="类和对象">类和对象</h2>
+<h3 id="类和对象的定义">类和对象的定义</h3>
+<p><strong>类</strong>：用来描述具有相同的属性和方法的对象的集合。它定义了该集合中每个对象所共有的属性和方法，是抽象的，不能直接使用。</p>
+<p><strong>对象</strong>：通过类定义的数据结构实例，可以直接使用。由哪一个类创建出来的对象，就拥有在哪一个类中定义的属性和方法。对象包括两个数据成员（类变量和实例变量）和方法。</p>
+<h3 id="类和对象的关系">类和对象的关系</h3>
 <ul>
-<li>如果模块中定义了 <code>__all__</code>，只有列在其中的名称会被
-<code>from module import *</code> 导入。</li>
-<li>没有定义 <code>__all__</code> 时，<code>from module import *</code>
-会导入所有<strong>不</strong>以下划线 <code>_</code>
-开头的全局名称。</li>
-</ul></li>
-<li><strong>对直接访问无影响</strong>：即使某个名称<strong>未</strong>包含在
-<code>__all__</code> 中，也可以通过显式导入（如
-<code>from module import func2</code> 或
-<code>import module</code>）访问。</li>
-<li><strong>可读性和维护性</strong>：<code>__all__</code>
-提供了一个显式的接口说明，帮助模块用户了解哪些功能是公开可用的，哪些是内部实现（不建议直接使用）。</li>
-</ol>
-<h2 id="注意">注意</h2>
-<ul>
-<li><code>__all__</code> 仅影响 <code>from module import *</code>
-的行为，不会限制其他导入方式。</li>
-<li>使用 <code>__all__</code>
-需要确保所列内容是模块的核心公开接口，否则可能引起混淆。</li>
+<li>类是模板，对象是根据类这个模板创建出来的，应该先有类，再有对象。<br />
+</li>
+<li>使用同一个类，能够创建出很多对象。<br />
+</li>
+<li>类中定义了什么属性和方法，对象中就有什么属性和方法。<br />
+</li>
+<li>不同对象对应的属性值也会不同。</li>
 </ul>
+<h3 id="类的设计">类的设计</h3>
+<p>设计一个类，通常需要满足三个要素：</p>
+<ul>
+<li><p><strong>类名</strong>：这类事物的名字，按照大驼峰命名法起名。</p></li>
+<li><p><strong>属性</strong>：这类事物具有什么样的特征。</p></li>
+<li><p><strong>方法</strong>：这类事物具有什么样的行为。</p></li>
+</ul>
+<h3 id="类和对象的简单语法格式">类和对象的简单语法格式</h3>
+<p>定义一个只包含方法的类，语法格式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">类名</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">方法1</span>(<span class="params">self,参数列表</span>):<span class="comment"># 方法里的第一个参数必须是self</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">方法2</span>(<span class="params">self,参数列表</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>创建对象，语法格式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对象变量名 = 类名()</span><br></pre></td></tr></table></figure>
+<h2 id="面向对象的基本语法">面向对象的基本语法</h2>
+<p>先用一个实例来解析：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):  <span class="comment"># 关注Student类有哪些特征和行为</span></span><br><span class="line">    <span class="comment"># 在 __init__ 方法里，以参数的形式定义特征，我们称之为属性</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line">    <span class="comment"># 行为定义为一个个函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;正在打游戏&#x27;</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">eat</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;正在吃东西&#x27;</span>)</span><br><span class="line"><span class="comment"># 使用 Student 类创建了两个实例对象 s1,s2</span></span><br><span class="line"><span class="comment"># s1和s2都会有name,age属性,同时都有play_game和eat方法</span></span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>, <span class="number">18</span>)  <span class="comment"># Student() ==&gt; 会自动调用 __init__ 方法</span></span><br><span class="line">s2 = Student(<span class="string">&#x27;李四&#x27;</span>, <span class="number">17</span>)</span><br><span class="line"><span class="comment"># 根据业务逻辑，让不同的对象执行不同的行为</span></span><br><span class="line">s1.play_game()</span><br><span class="line">s2.eat()</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<blockquote>
+<p>正在打游戏<br />
+正在吃东西</p>
+</blockquote>
+<h3 id="self语句的使用">self语句的使用</h3>
+<p>谁对象调用了方法，方法里的self指的就是谁。通过 self.属性名
+可以访问到这个对象的属性；通过 self.方法名()
+可以调用这个对象的方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(s1.name)  <span class="comment">#张三</span></span><br><span class="line">s1.play_game()  <span class="comment">#张三正在玩游戏</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>s1=Student(‘张三’) 这段代码具体做了什么呢？</p>
+<ol type="1">
+<li>调用 <strong>__new__</strong> 方法,用来申请内存空间</li>
+<li>调用 <strong>__init__</strong> 方法传入参数，将 self
+指向创建好的内存空间，填充数据</li>
+<li>变量 s1 也指向创建好的内存空间</li>
+</ol>
+</blockquote>
+<h3 id="给对象添加属性和修改">给对象添加属性和修改</h3>
+<p>Python支持动态属性，当一个对象创建好了以后，可以直接使用 对象.属性名
+= 属性值 就可以很方便的给对象添加或者修改一个属性。</p>
+<p>直接使用等号给一个属性赋值，如果这个属性以前不存在，会给对象添加一个新的属性</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1.age=<span class="number">18</span>  <span class="comment">#给对象添加一个age属性</span></span><br><span class="line"><span class="built_in">print</span>(s1.age) <span class="comment"># 18 </span></span><br></pre></td></tr></table></figure>
+<p>如果这个属性以前存在，会修改这个属性对应的值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line">s1.name = <span class="string">&#x27;李四&#x27;</span></span><br><span class="line">s1.play_game()  <span class="comment">#李四正在玩游戏</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在日常开发中，不推荐在类的外部直接给对象添加属性这种方式。对象应该具有哪些属性，我们应该封装在类的内部。</p>
+</blockquote>
 
     
 
@@ -1062,7 +670,7 @@ data-cites="staticmethod">@staticmethod</span></strong>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/">展开全文 >></a>
     </p>
     
 
@@ -1260,7 +868,7 @@ work_with_dog 产生了不同的执行效果。</p>
 
 
     
-      <article id="post-【后端】/python/OOP/面向过程与面向对象、类和对象、面向对象的基本语法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/【tutorial】/【12.文件操作】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1268,7 +876,7 @@ work_with_dog 产生了不同的执行效果。</p>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" target="_blank">面向过程与面向对象、类和对象、面向对象的基本语法</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/" target="_blank">【12.文件操作】</a>
   
     </h1>
   
@@ -1276,7 +884,7 @@ work_with_dog 产生了不同的执行效果。</p>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1289,81 +897,158 @@ work_with_dog 产生了不同的执行效果。</p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1
-id="面向过程与面向对象类和对象面向对象的基本语法">面向过程与面向对象、类和对象、面向对象的基本语法</h1>
-<h2 id="面向过程vs面向对象">面向过程vs面向对象</h2>
-<p><strong>面向过程</strong>：1.根据业务逻辑从上到下写代码。
-　　　　　2.开发思路是将数据和函数按照执行的逻辑顺序组织在一起
-　　　　　3.分开考虑数据与函数 优点：复杂度的问题简单化、流程化
-缺点：扩展性差，牵一发而动全身
-特点：1.注重步骤与过程，不注重职责分工，关注点是怎么做
-　　　2.如果需求复杂，代码会变得很复杂
-　　　3.开发复杂项目，没有固定的套路，开发难度很大！</p>
-<p><strong>面向对象</strong>：1.将数据与函数绑定到一起
-　　　　　2.进行封装 　　　　　3.更快速高效地开发程序
-　　　　　4.减少重复代码的重写过程</p>
-<p>优点：可扩展性高 缺点：编程复杂度高，容易出现过度设计问题
-特点：1.注重对象和职责，不同的对象承担不同的职责，关注点是谁来做。
-　　　2.更加适合应对复杂的需求变化，是专门应对复杂项目开发，提供的固定套路。
-　　　3.需要在面向过程基础上，再学习一些面向对象的语法。</p>
-<h2 id="类和对象">类和对象</h2>
-<h3 id="类和对象的定义">类和对象的定义</h3>
-<p><strong>类</strong>：用来描述具有相同的属性和方法的对象的集合。它定义了该集合中每个对象所共有的属性和方法，是抽象的，不能直接使用。</p>
-<p><strong>对象</strong>：通过类定义的数据结构实例，可以直接使用。由哪一个类创建出来的对象，就拥有在哪一个类中定义的属性和方法。对象包括两个数据成员（类变量和实例变量）和方法。</p>
-<h3 id="类和对象的关系">类和对象的关系</h3>
+    <h1 id="文件操作">【12.文件操作】</h1>
+<h2 id="打开文件">打开文件</h2>
+<p>在 Python 中，使用 <code>open()</code>
+函数打开文件。<code>open()</code>
+函数的第一个参数是文件名，第二个参数是打开模式。打开模式有多种，常见的有以下几种：</p>
 <ul>
-<li>类是模板，对象是根据类这个模板创建出来的，应该先有类，再有对象。<br />
-</li>
-<li>使用同一个类，能够创建出很多对象。<br />
-</li>
-<li>类中定义了什么属性和方法，对象中就有什么属性和方法。<br />
-</li>
-<li>不同对象对应的属性值也会不同。</li>
+<li>"r"：只读模式（默认值）。</li>
+<li>"w"：写入模式，如果文件不存在，则创建文件；如果文件已经存在，则
+<strong>覆盖</strong> 原文件。</li>
+<li>"a"：追加模式，如果文件不存在，则创建文件；如果文件已经存在，则在文件
+<strong>末尾</strong> 添加新的内容。</li>
+<li>"x"：创建模式，创建新文件并写入内容，如果文件已经存在，则抛出异常。</li>
+<li>"b"：二进制模式，用于读取和写入二进制数据。</li>
+<li>"t"：文本模式（默认值），用于读取和写入字符串数据。</li>
 </ul>
-<h3 id="类的设计">类的设计</h3>
-<p>设计一个类，通常需要满足三个要素：</p>
-<ul>
-<li><p><strong>类名</strong>：这类事物的名字，按照大驼峰命名法起名。</p></li>
-<li><p><strong>属性</strong>：这类事物具有什么样的特征。</p></li>
-<li><p><strong>方法</strong>：这类事物具有什么样的行为。</p></li>
-</ul>
-<h3 id="类和对象的简单语法格式">类和对象的简单语法格式</h3>
-<p>定义一个只包含方法的类，语法格式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">类名</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">方法1</span>(<span class="params">self,参数列表</span>):<span class="comment"># 方法里的第一个参数必须是self</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">方法2</span>(<span class="params">self,参数列表</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>创建对象，语法格式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对象变量名 = 类名()</span><br></pre></td></tr></table></figure>
-<h2 id="面向对象的基本语法">面向对象的基本语法</h2>
-<p>先用一个实例来解析：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):  <span class="comment"># 关注Student类有哪些特征和行为</span></span><br><span class="line">    <span class="comment"># 在 __init__ 方法里，以参数的形式定义特征，我们称之为属性</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line">    <span class="comment"># 行为定义为一个个函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;正在打游戏&#x27;</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">eat</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;正在吃东西&#x27;</span>)</span><br><span class="line"><span class="comment"># 使用 Student 类创建了两个实例对象 s1,s2</span></span><br><span class="line"><span class="comment"># s1和s2都会有name,age属性,同时都有play_game和eat方法</span></span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>, <span class="number">18</span>)  <span class="comment"># Student() ==&gt; 会自动调用 __init__ 方法</span></span><br><span class="line">s2 = Student(<span class="string">&#x27;李四&#x27;</span>, <span class="number">17</span>)</span><br><span class="line"><span class="comment"># 根据业务逻辑，让不同的对象执行不同的行为</span></span><br><span class="line">s1.play_game()</span><br><span class="line">s2.eat()</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<blockquote>
-<p>正在打游戏<br />
-正在吃东西</p>
-</blockquote>
-<h3 id="self语句的使用">self语句的使用</h3>
-<p>谁对象调用了方法，方法里的self指的就是谁。通过 self.属性名
-可以访问到这个对象的属性；通过 self.方法名()
-可以调用这个对象的方法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(s1.name)  <span class="comment">#张三</span></span><br><span class="line">s1.play_game()  <span class="comment">#张三正在玩游戏</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>s1=Student(‘张三’) 这段代码具体做了什么呢？</p>
+<p>在完成文件读写操作后，必须使用文件对象的 <code>close()</code>
+方法来关闭文件，如果忘记关闭文件，可能会导致内存泄漏或其他问题。为了避免这种情况，可以使用
+<code>with</code> 语句来自动关闭文件对象。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h2 id="读取文件">读取文件</h2>
+<p>以 <strong>只读</strong>
+方式打开文件，文件的指针将会放在文件的开头</p>
 <ol type="1">
-<li>调用 <strong>__new__</strong> 方法,用来申请内存空间</li>
-<li>调用 <strong>__init__</strong> 方法传入参数，将 self
-指向创建好的内存空间，填充数据</li>
-<li>变量 s1 也指向创建好的内存空间</li>
+<li>读取文件内容，保存在 <strong>字符串</strong> 中</li>
 </ol>
-</blockquote>
-<h3 id="给对象添加属性和修改">给对象添加属性和修改</h3>
-<p>Python支持动态属性，当一个对象创建好了以后，可以直接使用 对象.属性名
-= 属性值 就可以很方便的给对象添加或者修改一个属性。</p>
-<p>直接使用等号给一个属性赋值，如果这个属性以前不存在，会给对象添加一个新的属性</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1.age=<span class="number">18</span>  <span class="comment">#给对象添加一个age属性</span></span><br><span class="line"><span class="built_in">print</span>(s1.age) <span class="comment"># 18 </span></span><br></pre></td></tr></table></figure>
-<p>如果这个属性以前存在，会修改这个属性对应的值。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">play_game</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125;正在玩游戏&#x27;</span>.<span class="built_in">format</span>(self.name))</span><br><span class="line">s1 = Student(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line">s1.name = <span class="string">&#x27;李四&#x27;</span></span><br><span class="line">s1.play_game()  <span class="comment">#李四正在玩游戏</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>在日常开发中，不推荐在类的外部直接给对象添加属性这种方式。对象应该具有哪些属性，我们应该封装在类的内部。</p>
-</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认读取文件所有内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    content: <span class="built_in">str</span> = f.read()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 读取文件前 20 个字节</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    content: <span class="built_in">str</span> = f.read(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>按行方式读取文件内容，保存在 <strong>字符串列表</strong> 中，
+其中每一行的数据为一个元素</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文件所有内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    lines: <span class="built_in">list</span>[<span class="built_in">str</span>] = f.readlines()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 读取文件某 1 行内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    line1: <span class="built_in">str</span> = f.readline()    <span class="comment"># 读取文件第一行内容</span></span><br><span class="line">    line2: <span class="built_in">str</span> = f.readline()    <span class="comment"># 读取文件第二行内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行处理文件内容（方法1）</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:	<span class="comment"># line 是 str 类型</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行处理文件内容（方法2）</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():	<span class="comment"># line 是 str 类型</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Special Variables/&#39;__all__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/" target="_blank">__all__</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="all__"><code>__all__</code></h1>
+<h2 id="作用">作用</h2>
+<p>在 Python
+<strong>模块</strong>中，<strong><code>__all__</code></strong>
+是一个列表，<strong>定义了当使用 <code>from module import *</code>
+语法时，模块中可以导出的函数或类的集合</strong>。它是模块作者提供的一种机制，用来显式控制导出内容。</p>
+<h2 id="示例">示例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mymodule.py</span></span><br><span class="line">__all__ = [<span class="string">&quot;func1&quot;</span>, <span class="string">&quot;MyClass&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;This is func1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;This is func2&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HiddenClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>在另一个文件中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mymodule <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">func1()       <span class="comment"># 正常导入，输出 &quot;This is func1&quot;</span></span><br><span class="line">MyClass()     <span class="comment"># 正常导入</span></span><br><span class="line">func2()       <span class="comment"># 报错，未导入</span></span><br><span class="line">HiddenClass() <span class="comment"># 报错，未导入</span></span><br></pre></td></tr></table></figure>
+<h2 id="细节">细节</h2>
+<ol type="1">
+<li><strong>限制导出范围</strong>：
+<ul>
+<li>如果模块中定义了 <code>__all__</code>，只有列在其中的名称会被
+<code>from module import *</code> 导入。</li>
+<li>没有定义 <code>__all__</code> 时，<code>from module import *</code>
+会导入所有<strong>不</strong>以下划线 <code>_</code>
+开头的全局名称。</li>
+</ul></li>
+<li><strong>对直接访问无影响</strong>：即使某个名称<strong>未</strong>包含在
+<code>__all__</code> 中，也可以通过显式导入（如
+<code>from module import func2</code> 或
+<code>import module</code>）访问。</li>
+<li><strong>可读性和维护性</strong>：<code>__all__</code>
+提供了一个显式的接口说明，帮助模块用户了解哪些功能是公开可用的，哪些是内部实现（不建议直接使用）。</li>
+</ol>
+<h2 id="注意">注意</h2>
+<ul>
+<li><code>__all__</code> 仅影响 <code>from module import *</code>
+的行为，不会限制其他导入方式。</li>
+<li>使用 <code>__all__</code>
+需要确保所列内容是模块的核心公开接口，否则可能引起混淆。</li>
+</ul>
 
     
 
@@ -1390,7 +1075,7 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E3%80%81%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/">展开全文 >></a>
     </p>
     
 
@@ -1497,6 +1182,113 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Special Variables/&#39;__class__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__class__'/" target="_blank">__class__</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__class__'/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="class__"><code>__class__</code></h1>
+<h2 id="定义">定义</h2>
+<p>每个 Python 对象都有一个 <code>__class__</code>
+属性，它用于获取<strong>该对象所属的类
+(class)</strong>。无论是内置类型对象，还是自定义类的实例，都可以通过
+<code>__class__</code> 获取其对应的类</p>
+<h2 id="作用">作用</h2>
+<ul>
+<li><strong>获取对象类型</strong>：可以用来判断一个对象属于哪个类，有助于进行类型检查和相关操作。例如，当需要根据对象的类型执行不同的逻辑时，可以通过
+<code>__class__</code> 来获取对象的类信息，进而做出相应的判断</li>
+<li><strong>访问类属性和类方法</strong>：通过对象的
+<code>__class__</code>
+属性，可以间接访问该类的类属性（即属于类本身的属性，而不是实例属性）和类方法（使用
+<code>@classmethod</code>
+装饰的方法）。这在某些需要从实例层面获取类级别信息或调用类方法的场景中非常有用</li>
+</ul>
+<h2 id="示例">示例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>:</span><br><span class="line">    species = <span class="string">&quot;Homo sapiens&quot;</span>  <span class="comment"># 类属性</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, age</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_species</span>(<span class="params">cls</span>):</span><br><span class="line">        <span class="keyword">return</span> cls.species</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Person 类的实例</span></span><br><span class="line">person = Person(<span class="string">&quot;Alice&quot;</span>, <span class="number">30</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取实例的类</span></span><br><span class="line"><span class="built_in">print</span>(person.__class__)  <span class="comment"># 输出：&lt;class &#x27;__main__.Person&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 __class__ 访问类属性</span></span><br><span class="line"><span class="built_in">print</span>(person.__class__.species)  <span class="comment"># 输出：Homo sapiens</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 __class__ 调用类方法</span></span><br><span class="line"><span class="built_in">print</span>(person.__class__.get_species())  <span class="comment"># 输出：Homo sapiens</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过 __class__ 创建新的实例</span></span><br><span class="line">new_person = person.__class__(<span class="string">&quot;Bob&quot;</span>, <span class="number">25</span>)</span><br><span class="line"><span class="built_in">print</span>(new_person.name)  <span class="comment"># 输出：Bob</span></span><br><span class="line"><span class="built_in">print</span>(new_person.age)   <span class="comment"># 输出：25</span></span><br><span class="line"><span class="built_in">print</span>(new_person.species)  <span class="comment"># 输出：Homo sapiens</span></span><br></pre></td></tr></table></figure>
+<p>在这个示例中，<code>person</code> 是 <code>Person</code>
+类的一个实例，通过 <code>person.__class__</code> 可以获取到
+<code>Person</code> 类本身。进而可以访问类属性 <code>species</code>
+、调用类方法 <code>get_species()</code> 以及创建新的实例等。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__class__'/">展开全文 >></a>
     </p>
     
 
@@ -1823,15 +1615,15 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1843,7 +1635,15 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1859,23 +1659,7 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1891,11 +1675,15 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1903,7 +1691,7 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1915,15 +1703,19 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

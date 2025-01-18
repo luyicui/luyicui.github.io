@@ -1054,6 +1054,193 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 
 
   
+    <article id="post-【后端】/python/Module/&#39;__init__.py&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" target="_blank">__init__.py</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="init__.py-的奥秘"><code>__init__.py</code> 的奥秘</h1>
+<p>最近有一些小伙伴问了我一个经典问题：“<code>__init__.py</code>
+到底有什么用？”这个问题在 Python
+社区非常常见，尤其对于新手来说，<code>__init__.py</code>
+往往显得神秘兮兮。今天，我就站在一位资深程序员的角度，带大家深入了解
+<code>__init__.py</code>
+的用途和一些需要注意的使用细节，帮助大家避开常见的坑。</p>
+<h2 id="init__.py-是什么"><code>__init__.py</code> 是什么？</h2>
+<p>顾名思义，<code>__init__.py</code>
+这个文件名已经暗示了它的作用——初始化。在 Python
+中，它主要用于标识一个目录为“包（Package）”。也就是说，如果你在项目中创建了一个文件夹，并希望将其作为一个可以导入的模块包使用，只需在该文件夹下放入
+<code>__init__.py</code> 文件。</p>
+<p>假设我们的项目结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_project/</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── module1.py</span><br><span class="line">    └── module2.py</span><br></pre></td></tr></table></figure>
+<p>此时，如果你希望在外部使用 <code>my_project</code>
+这个包，可以这样导入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> my_project</span><br></pre></td></tr></table></figure>
+<p>有了 <code>__init__.py</code> 的存在，Python 就知道
+<code>my_project</code>
+是一个包，而不是一个普通的文件夹。因此，<code>__init__.py</code>
+文件的基本作用是：告诉
+Python，“这里是一个包，你可以在其他地方导入我！”</p>
+<h2 id="init__.py-还能做些什么"><code>__init__.py</code>
+还能做些什么？</h2>
+<p>很多初学者可能认为，<code>__init__.py</code>
+只是用来标识包的，但实际上，它的作用远不止于此。你可以在
+<code>__init__.py</code>
+中编写代码，这些代码会在包被导入时自动执行。下面是一些常见的用途：</p>
+<h3 id="模块初始化操作">模块初始化操作</h3>
+<p>假设你有一个工具包，需要加载配置文件或做一些初始化工作。你可以在
+<code>__init__.py</code>
+中直接进行这些操作，这样当包被导入时，相关的初始化工作也会自动完成。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化配置文件路径</span></span><br><span class="line">config_file = os.path.join(os.path.dirname(__file__), <span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正在初始化配置文件...&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这样，当你导入 <code>my_project</code> 时，<code>config.yaml</code>
+就会被自动加载，你不需要在每个子模块中重复配置路径了。</p>
+<h3 id="控制子模块导入">控制子模块导入</h3>
+<p>通过在 <code>__init__.py</code> 中使用
+<code>from .sub_module import some_function</code>，你可以在导入包时自动加载所有常用的子模块或函数，这样就能直接从包的顶级目录访问这些模块的功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> func2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样，你可以直接这样使用：</span></span><br><span class="line"><span class="comment"># import my_project</span></span><br><span class="line"><span class="comment"># my_project.func1()</span></span><br></pre></td></tr></table></figure>
+<p>这种做法就像开了一个餐厅，顾客一进门就能看到招牌菜，提升了用户体验，减少了他们的绕路时间。</p>
+<h3 id="包级别变量和函数的初始化">包级别变量和函数的初始化</h3>
+<p>你还可以在 <code>__init__.py</code>
+中设置一些全局变量，或者定义一些包级别的工具函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line">package_name = <span class="string">&quot;my_project&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_info</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;欢迎使用 <span class="subst">&#123;package_name&#125;</span> 包！&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这样，在任何地方，只要你导入了 <code>my_project</code>，就能直接调用
+<code>show_info()</code>。</p>
+<h2 id="init__.py-的一些坑"><code>__init__.py</code> 的一些坑</h2>
+<p>俗话说，“有光的地方就有阴影”。虽然 <code>__init__.py</code>
+非常实用，但在使用时也有一些陷阱，特别是 <strong>循环导入（Circular
+Import）</strong>，这一坑可能会让你怀疑人生。</p>
+<h3 id="什么是循环导入">什么是循环导入？</h3>
+<p>假设你有两个模块：<code>module1.py</code> 和
+<code>module2.py</code>，并且在 <code>module1.py</code> 中引用了
+<code>module2.py</code>，在 <code>module2.py</code> 中又引用了
+<code>module1.py</code>，如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line"><span class="comment"># module2.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> another_function</span><br></pre></td></tr></table></figure>
+<p>这种情况下，Python 会在导入包时形成死循环：<code>module1</code> 导入
+<code>module2</code>，<code>module2</code> 又导入
+<code>module1</code>，导致两者互相等待对方加载，最终抛出错误或无法正常导入。</p>
+<h3 id="如何解决">如何解决？</h3>
+<p>解决循环导入问题的常见方法有两种：</p>
+<ol type="1">
+<li><p><strong>延迟导入</strong>：将导入语句移到函数内部，而不是文件的顶部。这样，只有在需要时才会导入模块，避免了循环依赖。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line">    <span class="comment"># 使用 some_function</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>重构代码结构</strong>：将相互依赖的部分提取到一个公共模块中，这样
+<code>module1</code> 和 <code>module2</code>
+就不再直接依赖对方了。</p></li>
+</ol>
+<h3 id="init__.py-和相对导入的关系"><code>__init__.py</code>
+和相对导入的关系</h3>
+<p>另外，一个可能让人头疼的问题是相对导入和绝对导入的使用。在
+<code>__init__.py</code> 中，你可能会用相对导入语法，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
+<p>乍看之下，这没有问题，但当你直接运行 <code>module1.py</code>
+时，Python
+会报错。原因是相对导入要求你必须从包的顶层开始导入，而你直接运行
+<code>module1.py</code> 时，Python 并不知道它是从哪个包里来的。</p>
+<p><strong>解决方案</strong>：尽量使用绝对导入，这样无论你是直接运行
+<code>module1.py</code>，还是导入整个 <code>my_project</code>
+包，都不会有问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> my_project.module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
+<h2 id="其他小技巧">其他小技巧</h2>
+<p>在使用 <code>__init__.py</code> 时，以下是一些实用的小技巧：</p>
+<ol type="1">
+<li><p><strong>避免复杂逻辑</strong>：不要在 <code>__init__.py</code>
+中写太复杂的业务逻辑。它的职责应该是轻量级的初始化和导入，避免让维护变得困难。</p></li>
+<li><p><strong>模块导出控制</strong>：你可以通过 <code>__all__</code>
+来控制从包中导出的模块或变量。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__all__ = [<span class="string">&#x27;module1&#x27;</span>, <span class="string">&#x27;module2&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>这样，使用 <code>from my_project import *</code> 时，Python 只会导入
+<code>__all__</code> 中指定的内容。</p></li>
+<li><p><strong>合并子模块</strong>：你可以在 <code>__init__.py</code>
+中将多个子模块的功能合并到一个命名空间中，使得用户使用起来更加方便。</p></li>
+<li><p><strong>记录导入顺序</strong>：如果你的包中有很多子模块，建议记录导入顺序，避免因为导入顺序导致的奇怪
+Bug。</p></li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>总体来说，<code>__init__.py</code>
+是一个非常强大的工具，它可以让包的管理井井有条。然而，如果使用不当，它也可能成为代码中的“绊脚石”。掌握好它的用法，不仅能让你的项目结构更加清晰，还能避免一些常见的坑，提升代码的可维护性。</p>
+<hr />
+<p>通过这样整理，内容不仅更清晰，结构也更加有条理，同时对一些关键点的解释更加详细，能帮助读者更好地理解
+<code>__init__.py</code> 的作用和使用技巧。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/Module/相对导入常见问题和解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1294,7 +1481,7 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
 
 
   
-    <article id="post-【后端】/python/Module/&#39;__init__.py&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/Module/绝对导入与相对导入" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1302,7 +1489,7 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" target="_blank">__init__.py</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" target="_blank">绝对导入与相对导入</a>
   
     </h1>
   
@@ -1310,7 +1497,7 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1323,108 +1510,107 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="init__.py-的奥秘"><code>__init__.py</code> 的奥秘</h1>
-<p>最近有一些小伙伴问了我一个经典问题：“<code>__init__.py</code>
-到底有什么用？”这个问题在 Python
-社区非常常见，尤其对于新手来说，<code>__init__.py</code>
-往往显得神秘兮兮。今天，我就站在一位资深程序员的角度，带大家深入了解
-<code>__init__.py</code>
-的用途和一些需要注意的使用细节，帮助大家避开常见的坑。</p>
-<h2 id="init__.py-是什么"><code>__init__.py</code> 是什么？</h2>
-<p>顾名思义，<code>__init__.py</code>
-这个文件名已经暗示了它的作用——初始化。在 Python
-中，它主要用于标识一个目录为“包（Package）”。也就是说，如果你在项目中创建了一个文件夹，并希望将其作为一个可以导入的模块包使用，只需在该文件夹下放入
+    <h1 id="绝对导入与相对导入">绝对导入与相对导入</h1>
+<h2 id="绝对导入">绝对导入</h2>
+<h3 id="标准库导入">标准库导入</h3>
+<p>假设有一个文件 <code>a.py</code>，其中导入了标准库模块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br></pre></td></tr></table></figure>
+<p>这种导入方式称为标准库导入，因为 <code>os</code> 是 Python
+的标准库之一，其它常见的标准库如下：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501041450614.png"
+alt="image-20250104145009446" />
+<figcaption aria-hidden="true">image-20250104145009446</figcaption>
+</figure>
+<h3 id="当前文件目录导入">当前文件目录导入</h3>
+<p>如果在 <code>a.py</code> 所在的目录下有一个 <code>b.py</code>
+文件，其中定义了一个类 <code>B</code>，那么在 <code>a.py</code>
+中可以这样导入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b <span class="keyword">import</span> B</span><br></pre></td></tr></table></figure>
+<p>这是从当前文件目录导入，因为当运行 <code>a.py</code>
+时，当前工作目录就是 <code>a.py</code> 所在的目录。只要
+<code>b.py</code> 在同一目录下，就能成功导入。</p>
+<p>对于嵌套导入，当前文件目录始终是最初执行的文件所在的目录。比如，考虑如下目录结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">│  a.py</span><br><span class="line">│  a2.py</span><br><span class="line">│</span><br><span class="line">└─b</span><br><span class="line">        b.py</span><br></pre></td></tr></table></figure>
+<p><strong>a2.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A2</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><strong>b.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
+<p><strong>a.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
+<p>直接运行 <code>python b/b.py</code> 会失败，报错如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;a2&#x27;</span><br></pre></td></tr></table></figure>
+<p>但是运行 <code>python a.py</code>
+则能成功导入。这是因为执行的顶层文件（在此为
+<code>a.py</code>）决定了工作目录，而工作目录会影响子模块的绝对导入路径。</p>
+<h3 id="site-packages-导入"><code>site-packages</code> 导入</h3>
+<p><code>site-packages</code> 目录包含了通过 <code>pip</code>
+安装的第三方包。当我们安装一个包时，Python
+会将其放置在该目录下。导入这些包时，Python 会优先查找
+<code>site-packages</code> 目录。</p>
+<h3 id="导入顺序">导入顺序</h3>
+<p>Python 导入模块时会按以下顺序查找模块：</p>
+<ol type="1">
+<li><strong>当前目录</strong>：首先检查当前脚本所在的目录。</li>
+<li><strong>标准库目录</strong>：如果当前目录没有找到模块，Python
+会在标准库目录中查找。</li>
+<li><strong><code>site-packages</code> 目录</strong>：最后，Python 会在
+<code>site-packages</code>（即安装的第三方包目录）中查找。</li>
+</ol>
+<h2 id="相对导入">相对导入</h2>
+<p>相对导入只能在一个模块作为子模块被引用时使用，不能直接运行该文件。在使用相对导入时，必须确保引用的文件在一个包中。具体来说，运行的文件所在的目录也必须是一个包，而不能直接在该目录下运行模块。</p>
+<p>考虑如下目录结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">│   main.py</span><br><span class="line">│</span><br><span class="line">├───a</span><br><span class="line">│       a.py</span><br><span class="line">│</span><br><span class="line">└───c</span><br><span class="line">        c.py</span><br></pre></td></tr></table></figure>
+<p><strong>main.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
+<p><strong>a.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ..c.c <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
+<p><strong>c.py</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>运行 <code>python main.py</code> 会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
+<p>原因是 <code>a.py</code> 中的 <code>..</code> 会尝试访问到
+<code>./</code> 目录，而该目录不是一个包。为了解决这个问题，可以将
+<code>a</code> 和 <code>c</code> 文件夹打包成一个包，放到
+<code>main.py</code> 同级目录下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">│  main.py</span><br><span class="line">│</span><br><span class="line">└─top</span><br><span class="line">    ├─a</span><br><span class="line">    │      a.py</span><br><span class="line">    │</span><br><span class="line">    └─c</span><br><span class="line">           c.py</span><br></pre></td></tr></table></figure>
+<p>然后修改 <code>main.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> top.a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
+<p>此时可以成功运行。</p>
+<h2 id="使用-sys.path.append-实现相对导入">使用
+<code>sys.path.append</code> 实现相对导入</h2>
+<p>直接使用相对导入时，不能直接运行文件，这使得编写脚本变得不太方便。如果希望在某些情况下能够从其他文件夹导入模块，可以通过
+<code>sys.path.append</code> 将当前工作目录添加到系统路径中。</p>
+<p>假设在工作目录下有两个文件夹：<code>src1</code> 和
+<code>src2</code>，并且 <code>src2</code> 中的文件需要从
+<code>src1</code> 导入模块。可以在 <code>src2</code>
+中的文件中这样做：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;./&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后就可以从 <code>src1</code> 中导入模块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> src1.xxx <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
+<p>另一种方式是通过环境变量设置
+<code>PYTHONPATH</code>，在终端执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPATH=./</span><br></pre></td></tr></table></figure>
+<p>但这样要求工作目录必须是正确的，<code>./</code> 目录应该是
+<code>src1</code> 和 <code>src2</code>
+的父目录。如果想避免在程序中写路径，也可以使用绝对路径，但这样会增加迁移环境的复杂性。</p>
+<p>为了更加灵活地使用 <code>sys.path</code>，可以通过 <code>os</code>
+模块获取当前目录并自动调整路径：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), <span class="string">&#x27;..&#x27;</span>)))</span><br></pre></td></tr></table></figure>
+<h2 id="init__.py-文件的作用"><code>__init__.py</code> 文件的作用</h2>
+<p>通常我们在导入时会看到 <code>from a.a import XXX</code>
+这样的形式，其中第一个 <code>a</code> 是文件夹名，第二个 <code>a</code>
+是文件名。这种形式可能不太方便。如果希望直接使用
+<code>from a import XXX</code>，并且 <code>a</code>
+代表文件夹名，可以在文件夹 <code>a</code> 中创建一个
 <code>__init__.py</code> 文件。</p>
-<p>假设我们的项目结构如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_project/</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── module1.py</span><br><span class="line">    └── module2.py</span><br></pre></td></tr></table></figure>
-<p>此时，如果你希望在外部使用 <code>my_project</code>
-这个包，可以这样导入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> my_project</span><br></pre></td></tr></table></figure>
-<p>有了 <code>__init__.py</code> 的存在，Python 就知道
-<code>my_project</code>
-是一个包，而不是一个普通的文件夹。因此，<code>__init__.py</code>
-文件的基本作用是：告诉
-Python，“这里是一个包，你可以在其他地方导入我！”</p>
-<h2 id="init__.py-还能做些什么"><code>__init__.py</code>
-还能做些什么？</h2>
-<p>很多初学者可能认为，<code>__init__.py</code>
-只是用来标识包的，但实际上，它的作用远不止于此。你可以在
-<code>__init__.py</code>
-中编写代码，这些代码会在包被导入时自动执行。下面是一些常见的用途：</p>
-<h3 id="模块初始化操作">模块初始化操作</h3>
-<p>假设你有一个工具包，需要加载配置文件或做一些初始化工作。你可以在
-<code>__init__.py</code>
-中直接进行这些操作，这样当包被导入时，相关的初始化工作也会自动完成。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化配置文件路径</span></span><br><span class="line">config_file = os.path.join(os.path.dirname(__file__), <span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正在初始化配置文件...&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，当你导入 <code>my_project</code> 时，<code>config.yaml</code>
-就会被自动加载，你不需要在每个子模块中重复配置路径了。</p>
-<h3 id="控制子模块导入">控制子模块导入</h3>
-<p>通过在 <code>__init__.py</code> 中使用
-<code>from .sub_module import some_function</code>，你可以在导入包时自动加载所有常用的子模块或函数，这样就能直接从包的顶级目录访问这些模块的功能。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> func2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样，你可以直接这样使用：</span></span><br><span class="line"><span class="comment"># import my_project</span></span><br><span class="line"><span class="comment"># my_project.func1()</span></span><br></pre></td></tr></table></figure>
-<p>这种做法就像开了一个餐厅，顾客一进门就能看到招牌菜，提升了用户体验，减少了他们的绕路时间。</p>
-<h3 id="包级别变量和函数的初始化">包级别变量和函数的初始化</h3>
-<p>你还可以在 <code>__init__.py</code>
-中设置一些全局变量，或者定义一些包级别的工具函数。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line">package_name = <span class="string">&quot;my_project&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_info</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;欢迎使用 <span class="subst">&#123;package_name&#125;</span> 包！&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，在任何地方，只要你导入了 <code>my_project</code>，就能直接调用
-<code>show_info()</code>。</p>
-<h2 id="init__.py-的一些坑"><code>__init__.py</code> 的一些坑</h2>
-<p>俗话说，“有光的地方就有阴影”。虽然 <code>__init__.py</code>
-非常实用，但在使用时也有一些陷阱，特别是 <strong>循环导入（Circular
-Import）</strong>，这一坑可能会让你怀疑人生。</p>
-<h3 id="什么是循环导入">什么是循环导入？</h3>
-<p>假设你有两个模块：<code>module1.py</code> 和
-<code>module2.py</code>，并且在 <code>module1.py</code> 中引用了
-<code>module2.py</code>，在 <code>module2.py</code> 中又引用了
-<code>module1.py</code>，如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line"><span class="comment"># module2.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> another_function</span><br></pre></td></tr></table></figure>
-<p>这种情况下，Python 会在导入包时形成死循环：<code>module1</code> 导入
-<code>module2</code>，<code>module2</code> 又导入
-<code>module1</code>，导致两者互相等待对方加载，最终抛出错误或无法正常导入。</p>
-<h3 id="如何解决">如何解决？</h3>
-<p>解决循环导入问题的常见方法有两种：</p>
-<ol type="1">
-<li><p><strong>延迟导入</strong>：将导入语句移到函数内部，而不是文件的顶部。这样，只有在需要时才会导入模块，避免了循环依赖。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line">    <span class="comment"># 使用 some_function</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>重构代码结构</strong>：将相互依赖的部分提取到一个公共模块中，这样
-<code>module1</code> 和 <code>module2</code>
-就不再直接依赖对方了。</p></li>
-</ol>
-<h3 id="init__.py-和相对导入的关系"><code>__init__.py</code>
-和相对导入的关系</h3>
-<p>另外，一个可能让人头疼的问题是相对导入和绝对导入的使用。在
-<code>__init__.py</code> 中，你可能会用相对导入语法，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<p>乍看之下，这没有问题，但当你直接运行 <code>module1.py</code>
-时，Python
-会报错。原因是相对导入要求你必须从包的顶层开始导入，而你直接运行
-<code>module1.py</code> 时，Python 并不知道它是从哪个包里来的。</p>
-<p><strong>解决方案</strong>：尽量使用绝对导入，这样无论你是直接运行
-<code>module1.py</code>，还是导入整个 <code>my_project</code>
-包，都不会有问题。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> my_project.module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<h2 id="其他小技巧">其他小技巧</h2>
-<p>在使用 <code>__init__.py</code> 时，以下是一些实用的小技巧：</p>
-<ol type="1">
-<li><p><strong>避免复杂逻辑</strong>：不要在 <code>__init__.py</code>
-中写太复杂的业务逻辑。它的职责应该是轻量级的初始化和导入，避免让维护变得困难。</p></li>
-<li><p><strong>模块导出控制</strong>：你可以通过 <code>__all__</code>
-来控制从包中导出的模块或变量。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__all__ = [<span class="string">&#x27;module1&#x27;</span>, <span class="string">&#x27;module2&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>这样，使用 <code>from my_project import *</code> 时，Python 只会导入
-<code>__all__</code> 中指定的内容。</p></li>
-<li><p><strong>合并子模块</strong>：你可以在 <code>__init__.py</code>
-中将多个子模块的功能合并到一个命名空间中，使得用户使用起来更加方便。</p></li>
-<li><p><strong>记录导入顺序</strong>：如果你的包中有很多子模块，建议记录导入顺序，避免因为导入顺序导致的奇怪
-Bug。</p></li>
-</ol>
-<h2 id="总结">总结</h2>
-<p>总体来说，<code>__init__.py</code>
-是一个非常强大的工具，它可以让包的管理井井有条。然而，如果使用不当，它也可能成为代码中的“绊脚石”。掌握好它的用法，不仅能让你的项目结构更加清晰，还能避免一些常见的坑，提升代码的可维护性。</p>
-<hr />
-<p>通过这样整理，内容不仅更清晰，结构也更加有条理，同时对一些关键点的解释更加详细，能帮助读者更好地理解
-<code>__init__.py</code> 的作用和使用技巧。</p>
+<p>在 <code>a</code> 文件夹下创建 <code>__init__.py</code>
+文件，并在其中添加如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .a <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
+<p>这样就可以简化导入方式，使得我们可以直接使用
+<code>from a import XXX</code>。<code>__init__.py</code>
+文件在这里起到了帮助导入模块的作用。</p>
 
     
 
@@ -1451,7 +1637,7 @@ Bug。</p></li>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/">展开全文 >></a>
     </p>
     
 
@@ -1728,192 +1914,6 @@ Bug。</p></li>
 
 
   
-    <article id="post-【后端】/python/Module/绝对导入与相对导入" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" target="_blank">绝对导入与相对导入</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="绝对导入与相对导入">绝对导入与相对导入</h1>
-<h2 id="绝对导入">绝对导入</h2>
-<h3 id="标准库导入">标准库导入</h3>
-<p>假设有一个文件 <code>a.py</code>，其中导入了标准库模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br></pre></td></tr></table></figure>
-<p>这种导入方式称为标准库导入，因为 <code>os</code> 是 Python
-的标准库之一，其它常见的标准库如下：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501041450614.png"
-alt="image-20250104145009446" />
-<figcaption aria-hidden="true">image-20250104145009446</figcaption>
-</figure>
-<h3 id="当前文件目录导入">当前文件目录导入</h3>
-<p>如果在 <code>a.py</code> 所在的目录下有一个 <code>b.py</code>
-文件，其中定义了一个类 <code>B</code>，那么在 <code>a.py</code>
-中可以这样导入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b <span class="keyword">import</span> B</span><br></pre></td></tr></table></figure>
-<p>这是从当前文件目录导入，因为当运行 <code>a.py</code>
-时，当前工作目录就是 <code>a.py</code> 所在的目录。只要
-<code>b.py</code> 在同一目录下，就能成功导入。</p>
-<p>对于嵌套导入，当前文件目录始终是最初执行的文件所在的目录。比如，考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">│  a.py</span><br><span class="line">│  a2.py</span><br><span class="line">│</span><br><span class="line">└─b</span><br><span class="line">        b.py</span><br></pre></td></tr></table></figure>
-<p><strong>a2.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A2</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><strong>b.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> b.b <span class="keyword">import</span> A2</span><br></pre></td></tr></table></figure>
-<p>直接运行 <code>python b/b.py</code> 会失败，报错如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;a2&#x27;</span><br></pre></td></tr></table></figure>
-<p>但是运行 <code>python a.py</code>
-则能成功导入。这是因为执行的顶层文件（在此为
-<code>a.py</code>）决定了工作目录，而工作目录会影响子模块的绝对导入路径。</p>
-<h3 id="site-packages-导入"><code>site-packages</code> 导入</h3>
-<p><code>site-packages</code> 目录包含了通过 <code>pip</code>
-安装的第三方包。当我们安装一个包时，Python
-会将其放置在该目录下。导入这些包时，Python 会优先查找
-<code>site-packages</code> 目录。</p>
-<h3 id="导入顺序">导入顺序</h3>
-<p>Python 导入模块时会按以下顺序查找模块：</p>
-<ol type="1">
-<li><strong>当前目录</strong>：首先检查当前脚本所在的目录。</li>
-<li><strong>标准库目录</strong>：如果当前目录没有找到模块，Python
-会在标准库目录中查找。</li>
-<li><strong><code>site-packages</code> 目录</strong>：最后，Python 会在
-<code>site-packages</code>（即安装的第三方包目录）中查找。</li>
-</ol>
-<h2 id="相对导入">相对导入</h2>
-<p>相对导入只能在一个模块作为子模块被引用时使用，不能直接运行该文件。在使用相对导入时，必须确保引用的文件在一个包中。具体来说，运行的文件所在的目录也必须是一个包，而不能直接在该目录下运行模块。</p>
-<p>考虑如下目录结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">│   main.py</span><br><span class="line">│</span><br><span class="line">├───a</span><br><span class="line">│       a.py</span><br><span class="line">│</span><br><span class="line">└───c</span><br><span class="line">        c.py</span><br></pre></td></tr></table></figure>
-<p><strong>main.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>a.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ..c.c <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p><strong>c.py</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>运行 <code>python main.py</code> 会报错：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
-<p>原因是 <code>a.py</code> 中的 <code>..</code> 会尝试访问到
-<code>./</code> 目录，而该目录不是一个包。为了解决这个问题，可以将
-<code>a</code> 和 <code>c</code> 文件夹打包成一个包，放到
-<code>main.py</code> 同级目录下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">│  main.py</span><br><span class="line">│</span><br><span class="line">└─top</span><br><span class="line">    ├─a</span><br><span class="line">    │      a.py</span><br><span class="line">    │</span><br><span class="line">    └─c</span><br><span class="line">           c.py</span><br></pre></td></tr></table></figure>
-<p>然后修改 <code>main.py</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> top.a.a <span class="keyword">import</span> C</span><br></pre></td></tr></table></figure>
-<p>此时可以成功运行。</p>
-<h2 id="使用-sys.path.append-实现相对导入">使用
-<code>sys.path.append</code> 实现相对导入</h2>
-<p>直接使用相对导入时，不能直接运行文件，这使得编写脚本变得不太方便。如果希望在某些情况下能够从其他文件夹导入模块，可以通过
-<code>sys.path.append</code> 将当前工作目录添加到系统路径中。</p>
-<p>假设在工作目录下有两个文件夹：<code>src1</code> 和
-<code>src2</code>，并且 <code>src2</code> 中的文件需要从
-<code>src1</code> 导入模块。可以在 <code>src2</code>
-中的文件中这样做：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&quot;./&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>然后就可以从 <code>src1</code> 中导入模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> src1.xxx <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>另一种方式是通过环境变量设置
-<code>PYTHONPATH</code>，在终端执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTHONPATH=./</span><br></pre></td></tr></table></figure>
-<p>但这样要求工作目录必须是正确的，<code>./</code> 目录应该是
-<code>src1</code> 和 <code>src2</code>
-的父目录。如果想避免在程序中写路径，也可以使用绝对路径，但这样会增加迁移环境的复杂性。</p>
-<p>为了更加灵活地使用 <code>sys.path</code>，可以通过 <code>os</code>
-模块获取当前目录并自动调整路径：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), <span class="string">&#x27;..&#x27;</span>)))</span><br></pre></td></tr></table></figure>
-<h2 id="init__.py-文件的作用"><code>__init__.py</code> 文件的作用</h2>
-<p>通常我们在导入时会看到 <code>from a.a import XXX</code>
-这样的形式，其中第一个 <code>a</code> 是文件夹名，第二个 <code>a</code>
-是文件名。这种形式可能不太方便。如果希望直接使用
-<code>from a import XXX</code>，并且 <code>a</code>
-代表文件夹名，可以在文件夹 <code>a</code> 中创建一个
-<code>__init__.py</code> 文件。</p>
-<p>在 <code>a</code> 文件夹下创建 <code>__init__.py</code>
-文件，并在其中添加如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .a <span class="keyword">import</span> XXX</span><br></pre></td></tr></table></figure>
-<p>这样就可以简化导入方式，使得我们可以直接使用
-<code>from a import XXX</code>。<code>__init__.py</code>
-文件在这里起到了帮助导入模块的作用。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
@@ -2080,19 +2080,19 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2104,15 +2104,7 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2120,15 +2112,23 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2137,10 +2137,6 @@ alt="image-20250104145009446" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2156,6 +2152,10 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
@@ -2168,15 +2168,11 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2184,11 +2180,11 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2197,6 +2193,10 @@ alt="image-20250104145009446" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

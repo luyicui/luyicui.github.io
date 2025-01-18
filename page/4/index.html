@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-LLM/Basic/Multi-modal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/Decoding/Decoding Hyperparameters" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Multi-modal/" target="_blank">Multi-modal</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" target="_blank">Decoding Hyperparameters</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Multi-modal/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -242,17 +242,19 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="multi-modal">Multi-modal</h1>
-<p>在人工智能的不断发展中，多模态学习逐渐崭露头角，成为了一个重要的研究方向。它不再局限于<strong>单一类型的数据处理</strong>，而是<font color='red'><strong>将文本、图像、视频、音频等多种信息源结合起来</strong></font>，为机器提供了更加丰富和多元的理解视角。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410021849147.png"
-alt="5139a98f8d2858b5b9722638ce88c46f" />
-<figcaption
-aria-hidden="true">5139a98f8d2858b5b9722638ce88c46f</figcaption>
-</figure>
+    <h1 id="decoding-hyperparameters">Decoding Hyperparameters</h1>
+<p>你知道生成解码的这些细节吗？</p>
+<ol type="1">
+<li>temperature、top-k、top-p的执行顺序是什么？（不同的执行顺序影响巨大）</li>
+<li>重复惩罚在贪婪解码时还需要处理吗？</li>
+<li>除了这些参数还有哪些，能说出几种？</li>
+<li>它们怎么实现的，难道用几百行放到一起吗？</li>
+<li>如果你想自己额外加一个解码策略怎么加？</li>
+<li>停止生成都有哪些条件，除了碰到就停止还有其他方式吗？</li>
+</ol>
+<p>如果有哪一点不了解的，记得点赞收藏慢慢阅读哦~</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Multi-modal/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/#more">more >></a>
     
     
 
@@ -279,7 +281,445 @@ aria-hidden="true">5139a98f8d2858b5b9722638ce88c46f</figcaption>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Multi-modal/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-LLM/Basic/LLM Hallucination" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/LLM%20Hallucination/" target="_blank">LLM Hallucination</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/LLM%20Hallucination/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="llm-hallucination">LLM Hallucination</h1>
+<p>先说结论：在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。</p>
+<p>有一篇最近的高引用论文<a
+target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/3571730">《Survey of
+Hallucination in Natural Language
+Generation》</a>，是香港科技大学的成果。</p>
+<p>讨论的正好就是大模型的幻觉问题，也就是Hallucination。</p>
+<h2 id="幻觉的定义">幻觉的定义</h2>
+<p>先说幻觉Hallucination的定义，作者采用了这个定义：</p>
+<blockquote>
+<p>the generated content that is nonsensical or unfaithful to the
+provided source content</p>
+<p>即生成的内容是无意义的或不忠实于提供的源内容</p>
+</blockquote>
+<p>文中提到了，在自然语言处理之外的一般语境中，幻觉的定义是</p>
+<blockquote>
+<p>hallucination is a psychological term referring to a particular type
+of perception。</p>
+<p>幻觉是一个心理学术语，指的是一种特定类型的感知。</p>
+</blockquote>
+<p>在NLP或者大模型的语境下，幻觉是一种虚假的感知，但感觉上却是真实的。这可能解释起来有点儿绕口，比如说我们问ChatGPT：“离离原上草一岁一枯荣是谁写的？”ChatGPT可能会一本正经的跟你说这是明代诗人李白写的诗，如果你恰好不知道这个问题，那么明代是真实的，李白也是真实的，那么你就可能会相信ChatGPT说的是真的。幻觉会觉文本给人一种流畅自然的印象，尽管它是不忠实和无意义的，这也是为什么幻觉会很难一眼看出来。</p>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/LLM%20Hallucination/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/LLM%20Hallucination/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-LLM/Basic/Prompt Engineering" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/" target="_blank">Prompt Engineering</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="prompt-engineering">Prompt Engineering</h1>
+<p>提示工程：<a target="_blank" rel="noopener" href="https://www.promptingguide.ai/zh">提示工程指南 |
+Prompt Engineering Guide (promptingguide.ai)</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-LLM/Basic/special tokens" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/" target="_blank">special tokens</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="special-tokens">special tokens</h1>
+<p>BERT模型中的特殊标记（Special Tokens）有
+[CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下：</p>
+<h2 id="pad">[PAD]</h2>
+<p>[PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD]
+进行<strong>填充</strong>以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。</p>
+<p>这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做 padding
+一样，tensorflow 或者 torch 的 bert 之类的预训练 model 的接口 API
+只能接受长度相同的 input，所以用 [PAD]
+让所有短句都能够对齐，长句就直接做截断，[PAD]
+这个符号只是一种约定的用法，看文档：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch_sentences = [<span class="string">&quot;Hello I&#x27;m a single sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And another sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And the very very last one&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch = tokenizer(batch_sentences, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(batch)</span><br><span class="line">&#123;<span class="string">&#x27;input_ids&#x27;</span>: tensor([[ <span class="number">101</span>, <span class="number">8667</span>,  <span class="number">146</span>,  <span class="number">112</span>,  <span class="number">182</span>,  <span class="number">170</span>, <span class="number">1423</span>, <span class="number">5650</span>,  <span class="number">102</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1330</span>, <span class="number">5650</span>,  <span class="number">102</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1103</span>, <span class="number">1304</span>, <span class="number">1304</span>, <span class="number">1314</span>, <span class="number">1141</span>,  <span class="number">102</span>,    <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>]])&#125;</span><br></pre></td></tr></table></figure>
+<p>这里 padding 部分的 index 都是 0，即在 embedding 矩阵中对应第 0
+行，因为 PAD 在所难免，所以 input 输入的时候，你总得在 embedding
+矩阵里加一行 embedding vector 专门用来代表 [PAD]，否则程序报错，但是这个
+embedding 因为被 mask 后续不会参与到权重更新，所以其实把 bert 原始的
+token embedding 矩阵中这一行对应的权重改成任意的向量都没什么区别；</p>
+<hr />
+<h2 id="unk">[UNK]</h2>
+<p>[UNK] 即
+unknown：此标记用于表示未知或词汇外的单词。当一个模型遇到一个它以前没有见过/无法识别的词时，它会用这个标记替换它。</p>
+<p>这个更多是为了预测服务的，如果为了 input 的句子里有 embedding
+矩阵没有的 token，分 token 的时候，这类 token 都会变成 UNK，同样 bert 的
+embedding 矩阵里也有一行 embedding 向量专门用来表示 UNK，不过具体不知道
+bert pretrained model 里这个 UNK 是怎么设计的，简单的方法就是直接取所有
+embedding vector 的均值作为代替；</p>
+<hr />
+<h2 id="mask">[MASK]</h2>
+<p>[MASK] 主要是为了 MLM 任务，同样 Bert 的 embedding 向量中也有专门存放
+[MASK] 这个 token 的 embedding
+向量，设计的目的也是为了保证程序正常运行，如果 embedding layer 里没有
+[MASK] 则程序报错，</p>
+<p><strong>但是如果 bertmodel 的下游没有设置 MLM 任务之类的和 [MASK]
+相关的预训练任务对应的 layer，把 token 替换成 [MASK]
+啥屁用都没有</strong>，你就真的把这个词变成 [MASK] 了。</p>
+<p>而所谓的预训练任务对应的 layer，可以看看 keras
+官方文档，重头撸到尾：</p>
+<p><a
+href="https://link.zhihu.com/?target=https%3A//keras.io/examples/nlp/masked_language_modeling/">Keras
+documentation: End-to-end Masked Language Modeling with
+BERTkeras.io/examples/nlp/masked_language_modeling/<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png" /></a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mlm_output = layers.Dense(config.VOCAB_SIZE, name=<span class="string">&quot;mlm_cls&quot;</span>, activation=<span class="string">&quot;softmax&quot;</span>)(</span><br><span class="line">    encoder_output</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>这就是 mlm 任务对应的任务头（layer），就是一个 vocab_size
+大小的超级多分类，这里没法用 word2vec 中用的负采样因为 mask
+可能有多个，也就是输出可能是 [0,0,0,1,0,1,0,....] 这样的向量输出。</p>
+<p>可以看到 [MASK] 除了对 input
+进行替换之外，全程打酱油，最终是根据输出来确定了 [MASK]
+的作用，<strong>注意，bert 中针对 input 的 mask 机制仅仅针对 padding
+部分进行 mask，对 [MASK] 是不做 mask 操作的</strong>。</p>
+<p>所以，当我们把某个 token mask 之后，如果这个句子中没有被 mask 的
+token 都和被 mask 的 token 不相同的话，那么这个被 mask 的 token 的 word
+embedding 不会得到任何训练，因为压根也没有往前传。</p>
+<hr />
+<h2 id="cls">[CLS]</h2>
+<p>[CLS]，huggingface 的 berttokenize 默认是给句子配一个 [CLS] 和一个
+[SEP]，分别在句首和句尾，我看了很多百度知乎和谷歌上的说法：</p>
+<blockquote>
+<p><code>CLS</code>：special classification
+embedding，用于分类的向量，会聚集所有的分类信息</p>
+<p><code>SEP</code>：输入是 QA 或 2
+个句子时，需添加<code>SEP</code>标记以示区别</p>
+</blockquote>
+<p>基本都是这么解释的。</p>
+<p>这种解释压根难以 make sence。</p>
+<p><strong>首先，如果我们的预训练任务或者是下游的应用的输入都是单个句子，[SEP]
+根本就没用，不用加到分 token 后的句子里</strong>。</p>
+<p>先来理解一下 [CLS]，</p>
+<p>先看下原文的解释：</p>
+<blockquote>
+<p>The first token of every sequence is always a special classification
+token ([CLS]). The final hidden state corresponding to this token is
+used as the aggregate sequence representation for classification
+tasks.</p>
+</blockquote>
+<p>讲了和没讲差不多。</p>
+<p>然后我又看了一下 google bert 的源代码，其中对这部分做了解释：</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/google-research/bert/blob/eedf5716ce1268e56f0a50264a88cafad334ac61/run_classifier.py">bert/run_classifier.py
+at eedf5716ce1268e56f0a50264a88cafad334ac61 ·
+google-research/bert</a></p>
+<blockquote>
+<p>For classification tasks, the first vector (corresponding to [CLS])
+is used as the "sentence vector". Note that this only makes sense
+because the entire model is fine-tuned.</p>
+</blockquote>
+<p>翻译过来就是，你要用 [CLS] 去做下游句子分类任务的 fine-tune
+才有意义，反正最后根据下游任务 finetune 之后，bert
+的参数就会发生一定的变化使得 [CLS] 处得到的 hidden state
+包含句子的表征信息，换句话说，你用别的 token 的 last hidden state 来做
+finetune 也没问题。</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/jina-ai/clip-as-service#q-what-are-the-available-pooling-strategies">jina-ai/clip-as-service:
+🏄 Scalable embedding, reasoning, ranking for images and sentences with
+CLIP</a></p>
+<p>在 bert as service 中也提到了这个问题以及作者的回答：</p>
+<blockquote>
+<p><strong>Q:</strong> Why not use the hidden state of the first token
+as default strategy, i.e. the <code>[CLS]</code>? <strong>A:</strong>
+Because a pre-trained model is not fine-tuned on any downstream tasks
+yet. In this case, the hidden state of <code>[CLS]</code> is not a good
+sentence representation. If later you fine-tune the model, you may use
+<code>[CLS]</code> as well.</p>
+</blockquote>
+<p>后续看完 sentence-bert 之后，发现确实 CLS
+这么做效果没有直观的方法——对所有的 input 的 token 的 last hidden state
+做 pooling 效果来的好。<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/348646690">BERT中CLS效果真的好嘛？这篇文章告诉你答案
+- 知乎</a> 篇文章也提到了相应的介绍。</p>
+<p>所以，说老实话，我觉得 [CLS] 加不加没啥太大区别（从 keras 的 mlm
+的官方的实现来看也可以看到，作者从头训练了一个 MLM 的 bert
+model，压根就没有把 [CLS] 这个 special token
+加到词表里。）。无论是预训练 mlm
+任务还是句子分类这样的下游任务，完全可以舍弃 CLS，只不过 huggingface
+以及后续不少开源的 model 的语料训练的时候大家都模仿了最早的 bert
+往里面加 [CLS]，而预训练的模型的输入本身已经将
+[CLS]+句子，这样的输入形式学习到模型的权重中去了（导致<strong>[CLS] 这个
+token 在训练的过程中也被编码了某些知识</strong>，<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52866475">解构BERT:从一亿参数中获取六种pattern
+- 知乎</a> 可以参考这篇，[CLS]
+还是学习到了一些东西的<strong>）</strong>，</p>
+<p>如果你后续 finetune 的时候不这么做，[CLS]+句子 A 和直接使用句子 A
+分别作为输入来 finetune 下游的文本分类任务之类的，可能舍弃了 [CLS]
+就浪费了一部分信息，效果和保持原始输入形式的效果就会有一些差别。</p>
+<hr />
+<h2 id="sep">[SEP]</h2>
+<p>[SEP] 即
+seperation：用于分隔两个句子，例如在文本分类问题中，将两个句子拼接成一个输入序列时，可以使用
+[SEP] 来分隔这两个句子。</p>
+<p>其实前面提到的 [SEP] 和 [CLS]
+的意义几乎差不多，就是预训练的时候一部分的知识被编码到这两个 token
+对应的权重里了，SEP 用来区分句子，因为 bert 中有个 nsp 的任务：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028715.jpeg" /></p>
+<p>这个其实去看下 huggingface 的 bertmodel 的源代码：</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/blob/1c06240e1b3477728129bb58e7b6c7734bb5074e/src/transformers/models/bert/modeling_bert.py">transformers/src/transformers/models/bert/modeling_bert.py
+at 1c06240e1b3477728129bb58e7b6c7734bb5074e ·
+huggingface/transformers</a></p>
+<p>就可以知道，embedding 部分压根就没有关于 [SEP] 的额外处理，就单独对
+PAD 的 index 进行了定义，也就是 [SEP] 也是当作一个字符放进去了。google
+上有不少 train from scratch 的代码，比如这段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">    t1,t2 = self.get_sentence(idx)</span><br><span class="line">    t1_random, t1_label,_ = self.random_word(t1) </span><br><span class="line">    t2_random, t2_label,_ = self.random_word(t1) </span><br><span class="line"></span><br><span class="line">    t1 = [self.vocab[<span class="string">&#x27;[CLS]&#x27;</span>]] + t1_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t2 = t2_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t1_label = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] + t1_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]]</span><br><span class="line">    t2_label = t2_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] </span><br><span class="line"></span><br><span class="line">    segment_label = ([<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t1))] + [<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t2))])[:self.seq_len]</span><br><span class="line">    bert_input = (t1 + t2)[:self.seq_len]</span><br><span class="line"></span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_input))]</span><br><span class="line">    attention_mask = <span class="built_in">len</span>(bert_input) * [<span class="number">1</span>] + <span class="built_in">len</span>(padding) * [<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    bert_input.extend(padding)</span><br><span class="line"></span><br><span class="line">    bert_label = t1_label</span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_label))]</span><br><span class="line">    bert_label.extend(padding)<span class="comment"># , segment_label.extend(padding)</span></span><br><span class="line"></span><br><span class="line">    attention_mask = np.array(attention_mask)</span><br><span class="line">    bert_input = np.array(bert_input)</span><br><span class="line">    segment_label = np.array(segment_label)</span><br><span class="line">    bert_label = np.array(bert_label)</span><br><span class="line">    <span class="comment">#is_next_label = np.array(is_next_label)</span></span><br><span class="line">    output = &#123;<span class="string">&quot;input_ids&quot;</span>: bert_input,</span><br><span class="line">              <span class="string">&quot;token_type_ids&quot;</span>: segment_label, </span><br><span class="line">              <span class="string">&#x27;attention_mask&#x27;</span>: attention_mask,</span><br><span class="line">              <span class="string">&quot;bert_label&quot;</span>: bert_label&#125;<span class="comment">#, is_next_label</span></span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>是关于 nsp 任务准备的，可以发现，句子的先后顺序，也就是 segment
+embedding 对应的</p>
+<p>segment_label：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">segment_label = ([0 for _ in range(len(t1))] + [1 for _ in range(len(t2))])[:self.seq_len]</span><br></pre></td></tr></table></figure>
+<p>和 [SEP] 没有半毛钱关系。</p>
+<hr />
+<h2 id="总结">总结</h2>
+<p>不是因为 special token 有特殊意义我们才要刻意地使用 special
+token，而是因为开源地预训练模型是在这样地输入形式上训练地，所以我们使用地时候也要尊崇其语料地形式对新语料进行改造，换句话说，如果你有能力自己预训练一个新的
+model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，而
+[CLS]、[SEP] 不加都可以，或者某些开源的预训练模型里也没有 [CLS]、[SEP]
+之类的奇怪的 token，那么就完全不需要加。</p>
+<p>在BERT模型中，这些特殊标记是必不可少的，因为它们能够帮助模型区分输入序列的不同部分，进而更好地理解和处理文本数据。</p>
+<p><font color='red'><strong>请注意：很多模型的vocab.txt文件不一样，它们定义的“特殊标记”也不同</strong></font></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/">展开全文 >></a>
     </p>
     
 
@@ -417,7 +857,7 @@ alt="context window.png" />
 
 
   
-    <article id="post-LLM/Basic/Prompt Engineering" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/Decoding/Decoding Strategies" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -425,7 +865,7 @@ alt="context window.png" />
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/" target="_blank">Prompt Engineering</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/" target="_blank">Decoding Strategies</a>
   
     </h1>
   
@@ -433,7 +873,7 @@ alt="context window.png" />
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -446,10 +886,18 @@ alt="context window.png" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="prompt-engineering">Prompt Engineering</h1>
-<p>提示工程：<a target="_blank" rel="noopener" href="https://www.promptingguide.ai/zh">提示工程指南 |
-Prompt Engineering Guide (promptingguide.ai)</a></p>
-
+    <h1 id="decoding-strategies">Decoding Strategies</h1>
+<p>在大模型训练好之后，如何对训练好的模型进行解码（decode）是一个火热的研究话题。</p>
+<p>在自然语言任务中，我们通常使用一个预训练的大模型（比如GPT）来根据给定的输入文本（比如一个开头或一个问题）生成输出文本（比如一个答案或一个结尾）。为了生成输出文本，我们需要让模型逐个预测每个
+token
+，直到达到一个终止条件（如一个标点符号或一个最大长度）。在每一步，模型会基于原始分数
+logits 给出一个概率分布
+prob，表示它对下一个单词的预测，可以通过调整某些超参数来修改这些原始分数
+logits，进而改变最终的概率分布
+prob。本文主要介绍得到最终概率分布后的解码策略。</p>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/#more">more >></a>
+    
     
 
     
@@ -475,7 +923,7 @@ Prompt Engineering Guide (promptingguide.ai)</a></p>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/Prompt%20Engineering/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/">展开全文 >></a>
     </p>
     
 
@@ -749,7 +1197,7 @@ school–self-supervised learning_Zisserman</a></p>
 
 
   
-    <article id="post-LLM/Basic/special tokens" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/Fine-Tuning/【SFT】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -757,7 +1205,7 @@ school–self-supervised learning_Zisserman</a></p>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/" target="_blank">special tokens</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/" target="_blank">【SFT】</a>
   
     </h1>
   
@@ -765,7 +1213,7 @@ school–self-supervised learning_Zisserman</a></p>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -778,164 +1226,16 @@ school–self-supervised learning_Zisserman</a></p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="special-tokens">special tokens</h1>
-<p>BERT模型中的特殊标记（Special Tokens）有
-[CLS]、[SEP]、[UNK]、[PAD]、[MASK]，它们的含义如下：</p>
-<h2 id="pad">[PAD]</h2>
-<p>[PAD] 即 padding，指在 batch 中对齐序列长度时，用 [PAD]
-进行<strong>填充</strong>以使所有序列长度相同。可以通过将其添加到较短的序列末尾来实现对齐。</p>
-<p>这个很简单了，就是占位符，和程序设计有关，和 LSTM 中做 padding
-一样，tensorflow 或者 torch 的 bert 之类的预训练 model 的接口 API
-只能接受长度相同的 input，所以用 [PAD]
-让所有短句都能够对齐，长句就直接做截断，[PAD]
-这个符号只是一种约定的用法，看文档：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch_sentences = [<span class="string">&quot;Hello I&#x27;m a single sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And another sentence&quot;</span>,</span><br><span class="line"><span class="meta">... </span>                   <span class="string">&quot;And the very very last one&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>batch = tokenizer(batch_sentences, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(batch)</span><br><span class="line">&#123;<span class="string">&#x27;input_ids&#x27;</span>: tensor([[ <span class="number">101</span>, <span class="number">8667</span>,  <span class="number">146</span>,  <span class="number">112</span>,  <span class="number">182</span>,  <span class="number">170</span>, <span class="number">1423</span>, <span class="number">5650</span>,  <span class="number">102</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1330</span>, <span class="number">5650</span>,  <span class="number">102</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>,    <span class="number">0</span>],</span><br><span class="line">                      [ <span class="number">101</span>, <span class="number">1262</span>, <span class="number">1103</span>, <span class="number">1304</span>, <span class="number">1304</span>, <span class="number">1314</span>, <span class="number">1141</span>,  <span class="number">102</span>,    <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;token_type_ids&#x27;</span>: tensor([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]]),</span><br><span class="line"> <span class="string">&#x27;attention_mask&#x27;</span>: tensor([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">                           [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>]])&#125;</span><br></pre></td></tr></table></figure>
-<p>这里 padding 部分的 index 都是 0，即在 embedding 矩阵中对应第 0
-行，因为 PAD 在所难免，所以 input 输入的时候，你总得在 embedding
-矩阵里加一行 embedding vector 专门用来代表 [PAD]，否则程序报错，但是这个
-embedding 因为被 mask 后续不会参与到权重更新，所以其实把 bert 原始的
-token embedding 矩阵中这一行对应的权重改成任意的向量都没什么区别；</p>
-<hr />
-<h2 id="unk">[UNK]</h2>
-<p>[UNK] 即
-unknown：此标记用于表示未知或词汇外的单词。当一个模型遇到一个它以前没有见过/无法识别的词时，它会用这个标记替换它。</p>
-<p>这个更多是为了预测服务的，如果为了 input 的句子里有 embedding
-矩阵没有的 token，分 token 的时候，这类 token 都会变成 UNK，同样 bert 的
-embedding 矩阵里也有一行 embedding 向量专门用来表示 UNK，不过具体不知道
-bert pretrained model 里这个 UNK 是怎么设计的，简单的方法就是直接取所有
-embedding vector 的均值作为代替；</p>
-<hr />
-<h2 id="mask">[MASK]</h2>
-<p>[MASK] 主要是为了 MLM 任务，同样 Bert 的 embedding 向量中也有专门存放
-[MASK] 这个 token 的 embedding
-向量，设计的目的也是为了保证程序正常运行，如果 embedding layer 里没有
-[MASK] 则程序报错，</p>
-<p><strong>但是如果 bertmodel 的下游没有设置 MLM 任务之类的和 [MASK]
-相关的预训练任务对应的 layer，把 token 替换成 [MASK]
-啥屁用都没有</strong>，你就真的把这个词变成 [MASK] 了。</p>
-<p>而所谓的预训练任务对应的 layer，可以看看 keras
-官方文档，重头撸到尾：</p>
-<p><a
-href="https://link.zhihu.com/?target=https%3A//keras.io/examples/nlp/masked_language_modeling/">Keras
-documentation: End-to-end Masked Language Modeling with
-BERTkeras.io/examples/nlp/masked_language_modeling/<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028104.png" /></a></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mlm_output = layers.Dense(config.VOCAB_SIZE, name=<span class="string">&quot;mlm_cls&quot;</span>, activation=<span class="string">&quot;softmax&quot;</span>)(</span><br><span class="line">    encoder_output</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>这就是 mlm 任务对应的任务头（layer），就是一个 vocab_size
-大小的超级多分类，这里没法用 word2vec 中用的负采样因为 mask
-可能有多个，也就是输出可能是 [0,0,0,1,0,1,0,....] 这样的向量输出。</p>
-<p>可以看到 [MASK] 除了对 input
-进行替换之外，全程打酱油，最终是根据输出来确定了 [MASK]
-的作用，<strong>注意，bert 中针对 input 的 mask 机制仅仅针对 padding
-部分进行 mask，对 [MASK] 是不做 mask 操作的</strong>。</p>
-<p>所以，当我们把某个 token mask 之后，如果这个句子中没有被 mask 的
-token 都和被 mask 的 token 不相同的话，那么这个被 mask 的 token 的 word
-embedding 不会得到任何训练，因为压根也没有往前传。</p>
-<hr />
-<h2 id="cls">[CLS]</h2>
-<p>[CLS]，huggingface 的 berttokenize 默认是给句子配一个 [CLS] 和一个
-[SEP]，分别在句首和句尾，我看了很多百度知乎和谷歌上的说法：</p>
-<blockquote>
-<p><code>CLS</code>：special classification
-embedding，用于分类的向量，会聚集所有的分类信息</p>
-<p><code>SEP</code>：输入是 QA 或 2
-个句子时，需添加<code>SEP</code>标记以示区别</p>
-</blockquote>
-<p>基本都是这么解释的。</p>
-<p>这种解释压根难以 make sence。</p>
-<p><strong>首先，如果我们的预训练任务或者是下游的应用的输入都是单个句子，[SEP]
-根本就没用，不用加到分 token 后的句子里</strong>。</p>
-<p>先来理解一下 [CLS]，</p>
-<p>先看下原文的解释：</p>
-<blockquote>
-<p>The first token of every sequence is always a special classification
-token ([CLS]). The final hidden state corresponding to this token is
-used as the aggregate sequence representation for classification
-tasks.</p>
-</blockquote>
-<p>讲了和没讲差不多。</p>
-<p>然后我又看了一下 google bert 的源代码，其中对这部分做了解释：</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/google-research/bert/blob/eedf5716ce1268e56f0a50264a88cafad334ac61/run_classifier.py">bert/run_classifier.py
-at eedf5716ce1268e56f0a50264a88cafad334ac61 ·
-google-research/bert</a></p>
-<blockquote>
-<p>For classification tasks, the first vector (corresponding to [CLS])
-is used as the "sentence vector". Note that this only makes sense
-because the entire model is fine-tuned.</p>
-</blockquote>
-<p>翻译过来就是，你要用 [CLS] 去做下游句子分类任务的 fine-tune
-才有意义，反正最后根据下游任务 finetune 之后，bert
-的参数就会发生一定的变化使得 [CLS] 处得到的 hidden state
-包含句子的表征信息，换句话说，你用别的 token 的 last hidden state 来做
-finetune 也没问题。</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/jina-ai/clip-as-service#q-what-are-the-available-pooling-strategies">jina-ai/clip-as-service:
-🏄 Scalable embedding, reasoning, ranking for images and sentences with
-CLIP</a></p>
-<p>在 bert as service 中也提到了这个问题以及作者的回答：</p>
-<blockquote>
-<p><strong>Q:</strong> Why not use the hidden state of the first token
-as default strategy, i.e. the <code>[CLS]</code>? <strong>A:</strong>
-Because a pre-trained model is not fine-tuned on any downstream tasks
-yet. In this case, the hidden state of <code>[CLS]</code> is not a good
-sentence representation. If later you fine-tune the model, you may use
-<code>[CLS]</code> as well.</p>
-</blockquote>
-<p>后续看完 sentence-bert 之后，发现确实 CLS
-这么做效果没有直观的方法——对所有的 input 的 token 的 last hidden state
-做 pooling 效果来的好。<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/348646690">BERT中CLS效果真的好嘛？这篇文章告诉你答案
-- 知乎</a> 篇文章也提到了相应的介绍。</p>
-<p>所以，说老实话，我觉得 [CLS] 加不加没啥太大区别（从 keras 的 mlm
-的官方的实现来看也可以看到，作者从头训练了一个 MLM 的 bert
-model，压根就没有把 [CLS] 这个 special token
-加到词表里。）。无论是预训练 mlm
-任务还是句子分类这样的下游任务，完全可以舍弃 CLS，只不过 huggingface
-以及后续不少开源的 model 的语料训练的时候大家都模仿了最早的 bert
-往里面加 [CLS]，而预训练的模型的输入本身已经将
-[CLS]+句子，这样的输入形式学习到模型的权重中去了（导致<strong>[CLS] 这个
-token 在训练的过程中也被编码了某些知识</strong>，<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52866475">解构BERT:从一亿参数中获取六种pattern
-- 知乎</a> 可以参考这篇，[CLS]
-还是学习到了一些东西的<strong>）</strong>，</p>
-<p>如果你后续 finetune 的时候不这么做，[CLS]+句子 A 和直接使用句子 A
-分别作为输入来 finetune 下游的文本分类任务之类的，可能舍弃了 [CLS]
-就浪费了一部分信息，效果和保持原始输入形式的效果就会有一些差别。</p>
-<hr />
-<h2 id="sep">[SEP]</h2>
-<p>[SEP] 即
-seperation：用于分隔两个句子，例如在文本分类问题中，将两个句子拼接成一个输入序列时，可以使用
-[SEP] 来分隔这两个句子。</p>
-<p>其实前面提到的 [SEP] 和 [CLS]
-的意义几乎差不多，就是预训练的时候一部分的知识被编码到这两个 token
-对应的权重里了，SEP 用来区分句子，因为 bert 中有个 nsp 的任务：</p>
+    <h1 id="sft">SFT</h1>
+<h2 id="预训练">预训练</h2>
+<p>现在的大模型在进行预训练时大部分都采用了 GPT 的预训练任务，即 Next <a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232733945&amp;content_type=Article&amp;match_order=1&amp;q=token+prediction&amp;zhida_source=entity">token
+prediction</a>。</p>
 <p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412192028715.jpeg" /></p>
-<p>这个其实去看下 huggingface 的 bertmodel 的源代码：</p>
-<p><a
-target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/blob/1c06240e1b3477728129bb58e7b6c7734bb5074e/src/transformers/models/bert/modeling_bert.py">transformers/src/transformers/models/bert/modeling_bert.py
-at 1c06240e1b3477728129bb58e7b6c7734bb5074e ·
-huggingface/transformers</a></p>
-<p>就可以知道，embedding 部分压根就没有关于 [SEP] 的额外处理，就单独对
-PAD 的 index 进行了定义，也就是 [SEP] 也是当作一个字符放进去了。google
-上有不少 train from scratch 的代码，比如这段：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">    t1,t2 = self.get_sentence(idx)</span><br><span class="line">    t1_random, t1_label,_ = self.random_word(t1) </span><br><span class="line">    t2_random, t2_label,_ = self.random_word(t1) </span><br><span class="line"></span><br><span class="line">    t1 = [self.vocab[<span class="string">&#x27;[CLS]&#x27;</span>]] + t1_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t2 = t2_random + [self.vocab[<span class="string">&#x27;[SEP]&#x27;</span>]]</span><br><span class="line">    t1_label = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] + t1_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]]</span><br><span class="line">    t2_label = t2_label + [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>]] </span><br><span class="line"></span><br><span class="line">    segment_label = ([<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t1))] + [<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(t2))])[:self.seq_len]</span><br><span class="line">    bert_input = (t1 + t2)[:self.seq_len]</span><br><span class="line"></span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_input))]</span><br><span class="line">    attention_mask = <span class="built_in">len</span>(bert_input) * [<span class="number">1</span>] + <span class="built_in">len</span>(padding) * [<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    bert_input.extend(padding)</span><br><span class="line"></span><br><span class="line">    bert_label = t1_label</span><br><span class="line">    padding = [self.vocab[<span class="string">&#x27;[PAD]&#x27;</span>] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.seq_len - <span class="built_in">len</span>(bert_label))]</span><br><span class="line">    bert_label.extend(padding)<span class="comment"># , segment_label.extend(padding)</span></span><br><span class="line"></span><br><span class="line">    attention_mask = np.array(attention_mask)</span><br><span class="line">    bert_input = np.array(bert_input)</span><br><span class="line">    segment_label = np.array(segment_label)</span><br><span class="line">    bert_label = np.array(bert_label)</span><br><span class="line">    <span class="comment">#is_next_label = np.array(is_next_label)</span></span><br><span class="line">    output = &#123;<span class="string">&quot;input_ids&quot;</span>: bert_input,</span><br><span class="line">              <span class="string">&quot;token_type_ids&quot;</span>: segment_label, </span><br><span class="line">              <span class="string">&#x27;attention_mask&#x27;</span>: attention_mask,</span><br><span class="line">              <span class="string">&quot;bert_label&quot;</span>: bert_label&#125;<span class="comment">#, is_next_label</span></span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>是关于 nsp 任务准备的，可以发现，句子的先后顺序，也就是 segment
-embedding 对应的</p>
-<p>segment_label：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">segment_label = ([0 for _ in range(len(t1))] + [1 for _ in range(len(t2))])[:self.seq_len]</span><br></pre></td></tr></table></figure>
-<p>和 [SEP] 没有半毛钱关系。</p>
-<hr />
-<h2 id="总结">总结</h2>
-<p>不是因为 special token 有特殊意义我们才要刻意地使用 special
-token，而是因为开源地预训练模型是在这样地输入形式上训练地，所以我们使用地时候也要尊崇其语料地形式对新语料进行改造，换句话说，如果你有能力自己预训练一个新的
-model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，而
-[CLS]、[SEP] 不加都可以，或者某些开源的预训练模型里也没有 [CLS]、[SEP]
-之类的奇怪的 token，那么就完全不需要加。</p>
-<p>在BERT模型中，这些特殊标记是必不可少的，因为它们能够帮助模型区分输入序列的不同部分，进而更好地理解和处理文本数据。</p>
-<p><font color='red'><strong>请注意：很多模型的vocab.txt文件不一样，它们定义的“特殊标记”也不同</strong></font></p>
-
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410051534936.webp" /></p>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/#more">more >></a>
+    
     
 
     
@@ -961,7 +1261,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Basic/special%20tokens/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90SFT%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -991,7 +1291,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
 
 
   
-    <article id="post-LLM/Metric/Top@k" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/Fine-Tuning/【RLHF】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -999,7 +1299,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/" target="_blank">top@k</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/" target="_blank">【RLHF】</a>
   
     </h1>
   
@@ -1007,7 +1307,7 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1020,39 +1320,41 @@ model，special token，例如 [PAD]、[MASK]、[UNK] 想换成什么都行，�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="topk">top@k</h1>
+    <h1 id="rlhf">【RLHF】</h1>
+<p>通过人类标注数据训练得到 Reward
+Model（相当于有了人类标注数据，则相信它是不错的，然后反推人类因为什么样的奖励函数公会采取这些行为），有了奖励函数之后，就可以使用一般的强化学习的方法去找出最优策略/动作。</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412191940457.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410151652948.png"
+alt="image-20241015165219882" />
+<figcaption aria-hidden="true">image-20241015165219882</figcaption>
 </figure>
-<p>在这张图中，指标 <strong>top@max</strong>
-通常表示模型在测试集中可以返回多个候选答案时，包含正确答案的最大排名比例。具体来说，top@max
-测量模型是否能够在其所有预测的答案中（可能数量不固定）包含正确答案，并且统计这样的样本比例。</p>
-<p>以下是几个关键点的说明：</p>
+<h2 id="背景">背景</h2>
+<p>过去几年里，以 ChatGPT 为代表的基于 prompt 范式的大型语言模型 (Large
+Language Model，LLM) 取得了巨大的成功。然而，对生成结果的评估是
+<strong>主观和依赖上下文</strong> 的，这些结果难以用现有的基于规则的 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90&amp;spm=1001.2101.3001.7020">文本生成</a>
+指标 (如 BLUE 和 ROUGE)
+来衡量。除了评估指标，现有的模型通常以预测下一个单词的方式和简单的损失函数
+(如交叉熵) 来建模，没有显式地引入人的偏好和主观意见。</p>
+<p>一致性关注的是我们实际上希望模型做什么。它提出的问题是“目标函数是否符合我们的意图”，并且基于模型的目标和行为，在多大程度上与我们人类的价值观和和期望一致。举个简单的例子，假设我们要训练一个鸟类分类器，把鸟类分类为“麻雀”或“知更鸟”，并使用对数损失为训练目标，尽管我们的最终目标是很高的分类精度。该模型可能具有较低的对数损失，即模型的能力较强，但精度较差，这就是一个不一致的例子。模型可以优化培训目标，但与我们的最终目标不一致。</p>
+<p>然而，在实际应用中，这些模型的目的是执行某种形式的有价值的认知工作，这些模型的训练方式与我们希望使用它们的方式之间存在着明显的分歧。尽管从数学上讲，机器计算的单词序列的统计分布可能是一种高效的选择，但实际上，我们会通过选择最适合给定情境的文本序列来生成语言，并使用我们的背景知识和常识来指导这一过程。当语言模型用于需要高度信任或可靠性的应用程序（如对话系统或智能个人助理）时，这可能会成为一个问题。</p>
+<p>虽然在过去几年里，这些基于大量数据训练的模型变得极为复杂、强大，但当应用于实际人们生活生产时，它们往往无法发挥出潜力。大型语言模型中的一致性问题通常表现为：</p>
 <ul>
-<li><strong>top@1</strong> 表示模型在返回的第一个答案中正确的比例。</li>
-<li><strong>top@5</strong>
-表示模型在返回的前五个候选答案中有正确答案的比例。</li>
-<li><strong>top@max</strong>
-则不限制候选答案数量，只要模型返回的所有答案中包含正确答案，就计为通过。</li>
+<li><p>缺乏有效帮助：没有遵循用户的明确指示。</p></li>
+<li><p>虚构幻象：模型会虚构不存在或错误的事实。</p></li>
+<li><p>缺乏可解读性：人们很难理解模型是如何得出特定决策或预测结果的。</p></li>
+<li><p>训练内容偏见有害：经过有偏见、有害数据训练的语言模型，可能会在输出中重现这些数据，即使没有明确指示这样做。</p></li>
 </ul>
-<p>在实际应用中，top@max
-通常用于评估一个模型生成多项候选答案时的能力，特别是针对一些生成式任务（如开放域问答或多标签分类）。这个指标越高，意味着模型在所有可能输出的答案中，正确答案总是出现的概率越大。</p>
-<blockquote>
-<p><strong>top1-----</strong> 就是你预测的 label
-取最后概率向量里面<strong>最大的</strong>那一个作为预测结果，如果你的预测结果中概率最大的那个分类正确，则预测正确。否则预测错误
-<strong>top5-----</strong>
-就是最后概率向量<strong>最大的前五名</strong>中，只要出现了正确概率即为预测正确。否则预测错误。</p>
-</blockquote>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412191940015.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-
+<p>但具体来说，一致性问题是从何处来的？</p>
+<p>因此，训练阶段，如果直接用人的偏好（或者说人的反馈）来对模型整体的输出结果计算
+reward 或
+loss，显然是要比传统的“给定上下文，预测下一个词”的损失函数合理的多。基于这个思想，便引出了本文要讨论的对象——RLHF（Reinforcement
+Learning from Human
+Feedback）：即使用强化学习的方法，利用人类反馈信号直接优化语言模型。</p>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/#more">more >></a>
+    
     
 
     
@@ -1078,7 +1380,7 @@ alt="img" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Metric/Top@k/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E3%80%90RLHF%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1108,7 +1410,7 @@ alt="img" />
 
 
   
-    <article id="post-LLM/Decoding/Decoding Strategies" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/Fine-Tuning/预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1116,7 +1418,7 @@ alt="img" />
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/" target="_blank">Decoding Strategies</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" target="_blank">预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer learning）</a>
   
     </h1>
   
@@ -1124,7 +1426,7 @@ alt="img" />
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1137,247 +1439,23 @@ alt="img" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="decoding-strategies">Decoding Strategies</h1>
-<p>在大模型训练好之后，如何对训练好的模型进行解码（decode）是一个火热的研究话题。</p>
-<p>在自然语言任务中，我们通常使用一个预训练的大模型（比如GPT）来根据给定的输入文本（比如一个开头或一个问题）生成输出文本（比如一个答案或一个结尾）。为了生成输出文本，我们需要让模型逐个预测每个
-token
-，直到达到一个终止条件（如一个标点符号或一个最大长度）。在每一步，模型会基于原始分数
-logits 给出一个概率分布
-prob，表示它对下一个单词的预测，可以通过调整某些超参数来修改这些原始分数
-logits，进而改变最终的概率分布
-prob。本文主要介绍得到最终概率分布后的解码策略。</p>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Strategies/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-LLM/Decoding/Decoding Hyperparameters" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" target="_blank">Decoding Hyperparameters</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="decoding-hyperparameters">Decoding Hyperparameters</h1>
-<p>你知道生成解码的这些细节吗？</p>
-<ol type="1">
-<li>temperature、top-k、top-p的执行顺序是什么？（不同的执行顺序影响巨大）</li>
-<li>重复惩罚在贪婪解码时还需要处理吗？</li>
-<li>除了这些参数还有哪些，能说出几种？</li>
-<li>它们怎么实现的，难道用几百行放到一起吗？</li>
-<li>如果你想自己额外加一个解码策略怎么加？</li>
-<li>停止生成都有哪些条件，除了碰到就停止还有其他方式吗？</li>
-</ol>
-<p>如果有哪一点不了解的，记得点赞收藏慢慢阅读哦~</p>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Decoding/Decoding%20Hyperparameters/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-LLM/LLM Notation/LLM Notation" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/LLM%20Notation/" target="_blank">LLM Notation</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/LLM%20Notation/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="llm-notation">LLM Notation</h1>
-<p>大模型库中的<code>base</code>、<code>chat</code>、<code>instruct</code>和<code>4bit</code>通常指的是不同类型或配置的预训练语言模型。它们的区别主要在于训练目标、用途和模型参数的精度。以下是对这些术语的解释：</p>
-<h2 id="base-模型开源基座-llm"><code>Base</code> 模型（开源基座
-LLM）</h2>
+    <h1
+id="预训练pre-learning微调fine-tuning迁移学习transfer-learning">预训练（pre-learning）&amp;&amp;微调（fine-tuning）&amp;&amp;迁移学习（transfer
+learning）</h1>
+<h2 id="什么是预训练和微调">什么是预训练和微调？</h2>
 <ul>
-<li><strong>定义</strong>：Base
-模型通常是指未经特定任务微调的基础预训练模型，在训练过程中最初被开发和优化的，它旨在平衡性能和资源消耗。</li>
-<li><strong>用途</strong>：这些模型通常用于进一步的微调，以适应特定任务或应用场景。如：智能对话、文本内容生成等</li>
-<li><strong>特点</strong>：它们包含了大量通用知识，但没有针对特定任务进行优化。</li>
+<li>你需要搭建一个网络模型来完成一个特定的图像分类的任务。首先，你需要随机初始化参数，然后开始训练网络，不断调整参数，直到网络的损失越来越小。在训练的过程中，一开始初始化的参数会不断变化。当你觉得结果很满意的时候，你就可以将训练模型的参数保存下来，以便训练好的模型可以在下次执行类似任务时获得较好的结果。这个过程就是
+<code>pre-training</code>。</li>
+<li>之后，你又接收到一个 <strong>类似的</strong>
+图像分类的任务。这时候，你可以直接使用之前保存下来的模型的参数来作为这一任务的初始化参数，然后在训练的过程中，依据结果不断进行一些修改。这时候，你使用的就是一个
+<code>pre-trained</code> 模型，而过程就是
+<code>fine-tuning</code>。</li>
 </ul>
-<h3 id="gptgenerative-pre-trained-transformer">GPT（Generative
-Pre-trained Transformer）</h3>
-<p>GPT 是由 OpenAI
-开发的大型语言模型系列，通过深度学习技术理解和生成自然语言文本。GPT
-模型通过在大量文本数据上的预训练，学习语言的模式和结构，使其能够预测和生成连贯、有意义的文本内容。GPT
-模型可以广泛应用于文本生成、对话系统、自动摘要等多种自然语言处理任务。</p>
-<h3 id="claude">Claude</h3>
-<p>Claude 是 Anthropic
-公司推出的一款基于自然语言处理技术的人工智能对话系统，类似于
-ChatGPT。Claude
-的设计灵感来自于人类语言的推理过程，其模型基于最新的自然语言处理技术和深度学习模型，可以理解人类语言，并且具有基本的推理能力。</p>
-<h3 id="gemini">Gemini</h3>
-<p>Gemini 由 Google DeepMind
-开发，号称谷歌最大，能力最强的人工智能模型。Gemini
-也是最灵活的模型，能够在从数据中心到移动设备的所有设备上高效运行。Gemini
-包含三个不同大小的模型：Gemini Ultra、Gemini Pro 和 Gemini
-Nano，分别用于处理不同复杂度的任务。</p>
-<h3 id="llamallama">Llama（LLaMA）</h3>
-<p>Llama 模型由 Meta 公司发布，包含多个版本，参数从 1B 到 405B
-不等，训练数据量超过 15.0T tokens。Llama
-模型以其开源性和高效的性能而受到关注，被广泛应用于聊天机器人等应用。</p>
-<h3 id="mistral">Mistral</h3>
-<p>Mistral AI 是一家总部位于法国的 AI
-公司，专注于构建快速而安全的大型语言模型（LLM），此类模型可用于从聊天机器人到代码生成等各种任务。Mistral
-AI 模型以其透明和可自定义的优点而受到有合规与监管需求的企业的青睐。</p>
-<h3 id="grok">grok</h3>
-<p>Grok-1 是由马斯克旗下的人工智能初创公司 xAI
-所开发的大型语言模型，采用了混合专家（MoE）模型结构，并拥有着 3140
-亿参数的庞大规模。Grok-1 旨在用作 Grok
-聊天机器人背后的引擎，用于包括问答、信息检索、创意写作和编码辅助在内的自然语言处理任务。</p>
-<h3 id="chatglm">chatGLM</h3>
-<p>ChatGLM-6B 是由清华大学和智谱 AI
-联合研发的产品，是一个开源的、支持中英双语问答的对话语言模型，并针对中文进行了优化。该模型基于
-General Language Model (GLM) 架构，具有 62
-亿参数，结合模型量化技术，用户可以在消费级的显卡上进行本地部署。</p>
+<p>所以，<strong>预训练</strong>
+就是指预先训练的一个模型或者指预先训练模型的过程；<strong>微调</strong>
+就是指将预训练过的模型作用于自己的数据集，并使参数适应自己数据集的过程。</p>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/LLM%20Notation/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/#more">more >></a>
     
     
 
@@ -1404,231 +1482,7 @@ General Language Model (GLM) 架构，具有 62
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/LLM%20Notation/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-LLM/LLM Notation/Qwen2.5-math" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/" target="_blank">Qwen2.5-math</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># Qwen2.5-math</p>
-<p>我们知道最新发布的<strong>Qwen2.5</strong>全家桶共有 3
-个模型，除常规的大语言模型 Qwen2.5 和专门针对编程的 Qwen2.5-Coder
-模型之外，还有一个专门针对数学的 <strong>Qwen2.5-Math</strong>
-模型，它号称是<strong>世界领先的数学开源大语言模型</strong>，我们今天就通过奥数题目来实实在在的感受一下它的强大之处。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316156.jpeg"
-alt="Qwen2.5-Math评测结果世界领先" />
-<figcaption aria-hidden="true">Qwen2.5-Math评测结果世界领先</figcaption>
-</figure>
-<p>因此，我们将通过以下 3 个主要部分来完成 <strong>Qwen2.5-Math</strong>
-模型的实战之旅：</p>
-<ol type="1">
-<li><strong>Qwen2.5-Math</strong>的基本介绍，主要是简单了解一下<strong>Qwen2.5-Math</strong>的特点和能力</li>
-<li>本地部署<strong>Qwen2.5-Math-1.5B</strong>模型，通过一个一元一次方程简单数学题，体验一下其数学推理能力</li>
-<li>我们选取<strong>小学</strong>和<strong>初中</strong>阶段经典的几道奥数题，让
-<strong>Qwen2.5-Math-72B</strong> 作为 AI
-老师，来实战验证其逻辑推导能力</li>
-</ol>
-<h2 id="基本介绍">基本介绍</h2>
-<p><strong>Qwen2.5-Math</strong> 明确说明：Qwen2.5-Math
-主要被设计用于通过<strong>CoT</strong>或<strong>TIR</strong>的方式解中英数学题，不推荐在其他任务上使用该系列模型。那么，什么是
-<strong>CoT</strong> 和 <strong>TIR</strong> 推理方式呢？</p>
-<h3 id="cot">CoT</h3>
-<p>【<strong>CoT</strong> 推理方式：】即思维链（Chain of
-Thought），主要目的是让大模型一步一步的展现出其推理过程，而不是直接给答案，就像我们人类逻辑思维过程一样，通过多步分解的方式，能更好的理解和解决复杂问题。如下数学题目的解答过程：</p>
-<ul>
-<li>题目：小明有 10 个苹果，他给了小红 3 个苹果，然后又买了 5
-个苹果，请问小明现在有几个苹果？</li>
-<li><strong>CoT</strong> 推理过程：
-<ul>
-<li>第一步：小明最初有 10 个苹果。</li>
-<li>第二步：小明给了小红 3 个苹果，所以现在剩下 10-3=7 个苹果。</li>
-<li>第三步：小明又买了 5 个苹果，所以现在共有 7+5=12 个苹果。</li>
-<li>答案：现在小明有 12 个苹果。</li>
-</ul></li>
-</ul>
-<h3 id="tir">TIR</h3>
-<p>【<strong>TIR</strong> 推理方式：】即工具集成推理（Tool integrated
-Reasoning），就是在推理过程中使用外部工具（如：使用 Python
-执行代码获取结果）。<strong>TIR</strong>
-是<strong>Qwen2.5-Math</strong>的新特性，它能显著提升中英文的数学解题能力，包括精确计算、符号操作和算法操作等方面。具体用法可以阅读样例代码：<a
-target="_blank" rel="noopener" href="https://github.com/QwenLM/Qwen-Agent">https://github.com/QwenLM/Qwen-Agent</a></p>
-<p>另外，有关 <strong>Qwen2.5-Math</strong>
-的预训练架构设计，有个特别<strong>有趣</strong>的地方：<strong>Qwen2.5-Math</strong>的部分预训练数据，竟然是由<strong>Qwen2-Math-Instruct</strong>
-模型提供的，感觉它们已经开始在左右互搏了，因此<strong>世界领先</strong>也就不为奇了。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316043.jpeg"
-alt="Qwen2.5-Math架构设计" />
-<figcaption aria-hidden="true">Qwen2.5-Math架构设计</figcaption>
-</figure>
-<p>更多 <strong>Qwen2.5-Math</strong> 的详细介绍，可查看官网：<a
-target="_blank" rel="noopener" href="https://qwenlm.github.io/zh/blog/qwen2.5-math">https://qwenlm.github.io/zh/blog/qwen2.5-math/</a></p>
-<h2 id="本地部署和体验">本地部署和体验</h2>
-<p>我们先本地部署 <strong>Qwen2.5-Math</strong>
-模型，然后进行简单的数学题推理。由于老牛同学电脑配置不够强悍，因此本次演示我们使用<strong>1.5B</strong>参数版本（大家可根据自己硬件配置，选择不同的参数量版本）。我们通过以下三步完成整个流程：</p>
-<p>【<strong>第一步</strong>：下载 <strong>Qwen2.5-Math</strong>
-模型权重文件】</p>
-<p>存放权重文件目录：<code>Qwen2.5-Math-1.5B-Instruct</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Git大文件系统</span></span><br><span class="line">git lfs install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载模型权重文件</span></span><br><span class="line">git clone https://www.modelscope.cn/qwen/Qwen2.5-math-1.5B-Instruct.git Qwen2.5-Math-1.5B-Instruct</span><br></pre></td></tr></table></figure>
-<p>若下载过程中异常中断，可以通过<code>git lfs install</code>命令继续下载：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换到Git目录</span></span><br><span class="line">cd Qwen2.5-Math-1.5B-Instruct</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">继续下载</span></span><br><span class="line">git lfs install</span><br><span class="line">git lfs pull</span><br></pre></td></tr></table></figure>
-<p>【<strong>第二步</strong>：设置 Python 虚拟环境和安装依赖】</p>
-<p><strong>工欲善其事，必先利其器</strong>，我们通过<strong>Miniconda</strong>管理
-Python
-虚拟环境，<strong>Miniconda</strong>的安装和使用可以参考老牛同学之前的文章：<a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/P_ufvz4MWVSqv_VM-rJp9w">大模型应用研发基础环境配置（Miniconda、Python、Jupyter
-Lab、Ollama 等）</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python虚拟环境名：Qwen2.5，版本号：3.10</span></span><br><span class="line">conda create -n Qwen2.5 python=3.10 -y</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">激活虚拟环境</span></span><br><span class="line">conda activate Qwen2.5</span><br></pre></td></tr></table></figure>
-<p>接下来，在虚拟环境中下载依赖包：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pip install torch</span><br><span class="line">pip install modelscope</span><br><span class="line">pip install &quot;transformers&gt;=4.37.0&quot;</span><br><span class="line">pip install &quot;accelerate&gt;=0.26.0&quot;</span><br></pre></td></tr></table></figure>
-<p>【<strong>第三步</strong>：使用<strong>CoT</strong>方式进行数学推理验证】</p>
-<p>我们先通过一个简单数学方程：<code>4X+5=6X+7</code>，验证一下
-<strong>Qwen2.5-Math</strong> 的推理能力：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Qwen2.5-Math-Eval-01.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> modelscope <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 权重文件目录</span></span><br><span class="line">model_dir = os.path.join(<span class="string">&#x27;D:&#x27;</span>, os.path.sep, <span class="string">&#x27;ModelSpace&#x27;</span>, <span class="string">&#x27;Qwen2.5&#x27;</span>, <span class="string">&#x27;Qwen2.5-Math-1.5B-Instruct&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;权重目录: <span class="subst">&#123;model_dir&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化模型</span></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    model_dir,</span><br><span class="line">    torch_dtype=<span class="string">&#x27;auto&#x27;</span>,</span><br><span class="line">    device_map=<span class="string">&#x27;auto&#x27;</span>,</span><br><span class="line">    local_files_only=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化分词器</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(</span><br><span class="line">	model_dir,</span><br><span class="line">	local_files_only=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Prompt提示词</span></span><br><span class="line">prompt = <span class="string">&#x27;请计算等式中的X值: 4X+5=6X+7&#x27;</span></span><br><span class="line">messages = [</span><br><span class="line">    &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;system&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: <span class="string">&#x27;你是一位数学专家，特别擅长解答数学题。&#x27;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: prompt&#125;</span><br><span class="line">]</span><br><span class="line">text = tokenizer.apply_chat_template(</span><br><span class="line">    messages,</span><br><span class="line">    tokenize=<span class="literal">False</span>,</span><br><span class="line">    add_generation_prompt=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line">model_inputs = tokenizer(</span><br><span class="line">    [text],</span><br><span class="line">    return_tensors=<span class="string">&#x27;pt&#x27;</span>,</span><br><span class="line">).to(model.device)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;开始推理: <span class="subst">&#123;prompt&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">generated_ids = model.generate(</span><br><span class="line">    **model_inputs,</span><br><span class="line">    max_new_tokens=<span class="number">512</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;推理完成.&#x27;</span>)</span><br><span class="line"></span><br><span class="line">generated_ids = [</span><br><span class="line">    output_ids[<span class="built_in">len</span>(input_ids):] <span class="keyword">for</span> input_ids, output_ids <span class="keyword">in</span> <span class="built_in">zip</span>(model_inputs.input_ids, generated_ids)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">response = tokenizer.batch_decode(</span><br><span class="line">    generated_ids,</span><br><span class="line">    skip_special_tokens=<span class="literal">True</span>,</span><br><span class="line">)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;推理结果: <span class="subst">&#123;response&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>执行本 Python
-程序：<code>python Qwen2.5-Math-Eval-01.py</code>，可以看到
-<strong>Qwen2.5-Math</strong> 模型通过 <strong>CoT</strong>
-的推理方式给出了结果：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316172.jpeg"
-alt="Qwen2.5-Math解方程推理过程" />
-<figcaption aria-hidden="true">Qwen2.5-Math解方程推理过程</figcaption>
-</figure>
-<p>从最终结果来看，<strong>Qwen2.5-Math</strong>
-推理过程很清晰，和我们的思维模型比较相近（唯一不足就是老牛同学电脑配置有点吃力）。</p>
-<h2 id="小学和初中奥数题挑战">小学和初中奥数题挑战</h2>
-<p>上面一元一次方程只是简单体验，接下来我们通过奥数题目，对
-<strong>Qwen2.5-Math</strong> 发出挑战。因此，我们将采用
-<strong>Qwen2.5-Math-72B</strong>
-目前地表最强数学模型，来解答<strong>小学</strong>和<strong>初中</strong>奥数题目。（那为啥没有高中奥数题呢？因为老牛同学有点担心自己不会，当不了裁判，因此就不好去挑战大模型了_）</p>
-<p>我们将通过以下 3 个步骤，完成 <strong>Qwen2.5-Math</strong>
-整个奥数题挑战验证：</p>
-<p>【<strong>第一步</strong>：整理奥数题目，小学和初中分别 3
-道题目】</p>
-<p>老牛同学在网上分别找了 3 道奥数题目，我们通过 JSON
-格式文件存储每道题目，每道题由等级、题目和答案组成：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明和小红共有100元钱，小明比小红多20元。请问小明和小红分别有多少钱？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明：60元，小红：40元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明围绕长方形操场跑步，跑了3圈共480米，操场的长比宽多20米。请问操场面积是多少平方米？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;操场面积：1500平方米&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;甲乙二人从两地沿直线同时相对而行，经过4小时，在距离中点4千米处相遇，甲比乙的速度快。请问甲每小时比乙快多少千米？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;甲每小时比乙快：2千米&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明和小红以同样多的钱买了同一种铅笔，小明要了13支，小红要了7支，小明又给小红0.6元钱。请问每支铅笔多少钱？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;每支铅笔：0.2元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;父亲今年45岁，儿子今年15岁。请问多少年前父亲的年龄是儿子年龄的11倍？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;12年前&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;商店有一套运动服，成本价为100元，按标价的8折出售仍可获利20元。请问这套运动服的标价是多少元？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这套运动服的标价：150元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
-<p>【<strong>第二步</strong>：调用 <strong>Qwen2.5-Math-72B</strong> API
-完成推理】</p>
-<p>由于老牛同学本地推理比较慢，接下来将使用阿里云百炼平台 API
-完成奥数推理。大家如果对自己电脑配置有信心的话，可以直接使用本地模型进行验证，可以免费完全接下来的推理。</p>
-<p>有关阿里云百炼平台的介绍，可参考老牛同学之前的文章：<a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xclHiuy7gFPUlWZW5oOBSg">太卷了，阿里云免费
-1 个月大模型算力额度，玩转 Llama3.1/Qwen2 等训练推理</a></p>
-<p>奥数题目的推理程序逻辑有 3
-部分组成（<code>Qwen2.5-Math-奥数推理.py</code>）：</p>
-<ol type="1">
-<li>读取奥数题目 JSON 文件，并循环每一道题</li>
-<li>使用 <strong>Qwen2-Math</strong> 模型进行推理（或者：百炼平台
-API），获取结果</li>
-<li>存储奥数题目和推理结果到新文件，便于我们进行查看检测</li>
-</ol>
-<p>如果大家是通过调用 API
-完成推理，请先安装依赖包：<code>pip install OpenAI</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Qwen2.5-Math-奥数推理.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化客户端：提前配置好`DASHSCOPE_API_KEY`环境变量</span></span><br><span class="line">client = OpenAI(</span><br><span class="line">    api_key=os.getenv(<span class="string">&#x27;DASHSCOPE_API_KEY&#x27;</span>),</span><br><span class="line">    base_url=<span class="string">&#x27;https://dashscope.aliyuncs.com/compatible-mode/v1&#x27;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取奥数题目</span></span><br><span class="line">input_file = <span class="string">&#x27;Qwen2.5-Math-奥数题目.json&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(input_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    data = json.load(file)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环每道题目，请求推理服务</span></span><br><span class="line">output_data = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;奥数题目-&gt; <span class="subst">&#123;item[<span class="string">&quot;title&quot;</span>]&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;期望答案-&gt; <span class="subst">&#123;item[<span class="string">&quot;answer&quot;</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    completion = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&#x27;qwen2.5-math-72b-instruct&#x27;</span>,</span><br><span class="line">        messages=[</span><br><span class="line">            &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;system&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: <span class="string">&#x27;你是一位数学专家，特别擅长解答数学题。&#x27;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: item[<span class="string">&quot;title&quot;</span>]&#125;</span><br><span class="line">        ],</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取推理结果</span></span><br><span class="line">    result = json.loads(completion.model_dump_json())</span><br><span class="line">    content = result[<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;推理结果-&gt; <span class="subst">&#123;content&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 暂存结果，后面统一存储到文件</span></span><br><span class="line">    output = &#123;</span><br><span class="line">        <span class="string">&#x27;level&#x27;</span>: item[<span class="string">&#x27;level&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;title&#x27;</span>: item[<span class="string">&#x27;title&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;answer&#x27;</span>: item[<span class="string">&#x27;answer&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;result&#x27;</span>: content</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    output_data.append(output)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存推理结果</span></span><br><span class="line">output_file = <span class="string">&#x27;Qwen2.5-Math-推理结果.md&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(output_file, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    <span class="keyword">for</span> output <span class="keyword">in</span> output_data:</span><br><span class="line">        file.write(<span class="string">f&#x27;<span class="subst">&#123;output[<span class="string">&quot;level&quot;</span>]&#125;</span>题目：<span class="subst">&#123;output[<span class="string">&quot;title&quot;</span>]&#125;</span>\n\n期望答案：<span class="subst">&#123;output[<span class="string">&quot;answer&quot;</span>]&#125;</span>\n\n&#x27;</span>)</span><br><span class="line">        file.write(<span class="string">f&#x27;<span class="subst">&#123;output[<span class="string">&quot;result&quot;</span>]&#125;</span>\n\n---\n\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>Qwen2.5-Math-72B</strong>
-果然没有让人失望，推理过程较快，并且推理的每一步都清晰明了：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316326.jpeg"
-alt="Qwen2.5-Math-72B推理过程样例" />
-<figcaption aria-hidden="true">Qwen2.5-Math-72B推理过程样例</figcaption>
-</figure>
-<p>【<strong>第三步</strong>：验证推理结果的正确性，给出评分】</p>
-<p>最后一步，我们打开 <strong>Qwen2.5-Math-72B</strong>
-推理结果文件<code>Qwen2.5-Math-推理结果.md</code>，确定其准确率：<strong>100%</strong>（奥数题全对）</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316248.jpeg"
-alt="所有奥数题结果样例" />
-<figcaption aria-hidden="true">所有奥数题结果样例</figcaption>
-</figure>
-<p>说实话，老牛同学还是挺吃惊的，它的推理速度，比老牛同学要快得多，并且推理的步骤都非常清晰明了。</p>
-<p>对于有娃的朋友们，如果您在辅导家庭作业感到头疼的话，<strong>Qwen2.5-Math</strong>
-赶紧使用起来吧，让我们真正体验一下父慈子孝的和谐乐趣~</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LLM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/Fine-Tuning/%E9%A2%84%E8%AE%AD%E7%BB%83%EF%BC%88pre-learning%EF%BC%89&&%E5%BE%AE%E8%B0%83%EF%BC%88fine-tuning%EF%BC%89&&%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer%20learning%EF%BC%89/">展开全文 >></a>
     </p>
     
 
@@ -1824,11 +1678,11 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1836,23 +1690,7 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1860,11 +1698,23 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1873,6 +1723,10 @@ alt="所有奥数题结果样例" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1900,15 +1754,11 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1916,11 +1766,15 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1936,11 +1790,11 @@ alt="所有奥数题结果样例" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

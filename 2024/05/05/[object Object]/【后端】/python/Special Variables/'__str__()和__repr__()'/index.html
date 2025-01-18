@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="# __str__()和__repr__() 在学习类相关知识时，注意到了__str__() 和、__repr__() 这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。 首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic method），且作用都是根据对象的状态">
+  <meta name="description" content="__str__()和__repr__()在学习类相关知识时，注意到了__str__() 和、__repr__() 这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。 首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic method），且作用都是根据对象的状态返回字符串。那">
 <meta property="og:type" content="article">
 <meta property="og:title" content="__str__()和__repr__()">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__str__()%E5%92%8C__repr__()'/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="# __str__()和__repr__() 在学习类相关知识时，注意到了__str__() 和、__repr__() 这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。 首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic method），且作用都是根据对象的状态">
+<meta property="og:description" content="__str__()和__repr__()在学习类相关知识时，注意到了__str__() 和、__repr__() 这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。 首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic method），且作用都是根据对象的状态返回字符串。那">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-18T10:48:34.595Z">
@@ -262,109 +262,57 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p># <code>__str__()</code>和<code>__repr__()</code></p>
-<p>在学习类相关知识时，注意到了__str__() 和、__repr__()
-这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。</p>
-<p>首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic
-method），且作用都是根据对象的状态返回字符串。那两者的具体应用场景以及区别是什么呢？接下来一一进行介绍。</p>
-<h2 id="str__-方法">__str__() 方法</h2>
-<h3 id="调用场景">调用场景</h3>
-<p>对象的__str__() 方法在以下情况下会被调用：</p>
+    <h1 id="str-和-repr"><a href="#str-和-repr" class="headerlink" title="__str__()和__repr__()"></a><code>__str__()</code>和<code>__repr__()</code></h1><p>在学习类相关知识时，注意到了__str__() 和、__repr__() 这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。</p>
+<p>首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic method），且作用都是根据对象的状态返回字符串。那两者的具体应用场景以及区别是什么呢？接下来一一进行介绍。</p>
+<h2 id="str-方法"><a href="#str-方法" class="headerlink" title="__str__() 方法"></a>__str__() 方法</h2><h3 id="调用场景"><a href="#调用场景" class="headerlink" title="调用场景"></a>调用场景</h3><p>对象的__str__() 方法在以下情况下会被调用：</p>
 <ul>
 <li>使用<strong>print()</strong>打印一个对象；</li>
 <li>将对象传入<strong>format()</strong>；</li>
 <li>将对象传入<strong>str.format()</strong>；</li>
 <li>将对象传入<strong>str()</strong>；</li>
 </ul>
-<p><strong>注意：</strong>如果对象中定义了__str__()
-方法，则在上述情况下__str__() 会被调用，否则将会调用__repr__()
-方法。</p>
-<h3 id="默认实现">默认实现</h3>
-<p><strong>python 中所有类默认会继承 object 类，object
-类中默认实现了__str__() 和__repr__() 方法，但由于 python 的源码是 C
-语言</strong>，所以对于普通 python 用户来说阅读难度较大，在这里我们用
-python 语言等价表示一下__str__() 方法默认实现的原理：</p>
+<p><strong>注意：</strong>如果对象中定义了__str__() 方法，则在上述情况下__str__() 会被调用，否则将会调用__repr__() 方法。</p>
+<h3 id="默认实现"><a href="#默认实现" class="headerlink" title="默认实现"></a>默认实现</h3><p><strong>python 中所有类默认会继承 object 类，object 类中默认实现了__str__() 和__repr__() 方法，但由于 python 的源码是 C 语言</strong>，所以对于普通 python 用户来说阅读难度较大，在这里我们用 python 语言等价表示一下__str__() 方法默认实现的原理：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># __repr__() 默认实现同理</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&lt;&#123;0&#125;.&#123;1&#125; object at &#123;2&#125;&gt;&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">      <span class="built_in">type</span>(self).__module__, <span class="built_in">type</span>(self).__qualname__, <span class="built_in">hex</span>(<span class="built_in">id</span>(self)))</span><br></pre></td></tr></table></figure>
-<p>其中__module__() 表示对象来自哪个模块，__qualname__()
-我们可以暂时理解为类的名字（__qualname__和__name__的异同感兴趣的伙伴可自行查阅）。</p>
-<p>也就是说，object 类中默认实现的__str__()
-方法会输出<strong>对象所在的模块</strong>、<strong>对象所属的类的名字</strong>以及<strong>对象在内存中的十六进制地址表示</strong>。</p>
-<h3 id="实例分析">实例分析</h3>
-<p>了解了__str__()
-的具体应用场景以及默认实现，接下来结合几个例子进一步理解一下具体的调用过程。</p>
-<h4 id="例子-1">例子 1</h4>
-<p>自定义类，但并未在类中实现__str__()
-方法。可以先回忆一下如果没有实现__str__() 方法，情况会如何？</p>
+<p>其中__module__() 表示对象来自哪个模块，__qualname__() 我们可以暂时理解为类的名字（__qualname__和__name__的异同感兴趣的伙伴可自行查阅）。</p>
+<p>也就是说，object 类中默认实现的__str__() 方法会输出<strong>对象所在的模块</strong>、<strong>对象所属的类的名字</strong>以及<strong>对象在内存中的十六进制地址表示</strong>。</p>
+<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><p>了解了__str__() 的具体应用场景以及默认实现，接下来结合几个例子进一步理解一下具体的调用过程。</p>
+<h4 id="例子-1"><a href="#例子-1" class="headerlink" title="例子 1"></a>例子 1</h4><p>自定义类，但并未在类中实现__str__() 方法。可以先回忆一下如果没有实现__str__() 方法，情况会如何？</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">CustomClass</span>: <span class="keyword">pass</span> </span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(CustomClass())  <span class="comment"># 调用 print() 方法</span></span><br><span class="line">&lt;__main__.CustomClass <span class="built_in">object</span> at <span class="number">0x000001BFB5E13DC0</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span>(CustomClass())  <span class="comment"># 调用 str() 方法</span></span><br><span class="line"><span class="string">&#x27;&lt;__main__.CustomClass object at 0x000001BFB5E13DC0&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>结合上述例子，我们分析一下具体的调用过程。首先我们定义了一个名为
-CustomClass 的类，然后我们分别将它的一个实例对象传入 print() 和和 str()
-方法中，这两种方法都是调用对象的__str__() 方法；但是由于 CustomClass
-中没有实现__str__()
-方法，<strong>那么根据注意事项中提到的</strong>，会调用__repr__()
-方法，但显然 CustomClass 中也没有实现，最终就会调用基类 object
-中的__repr__() 方法。</p>
-<p><strong>注意：</strong>print() 和 str() 两者最终调用的都是 object
-中的__repr__() 方法，__repr__() 返回的是字符串，但</p>
+<p>结合上述例子，我们分析一下具体的调用过程。首先我们定义了一个名为 CustomClass 的类，然后我们分别将它的一个实例对象传入 print() 和和 str() 方法中，这两种方法都是调用对象的__str__() 方法；但是由于 CustomClass 中没有实现__str__() 方法，<strong>那么根据注意事项中提到的</strong>，会调用__repr__() 方法，但显然 CustomClass 中也没有实现，最终就会调用基类 object 中的__repr__() 方法。</p>
+<p><strong>注意：</strong>print() 和 str() 两者最终调用的都是 object 中的__repr__() 方法，__repr__() 返回的是字符串，但</p>
 <ul>
 <li>print() 将字符串打印在了屏幕上</li>
 <li>而 str() 保留了字符串的格式。</li>
 </ul>
-<h4 id="例子-2">例子 2</h4>
-<p>自定义类，但实现了__str__() 方法。</p>
+<h4 id="例子-2"><a href="#例子-2" class="headerlink" title="例子 2"></a>例子 2</h4><p>自定义类，但实现了__str__() 方法。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">CustomClass</span>:     </span><br><span class="line"><span class="meta">... </span>    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>): <span class="keyword">return</span> <span class="string">&#x27;foo&#x27;</span> </span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(CustomClass()) </span><br><span class="line">foo</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span>(CustomClass()) </span><br><span class="line"><span class="string">&#x27;foo&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>这个例子比较容易理解，就是调用了 CustomClass 类中实现的__str__()
-方法。</p>
-<h3 id="目的">目的</h3>
-<p>根据__str__() 的具体使用场景我们可以看出，主要是 print()、str()
-等函数会调用对象的__str__() 方法，而 print()、str()
-等函数的输出通常主要是给<strong>程序的使用者</strong>看的，且并非所有程序使用者都具有编程知识，所以__str__()
-的返回值一定是便于阅读的。这一点结合后面__repr__() 的目的进行理解。</p>
-<h2 id="repr__-方法">__repr__() 方法</h2>
-<h3 id="调用场景-1">调用场景</h3>
-<p>__repr__() 方法调用场景主要有以下两种：</p>
+<p>这个例子比较容易理解，就是调用了 CustomClass 类中实现的__str__() 方法。</p>
+<h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>根据__str__() 的具体使用场景我们可以看出，主要是 print()、str() 等函数会调用对象的__str__() 方法，而 print()、str() 等函数的输出通常主要是给<strong>程序的使用者</strong>看的，且并非所有程序使用者都具有编程知识，所以__str__() 的返回值一定是便于阅读的。这一点结合后面__repr__() 的目的进行理解。</p>
+<h2 id="repr-方法"><a href="#repr-方法" class="headerlink" title="__repr__() 方法"></a>__repr__() 方法</h2><h3 id="调用场景-1"><a href="#调用场景-1" class="headerlink" title="调用场景"></a>调用场景</h3><p>__repr__() 方法调用场景主要有以下两种：</p>
 <ul>
 <li>被内置函数 repr() 调用；</li>
-<li>我们输入能返回一个对象的表达式时，回车之后在 python shell
-中显示内容的过程会调用__repr__() 方法。</li>
+<li>我们输入能返回一个对象的表达式时，回车之后在 python shell 中显示内容的过程会调用__repr__() 方法。</li>
 <li>debugger 时的变量表示</li>
 </ul>
-<p><strong>__repr__() 作为__str__()
-的备用方法，如果你只能实现其中一个的话，建议实现__repr__()
-方法。</strong></p>
-<h3 id="默认实现-1">默认实现</h3>
-<p>同__str__()</p>
-<h3 id="案例分析">案例分析</h3>
-<h4 id="例子-1-1">例子 1</h4>
-<p>自定义类，但没有实现__repr__() 方法。</p>
+<p><strong>__repr__() 作为__str__() 的备用方法，如果你只能实现其中一个的话，建议实现__repr__() 方法。</strong></p>
+<h3 id="默认实现-1"><a href="#默认实现-1" class="headerlink" title="默认实现"></a>默认实现</h3><p>同__str__()</p>
+<h3 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h3><h4 id="例子-1-1"><a href="#例子-1-1" class="headerlink" title="例子 1"></a>例子 1</h4><p>自定义类，但没有实现__repr__() 方法。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">C</span>: <span class="keyword">pass</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">repr</span>(C())</span><br><span class="line"><span class="string">&#x27;&lt;__main__.C object at 0x000001B277733DC0&gt;&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>C()</span><br><span class="line">&lt;__main__.C <span class="built_in">object</span> at <span class="number">0x000001B277733DC0</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>首先，我们自定义了一个名为 C 的类，在将 C 的实例对象传给 repr()
-时，去调用 C 的__repr__() 方法，但由于 C 中没有实现，最终调用的是基类
-object 中的__repr__() 方法。在解释器中输入 C() 回车后调用过程同理。</p>
-<p>注意：当在控制台直接输入 C() 并按回车键时，调用__repr__()
-并得到一个字符串返回值，但为了提高可读性，解释器只显示了这个字符串的内容，没有加引号。</p>
-<h4 id="例子-2-1">例子 2</h4>
-<p>自定义类且实现__repr__() 方法。</p>
+<p>首先，我们自定义了一个名为 C 的类，在将 C 的实例对象传给 repr() 时，去调用 C 的__repr__() 方法，但由于 C 中没有实现，最终调用的是基类 object 中的__repr__() 方法。在解释器中输入 C() 回车后调用过程同理。</p>
+<p>注意：当在控制台直接输入 C() 并按回车键时，调用__repr__() 并得到一个字符串返回值，但为了提高可读性，解释器只显示了这个字符串的内容，没有加引号。</p>
+<h4 id="例子-2-1"><a href="#例子-2-1" class="headerlink" title="例子 2"></a>例子 2</h4><p>自定义类且实现__repr__() 方法。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">C</span>:     </span><br><span class="line"><span class="meta">... </span>    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>): <span class="keyword">return</span> <span class="string">&#x27;call __repr__() method&#x27;</span> </span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">repr</span>(C()) </span><br><span class="line"><span class="string">&#x27;call __repr__() method&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>C()</span><br><span class="line">call __repr__() method</span><br></pre></td></tr></table></figure>
-<h3 id="目的-1">目的</h3>
-<p>根据__repr__() 的应用场景——控制台输出、debugger
-等，可以看出，其输出的内容主要面向<strong>程序开发者</strong>，需要为开发者提供必要且有用的信息，包括但不限于对象对应的类名、对象属性值等。</p>
-<p>我们结合一个例子直观感受一下为什么说__str__()
-主要面向程序使用者，而__repr__() 主要面向程序开发者：</p>
+<h3 id="目的-1"><a href="#目的-1" class="headerlink" title="目的"></a>目的</h3><p>根据__repr__() 的应用场景——控制台输出、debugger 等，可以看出，其输出的内容主要面向<strong>程序开发者</strong>，需要为开发者提供必要且有用的信息，包括但不限于对象对应的类名、对象属性值等。</p>
+<p>我们结合一个例子直观感受一下为什么说__str__() 主要面向程序使用者，而__repr__() 主要面向程序开发者：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> datetime </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>datetime.datetime.now()  <span class="comment"># 调用__repr__()</span></span><br><span class="line">datetime.datetime(<span class="number">2024</span>, <span class="number">11</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">23</span>, <span class="number">18</span>, <span class="number">647770</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(datetime.datetime.now()) <span class="comment"># 调用__str__()</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">11</span>-<span class="number">17</span> <span class="number">22</span>:<span class="number">23</span>:<span class="number">42.227722</span></span><br></pre></td></tr></table></figure>
-<p>因此对于__repr__()
-的返回值，我们希望其满足一定要求，具体来说就是：</p>
+<p>因此对于__repr__() 的返回值，我们希望其满足一定要求，具体来说就是：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="built_in">repr</span>(<span class="built_in">object</span>)) == <span class="built_in">object</span></span><br></pre></td></tr></table></figure>
-<p>其中 eval()
-函数用来执行一个字符串表达式，并返回表达式的值。也就是说，一个对象__repr__()
-的返回值，如果在控制台输入这个返回值，可以得到一个对象实例，结合例子具体理解一下：</p>
+<p>其中 eval() 函数用来执行一个字符串表达式，并返回表达式的值。也就是说，一个对象__repr__() 的返回值，如果在控制台输入这个返回值，可以得到一个对象实例，结合例子具体理解一下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个表示二维向量的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x=<span class="number">0</span>, y=<span class="number">0</span></span>):</span><br><span class="line">        self.x = x</span><br><span class="line">        self.y = y</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        s = <span class="string">&#x27;Vector(%r, %r)&#x27;</span> % (self.x, self.y)</span><br><span class="line">        <span class="keyword">return</span> s</span><br></pre></td></tr></table></figure>
-<p>在上述例子中，对于使用默认参数的对象实例 Vector()，_repr__()
-返回值为<strong>'Vector(0, 0)'</strong>，而 eval()
-则会根据这个返回值再创建一个对象实例。但__repr__()
-的默认实现并不满足上述要求，因此在编写大型项目时通常需要自行实现。</p>
-<hr />
-<h2 id="总结">总结</h2>
-<p>最后总结一下__str__() 和__repr__() 两者的异同。</p>
+<p>在上述例子中，对于使用默认参数的对象实例 Vector()，_repr__() 返回值为<strong>‘Vector(0, 0)’</strong>，而 eval() 则会根据这个返回值再创建一个对象实例。但__repr__() 的默认实现并不满足上述要求，因此在编写大型项目时通常需要自行实现。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后总结一下__str__() 和__repr__() 两者的异同。</p>
 <p><strong>相同点</strong>：</p>
 <ul>
 <li>都属于特殊方法；</li>
@@ -373,12 +321,8 @@ object 中的__repr__() 方法。在解释器中输入 C() 回车后调用过程
 </ul>
 <p><strong>不同点</strong>：</p>
 <ul>
-<li>应用场景不同，__str__() 是当对象传入 print()、str()、format() 和
-str.format() 时被调用，而__repr__() 是对象传入 repr()、控制台输出和
-debugger 时被调用；</li>
-<li>输出内容面向人群不同，__str__()
-返回值主要是给程序使用者看的，而__repr__()
-返回值是给程序开发者看的。</li>
+<li>应用场景不同，__str__() 是当对象传入 print()、str()、format() 和 str.format() 时被调用，而__repr__() 是对象传入 repr()、控制台输出和 debugger 时被调用；</li>
+<li>输出内容面向人群不同，__str__() 返回值主要是给程序使用者看的，而__repr__() 返回值是给程序开发者看的。</li>
 </ul>
 
     
@@ -519,18 +463,18 @@ debugger 时被调用；</li>
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/Introduction/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__package__'/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Introduction
+          __package__
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86with%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">上下文管理with相关的魔术方法</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">_&#39;_new__()和__init__()&#39;</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -557,7 +501,7 @@ debugger 时被调用；</li>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#str__-%E6%96%B9%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">__str__() 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">调用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">默认实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">实例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">例子 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">例子 2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84"><span class="toc-number">1.4.</span> <span class="toc-text">目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#repr__-%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">__repr__() 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="toc-number">2.1.</span> <span class="toc-text">调用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">2.2.</span> <span class="toc-text">默认实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-1-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">例子 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-2-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">例子 2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84-1"><span class="toc-number">2.4.</span> <span class="toc-text">目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#str-%E5%92%8C-repr"><span class="toc-number">1.</span> <span class="toc-text">__str__()和__repr__()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#str-%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">__str__() 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.1.</span> <span class="toc-text">调用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.1.2.</span> <span class="toc-text">默认实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.1.3.</span> <span class="toc-text">实例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-1"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">例子 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-2"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">例子 2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84"><span class="toc-number">1.1.4.</span> <span class="toc-text">目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#repr-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">__repr__() 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">调用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">默认实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text">案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-1-1"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">例子 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-2-1"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">例子 2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84-1"><span class="toc-number">1.2.4.</span> <span class="toc-text">目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -736,10 +680,6 @@ debugger 时被调用；</li>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
@@ -748,11 +688,15 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -768,14 +712,6 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
@@ -784,11 +720,11 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -796,11 +732,11 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -808,15 +744,11 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -832,11 +764,27 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -852,11 +800,7 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -864,7 +808,7 @@ debugger 时被调用；</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

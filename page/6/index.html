@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/python项目中的相对路径与绝对路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/global与nonlocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" target="_blank">python项目中的绝对路径与相对路径</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" target="_blank">global与nonlocal</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -242,37 +242,120 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1
-id="python项目中的绝对路径与相对路径">python项目中的绝对路径与相对路径</h1>
-<p>当前工作目录（<strong>cwd</strong>，Current Working
-Directory）是在程序启动时由操作系统或运行环境设置的，具体由
-<strong>运行程序的上下文</strong>
-决定。以下是对设置时机和机制的详细解释：</p>
-<p>在 Python 项目中，路径的管理是一个常见问题，理解
-<strong>相对路径</strong> 和 <strong>绝对路径</strong>
-的区别非常重要。它们主要用于访问文件、资源或目录。</p>
-<h2 id="绝对路径">绝对路径</h2>
+    <h1 id="global与nonlocal">global与nonlocal</h1>
+<p>学习过程中，我们会遇到两个有趣的关键字，一个是
+<code>global</code>，一个是 <code>nonlocal</code>。</p>
+<p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p>
+<p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p>
+<p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p>
+<h2 id="python的定义域">Python的定义域</h2>
+<p>先试看一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()	<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
+<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量
+<code>b</code> 的值 <code>1</code>。</p>
+<p>来看第二个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
+<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量
+<code>b</code> 的赋值。那它的结果是什么呢？</p>
+<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对
+<code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p>
+<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量
+<code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
+<p>这是因为 Python
+在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python
+遵循以下规则：</p>
+<ol type="1">
+<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python
+会将该变量视为局部变量。
 <ul>
-<li><strong>绝对路径</strong>
-指从<strong>根目录</strong>开始的完整路径。</li>
-<li>绝对路径与当前程序的运行位置无关，始终指向同一个文件或目录。</li>
-</ul>
-<h3 id="特点">特点</h3>
+<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code>
+函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的
+<code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code>
+时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了
+<code>UnboundLocalError</code> 错误）。</li>
+</ul></li>
+<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。
 <ul>
-<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名
-<code>C:\</code>（Windows）开头。</li>
-<li><strong>跨环境不够灵活</strong>，因为不同系统的根路径可能不同。</li>
-</ul>
-<h3 id="示例">示例</h3>
+<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code>
+进行赋值操作，所以 Python 会认为 <code>b</code>
+是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量
+<code>b</code> 的值。</li>
+</ul></li>
+</ol>
+<p>总结一下：</p>
 <ul>
-<li><strong>Windows</strong>：<code>C:\Users\Project\file.txt</code></li>
-<li><strong>Linux/Mac</strong>：<code>/home/user/Project/file.txt</code></li>
+<li>如果在函数内对变量进行赋值，Python
+会认为这个变量是局部的，并会在函数内部查找它。</li>
+<li>如果函数内没有赋值操作，Python
+会尝试访问外部作用域（如全局作用域）的变量。</li>
 </ul>
-<h3 id="示例-1">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/#more">more >></a>
-    
+<p>因此，在第二个例子中，虽然你想访问的是全局变量
+<code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将
+<code>b</code> 视为局部变量并抛出了错误。</p>
+<h2 id="global的作用">global的作用</h2>
+<p>那如何在函数中使用全局变量呢？用 <code>global</code>
+标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量
+<code>b</code> 而言的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
+<p>全局的问题解决了，再来看另外一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>因为函数 <code>a()</code> 中，对 <code>count</code>
+变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行
+<code>count + 1</code> 操作时，却没有找到
+<code>count</code>，所以报错了。</p>
+<p>那怎么处理呢？</p>
+<h2 id="nonlocal的作用">nonlocal的作用</h2>
+<p>我猜你会用 <code>global</code>
+标记一下，但是注意啊。<code>global</code>
+标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code>
+函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure>
+<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉
+<code>a()</code> 函数，<code>count</code>
+不在本地定义，但也不在全局变量里。在 Python
+中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用
+<code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而
+<code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>nonlocal</code> 告诉
+Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p></li>
+<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code>
+的变量，而不是重新定义新的局部变量</p></li>
+</ul>
+<h2 id="闭包">闭包</h2>
+<p>学习 Python
+时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回
+<code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code>
+函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的
+<code>count</code> 变量。</p>
+<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code>
+已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
+<p>像函数 <code>a()</code> 中 <code>count</code>
+这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
+<p>用 <code>nonlocal</code> 标记后呢，Python
+就会保留自由变量的绑定（或者说定义环境）。</p>
+<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是
+<code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
+<p>因为 <code>a()</code>
+延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li><p><code>global</code> 和 <code>nonlocal</code>
+的功能都是<strong>改变变量作用域</strong>。</p></li>
+<li><p><code>global</code> 标记全局变量，<code>nonlocal</code>
+标记非全局、非本地的<strong>自由变量</strong>。</p></li>
+<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p></li>
+</ul>
+
     
 
     
@@ -298,7 +381,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/">展开全文 >></a>
     </p>
     
 
@@ -709,135 +792,6 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" /></p
 
 
   
-    <article id="post-【后端】/python/直接赋值、浅拷贝和深度拷贝" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" target="_blank">直接赋值、浅拷贝和深度拷贝</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="直接赋值浅拷贝和深度拷贝">直接赋值、浅拷贝和深度拷贝</h1>
-<ul>
-<li><strong>直接赋值：</strong>其实就是对象的<strong>引用（别名）</strong></li>
-<li><strong>浅拷贝(copy)：</strong>拷贝<strong>父对象</strong>，不会拷贝对象的内部的子对象</li>
-<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy
-方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
-</ul>
-<h2 id="字典实例">字典实例</h2>
-<p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b
-是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b
-完全拷贝了父对象及其子对象，两者是完全独立的。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="列表实例">列表实例</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;b = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;c = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]])</span><br><span class="line">(<span class="string">&#x27;d = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]])</span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/逻辑运算符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1025,6 +979,135 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/直接赋值、浅拷贝和深度拷贝" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" target="_blank">直接赋值、浅拷贝和深度拷贝</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="直接赋值浅拷贝和深度拷贝">直接赋值、浅拷贝和深度拷贝</h1>
+<ul>
+<li><strong>直接赋值：</strong>其实就是对象的<strong>引用（别名）</strong></li>
+<li><strong>浅拷贝(copy)：</strong>拷贝<strong>父对象</strong>，不会拷贝对象的内部的子对象</li>
+<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy
+方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
+</ul>
+<h2 id="字典实例">字典实例</h2>
+<p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b
+是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b
+完全拷贝了父对象及其子对象，两者是完全独立的。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="列表实例">列表实例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;b = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;c = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]])</span><br><span class="line">(<span class="string">&#x27;d = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]])</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/">展开全文 >></a>
     </p>
     
 
@@ -1481,6 +1564,95 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
 
 
   
+    <article id="post-【后端】/python/OOP/【Reference】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E3%80%90Reference%E3%80%91/" target="_blank">Python Object-Oriented Programming (OOP)</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E3%80%90Reference%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <ul>
+<li><a target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/">Python
+Object-Oriented Programming (OOP)</a></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E3%80%90Reference%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/Module/绝对导入与相对导入" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1667,253 +1839,6 @@ alt="image-20250104145009446" />
 
 
   
-    <article id="post-【后端】/python/OOP/self与cls的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">self与cls的区别</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="self与cls的区别">self与cls的区别</h1>
-<p>在 Python 面向对象编程中，<code>self</code> 和 <code>cls</code>
-是两个常见的关键字，它们分别用于<strong>实例方法</strong>和<strong>类方法</strong>。本文将详细介绍它们的作用、区别及使用场景，并通过代码示例帮助大家理解如何调用这些方法。</p>
-<hr />
-<h2 id="什么是-self">什么是 <code>self</code>？</h2>
-<h3 id="定义与作用">定义与作用</h3>
-<ul>
-<li><code>self</code>
-是<strong>实例方法</strong>的第一个参数，表示方法所属的<strong>实例对象</strong>。</li>
-<li>在实例方法中，<code>self</code>
-用于访问实例变量和其他实例方法。</li>
-</ul>
-<h3 id="示例代码">示例代码</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">bark</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span> is barking!&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">rename</span>(<span class="params">self, new_name</span>):</span><br><span class="line">        self.name = new_name  <span class="comment"># 修改实例变量</span></span><br></pre></td></tr></table></figure>
-<h3 id="调用示例">调用示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">dog1 = Dog(<span class="string">&quot;Buddy&quot;</span>)</span><br><span class="line">dog2 = Dog(<span class="string">&quot;Max&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用实例方法</span></span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Buddy is barking!</span></span><br><span class="line">dog2.bark()  <span class="comment"># 输出: Max is barking!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改实例变量</span></span><br><span class="line">dog1.rename(<span class="string">&quot;Charlie&quot;</span>)</span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Charlie is barking!</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点">注意点</h3>
-<ul>
-<li><code>self</code> 是约定俗成的名称，不是 Python
-的关键字，可以用其他名称替代，但不建议更改。</li>
-<li>调用实例方法时，<code>self</code> 由 Python
-自动传入，无需显式提供。</li>
-</ul>
-<hr />
-<h2 id="什么是-cls">什么是 <code>cls</code>？</h2>
-<h3 id="定义与作用-1">定义与作用</h3>
-<ul>
-<li><code>cls</code>
-是<strong>类方法</strong>的第一个参数，表示方法所属的<strong>类对象</strong>。</li>
-<li>在<strong>类方法</strong>中，<code>cls</code>
-可用于访问和修改<strong>类变量</strong>或调用其他<strong>类方法</strong>。</li>
-<li>类方法通过 <code>@classmethod</code> 装饰器定义。</li>
-</ul>
-<h3 id="示例代码-1">示例代码</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>:</span><br><span class="line">    species = <span class="string">&quot;Feline&quot;</span>  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">change_species</span>(<span class="params">cls, new_species</span>):</span><br><span class="line">        cls.species = new_species  <span class="comment"># 修改类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create</span>(<span class="params">cls, name</span>):</span><br><span class="line">        <span class="comment"># 使用 cls 动态创建实例</span></span><br><span class="line">        <span class="keyword">return</span> cls(name)</span><br></pre></td></tr></table></figure>
-<h3 id="调用示例-1">调用示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改类变量</span></span><br><span class="line">Cat.change_species(<span class="string">&quot;BigCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: BigCat</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">cat1 = Cat.create(<span class="string">&quot;Whiskers&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(cat1.name)  <span class="comment"># 输出: Whiskers</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过实例调用类方法</span></span><br><span class="line">cat1.change_species(<span class="string">&quot;GreenCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: GreenCat</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点-1">注意点</h3>
-<ul>
-<li>类方法可以直接通过<strong>类名</strong>或<strong>实例</strong>调用，例如：<code>Cat.change_species()</code>
-或 <code>cat1.change_species()</code>。</li>
-<li>类方法适合实现<strong>工厂方法</strong>或<strong>类级别的操作</strong>。</li>
-</ul>
-<hr />
-<h2 id="self-与-cls-的区别"><code>self</code> 与 <code>cls</code>
-的区别</h2>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>特点</th>
-<th><code>self</code></th>
-<th><code>cls</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>作用范围</td>
-<td><strong>实例方法</strong>，用于操作实例变量和实例方法</td>
-<td><strong>类方法</strong>，用于操作类变量和类方法</td>
-</tr>
-<tr class="even">
-<td>第一个参数</td>
-<td>代表实例对象</td>
-<td>代表类对象</td>
-</tr>
-<tr class="odd">
-<td>访问的变量类型</td>
-<td>实例变量</td>
-<td>类变量</td>
-</tr>
-<tr class="even">
-<td>调用方式</td>
-<td>必须通过实例调用</td>
-<td>可以通过类或实例调用</td>
-</tr>
-<tr class="odd">
-<td>使用场景</td>
-<td>与具体对象相关的行为</td>
-<td>与类相关的行为（例如创建实例、更新类变量等）</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="实例分析transformers-库的实际应用">实例分析：Transformers
-库的实际应用</h2>
-<h3 id="使用-self-的例子实例方法操作实例变量">使用 <code>self</code>
-的例子：实例方法操作实例变量</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ModelConfig</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name</span>):</span><br><span class="line">        self.model_name = model_name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">show_config</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Model: <span class="subst">&#123;self.model_name&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">config = ModelConfig(<span class="string">&quot;bert-base-uncased&quot;</span>)</span><br><span class="line">config.show_config()  <span class="comment"># 输出: Model: bert-base-uncased</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li><code>self.model_name</code> 是实例变量，不同实例之间互不影响。</li>
-</ul>
-<hr />
-<h3 id="使用-cls-的例子类方法动态创建实例">使用 <code>cls</code>
-的例子：类方法动态创建实例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AutoConfig</span>:</span><br><span class="line">    CONFIG_MAPPING = &#123;&#125;  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">cls, model_type, config</span>):</span><br><span class="line">        cls.CONFIG_MAPPING[model_type] = config  <span class="comment"># 更新类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_config</span>(<span class="params">cls, model_type</span>):</span><br><span class="line">        <span class="keyword">if</span> model_type <span class="keyword">in</span> cls.CONFIG_MAPPING:</span><br><span class="line">            <span class="keyword">return</span> cls.CONFIG_MAPPING[model_type]()</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Invalid model type!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注册模型配置</span></span><br><span class="line">AutoConfig.register(<span class="string">&quot;bert&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;BERT Config&quot;</span>)</span><br><span class="line">AutoConfig.register(<span class="string">&quot;gpt&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;GPT Config&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据配置动态创建实例</span></span><br><span class="line">config = AutoConfig.from_config(<span class="string">&quot;bert&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(config)  <span class="comment"># 输出: BERT Config</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(config))	<span class="comment"># 输出: &lt;class &#x27;str&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li>类变量 <code>CONFIG_MAPPING</code> 用于存储模型配置，可以通过
-<code>cls</code> 动态更新。</li>
-<li>类方法适合需要跨实例共享的数据和逻辑操作。</li>
-</ul>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412251732711.png" alt="image-20241225173205571" style="zoom: 50%;" /></p>
-<hr />
-<h2 id="如何选择-self-或-cls">如何选择 <code>self</code> 或
-<code>cls</code>？</h2>
-<ol type="1">
-<li><p><strong>实例相关逻辑使用 <code>self</code></strong></p>
-<p>如果方法需要访问或操作实例变量，则选择实例方法，并将第一个参数命名为
-<code>self</code>。</p></li>
-<li><p><strong>类相关逻辑使用 <code>cls</code></strong></p>
-<p>如果方法需要操作类变量、定义工厂方法或执行跨实例共享的操作，则选择类方法，并将第一个参数命名为
-<code>cls</code>。</p></li>
-<li><p><strong>通用逻辑使用 <code>@staticmethod</code></strong></p>
-<p>如果方法既不依赖实例，也不依赖类，仅仅是工具函数，可以使用
-<code>@staticmethod</code>。</p></li>
-</ol>
-<hr />
-<h2 id="总结">总结</h2>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>使用场景</th>
-<th>推荐方法类型</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>操作实例变量或实例方法</td>
-<td>实例方法 (<code>self</code>)</td>
-<td>定义对象行为，例如 <code>rename</code> 方法</td>
-</tr>
-<tr class="even">
-<td>操作类变量或动态创建实例</td>
-<td>类方法 (<code>cls</code>)</td>
-<td>修改类级别的配置或注册模型</td>
-</tr>
-<tr class="odd">
-<td>不依赖实例或类，仅做工具操作</td>
-<td>静态方法 (<code>@staticmethod</code>)</td>
-<td>辅助功能，如输入验证或数据格式转换</td>
-</tr>
-</tbody>
-</table>
-<p><strong>建议：</strong> 在编写 Python 类时，合理选择
-<code>self</code> 和 <code>cls</code>
-可以使代码结构更清晰、可维护性更高。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/7/">Next &amp;raquo;</a>
@@ -2068,15 +1993,15 @@ alt="image-20250104145009446" />
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2092,15 +2017,27 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2112,22 +2049,6 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
@@ -2136,7 +2057,15 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2152,10 +2081,6 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
@@ -2168,11 +2093,15 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2184,7 +2113,7 @@ alt="image-20250104145009446" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2193,10 +2122,6 @@ alt="image-20250104145009446" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>
@@ -2223,7 +2148,7 @@ alt="image-20250104145009446" />
       link: false
       permalink: false
       excerpt: false
-      categories: false
+      categories: true
       tags: true
 </pre>
           </p>

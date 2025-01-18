@@ -868,6 +868,124 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
 
 
     
+      <article id="post-【后端】/python/【tutorial】/【12.文件操作】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/" target="_blank">【12.文件操作】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="文件操作">【12.文件操作】</h1>
+<h2 id="打开文件">打开文件</h2>
+<p>在 Python 中，使用 <code>open()</code>
+函数打开文件。<code>open()</code>
+函数的第一个参数是文件名，第二个参数是打开模式。打开模式有多种，常见的有以下几种：</p>
+<ul>
+<li>"r"：只读模式（默认值）。</li>
+<li>"w"：写入模式，如果文件不存在，则创建文件；如果文件已经存在，则
+<strong>覆盖</strong> 原文件。</li>
+<li>"a"：追加模式，如果文件不存在，则创建文件；如果文件已经存在，则在文件
+<strong>末尾</strong> 添加新的内容。</li>
+<li>"x"：创建模式，创建新文件并写入内容，如果文件已经存在，则抛出异常。</li>
+<li>"b"：二进制模式，用于读取和写入二进制数据。</li>
+<li>"t"：文本模式（默认值），用于读取和写入字符串数据。</li>
+</ul>
+<p>在完成文件读写操作后，必须使用文件对象的 <code>close()</code>
+方法来关闭文件，如果忘记关闭文件，可能会导致内存泄漏或其他问题。为了避免这种情况，可以使用
+<code>with</code> 语句来自动关闭文件对象。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h2 id="读取文件">读取文件</h2>
+<p>以 <strong>只读</strong>
+方式打开文件，文件的指针将会放在文件的开头</p>
+<ol type="1">
+<li>读取文件内容，保存在 <strong>字符串</strong> 中</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认读取文件所有内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    content: <span class="built_in">str</span> = f.read()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 读取文件前 20 个字节</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    content: <span class="built_in">str</span> = f.read(<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>按行方式读取文件内容，保存在 <strong>字符串列表</strong> 中，
+其中每一行的数据为一个元素</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文件所有内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    lines: <span class="built_in">list</span>[<span class="built_in">str</span>] = f.readlines()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 读取文件某 1 行内容</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    line1: <span class="built_in">str</span> = f.readline()    <span class="comment"># 读取文件第一行内容</span></span><br><span class="line">    line2: <span class="built_in">str</span> = f.readline()    <span class="comment"># 读取文件第二行内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行处理文件内容（方法1）</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:	<span class="comment"># line 是 str 类型</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逐行处理文件内容（方法2）</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;UTF-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():	<span class="comment"># line 是 str 类型</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【后端】/python/Special Variables/&#39;__all__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -958,6 +1076,112 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__all__'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/Special Variables/&#39;__call__()&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/" target="_blank">__call__()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="call__"><code>__call__()</code></h1>
+<h2 id="作用">作用</h2>
+<p><code>__call__</code>
+允许<strong>类实例</strong>像函数一样被调用。</p>
+<h2 id="示例">示例</h2>
+<ul>
+<li>如果一个<strong>类对象</strong>没有定义
+<code>__call__</code>，那么直接调用<strong>类实例</strong>会报错</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Example</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, value</span>):</span><br><span class="line">        self.value = value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Example 对象</span></span><br><span class="line">obj = Example(<span class="number">42</span>)</span><br><span class="line"><span class="comment"># 调用实例</span></span><br><span class="line">obj(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    obj(10)</span><br><span class="line">TypeError: &#x27;Example&#x27; object is not callable</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果一个<strong>类对象</strong>定义了
+<code>__call__</code>，那么就允许<strong>类实例</strong>像函数一样被调用。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Example</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, value</span>):</span><br><span class="line">        self.value = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, increment</span>):</span><br><span class="line">        self.value += increment</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;对象的新值是 <span class="subst">&#123;self.value&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Example 对象</span></span><br><span class="line">obj = Example(<span class="number">42</span>)</span><br><span class="line"><span class="comment"># 调用实例</span></span><br><span class="line">obj(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对象的新值是 52</span><br></pre></td></tr></table></figure>
+<div>
+<pre><code>&lt;img src=&gt;
+&lt;img src=&gt;</code></pre>
+</div>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/">展开全文 >></a>
     </p>
     
 
@@ -1094,112 +1318,6 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
 
 
     
-      <article id="post-【后端】/python/Special Variables/&#39;__call__()&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/" target="_blank">__call__()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="call__"><code>__call__()</code></h1>
-<h2 id="作用">作用</h2>
-<p><code>__call__</code>
-允许<strong>类实例</strong>像函数一样被调用。</p>
-<h2 id="示例">示例</h2>
-<ul>
-<li>如果一个<strong>类对象</strong>没有定义
-<code>__call__</code>，那么直接调用<strong>类实例</strong>会报错</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Example</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, value</span>):</span><br><span class="line">        self.value = value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Example 对象</span></span><br><span class="line">obj = Example(<span class="number">42</span>)</span><br><span class="line"><span class="comment"># 调用实例</span></span><br><span class="line">obj(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    obj(10)</span><br><span class="line">TypeError: &#x27;Example&#x27; object is not callable</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果一个<strong>类对象</strong>定义了
-<code>__call__</code>，那么就允许<strong>类实例</strong>像函数一样被调用。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Example</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, value</span>):</span><br><span class="line">        self.value = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, increment</span>):</span><br><span class="line">        self.value += increment</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;对象的新值是 <span class="subst">&#123;self.value&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Example 对象</span></span><br><span class="line">obj = Example(<span class="number">42</span>)</span><br><span class="line"><span class="comment"># 调用实例</span></span><br><span class="line">obj(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对象的新值是 52</span><br></pre></td></tr></table></figure>
-<div>
-<pre><code>&lt;img src=&gt;
-&lt;img src=&gt;</code></pre>
-</div>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__call__()'/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/python/Special Variables/&#39;__dict__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1285,101 +1403,6 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__dict__'/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/Special Variables/&#39;__file__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__file__'/" target="_blank">__file__</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__file__'/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="file__"><code>__file__</code></h1>
-<h2 id="作用">作用</h2>
-<p>在Python中，<code>__file__</code>是一个特殊的内置属性，用于获取<strong>当前Python文件</strong>的<strong>绝对路径</strong>。</p>
-<h2 id="示例">示例</h2>
-<p>如果某一脚本文件名为 <code>example.py</code>，位于
-<code>/home/user/projects</code> 目录下，那么输出结果如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /home/user/projects/example.py</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(__file__)</span><br><span class="line"><span class="comment"># 输出</span></span><br><span class="line"><span class="comment"># /home/user/projects/example.py</span></span><br></pre></td></tr></table></figure>
-<p><code>__file__</code> 通常结合其他模块（如 <code>os</code>
-模块等）使用，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">file_path = os.path.abspath(__file__)  <span class="comment"># 获取绝对路径</span></span><br><span class="line">file_dir = os.path.dirname(__file__)  <span class="comment"># 获取文件所在目录</span></span><br><span class="line">file_name = os.path.basename(__file__)  <span class="comment"># 获取文件名</span></span><br><span class="line"><span class="built_in">print</span>(file_path)</span><br><span class="line"><span class="built_in">print</span>(file_dir)</span><br><span class="line"><span class="built_in">print</span>(file_name)</span><br><span class="line"><span class="comment"># 输出</span></span><br><span class="line"><span class="comment"># /home/user/projects/example.py</span></span><br><span class="line"><span class="comment"># /home/user/projects</span></span><br><span class="line"><span class="comment"># example.py</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__file__'/">展开全文 >></a>
     </p>
     
 
@@ -1564,15 +1587,15 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1592,22 +1615,6 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
@@ -1620,11 +1627,23 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1632,15 +1651,11 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1649,6 +1664,14 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1668,10 +1691,6 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
@@ -1681,6 +1700,10 @@ id="面向过程与面向对象类和对象面向对象的基本语法">面向�
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

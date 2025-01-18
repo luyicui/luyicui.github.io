@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="DataLoader前面的数据集 Dataset 类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的 mini-batches，然后按批 (batch) 将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个 epoch。    训练模型时，我们通常会在每次 epoch 循环开始前随机打乱样本顺序以缓解过拟合。  简介 作用：torch.ut">
+  <meta name="description" content="DataLoader 前面的数据集 Dataset 类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的 mini-batches，然后按批 (batch) 将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个 epoch。  训练模型时，我们通常会在每次 epoch 循环开始前随机打乱样本顺序以缓解过拟合。  简介">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DataLoader">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/26/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/DataLoader/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="DataLoader前面的数据集 Dataset 类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的 mini-batches，然后按批 (batch) 将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个 epoch。    训练模型时，我们通常会在每次 epoch 循环开始前随机打乱样本顺序以缓解过拟合。  简介 作用：torch.ut">
+<meta property="og:description" content="DataLoader 前面的数据集 Dataset 类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的 mini-batches，然后按批 (batch) 将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个 epoch。  训练模型时，我们通常会在每次 epoch 循环开始前随机打乱样本顺序以缓解过拟合。  简介">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-26T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-01T08:24:44.725Z">
@@ -262,22 +262,39 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="DataLoader"><a href="#DataLoader" class="headerlink" title="DataLoader"></a>DataLoader</h1><p>前面的数据集 <code>Dataset</code> 类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的 mini-batches，然后按批 (batch) 将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个 epoch。</p>
+    <h1 id="dataloader">DataLoader</h1>
+<p>前面的数据集 <code>Dataset</code>
+类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的
+mini-batches，然后按批 (batch)
+将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个
+epoch。</p>
 <blockquote>
-<p>  训练模型时，我们通常会在每次 epoch 循环开始前随机打乱样本顺序以缓解过拟合。</p>
+<p>训练模型时，我们通常会在每次 epoch
+循环开始前随机打乱样本顺序以缓解过拟合。</p>
 </blockquote>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ol>
-<li>作用：torch.utils.data.DataLoader 主要是对数据进行 batch 的划分。数据加载器，结合了数据集和取样器，并且可以提供多个线程处理数据集。在训练模型时使用到此函数，用来 <strong>把训练数据分成多个小组</strong> ，此函数 <strong>每次抛出一组数据</strong> 。直至把所有的数据都抛出。就是做一个数据的初始化。</li>
-<li>好处：使用 DataLoader 的好处是，可以快速的迭代数据。用于生成迭代数据非常方便。</li>
+<h2 id="简介">简介</h2>
+<ol type="1">
+<li>作用：torch.utils.data.DataLoader 主要是对数据进行 batch
+的划分。数据加载器，结合了数据集和取样器，并且可以提供多个线程处理数据集。在训练模型时使用到此函数，用来
+<strong>把训练数据分成多个小组</strong> ，此函数
+<strong>每次抛出一组数据</strong>
+。直至把所有的数据都抛出。就是做一个数据的初始化。</li>
+<li>好处：使用 DataLoader
+的好处是，可以快速的迭代数据。用于生成迭代数据非常方便。</li>
 </ol>
 <span id="more"></span>
-<p>Pytorch 提供了 <code>DataLoader</code> 类专门负责处理这些操作，除了基本的 <code>dataset</code>（数据集）和 <code>batch_size</code> （batch 大小）参数以外，还有以下常用参数：</p>
+<p>Pytorch 提供了 <code>DataLoader</code>
+类专门负责处理这些操作，除了基本的 <code>dataset</code>（数据集）和
+<code>batch_size</code> （batch 大小）参数以外，还有以下常用参数：</p>
 <ul>
 <li><code>shuffle</code>：是否打乱数据集；</li>
 <li><code>sampler</code>：采样器，也就是一个索引上的迭代器；</li>
-<li><code>collate_fn</code>：批处理函数，用于对采样出的一个 batch 中的样本进行处理（例如前面提过的 Padding 操作）。</li>
+<li><code>collate_fn</code>：批处理函数，用于对采样出的一个 batch
+中的样本进行处理（例如前面提过的 Padding 操作）。</li>
 </ul>
-<p>例如，我们按照 <code>batch = 4</code> 遍历 Pytorch 自带的图像分类 MNIST 数据集（每个样本是一张 28×28 的灰度图，以及分类标签），并且打乱数据集：</p>
+<p>例如，我们按照 <code>batch = 4</code> 遍历 Pytorch 自带的图像分类
+MNIST 数据集（每个样本是一张 28×28
+的灰度图，以及分类标签），并且打乱数据集：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> SequentialSampler, RandomSampler</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torchvision.transforms <span class="keyword">import</span> ToTensor</span><br><span class="line"></span><br><span class="line">training_data = datasets.MNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">True</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">test_data = datasets.MNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">False</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">train_dataloader = DataLoader(training_data, batch_size=<span class="number">4</span>, shuffle=<span class="literal">True</span>)</span><br><span class="line">test_dataloader = DataLoader(test_data, batch_size=<span class="number">4</span>)	<span class="comment"># shuffle is False by default</span></span><br><span class="line"></span><br><span class="line">train_features, train_labels = <span class="built_in">next</span>(<span class="built_in">iter</span>(train_dataloader))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Feature shape of the first train batch: <span class="subst">&#123;train_features.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Labels of the first train batch: <span class="subst">&#123;train_labels&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">test_features, test_labels = <span class="built_in">next</span>(<span class="built_in">iter</span>(test_dataloader))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Feature shape of the first test batch: <span class="subst">&#123;test_features.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Labels of the first test batch: <span class="subst">&#123;test_labels&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>运行一次输出结果</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Feature shape of the first train batch: torch.Size([4, 1, 28, 28])</span><br><span class="line">Labels of the first train batch: tensor([4, 8, 8, 9])</span><br><span class="line">Feature shape of the first test batch: torch.Size([4, 1, 28, 28])</span><br><span class="line">Labels of the first test batch: tensor([7, 2, 1, 0])</span><br></pre></td></tr></table></figure>
@@ -285,83 +302,130 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Feature shape of the first train batch: torch.Size([4, 1, 28, 28])</span><br><span class="line">Labels of the first train batch: tensor([5, 0, 8, 7])</span><br><span class="line">Feature shape of the first test batch: torch.Size([4, 1, 28, 28])</span><br><span class="line">Labels of the first test batch: tensor([7, 2, 1, 0])</span><br></pre></td></tr></table></figure>
 <p>我们发现：</p>
 <ul>
-<li><code>test_dataloader</code> 由于没有设置 <code>shuffle=True</code>，所以多次运行的结果相同，因为默认使用序列采样器 <code>SequentialSampler</code></li>
-<li><code>train_dataloader</code> 由于设置了 <code>shuffle=True</code>，所以多次运行的结果不同，因为会自动使用随机采样器 <code>RandomSampler</code></li>
+<li><code>test_dataloader</code> 由于没有设置
+<code>shuffle=True</code>，所以多次运行的结果相同，因为默认使用序列采样器
+<code>SequentialSampler</code></li>
+<li><code>train_dataloader</code> 由于设置了
+<code>shuffle=True</code>，所以多次运行的结果不同，因为会自动使用随机采样器
+<code>RandomSampler</code></li>
 </ul>
-<h2 id="数据加载顺序和-Sampler-类"><a href="#数据加载顺序和-Sampler-类" class="headerlink" title="数据加载顺序和 Sampler 类"></a>数据加载顺序和 <code>Sampler</code> 类</h2><p>对于迭代型数据集来说，数据的加载顺序直接由用户控制，用户可以精确地控制每一个 batch 中返回的样本，因此不需要使用 <code>Sampler</code> 类。</p>
-<p>对于映射型数据集来说，由于索引可以不是整数，因此我们可以通过 <code>Sampler</code> 对象来设置加载时的索引序列，即设置一个索引上的迭代器。</p>
+<h2 id="数据加载顺序和-sampler-类">数据加载顺序和 <code>Sampler</code>
+类</h2>
+<p>对于迭代型数据集来说，数据的加载顺序直接由用户控制，用户可以精确地控制每一个
+batch 中返回的样本，因此不需要使用 <code>Sampler</code> 类。</p>
+<p>对于映射型数据集来说，由于索引可以不是整数，因此我们可以通过
+<code>Sampler</code>
+对象来设置加载时的索引序列，即设置一个索引上的迭代器。</p>
 <ul>
-<li><p>当使用 <code>DataLoader</code> 加载数据时，<code>Sampler</code> 控制每个批次中的索引序列</p>
-</li>
-<li><p>如果使用 <code>shuffle=True</code>，<code>DataLoader</code> 会自动使用随机采样器 <code>RandomSampler</code>。</p>
-</li>
-<li><p>如果没有设置 <code>shuffle</code>，则默认使用序列采样器 <code>SequentialSampler</code>。</p>
-</li>
-<li><p>用户也可以通过 <code>sampler</code> 参数传入自定义 <code>Sampler</code>。</p>
-</li>
+<li><p>当使用 <code>DataLoader</code> 加载数据时，<code>Sampler</code>
+控制每个批次中的索引序列</p></li>
+<li><p>如果使用 <code>shuffle=True</code>，<code>DataLoader</code>
+会自动使用随机采样器 <code>RandomSampler</code>。</p></li>
+<li><p>如果没有设置 <code>shuffle</code>，则默认使用序列采样器
+<code>SequentialSampler</code>。</p></li>
+<li><p>用户也可以通过 <code>sampler</code> 参数传入自定义
+<code>Sampler</code>。</p></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> SequentialSampler, RandomSampler</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torchvision.transforms <span class="keyword">import</span> ToTensor</span><br><span class="line"></span><br><span class="line">training_data = datasets.MNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">True</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">test_data = datasets.MNIST(</span><br><span class="line">    root=<span class="string">&quot;data&quot;</span>,</span><br><span class="line">    train=<span class="literal">False</span>,</span><br><span class="line">    download=<span class="literal">True</span>,</span><br><span class="line">    transform=ToTensor()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">train_sampler = RandomSampler(training_data)</span><br><span class="line">test_sampler = SequentialSampler(test_data)</span><br><span class="line"></span><br><span class="line">train_dataloader = DataLoader(training_data, batch_size=<span class="number">4</span>, sampler=train_sampler)</span><br><span class="line">test_dataloader = DataLoader(test_data, batch_size=<span class="number">4</span>, sampler=test_sampler)</span><br><span class="line"></span><br><span class="line">train_features, train_labels = <span class="built_in">next</span>(<span class="built_in">iter</span>(train_dataloader))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Feature shape of the first train batch: <span class="subst">&#123;train_features.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Labels of the first train batch: <span class="subst">&#123;train_labels&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">test_features, test_labels = <span class="built_in">next</span>(<span class="built_in">iter</span>(test_dataloader))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Feature shape of the first test batch: <span class="subst">&#123;test_features.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Labels of the first test batch: <span class="subst">&#123;test_labels&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>上面的代码与设置 shuffle 参数的一致，结果分析也相同；我们可以打印一下 <code>train_sampler</code> 和 <code>test_sampler</code></p>
+<p>上面的代码与设置 shuffle 参数的一致，结果分析也相同；我们可以打印一下
+<code>train_sampler</code> 和 <code>test_sampler</code></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数据量太大了。因此我们只查看前 10 个</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(train_sampler), <span class="built_in">list</span>(train_sampler)[:<span class="number">10</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(test_sampler), <span class="built_in">list</span>(test_sampler)[:<span class="number">10</span>])</span><br></pre></td></tr></table></figure>
 <p>运行一次输出结果</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;torch.utils.data.sampler.RandomSampler&#x27;&gt; [2675, 43243, 39396, 518, 1497, 13736, 55281, 47123, 45247, 43870]</span><br><span class="line">&lt;class &#x27;torch.utils.data.sampler.SequentialSampler&#x27;&gt; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</span><br></pre></td></tr></table></figure>
 <p>再运行一次，输出结果</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;torch.utils.data.sampler.RandomSampler&#x27;&gt; [32365, 19349, 59297, 47291, 57479, 48230, 57510, 12783, 39689, 406]</span><br><span class="line">&lt;class &#x27;torch.utils.data.sampler.SequentialSampler&#x27;&gt; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</span><br></pre></td></tr></table></figure>
-<h2 id="批处理函数-collate-fn"><a href="#批处理函数-collate-fn" class="headerlink" title="批处理函数 collate_fn"></a>批处理函数 <code>collate_fn</code></h2><h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>批处理函数 <code>collate_fn</code> 负责对每一个采样出的 batch 中的样本进行处理。默认的 <code>collate_fn</code> 会进行如下操作：</p>
+<h2 id="批处理函数-collate_fn">批处理函数 <code>collate_fn</code></h2>
+<h3 id="作用">作用</h3>
+<p>批处理函数 <code>collate_fn</code> 负责对每一个采样出的 batch
+中的样本进行处理。默认的 <code>collate_fn</code> 会进行如下操作：</p>
 <ul>
 <li>添加一个新维度作为 batch 维；</li>
 <li>自动地将 NumPy 数组和 Python 数值转换为 PyTorch 张量；</li>
-<li>如果数据是嵌套结构（例如字典、元组），会保留其原始的数据结构，但将内容 batched。</li>
+<li>如果数据是嵌套结构（例如字典、元组），会保留其原始的数据结构，但将内容
+batched。</li>
 </ul>
 <blockquote>
-<p>  例如输入是字典的话，它会输出一个包含同样键 (key) 的字典，但是将值 (value) 替换为 batched 张量（如何可以转换的话）</p>
+<p>例如输入是字典的话，它会输出一个包含同样键 (key) 的字典，但是将值
+(value) 替换为 batched 张量（如何可以转换的话）</p>
 </blockquote>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>例如，如果样本是包含 3 通道的图像和一个整数型类别标签，即 <code>(image, class_index)</code>，那么默认的 <code>collate_fn</code> 会将这样的一个元组列表转换为一个包含 batched 图像张量和 batched 类别标签张量的元组。</p>
+<h3 id="示例">示例</h3>
+<p>例如，如果样本是包含 3 通道的图像和一个整数型类别标签，即
+<code>(image, class_index)</code>，那么默认的 <code>collate_fn</code>
+会将这样的一个元组列表转换为一个包含 batched 图像张量和 batched
+类别标签张量的元组。</p>
 <p>假设我们有一个简单的数据集，每个样本由两个元素组成：</p>
 <ul>
-<li><strong>图像</strong>：表示为形状为 <code>(3, 224, 224)</code> 的张量，代表一个 RGB 图片。</li>
+<li><strong>图像</strong>：表示为形状为 <code>(3, 224, 224)</code>
+的张量，代表一个 RGB 图片。</li>
 <li><strong>类别标签</strong>：表示为一个整数值，代表该图片的类别。</li>
 </ul>
 <p>假设我们采样出以下 3 个样本作为一个 batch：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">samples = [</span><br><span class="line">    (image1, label1),  <span class="comment"># 第一个样本</span></span><br><span class="line">    (image2, label2),  <span class="comment"># 第二个样本</span></span><br><span class="line">    (image3, label3)   <span class="comment"># 第三个样本</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p>这里：</p>
 <ul>
-<li><code>image1</code>, <code>image2</code>, <code>image3</code> 是形状 <code>(3, 224, 224)</code> 的张量。</li>
-<li><code>label1</code>, <code>label2</code>, <code>label3</code> 是整数，表示类别标签。</li>
+<li><code>image1</code>, <code>image2</code>, <code>image3</code> 是形状
+<code>(3, 224, 224)</code> 的张量。</li>
+<li><code>label1</code>, <code>label2</code>, <code>label3</code>
+是整数，表示类别标签。</li>
 </ul>
 <p><strong>默认 <code>collate_fn</code> 会进行以下处理：</strong></p>
-<h4 id="步骤-1：对图像添加-batch-维度"><a href="#步骤-1：对图像添加-batch-维度" class="headerlink" title="步骤 1：对图像添加 batch 维度"></a><strong>步骤 1：对图像添加 batch 维度</strong></h4><p>每个图片原来是 <code>(3, 224, 224)</code>，默认 <code>collate_fn</code> 会将它们堆叠到一起，形成一个 batch 张量，形状为 <code>(batch_size, 3, 224, 224)</code>：</p>
+<h4 id="步骤-1对图像添加-batch-维度"><strong>步骤 1：对图像添加 batch
+维度</strong></h4>
+<p>每个图片原来是 <code>(3, 224, 224)</code>，默认
+<code>collate_fn</code> 会将它们堆叠到一起，形成一个 batch 张量，形状为
+<code>(batch_size, 3, 224, 224)</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">batched_images = torch.stack([image1, image2, image3], dim=<span class="number">0</span>)  <span class="comment"># 形状：(3, 3, 224, 224)</span></span><br></pre></td></tr></table></figure>
 <p>每个图像的第一个维度现在代表 batch。</p>
-<h4 id="步骤-2：对标签添加-batch-维度"><a href="#步骤-2：对标签添加-batch-维度" class="headerlink" title="步骤 2：对标签添加 batch 维度"></a><strong>步骤 2：对标签添加 batch 维度</strong></h4><p>默认 <code>collate_fn</code> 也会将整数标签合并为一个张量：</p>
+<h4 id="步骤-2对标签添加-batch-维度"><strong>步骤 2：对标签添加 batch
+维度</strong></h4>
+<p>默认 <code>collate_fn</code> 也会将整数标签合并为一个张量：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">batched_labels = torch.tensor([label1, label2, label3])  <span class="comment"># 形状：(3,)</span></span><br></pre></td></tr></table></figure>
-<h4 id="步骤-3：合并为元组"><a href="#步骤-3：合并为元组" class="headerlink" title="步骤 3：合并为元组"></a><strong>步骤 3：合并为元组</strong></h4><p>默认 <code>collate_fn</code> 会将批次结果保留原有的数据结构，因此最终结果是一个元组：</p>
+<h4 id="步骤-3合并为元组"><strong>步骤 3：合并为元组</strong></h4>
+<p>默认 <code>collate_fn</code>
+会将批次结果保留原有的数据结构，因此最终结果是一个元组：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(batch_images, batch_labels)</span><br></pre></td></tr></table></figure>
 <ul>
-<li><code>batch_images</code>：形状为 <code>(3, 3, 224, 224)</code> 的张量。</li>
+<li><code>batch_images</code>：形状为 <code>(3, 3, 224, 224)</code>
+的张量。</li>
 <li><code>batch_labels</code>：形状为 <code>(3,)</code> 的张量。</li>
 </ul>
-<hr>
+<hr />
 <p>以下是代码的完整实现：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟样本数据</span></span><br><span class="line">image1 = torch.randn(<span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line">image2 = torch.randn(<span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line">image3 = torch.randn(<span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line"></span><br><span class="line">label1, label2, label3 = <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 样本列表</span></span><br><span class="line">samples = [(image1, label1), (image2, label2), (image3, label3)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟默认 collate_fn 的行为</span></span><br><span class="line">batched_images = torch.stack([s[<span class="number">0</span>] <span class="keyword">for</span> s <span class="keyword">in</span> samples], dim=<span class="number">0</span>)  <span class="comment"># 堆叠图像</span></span><br><span class="line">batched_labels = torch.tensor([s[<span class="number">1</span>] <span class="keyword">for</span> s <span class="keyword">in</span> samples])        <span class="comment"># 合并标签</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 最终结果</span></span><br><span class="line">batch = (batched_images, batched_labels)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看结果形状</span></span><br><span class="line"><span class="built_in">print</span>(batched_images.shape)  <span class="comment"># 输出：torch.Size([3, 3, 224, 224])</span></span><br><span class="line"><span class="built_in">print</span>(batched_labels.shape)  <span class="comment"># 输出：torch.Size([3])</span></span><br></pre></td></tr></table></figure>
-<h4 id="更复杂的情况：字典结构"><a href="#更复杂的情况：字典结构" class="headerlink" title="更复杂的情况：字典结构"></a>更复杂的情况：字典结构</h4><p>如果样本是字典，例如：</p>
+<h4 id="更复杂的情况字典结构">更复杂的情况：字典结构</h4>
+<p>如果样本是字典，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">samples = [</span><br><span class="line">    &#123;<span class="string">&quot;image&quot;</span>: image1, <span class="string">&quot;label&quot;</span>: label1&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;image&quot;</span>: image2, <span class="string">&quot;label&quot;</span>: label2&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;image&quot;</span>: image3, <span class="string">&quot;label&quot;</span>: label3&#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>默认 <code>collate_fn</code> 也会保留字典的结构，合并相应的键值为 batched 张量：</p>
+<p>默认 <code>collate_fn</code> 也会保留字典的结构，合并相应的键值为
+batched 张量：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">batched_dict = &#123;</span><br><span class="line">    <span class="string">&quot;image&quot;</span>: torch.stack([s[<span class="string">&quot;image&quot;</span>] <span class="keyword">for</span> s <span class="keyword">in</span> samples], dim=<span class="number">0</span>),  <span class="comment"># 形状：(3, 3, 224, 224)</span></span><br><span class="line">    <span class="string">&quot;label&quot;</span>: torch.tensor([s[<span class="string">&quot;label&quot;</span>] <span class="keyword">for</span> s <span class="keyword">in</span> samples])         <span class="comment"># 形状：(3,)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们也可以传入手工编写的 <code>collate_fn</code> 函数以对数据进行自定义处理，例如前面我们介绍过的 padding 操作，详细请参考<a href="../../【transformers】/第七章：微调预训练模型.md">第七章：微调预训练模型</a></p>
-<h2 id="BATCH-SIZE与数据量的关系"><a href="#BATCH-SIZE与数据量的关系" class="headerlink" title="BATCH_SIZE与数据量的关系"></a>BATCH_SIZE与数据量的关系</h2><h3 id="BATCH-SIZE-刚好整除数据量"><a href="#BATCH-SIZE-刚好整除数据量" class="headerlink" title="BATCH_SIZE 刚好整除数据量"></a>BATCH_SIZE 刚好整除数据量</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    批训练，把数据变成一小批一小批数据进行训练。</span></span><br><span class="line"><span class="string">    DataLoader就是用来包装所使用的数据，每次抛出一批数据</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> data</span><br><span class="line"></span><br><span class="line">BATCH_SIZE = <span class="number">5</span>       <span class="comment"># 批训练的数据个数</span></span><br><span class="line"></span><br><span class="line">x = torch.linspace(<span class="number">1</span>, <span class="number">10</span>, <span class="number">10</span>)   <span class="comment"># 训练数据</span></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">y = torch.linspace(<span class="number">10</span>, <span class="number">1</span>, <span class="number">10</span>)   <span class="comment"># 标签</span></span><br><span class="line"><span class="built_in">print</span>(y)</span><br><span class="line"><span class="comment"># 把数据放在数据库中</span></span><br><span class="line">torch_dataset = data.TensorDataset(x, y)  <span class="comment"># 对给定的 tensor 数据，将他们包装成 dataset</span></span><br><span class="line"></span><br><span class="line">loader = data.DataLoader(</span><br><span class="line">    <span class="comment"># 从数据库中每次抽出 batch size 个样本</span></span><br><span class="line">    dataset=torch_dataset,       <span class="comment"># torch TensorDataset format</span></span><br><span class="line">    batch_size=BATCH_SIZE,       <span class="comment"># mini batch size</span></span><br><span class="line">    shuffle=<span class="literal">True</span>,                <span class="comment"># 要不要打乱数据 (打乱比较好)</span></span><br><span class="line">    num_workers=<span class="number">2</span>,               <span class="comment"># 多线程来读数据</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_batch</span>():</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">for</span> step, (batch_x, batch_y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(loader):</span><br><span class="line">            <span class="comment"># training</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;steop:&#123;&#125;, batch_x:&#123;&#125;, batch_y:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(step, batch_x, batch_y))</span><br><span class="line"></span><br><span class="line">show_batch()</span><br></pre></td></tr></table></figure>
+<p>我们也可以传入手工编写的 <code>collate_fn</code>
+函数以对数据进行自定义处理，例如前面我们介绍过的 padding
+操作，详细请参考<a
+href="../../【transformers】/第七章：微调预训练模型.md">第七章：微调预训练模型</a></p>
+<h2 id="batch_size与数据量的关系">BATCH_SIZE与数据量的关系</h2>
+<h3 id="batch_size-刚好整除数据量">BATCH_SIZE 刚好整除数据量</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    批训练，把数据变成一小批一小批数据进行训练。</span></span><br><span class="line"><span class="string">    DataLoader就是用来包装所使用的数据，每次抛出一批数据</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> data</span><br><span class="line"></span><br><span class="line">BATCH_SIZE = <span class="number">5</span>       <span class="comment"># 批训练的数据个数</span></span><br><span class="line"></span><br><span class="line">x = torch.linspace(<span class="number">1</span>, <span class="number">10</span>, <span class="number">10</span>)   <span class="comment"># 训练数据</span></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">y = torch.linspace(<span class="number">10</span>, <span class="number">1</span>, <span class="number">10</span>)   <span class="comment"># 标签</span></span><br><span class="line"><span class="built_in">print</span>(y)</span><br><span class="line"><span class="comment"># 把数据放在数据库中</span></span><br><span class="line">torch_dataset = data.TensorDataset(x, y)  <span class="comment"># 对给定的 tensor 数据，将他们包装成 dataset</span></span><br><span class="line"></span><br><span class="line">loader = data.DataLoader(</span><br><span class="line">    <span class="comment"># 从数据库中每次抽出 batch size 个样本</span></span><br><span class="line">    dataset=torch_dataset,       <span class="comment"># torch TensorDataset format</span></span><br><span class="line">    batch_size=BATCH_SIZE,       <span class="comment"># mini batch size</span></span><br><span class="line">    shuffle=<span class="literal">True</span>,                <span class="comment"># 要不要打乱数据 (打乱比较好)</span></span><br><span class="line">    num_workers=<span class="number">2</span>,               <span class="comment"># 多线程来读数据</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_batch</span>():</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">for</span> step, (batch_x, batch_y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(loader):</span><br><span class="line">            <span class="comment"># training</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;steop:&#123;&#125;, batch_x:&#123;&#125;, batch_y:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(step, batch_x, batch_y))</span><br><span class="line"></span><br><span class="line">show_batch()</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tensor([ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>,  <span class="number">4.</span>,  <span class="number">5.</span>,  <span class="number">6.</span>,  <span class="number">7.</span>,  <span class="number">8.</span>,  <span class="number">9.</span>, <span class="number">10.</span>])</span><br><span class="line">tensor([<span class="number">10.</span>,  <span class="number">9.</span>,  <span class="number">8.</span>,  <span class="number">7.</span>,  <span class="number">6.</span>,  <span class="number">5.</span>,  <span class="number">4.</span>,  <span class="number">3.</span>,  <span class="number">2.</span>,  <span class="number">1.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([<span class="number">10.</span>,  <span class="number">1.</span>,  <span class="number">3.</span>,  <span class="number">7.</span>,  <span class="number">6.</span>]), batch_y:tensor([ <span class="number">1.</span>, <span class="number">10.</span>,  <span class="number">8.</span>,  <span class="number">4.</span>,  <span class="number">5.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">8.</span>, <span class="number">5.</span>, <span class="number">4.</span>, <span class="number">9.</span>, <span class="number">2.</span>]), batch_y:tensor([<span class="number">3.</span>, <span class="number">6.</span>, <span class="number">7.</span>, <span class="number">2.</span>, <span class="number">9.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([ <span class="number">9.</span>,  <span class="number">3.</span>, <span class="number">10.</span>,  <span class="number">1.</span>,  <span class="number">5.</span>]), batch_y:tensor([ <span class="number">2.</span>,  <span class="number">8.</span>,  <span class="number">1.</span>, <span class="number">10.</span>,  <span class="number">6.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">2.</span>, <span class="number">6.</span>, <span class="number">8.</span>, <span class="number">4.</span>, <span class="number">7.</span>]), batch_y:tensor([<span class="number">9.</span>, <span class="number">5.</span>, <span class="number">3.</span>, <span class="number">7.</span>, <span class="number">4.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([ <span class="number">2.</span>, <span class="number">10.</span>,  <span class="number">9.</span>,  <span class="number">6.</span>,  <span class="number">1.</span>]), batch_y:tensor([ <span class="number">9.</span>,  <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">5.</span>, <span class="number">10.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">8.</span>, <span class="number">3.</span>, <span class="number">4.</span>, <span class="number">7.</span>, <span class="number">5.</span>]), batch_y:tensor([<span class="number">3.</span>, <span class="number">8.</span>, <span class="number">7.</span>, <span class="number">4.</span>, <span class="number">6.</span>])</span><br></pre></td></tr></table></figure>
-<p>说明：共有 10 条数据，设置 BATCH_SIZE 为 5 来进行划分，能划分为 2 组（steop 为 0 和 1）。这两组数据互斥。</p>
-<h3 id="BATCH-SIZE-不整除数据量：会输出余下所有数据"><a href="#BATCH-SIZE-不整除数据量：会输出余下所有数据" class="headerlink" title="BATCH_SIZE 不整除数据量：会输出余下所有数据"></a>BATCH_SIZE 不整除数据量：会输出余下所有数据</h3><p>将上述代码中的 BATCH_SIZE 改为 4 ：</p>
+<p>说明：共有 10 条数据，设置 BATCH_SIZE 为 5 来进行划分，能划分为 2
+组（steop 为 0 和 1）。这两组数据互斥。</p>
+<h3 id="batch_size-不整除数据量会输出余下所有数据">BATCH_SIZE
+不整除数据量：会输出余下所有数据</h3>
+<p>将上述代码中的 BATCH_SIZE 改为 4 ：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    批训练，把数据变成一小批一小批数据进行训练。</span></span><br><span class="line"><span class="string">    DataLoader就是用来包装所使用的数据，每次抛出一批数据</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> data</span><br><span class="line"></span><br><span class="line">BATCH_SIZE = <span class="number">4</span>       <span class="comment"># 批训练的数据个数</span></span><br><span class="line"></span><br><span class="line">x = torch.linspace(<span class="number">1</span>, <span class="number">10</span>, <span class="number">10</span>)   <span class="comment"># 训练数据</span></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">y = torch.linspace(<span class="number">10</span>, <span class="number">1</span>, <span class="number">10</span>)   <span class="comment"># 标签</span></span><br><span class="line"><span class="built_in">print</span>(y)</span><br><span class="line"><span class="comment"># 把数据放在数据库中</span></span><br><span class="line">torch_dataset = data.TensorDataset(x, y)  <span class="comment"># 对给定的 tensor 数据，将他们包装成 dataset</span></span><br><span class="line"></span><br><span class="line">loader = data.DataLoader(</span><br><span class="line">    <span class="comment"># 从数据库中每次抽出 batch size 个样本</span></span><br><span class="line">    dataset=torch_dataset,       <span class="comment"># torch TensorDataset format</span></span><br><span class="line">    batch_size=BATCH_SIZE,       <span class="comment"># mini batch size</span></span><br><span class="line">    shuffle=<span class="literal">True</span>,                <span class="comment"># 要不要打乱数据 (打乱比较好)</span></span><br><span class="line">    num_workers=<span class="number">2</span>,               <span class="comment"># 多线程来读数据</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_batch</span>():</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">for</span> step, (batch_x, batch_y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(loader):</span><br><span class="line">            <span class="comment"># training</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;steop:&#123;&#125;, batch_x:&#123;&#125;, batch_y:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(step, batch_x, batch_y))</span><br><span class="line"></span><br><span class="line">show_batch()</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">tensor([ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>,  <span class="number">4.</span>,  <span class="number">5.</span>,  <span class="number">6.</span>,  <span class="number">7.</span>,  <span class="number">8.</span>,  <span class="number">9.</span>, <span class="number">10.</span>])</span><br><span class="line">tensor([<span class="number">10.</span>,  <span class="number">9.</span>,  <span class="number">8.</span>,  <span class="number">7.</span>,  <span class="number">6.</span>,  <span class="number">5.</span>,  <span class="number">4.</span>,  <span class="number">3.</span>,  <span class="number">2.</span>,  <span class="number">1.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([<span class="number">1.</span>, <span class="number">5.</span>, <span class="number">3.</span>, <span class="number">2.</span>]), batch_y:tensor([<span class="number">10.</span>,  <span class="number">6.</span>,  <span class="number">8.</span>,  <span class="number">9.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">7.</span>, <span class="number">8.</span>, <span class="number">4.</span>, <span class="number">6.</span>]), batch_y:tensor([<span class="number">4.</span>, <span class="number">3.</span>, <span class="number">7.</span>, <span class="number">5.</span>])</span><br><span class="line">steop:<span class="number">2</span>, batch_x:tensor([<span class="number">10.</span>,  <span class="number">9.</span>]), batch_y:tensor([<span class="number">1.</span>, <span class="number">2.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([ <span class="number">7.</span>, <span class="number">10.</span>,  <span class="number">5.</span>,  <span class="number">2.</span>]), batch_y:tensor([<span class="number">4.</span>, <span class="number">1.</span>, <span class="number">6.</span>, <span class="number">9.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">9.</span>, <span class="number">1.</span>, <span class="number">6.</span>, <span class="number">4.</span>]), batch_y:tensor([ <span class="number">2.</span>, <span class="number">10.</span>,  <span class="number">5.</span>,  <span class="number">7.</span>])</span><br><span class="line">steop:<span class="number">2</span>, batch_x:tensor([<span class="number">8.</span>, <span class="number">3.</span>]), batch_y:tensor([<span class="number">3.</span>, <span class="number">8.</span>])</span><br><span class="line">steop:<span class="number">0</span>, batch_x:tensor([<span class="number">10.</span>,  <span class="number">3.</span>,  <span class="number">2.</span>,  <span class="number">8.</span>]), batch_y:tensor([<span class="number">1.</span>, <span class="number">8.</span>, <span class="number">9.</span>, <span class="number">3.</span>])</span><br><span class="line">steop:<span class="number">1</span>, batch_x:tensor([<span class="number">1.</span>, <span class="number">7.</span>, <span class="number">5.</span>, <span class="number">9.</span>]), batch_y:tensor([<span class="number">10.</span>,  <span class="number">4.</span>,  <span class="number">6.</span>,  <span class="number">2.</span>])</span><br><span class="line">steop:<span class="number">2</span>, batch_x:tensor([<span class="number">4.</span>, <span class="number">6.</span>]), batch_y:tensor([<span class="number">7.</span>, <span class="number">5.</span>])</span><br></pre></td></tr></table></figure>
-<p>说明：共有 10 条数据，设置 BATCH_SIZE 为 4 来进行划分，能划分为 3 组（steop 为 0 、1、2）。分别有 4、4、2 条数据。</p>
-<hr>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/demo-deng/p/10623334.html">torch.utils.data.DataLoader 使用方法</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zfhsfdhdfajhsr/article/details/116836851">【Pytorch 基础】torch.utils.data.DataLoader 方法的使用</a></li>
+<p>说明：共有 10 条数据，设置 BATCH_SIZE 为 4 来进行划分，能划分为 3
+组（steop 为 0 、1、2）。分别有 4、4、2 条数据。</p>
+<hr />
+<h2 id="参考链接">参考链接</h2>
+<ol type="1">
+<li><a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/demo-deng/p/10623334.html">torch.utils.data.DataLoader
+使用方法</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/zfhsfdhdfajhsr/article/details/116836851">【Pytorch
+基础】torch.utils.data.DataLoader 方法的使用</a></li>
 </ol>
 
     
@@ -502,18 +566,18 @@
 
 <nav id="article-nav">
   
-    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          torch.set_grad_enabled(False) 与 torch.no_grad()
+          nn.module 如何自动调用 forward() 方法
         
       </div>
     </a>
   
   
-    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">构建模型</div>
+    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">torch.set_grad_enabled(False) 与 torch.no_grad()</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -540,7 +604,11 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DataLoader"><span class="toc-number">1.</span> <span class="toc-text">DataLoader</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%92%8C-Sampler-%E7%B1%BB"><span class="toc-number">1.2.</span> <span class="toc-text">数据加载顺序和 Sampler 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%B9%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0-collate-fn"><span class="toc-number">1.3.</span> <span class="toc-text">批处理函数 collate_fn</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E5%AF%B9%E5%9B%BE%E5%83%8F%E6%B7%BB%E5%8A%A0-batch-%E7%BB%B4%E5%BA%A6"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">步骤 1：对图像添加 batch 维度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E5%AF%B9%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0-batch-%E7%BB%B4%E5%BA%A6"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">步骤 2：对标签添加 batch 维度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3%EF%BC%9A%E5%90%88%E5%B9%B6%E4%B8%BA%E5%85%83%E7%BB%84"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">步骤 3：合并为元组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E6%83%85%E5%86%B5%EF%BC%9A%E5%AD%97%E5%85%B8%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">更复杂的情况：字典结构</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BATCH-SIZE%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%87%8F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.4.</span> <span class="toc-text">BATCH_SIZE与数据量的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BATCH-SIZE-%E5%88%9A%E5%A5%BD%E6%95%B4%E9%99%A4%E6%95%B0%E6%8D%AE%E9%87%8F"><span class="toc-number">1.4.1.</span> <span class="toc-text">BATCH_SIZE 刚好整除数据量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BATCH-SIZE-%E4%B8%8D%E6%95%B4%E9%99%A4%E6%95%B0%E6%8D%AE%E9%87%8F%EF%BC%9A%E4%BC%9A%E8%BE%93%E5%87%BA%E4%BD%99%E4%B8%8B%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text">BATCH_SIZE 不整除数据量：会输出余下所有数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dataloader"><span class="toc-number">1.</span> <span class="toc-text">DataLoader</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%92%8C-sampler-%E7%B1%BB"><span class="toc-number">1.2.</span> <span class="toc-text">数据加载顺序和 Sampler
+类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%B9%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0-collate_fn"><span class="toc-number">1.3.</span> <span class="toc-text">批处理函数 collate_fn</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1%E5%AF%B9%E5%9B%BE%E5%83%8F%E6%B7%BB%E5%8A%A0-batch-%E7%BB%B4%E5%BA%A6"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">步骤 1：对图像添加 batch
+维度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2%E5%AF%B9%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0-batch-%E7%BB%B4%E5%BA%A6"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">步骤 2：对标签添加 batch
+维度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3%E5%90%88%E5%B9%B6%E4%B8%BA%E5%85%83%E7%BB%84"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">步骤 3：合并为元组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E6%83%85%E5%86%B5%E5%AD%97%E5%85%B8%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">更复杂的情况：字典结构</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#batch_size%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%87%8F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.4.</span> <span class="toc-text">BATCH_SIZE与数据量的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#batch_size-%E5%88%9A%E5%A5%BD%E6%95%B4%E9%99%A4%E6%95%B0%E6%8D%AE%E9%87%8F"><span class="toc-number">1.4.1.</span> <span class="toc-text">BATCH_SIZE 刚好整除数据量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#batch_size-%E4%B8%8D%E6%95%B4%E9%99%A4%E6%95%B0%E6%8D%AE%E9%87%8F%E4%BC%9A%E8%BE%93%E5%87%BA%E4%BD%99%E4%B8%8B%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text">BATCH_SIZE
+不整除数据量：会输出余下所有数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -719,11 +787,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -743,15 +811,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -759,11 +823,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -775,7 +835,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -783,11 +851,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -823,10 +891,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
@@ -835,15 +899,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

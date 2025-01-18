@@ -10,20 +10,18 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="小批量梯度下降法（Mini-batch Gradient Descent）在 深度学习模型 的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch Gradient Descent）和随机梯度下降法（Stochastic Gradient Descent），两者各有优缺点。为了在 计算速度 和 收敛稳定性 之间找到 平衡，小批量梯度下降法（Mini-batch Gra">
+  <meta name="description" content="小批量梯度下降法（Mini-batch Gradient Descent） 在 深度学习模型 的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch Gradient Descent）和随机梯度下降法（Stochastic Gradient Descent），两者各有优缺点。为了在 计算速度 和 收敛稳定性 之间找到 平衡，小批量梯度下降法（Mini-b">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mini-batch GD">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/3.Mini-batch%20GD/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="小批量梯度下降法（Mini-batch Gradient Descent）在 深度学习模型 的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch Gradient Descent）和随机梯度下降法（Stochastic Gradient Descent），两者各有优缺点。为了在 计算速度 和 收敛稳定性 之间找到 平衡，小批量梯度下降法（Mini-batch Gra">
+<meta property="og:description" content="小批量梯度下降法（Mini-batch Gradient Descent） 在 深度学习模型 的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch Gradient Descent）和随机梯度下降法（Stochastic Gradient Descent），两者各有优缺点。为了在 计算速度 和 收敛稳定性 之间找到 平衡，小批量梯度下降法（Mini-b">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112012585.png">
 <meta property="article:published_time" content="2024-08-12T21:02:27.000Z">
 <meta property="article:modified_time" content="2024-11-13T14:14:28.508Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="优化算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112012585.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -264,45 +262,92 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="小批量梯度下降法（Mini-batch-Gradient-Descent）"><a href="#小批量梯度下降法（Mini-batch-Gradient-Descent）" class="headerlink" title="小批量梯度下降法（Mini-batch Gradient Descent）"></a>小批量梯度下降法（Mini-batch Gradient Descent）</h1><p>在 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B&amp;spm=1001.2101.3001.7020">深度学习模型</a> 的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch Gradient Descent）和随机梯度下降法（Stochastic Gradient Descent），两者各有优缺点。为了在 <strong>计算速度</strong> 和 <strong>收敛稳定性</strong> 之间找到 <strong>平衡</strong>，<strong>小批量梯度下降法</strong>（Mini-batch Gradient Descent）应运而生。下面我们详细介绍其基本思想、优缺点，并通过代码实现来比较三种梯度下降法。</p>
-<h2 id="小批量梯度下降法的基本思想"><a href="#小批量梯度下降法的基本思想" class="headerlink" title="小批量梯度下降法的基本思想"></a>小批量梯度下降法的基本思想</h2><p>​    小批量梯度下降法在每次迭代中，使用 <strong>一小部分随机样本（称为小批量）</strong> 来计算梯度，并更新参数值。具体来说，算法步骤如下：</p>
-<ol>
-<li><p>初始化参数 $w$ 和 $b$</p>
-</li>
-<li><p>在每次迭代中，从训练集中随机抽取 $m$ 个样本。</p>
-</li>
-<li>使用这 $m$ 个样本计算损失函数的梯度</li>
-<li>更新参数 $w$ 和 $b$</li>
+    <h1
+id="小批量梯度下降法mini-batch-gradient-descent">小批量梯度下降法（Mini-batch
+Gradient Descent）</h1>
+<p>在 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B&amp;spm=1001.2101.3001.7020">深度学习模型</a>
+的训练过程中，梯度下降法是最常用的优化算法之一。我们前面介绍了梯度下降法（Batch
+Gradient Descent）和随机梯度下降法（Stochastic Gradient
+Descent），两者各有优缺点。为了在 <strong>计算速度</strong> 和
+<strong>收敛稳定性</strong> 之间找到
+<strong>平衡</strong>，<strong>小批量梯度下降法</strong>（Mini-batch
+Gradient
+Descent）应运而生。下面我们详细介绍其基本思想、优缺点，并通过代码实现来比较三种梯度下降法。</p>
+<h2 id="小批量梯度下降法的基本思想">小批量梯度下降法的基本思想</h2>
+<p>​ 小批量梯度下降法在每次迭代中，使用
+<strong>一小部分随机样本（称为小批量）</strong>
+来计算梯度，并更新参数值。具体来说，算法步骤如下：</p>
+<ol type="1">
+<li><p>初始化参数 <span class="math inline">\(w\)</span> 和 <span
+class="math inline">\(b\)</span></p></li>
+<li><p>在每次迭代中，从训练集中随机抽取 <span
+class="math inline">\(m\)</span> 个样本。</p></li>
+<li><p>使用这 <span class="math inline">\(m\)</span>
+个样本计算损失函数的梯度</p></li>
+<li><p>更新参数 <span class="math inline">\(w\)</span> 和 <span
+class="math inline">\(b\)</span></p></li>
 </ol>
-<p>其梯度计算公式如下：  </p>
-<script type="math/tex; mode=display">
-w_{t+1}= w_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _w}L(w_{t}, b_{t}, x_i, y_i),
+<p>其梯度计算公式如下：</p>
+<p><span class="math display">\[
+w_{t+1}= w_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _w}L(w_{t},
+b_{t}, x_i, y_i),
 \\
-b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, x_i, y_i),</script><p>其中，$\alpha$ 是学习率， $m$ 是小批量的大小。</p>
+b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t},
+b_{t}, x_i, y_i),
+\]</span> 其中，<span class="math inline">\(\alpha\)</span> 是学习率，
+<span class="math inline">\(m\)</span> 是小批量的大小。</p>
 <ul>
-<li>当 $m=1$ 时，Mini-batch Gradient Descent 转换为 SGD</li>
-<li>当 $m=n$ 时，Mini-batch Gradient Descent 转换为 GD</li>
+<li>当 <span class="math inline">\(m=1\)</span> 时，Mini-batch Gradient
+Descent 转换为 SGD</li>
+<li>当 <span class="math inline">\(m=n\)</span> 时，Mini-batch Gradient
+Descent 转换为 GD</li>
 </ul>
 <span id="more"></span>
-<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
-<li><strong>计算速度快</strong>：与批量梯度下降法相比，每次迭代只需计算小批量样本的梯度，速度更快。  </li>
-<li><strong>减少振荡</strong>：与 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">随机梯度下降法</a> 相比，梯度的计算更加稳定，减少了参数更新时的振荡。  </li>
+<h2 id="优缺点">优缺点</h2>
+<h3 id="优点">优点</h3>
+<ol type="1">
+<li><strong>计算速度快</strong>：与批量梯度下降法相比，每次迭代只需计算小批量样本的梯度，速度更快。<br />
+</li>
+<li><strong>减少振荡</strong>：与 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">随机梯度下降法</a>
+相比，梯度的计算更加稳定，减少了参数更新时的振荡。<br />
+</li>
 <li><strong>控制灵活</strong>：可以调整小批量的大小，使得训练速度和精度之间达到平衡。</li>
 </ol>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
-<li><strong>需要调整学习率和小批量大小</strong>：学习率决定每次更新的步长，小批量大小决定每次计算梯度使用的样本数量。  </li>
-<li><strong>内存消耗</strong>：小批量大小的选择受限于内存容量，尤其在使用 GPU 运算时，需要选择合适的小批量大小。</li>
+<h3 id="缺点">缺点</h3>
+<ol type="1">
+<li><strong>需要调整学习率和小批量大小</strong>：学习率决定每次更新的步长，小批量大小决定每次计算梯度使用的样本数量。<br />
+</li>
+<li><strong>内存消耗</strong>：小批量大小的选择受限于内存容量，尤其在使用
+GPU 运算时，需要选择合适的小批量大小。</li>
 </ol>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>下面通过代码实现和比较三种梯度下降法的执行效果。</p>
+<h3 id="代码实现">代码实现</h3>
+<p>下面通过代码实现和比较三种梯度下降法的执行效果。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, TensorDataset</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义数据集</span></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line">X = np.random.rand(<span class="number">1000</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">3</span>*X + <span class="number">2</span> + np.random.randn(<span class="number">1000</span>, <span class="number">1</span>) * <span class="number">0.1</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 转换为 tensor</span></span><br><span class="line">X_tensor = torch.tensor(X, dtype=torch.float32)</span><br><span class="line">y_tensor = torch.tensor(y, dtype=torch.float32)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 封装为数据集</span></span><br><span class="line">dataset = TensorDataset(X_tensor, y_tensor)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearRegressionModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearRegressionModel, self).__init__()</span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 损失函数</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义梯度下降法的批量大小</span></span><br><span class="line">batch_sizes = [<span class="number">1000</span>, <span class="number">1</span>, <span class="number">128</span>]</span><br><span class="line">batch_labels = [<span class="string">&#x27;Batch Gradient Descent&#x27;</span>, <span class="string">&#x27;Stochastic Gradient Descent&#x27;</span>, <span class="string">&#x27;Mini-batch Gradient Descent&#x27;</span>]</span><br><span class="line">colors = [<span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;g&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 定义超参数</span></span><br><span class="line">learning_rate = <span class="number">0.01</span></span><br><span class="line">num_epochs = <span class="number">1000</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 存储损失值</span></span><br><span class="line">losses = &#123;label: [] <span class="keyword">for</span> label <span class="keyword">in</span> batch_labels&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line"><span class="keyword">for</span> batch_size, label, color <span class="keyword">in</span> <span class="built_in">zip</span>(batch_sizes, batch_labels, colors):</span><br><span class="line">    model = LinearRegressionModel()</span><br><span class="line">    optimizer = optim.SGD(model.parameters(), lr=learning_rate)</span><br><span class="line">    </span><br><span class="line">    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> tqdm(<span class="built_in">range</span>(num_epochs), desc=label):</span><br><span class="line">        epoch_loss = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> batch_x, batch_y <span class="keyword">in</span> data_loader:</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            outputs = model(batch_x)</span><br><span class="line">            loss = criterion(outputs, batch_y)</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br><span class="line">            epoch_loss += loss.item()</span><br><span class="line">        </span><br><span class="line">        losses[label].append(epoch_loss / <span class="built_in">len</span>(data_loader))</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 绘制损失值变化曲线</span></span><br><span class="line"><span class="keyword">for</span> label, color <span class="keyword">in</span> <span class="built_in">zip</span>(batch_labels, colors):</span><br><span class="line">    plt.plot(losses[label], color=color, label=label)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epoch&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Loss&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<h3 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h3><p>运行上述代码后，会显示三种梯度下降法在每个迭代周期（epoch）中的损失变化曲线。可以看到：</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112012585.png" alt="image-20240811201255444"></p>
-<ol>
-<li>批量梯度下降法：损失曲线平滑，但训练速度较慢。  </li>
-<li>随机梯度下降法：训练速度快，但损失曲线波动较大。  </li>
+<h3 id="结果分析">结果分析</h3>
+<p>运行上述代码后，会显示三种梯度下降法在每个迭代周期（epoch）中的损失变化曲线。可以看到：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112012585.png"
+alt="image-20240811201255444" />
+<figcaption aria-hidden="true">image-20240811201255444</figcaption>
+</figure>
+<ol type="1">
+<li>批量梯度下降法：损失曲线平滑，但训练速度较慢。<br />
+</li>
+<li>随机梯度下降法：训练速度快，但损失曲线波动较大。<br />
+</li>
 <li>小批量梯度下降法：在训练速度和损失曲线的稳定性之间达到了平衡，效果较为理想。</li>
 </ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>​    小批量梯度下降法结合了批量梯度下降法和随机梯度下降法的优点，是深度学习中常用的 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95&amp;spm=1001.2101.3001.7020">优化算法</a>。通过调整小 <strong>批量大小</strong> 和 <strong>学习率</strong>，可以在 <strong>训练速度</strong> 和 <strong>收敛稳定性</strong> 之间找到最佳平衡。在实际应用中，小批量梯度下降法由于其较高的效率和较好的收敛效果，被广泛应用于各类深度学习模型的训练中。</p>
+<h2 id="总结">总结</h2>
+<p>​
+小批量梯度下降法结合了批量梯度下降法和随机梯度下降法的优点，是深度学习中常用的
+<a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95&amp;spm=1001.2101.3001.7020">优化算法</a>。通过调整小
+<strong>批量大小</strong> 和 <strong>学习率</strong>，可以在
+<strong>训练速度</strong> 和 <strong>收敛稳定性</strong>
+之间找到最佳平衡。在实际应用中，小批量梯度下降法由于其较高的效率和较好的收敛效果，被广泛应用于各类深度学习模型的训练中。</p>
 
     
 
@@ -480,7 +525,8 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%EF%BC%88Mini-batch-Gradient-Descent%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">小批量梯度下降法（Mini-batch Gradient Descent）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.</span> <span class="toc-text">小批量梯度下降法的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.</span> <span class="toc-text">优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">1.2.4.</span> <span class="toc-text">结果分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95mini-batch-gradient-descent"><span class="toc-number">1.</span> <span class="toc-text">小批量梯度下降法（Mini-batch
+Gradient Descent）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.</span> <span class="toc-text">小批量梯度下降法的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.</span> <span class="toc-text">优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="toc-number">1.2.4.</span> <span class="toc-text">结果分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -659,11 +705,11 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -683,15 +729,11 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -699,11 +741,7 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -715,7 +753,15 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -723,11 +769,11 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -763,10 +809,6 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
@@ -775,15 +817,19 @@ b_{t+1}= b_{t}-\alpha \cdot \frac{1}{m}\sum_{i = 1}^m{\nabla _b}L(w_{t}, b_{t}, 
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

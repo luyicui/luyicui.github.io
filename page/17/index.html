@@ -252,6 +252,115 @@
 
   
     
+      <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/构建模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/" target="_blank">构建模型</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="构建模型">构建模型</h1>
+<p>Pytorch 所有的模块（层）都是 <code>nn.Module</code>
+的子类，神经网络模型本身就是一个模块，它还包含了很多其他的模块。</p>
+<p>我们还是以前面加载的 FashionMNIST
+数据库为例，构建一个神经网络模型来完成图像分类。模型同样继承自
+<code>nn.Module</code> 类，通过 <code>__init__()</code>
+初始化模型中的层和参数，在 <code>forward()</code>
+中定义模型的操作，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line">device = <span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;Using <span class="subst">&#123;device&#125;</span> device&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NeuralNetwork</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(NeuralNetwork, self).__init__()</span><br><span class="line">        self.flatten = nn.Flatten()</span><br><span class="line">        self.linear_relu_stack = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">28</span>*<span class="number">28</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, <span class="number">10</span>),</span><br><span class="line">            nn.Dropout(p=<span class="number">0.2</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        logits = self.linear_relu_stack(x)</span><br><span class="line">        <span class="keyword">return</span> logits</span><br><span class="line"></span><br><span class="line">model = NeuralNetwork().to(device)</span><br><span class="line"><span class="built_in">print</span>(model)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Using cpu device</span><br><span class="line">NeuralNetwork(</span><br><span class="line">  (flatten): Flatten(start_dim=1, end_dim=-1)</span><br><span class="line">  (linear_relu_stack): Sequential(</span><br><span class="line">    (0): Linear(in_features=784, out_features=512, bias=True)</span><br><span class="line">    (1): ReLU()</span><br><span class="line">    (2): Linear(in_features=512, out_features=256, bias=True)</span><br><span class="line">    (3): ReLU()</span><br><span class="line">    (4): Linear(in_features=256, out_features=10, bias=True)</span><br><span class="line">    (5): Dropout(p=0.2, inplace=False)</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们构建的模型首先将二维图像通过 <code>Flatten</code>
+层压成一维向量，然后经过两个带有 <code>ReLU</code>
+激活函数的全连接隐藏层，最后送入到一个包含 10 个神经元的分类器以完成 10
+分类任务。我们还通过在最终输出前添加 Dropout 层来缓解过拟合。</p>
+<p>最终我们构建的模型会输出一个 10
+维向量（每一维对应一个类别的预测值），与先前介绍过的 pipeline
+模型一样，这里输出的是 logits 值，我们需要再接一个 Softmax
+层来计算最终的概率值。下面我们构建一个包含四个伪二维图像的 mini-batch
+来进行预测：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">X = torch.rand(<span class="number">4</span>, <span class="number">28</span>, <span class="number">28</span>, device=device)</span><br><span class="line">logits = model(X)</span><br><span class="line">pred_probab = nn.Softmax(dim=<span class="number">1</span>)(logits)</span><br><span class="line"><span class="built_in">print</span>(pred_probab.size())</span><br><span class="line">y_pred = pred_probab.argmax(-<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Predicted class: <span class="subst">&#123;y_pred&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([4, 10])</span><br><span class="line">Predicted class: tensor([3, 8, 3, 3])</span><br></pre></td></tr></table></figure>
+<p>可以看到，模型成功输出了维度为 (4,10) 的预测结果（每个样本输出一个 10
+维的概率向量）。最后我们通过 argmax
+操作，将输出的概率向量转换为对应的标签。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
       <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/elementwise compute" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -370,7 +479,7 @@ z=(x+y)×(y−2)
 
 
     
-      <article id="post-【后端】/python/第三方库/【pytorch】/加载数据/加载数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+      <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/torch.set_grad_enabled(False) 与 torch.no_grad() " class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -378,7 +487,7 @@ z=(x+y)×(y−2)
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/" target="_blank">加载数据</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" target="_blank">torch.set_grad_enabled(False) 与 torch.no_grad()</a>
   
     </h1>
   
@@ -386,7 +495,7 @@ z=(x+y)×(y−2)
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -399,13 +508,104 @@ z=(x+y)×(y−2)
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="加载数据">加载数据</h1>
-<p>Pytorch 提供了 <code>DataLoader</code> 和 <code>Dataset</code> 类（或
-<code>IterableDataset</code>）专门用于处理数据，它们既可以加载 Pytorch
-预置的数据集，也可以加载自定义数据。其中数据集类
-<code>Dataset</code>（或
-<code>IterableDataset</code>）负责存储样本以及它们对应的标签；数据加载类
-<code>DataLoader</code> 负责迭代地访问数据集中的样本。</p>
+    <h1
+id="torch.set_grad_enabledfalse-与-torch.no_grad">torch.set_grad_enabled(False)
+与 torch.no_grad()</h1>
+<p><code>torch.set_grad_enabled(False)</code> 和
+<code>torch.no_grad()</code> 都是 PyTorch
+中用于控制梯度计算行为的工具，但它们的适用范围和使用场景略有不同。</p>
+<h2 id="相同点">相同点</h2>
+<ol type="1">
+<li><strong>禁用梯度计算</strong>：
+<ul>
+<li>两者都会禁用梯度计算，确保前向传播过程中不记录计算图。</li>
+<li>主要用于推理或验证场景，以减少内存开销和加快运行速度。</li>
+</ul></li>
+<li><strong>性能优化</strong>：
+<ul>
+<li>两者都能有效地降低内存使用和提高运行效率。</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="不同点">不同点</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 47%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>特性</th>
+<th><code>torch.set_grad_enabled(False)</code></th>
+<th><code>torch.no_grad()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>动态性</strong></td>
+<td>可以在代码中根据条件动态控制是否禁用梯度计算</td>
+<td>仅用于禁用梯度计算，不能动态切换</td>
+</tr>
+<tr class="even">
+<td><strong>功能范围</strong></td>
+<td>适用于既可以启用又可以禁用梯度计算的场景</td>
+<td>只能禁用梯度计算</td>
+</tr>
+<tr class="odd">
+<td><strong>典型用法</strong></td>
+<td>用于统一控制梯度计算状态的代码块</td>
+<td>用于明确需要禁用梯度计算的代码块</td>
+</tr>
+<tr class="even">
+<td><strong>显式表达意图</strong></td>
+<td>隐式表达梯度计算的控制逻辑</td>
+<td>明确表达禁用梯度计算的意图</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="代码对比">代码对比</h2>
+<h3
+id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
+<ul>
+<li><p>用于在动态控制代码中设置梯度计算状态。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">training = <span class="literal">False</span>  <span class="comment"># training 是一个动态变量</span></span><br><span class="line">/*</span><br><span class="line">  .........</span><br><span class="line">*/</span><br><span class="line"><span class="keyword">with</span> torch.set_grad_enabled(training):</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 如果 training=True，则记录计算图；否则不记录。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="torch.no_grad"><code>torch.no_grad()</code></h3>
+<ul>
+<li><p>直接明确禁用梯度计算，通常用于推理。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 始终禁用梯度计算。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr />
+<h2 id="使用建议">使用建议</h2>
+<ol type="1">
+<li><p><strong>使用
+<code>torch.set_grad_enabled(False)</code></strong>：</p>
+<ul>
+<li><p>适合在包含训练和推理逻辑的统一代码中使用，特别是需要根据条件动态切换梯度计算状态的场景。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> phase <span class="keyword">in</span> [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;val&#x27;</span>]:</span><br><span class="line">    <span class="keyword">with</span> torch.set_grad_enabled(phase == <span class="string">&#x27;train&#x27;</span>):</span><br><span class="line">        outputs = model(inputs)</span><br><span class="line">        <span class="keyword">if</span> phase == <span class="string">&#x27;train&#x27;</span>:</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><p><strong>使用 <code>torch.no_grad()</code></strong>：</p>
+<ul>
+<li><p>适合单纯的推理或测试阶段，不涉及任何动态条件。</p></li>
+<li><p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="总结">总结</h2>
+<ul>
+<li><strong><code>torch.no_grad()</code></strong>
+更简洁明了，专门用于禁用梯度计算的场景。</li>
+<li><strong><code>torch.set_grad_enabled(False)</code></strong>
+提供了更多灵活性，适合动态控制梯度计算的复杂场景。</li>
+</ul>
+<p>如果仅仅是为了禁用梯度计算，建议使用
+<strong><code>torch.no_grad()</code></strong>，它语义更明确。</p>
 
     
 
@@ -432,7 +632,226 @@ z=(x+y)×(y−2)
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/view()与reshape()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" target="_blank">view()与reshape()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="view与reshape">view()与reshape()</h1>
+<p>总之，两者都是用来重塑 tensor 的 shape 的。view
+只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
+同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
+能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
+<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
+<blockquote>
+<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
+张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
+（Storage）以及 tensor 的步长 Stride</p>
+</blockquote>
+<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
+<p>tensor 数据采用头信息区（Tensor）和存储区
+（Storage）分开存储的形式，如图 1
+所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
+tensor，tensor 名为 A，A 的形状 size、步长
+stride、数据的索引等信息都存储在头信息区，而 A
+所存储的真实数据则存储在存储区。另外，如果我们对 A
+进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
+的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
+的头信息区对数据的索引方式
+</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
+<strong>这种方式其实就是 <font color='green'> 浅拷贝
+</font></strong></p>
+<div style="text-align: center">
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
+&lt;br&gt;
+图 1 Torch 中 Tensor 的存储结构</code></pre>
+</div>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+    
+      <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/tranpose()与t()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/" target="_blank">tranpose()与t()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="tranpose与t">tranpose()与t()</h1>
+<h2 id="torch.tranpose">torch.tranpose()</h2>
+<p><strong>转置 <code>transpose</code></strong>
+交换张量中的两个维度，参数为相应的维度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">4</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">5</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">6</span>]])</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011314817.png"
+alt="image-20250101131446692" />
+<figcaption aria-hidden="true">image-20250101131446692</figcaption>
+</figure>
+<h2 id="torch.t">torch.t()</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011315079.png"
+alt="image-20250101131549964" />
+<figcaption aria-hidden="true">image-20250101131549964</figcaption>
+</figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/">展开全文 >></a>
     </p>
     
 
@@ -936,334 +1355,6 @@ aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
 
 
     
-      <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/permute()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" target="_blank">permute()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="permute">permute()</h1>
-<p><strong>交换维度 <code>permute</code></strong> 与
-<code>transpose</code>
-函数每次只能交换两个维度不同，<code>permute</code>
-可以直接设置新的维度排列方式，参数 <code>dims</code>
-是一个元组，表示新的维度顺序：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">         [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = x.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">4</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">2</span>, <span class="number">5</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">3</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png"
-alt="image-20250101132035181" />
-<figcaption aria-hidden="true">image-20250101132035181</figcaption>
-</figure>
-<p><code>(2, 0, 1)</code> 的含义：</p>
-<ul>
-<li>将原来的 <strong>第 2 维</strong> 移到第 0 个位置。</li>
-<li>将原来的 <strong>第 0 维</strong> 移到第 1 个位置。</li>
-<li>将原来的 <strong>第 1 维</strong> 移到第 2 个位置。</li>
-</ul>
-<p>对应的形状变为：</p>
-<ul>
-<li>原来 <code>x.size()</code> 为 <code>(2, 3, 5)</code>。</li>
-<li>调整后变为 <code>(5, 2, 3)</code>。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/view()与reshape()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" target="_blank">view()与reshape()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="view与reshape">view()与reshape()</h1>
-<p>总之，两者都是用来重塑 tensor 的 shape 的。view
-只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
-同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
-能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
-<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
-<blockquote>
-<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
-张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
-（Storage）以及 tensor 的步长 Stride</p>
-</blockquote>
-<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
-<p>tensor 数据采用头信息区（Tensor）和存储区
-（Storage）分开存储的形式，如图 1
-所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
-tensor，tensor 名为 A，A 的形状 size、步长
-stride、数据的索引等信息都存储在头信息区，而 A
-所存储的真实数据则存储在存储区。另外，如果我们对 A
-进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
-的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
-的头信息区对数据的索引方式
-</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
-<strong>这种方式其实就是 <font color='green'> 浅拷贝
-</font></strong></p>
-<div style="text-align: center">
-<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
-&lt;br&gt;
-图 1 Torch 中 Tensor 的存储结构</code></pre>
-</div>
-    
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
-      <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/tranpose()与t()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/" target="_blank">tranpose()与t()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="tranpose与t">tranpose()与t()</h1>
-<h2 id="torch.tranpose">torch.tranpose()</h2>
-<p><strong>转置 <code>transpose</code></strong>
-交换张量中的两个维度，参数为相应的维度：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">tensor([[<span class="number">1</span>, <span class="number">4</span>],</span><br><span class="line">        [<span class="number">2</span>, <span class="number">5</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">6</span>]])</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011314817.png"
-alt="image-20250101131446692" />
-<figcaption aria-hidden="true">image-20250101131446692</figcaption>
-</figure>
-<h2 id="torch.t">torch.t()</h2>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011315079.png"
-alt="image-20250101131549964" />
-<figcaption aria-hidden="true">image-20250101131549964</figcaption>
-</figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-    
       <article id="post-【后端】/C++/【Tips】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1424,7 +1515,7 @@ alt="在这里插入图片描述" />
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
-		toc_hide_index: true,
+		toc_hide_index: false,
 		root: "/",
 		innerArchive: true,
 		showTags: true
@@ -1532,11 +1623,11 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1556,23 +1647,11 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1592,11 +1671,19 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1604,7 +1691,7 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1612,11 +1699,19 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1625,10 +1720,6 @@ alt="在这里插入图片描述" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1644,19 +1735,19 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

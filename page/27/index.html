@@ -213,172 +213,6 @@
             
 
   
-    <article id="post-命令操作/【Linux】/如何优雅地监控GPU的使用情况？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/" target="_blank">服务器炼丹代码配置</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="如何优雅地监控-gpu-的使用情况">如何优雅地监控 GPU
-的·使用情况？</h1>
-<p>这是一篇非常基础的记录：如何优雅地监控服务器 GPU 使用情况？下面总结 4
-个最常用的方式：</p>
-<ol type="1">
-<li>nvidia-smi （最有名，没有之一） 🌟🌟</li>
-<li>gpustat （彩色并简约的显示） 🌟🌟🌟🌟</li>
-<li>nvtop （完整的信息，需 root 权限 apt 安装，不是非常方便）
-🌟🌟🌟</li>
-<li>nvitop （完整的信息，可作为 Python 的库安装，非常方便）
-🌟🌟🌟🌟🌟</li>
-</ol>
-<h2 id="工具-1nvidia-smi">工具 1：nvidia-smi</h2>
-<p>直接在终端输入 <code>nvidia-smi</code> 可以得到显卡情况：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221350846.png"
-alt="image-20241222135010770" />
-<figcaption aria-hidden="true">image-20241222135010770</figcaption>
-</figure>
-<p>如果希望自动刷新这个命令，并且只看当前信息，则可以执行如下命令实现每
-1s 刷新一次：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch -n 0.5 nvidia-smi</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<p><code>nvidia-smi</code> 是系统指令</p>
-<h2 id="工具-2gpustat">工具 2：gpustat</h2>
-<p>这个命令相比 <code>nvidia-smi</code> 更加好看一些，命令如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpustat</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221317457.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>显然这种带高亮的显示看起来更舒服，而且可以显示出完整显卡的完整名称，以及正在使用
-GPU 的用户。一个缺点就是不能像 <code>nvidia-smi</code>
-一样显示出各个进程的信息。</p>
-<p>如果希望每秒刷新这个信息，并只显示当前信息，则执行以下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpustat -i</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install gpustat</span><br></pre></td></tr></table></figure>
-<h2 id="工具-3nvtop">工具 3：nvtop</h2>
-<p>网上很多人说这个工具非常好用，能够非常优雅地全面地监控显卡信息，官方图如下（显示显卡使用情况以及详细的折线图）：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221349237.png"
-alt="image-20241222134924101" />
-<figcaption aria-hidden="true">image-20241222134924101</figcaption>
-</figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">nvtop version 3.1.0</span><br><span class="line">Available options:</span><br><span class="line">  -d --delay        : Select the refresh rate (1 == 0.1s)</span><br><span class="line">  -v --version      : Print the version and exit</span><br><span class="line">  -c --config-file  : Provide a custom config file location to load/save preferences</span><br><span class="line">  -p --no-plot      : Disable bar plot</span><br><span class="line">  -r --reverse-abs  : Reverse abscissa: plot the recent data left and older on the right</span><br><span class="line">  -C --no-color     : No colors</span><br><span class="line">line information</span><br><span class="line">  -f --freedom-unit : Use fahrenheit</span><br><span class="line">  -i --gpu-info     : Show bar with additional GPU parametres</span><br><span class="line">  -E --encode-hide  : Set encode/decode auto hide time in seconds (default 30s, negative = always on screen)</span><br><span class="line">  -h --help         : Print help and exit</span><br></pre></td></tr></table></figure>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::nvtop</span><br></pre></td></tr></table></figure>
-<h2 id="方法-4nvitop">方法 4：nvitop</h2>
-<p>想要拥有 <code>nvtop</code> 那样详细的展示，又想拥有
-<code>gpustat</code> 那样彩色的界面，并且希望能够像 <code>gpustat</code>
-一样通过 <code>pip</code> 快速安装，那就不得不提 <code>nvitop</code>
-工具了。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvitop</span><br></pre></td></tr></table></figure>
-<p>展示的模式有三种：</p>
-<ol type="1">
-<li>auto （默认）</li>
-<li>compact</li>
-<li>full</li>
-</ol>
-<p>如果希望展示超完整的显卡信息，则用如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvitop -m full</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221405175.png"
-alt="image-20241222140529049" />
-<figcaption aria-hidden="true">image-20241222140529049</figcaption>
-</figure>
-<p>我认为这个工具最好用的地方不在于彩色文字和进度条，而在于它能够<strong>完整地显示出每个进程的执行用户、运行时长、执行指令以及每个进程所使用的
-GPU 编号。可谓是集其他工具的优势于一身的实用主义工具了！</strong></p>
-<p><strong>安装方式</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install -y conda-forge::nvitop</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这条命令只需要在一个 conda
-虚拟环境下安装之后，所有虚拟环境下都可以使用这个命令</p>
-</blockquote>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E7%9B%91%E6%8E%A7GPU%E7%9A%84%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5%EF%BC%9F/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-命令操作/【Linux】/文件路径中的斜杠与反斜杠" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -490,7 +324,7 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
 
 
   
-    <article id="post-命令操作/【huggingface】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/【OpenAI】/如何利用 ChatGPT 帮助开展日常科研工作？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -498,7 +332,7 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" target="_blank">Errors</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/" target="_blank">如何利用 ChatGPT 帮助开展日常科研工作？</a>
   
     </h1>
   
@@ -506,7 +340,7 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -519,18 +353,27 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="errors">Errors</h1>
-<h2 id="httpsconnectionpool-错误">HTTPSConnectionPool 错误</h2>
-<p>在下载 huggingface
-模型的时候，即使你已经有了正确的上网姿势，也经常会出现这个错误：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProxyError: (MaxRetryError(&quot;HTTPSConnectionPool(host=&#x27;huggingface.co&#x27;, port=443): Max retries exceeded with url: /gpt2/resolve/main/config.json (Caused by ProxyError(&#x27;Unable to connect to proxy&#x27;, SSLError(SSLZeroReturnError(6, &#x27;TLS/SSL connection has been closed (EOF) (_ssl.c:1149)&#x27;))))&quot;), &#x27;(Request ID: 0800ad0f-291e-4cc5-9027-80f1427eda89)&#x27;)</span><br></pre></td></tr></table></figure>
-<p>如在下载 Tokenizer 的时候，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;csebuetnlp/mT5_multilingual_XLSum&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>就会出现以上的错误 HTTPSConnectionPool(host =‘huggingface.co‘, port =
-443)。</p>
-<p>解决的办法可以有两种。</p>
+    <h1 id="如何利用-chatgpt-帮助开展日常科研工作">如何利用 ChatGPT
+帮助开展日常科研工作？</h1>
+<h2 id="论文搜集助理">论文搜集助理</h2>
+<p>指定论文主题和时间范围，ChatGPT
+会自动给出一些代表性论文，根据论文顺藤摸瓜，可以对相关领域有大概了解。</p>
+<blockquote>
+<p>重要提醒：ChatGPT
+可能会编造不存在的论文，而且论文数据库与谷歌学术等平台差距较大，大家在使用的时候注意甄别和交叉验证。</p>
+</blockquote>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411081911822.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>举个例子，我们让 ChatGPT 搜索过去一年 <a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=554951561&amp;content_type=Answer&amp;match_order=1&amp;q=脉冲神经网络&amp;zhida_source=entity">脉冲神经网络</a>
+的文章。通过上图可以看出，ChatGPT
+不仅给出了脉冲神经网络过去一年这一领域的代表性文章，还给出了进一步搜索论文的方法，对科研小白很友好。</p>
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/#more">more >></a>
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/#more">more >></a>
     
     
 
@@ -547,7 +390,7 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">OpenAI</a>
         		</li>
       		
 		</ul>
@@ -557,7 +400,7 @@ id="文件路径中的和">文件路径中的<code>/</code>、<code>\</code>和<
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90OpenAI%E3%80%91/%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%20ChatGPT%20%E5%B8%AE%E5%8A%A9%E5%BC%80%E5%B1%95%E6%97%A5%E5%B8%B8%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%EF%BC%9F/">展开全文 >></a>
     </p>
     
 
@@ -709,7 +552,7 @@ Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使�
 
 
   
-    <article id="post-命令操作/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/【Windows】/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -717,7 +560,7 @@ Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" target="_blank">HuggingFace 缓存路径</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" target="_blank">【Reference】</a>
   
     </h1>
   
@@ -725,7 +568,7 @@ Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使�
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -738,25 +581,109 @@ Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="huggingface-缓存路径">HuggingFace 缓存路径</h1>
-<h2 id="缓存路径和缓存文件结构">缓存路径和缓存文件结构</h2>
-<h3 id="缓存路径">缓存路径</h3>
-<p>首先，你需要先了解 Transformers
-库对于它默认下载的缓存路径和文件结构，这样能让你更清楚的明白，Transformers
-库的.cache 系统以及如何更改缓存路径。</p>
-<p>通过 Hugging Face 的 Transformers
-库自动下载模型，会先缓存在默认路径：</p>
+    <h1 id="reference">【Reference】</h1>
 <ul>
-<li><strong>Linux</strong>：<code>'~/.cache/huggingface/hub'</code></li>
-<li><strong>Windows</strong>
-：<code>C:\Users\username\.cache\huggingface\hub</code>
-缓存的模型文件以哈希值形式储存，文件结构如下：</li>
+<li><a
+target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/windows-commands">Windows
+命令 | Microsoft Learn</a></li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; <span class="comment"># 缓存路径</span></span><br><span class="line">├─ &lt;MODELS&gt;<span class="comment"># 模型路径</span></span><br><span class="line">├─ &lt;DATASETS&gt;<span class="comment"># 数据集路径</span></span><br><span class="line">├─ &lt;SPACES&gt;<span class="comment"># 空间路径</span></span><br></pre></td></tr></table></figure>
-<p><code>&lt;CACHE_DIR&gt;</code> 通常由 <code>HF_HOME</code> 或
-<code>HF_HUB_CACHE</code> 指定，具体看第二节</p>
+
     
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/#more">more >></a>
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-命令操作/【huggingface】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2 id="httpsconnectionpool-错误">HTTPSConnectionPool 错误</h2>
+<p>在下载 huggingface
+模型的时候，即使你已经有了正确的上网姿势，也经常会出现这个错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProxyError: (MaxRetryError(&quot;HTTPSConnectionPool(host=&#x27;huggingface.co&#x27;, port=443): Max retries exceeded with url: /gpt2/resolve/main/config.json (Caused by ProxyError(&#x27;Unable to connect to proxy&#x27;, SSLError(SSLZeroReturnError(6, &#x27;TLS/SSL connection has been closed (EOF) (_ssl.c:1149)&#x27;))))&quot;), &#x27;(Request ID: 0800ad0f-291e-4cc5-9027-80f1427eda89)&#x27;)</span><br></pre></td></tr></table></figure>
+<p>如在下载 Tokenizer 的时候，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;csebuetnlp/mT5_multilingual_XLSum&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>就会出现以上的错误 HTTPSConnectionPool(host =‘huggingface.co‘, port =
+443)。</p>
+<p>解决的办法可以有两种。</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/#more">more >></a>
     
     
 
@@ -783,7 +710,7 @@ Bash，并且你的脚本仍然无法运行，那么可能是因为脚本中使�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/Errors/">展开全文 >></a>
     </p>
     
 
@@ -914,7 +841,7 @@ Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong
 
 
   
-    <article id="post-命令操作/【Windows】/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/【huggingface】/HuggingFace缓存路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -922,7 +849,7 @@ Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" target="_blank">【Reference】</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" target="_blank">HuggingFace 缓存路径</a>
   
     </h1>
   
@@ -930,7 +857,7 @@ Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -943,13 +870,26 @@ Windows 的各种版本都与其兼容，用户可以在 <strong>Windows</strong
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="reference">【Reference】</h1>
+    <h1 id="huggingface-缓存路径">HuggingFace 缓存路径</h1>
+<h2 id="缓存路径和缓存文件结构">缓存路径和缓存文件结构</h2>
+<h3 id="缓存路径">缓存路径</h3>
+<p>首先，你需要先了解 Transformers
+库对于它默认下载的缓存路径和文件结构，这样能让你更清楚的明白，Transformers
+库的.cache 系统以及如何更改缓存路径。</p>
+<p>通过 Hugging Face 的 Transformers
+库自动下载模型，会先缓存在默认路径：</p>
 <ul>
-<li><a
-target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/windows-commands">Windows
-命令 | Microsoft Learn</a></li>
+<li><strong>Linux</strong>：<code>'~/.cache/huggingface/hub'</code></li>
+<li><strong>Windows</strong>
+：<code>C:\Users\username\.cache\huggingface\hub</code>
+缓存的模型文件以哈希值形式储存，文件结构如下：</li>
 </ul>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;CACHE_DIR&gt; <span class="comment"># 缓存路径</span></span><br><span class="line">├─ &lt;MODELS&gt;<span class="comment"># 模型路径</span></span><br><span class="line">├─ &lt;DATASETS&gt;<span class="comment"># 数据集路径</span></span><br><span class="line">├─ &lt;SPACES&gt;<span class="comment"># 空间路径</span></span><br></pre></td></tr></table></figure>
+<p><code>&lt;CACHE_DIR&gt;</code> 通常由 <code>HF_HOME</code> 或
+<code>HF_HUB_CACHE</code> 指定，具体看第二节</p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/#more">more >></a>
+    
     
 
     
@@ -965,7 +905,7 @@ target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-s
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">huggingface</a>
         		</li>
       		
 		</ul>
@@ -975,7 +915,106 @@ target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-s
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Windows%E3%80%91/Reference/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90huggingface%E3%80%91/HuggingFace%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【前端】/js/tutorial/1 JS的调用方式与执行顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" target="_blank">1 JS的调用方式与执行顺序</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="js的调用方式与执行顺序">1 JS的调用方式与执行顺序</h1>
+<h2 id="使用方式">使用方式</h2>
+<p>HTML页面中的任意位置加上<code>&lt;script type="module"&gt;&lt;/script&gt;</code>标签即可。</p>
+<p>常见使用方式有以下几种：</p>
+<ul>
+<li><p>直接在<code>&lt;script type="module"&gt;&lt;/script&gt;</code>标签内写JS代码。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">let</span> x = <span class="number">3</span>;</span></span><br><span class="line"><span class="language-javascript">    <span class="variable language_">console</span>.<span class="title function_">log</span>(x);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>直接引入文件：<code>&lt;script type="module" src="/static/js/index.js"&gt;&lt;/script&gt;</code>。例如<code>/static/js/index.js</code>文件中的内容为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">&quot;acwing&quot;</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">print</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Hello World!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> &#123;</span><br><span class="line">    name,</span><br><span class="line">    print</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>将文件中所需的代码，通过<code>import</code>关键字引入到当前作用域。例如<code>&lt;script type="module"&gt;&lt;/script&gt;</code>中的内容为：</p></li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">import</span> &#123; name, print &#125; <span class="keyword">from</span> <span class="string">&quot;/static/js/index.js&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">console</span>.<span class="title function_">log</span>(name);</span></span><br><span class="line"><span class="language-javascript">	<span class="title function_">print</span>();</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/1%20JS%E7%9A%84%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
     </p>
     
 
@@ -1171,7 +1210,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 
 
   
-    <article id="post-【前端】/css/tutorial/【10.盒子模型】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【前端】/js/tutorial/10 事件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1179,7 +1218,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/" target="_blank">【10. 盒子模型】</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/" target="_blank">10 事件</a>
   
     </h1>
   
@@ -1187,7 +1226,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1200,15 +1239,46 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="盒子模型">【10. 盒子模型】</h1>
-<h2 id="box-sizing"><code>box-sizing</code></h2>
-<p>CSS 中的 <code>box-sizing</code> 属性定义了 user agent
-应该如何计算一个元素的总宽度和总高度。</p>
+    <h1 id="事件">10 事件</h1>
+<p>JavaScript的代码一般通过事件触发。</p>
+<p>可以通过<code>addEventListener</code>函数为元素绑定事件的触发函数。</p>
+<p>常见的触发函数有：</p>
+<h2 id="鼠标">鼠标</h2>
 <ul>
-<li><code>content-box</code>：是默认值，设置<code>border</code>和<code>padding</code>均会增加元素的宽高。</li>
-<li><code>border-box</code>：设置<code>border</code>和<code>padding</code>不会改变元素的宽高，而是挤占内容区域。</li>
+<li><code>click</code>：鼠标左键在一个元素上被按下和放开时，<code>click</code>
+事件就会被触发。</li>
+<li><code>dblclick</code>：鼠标左键双击</li>
+<li><code>contextmenu</code>：鼠标右键点击</li>
+<li><code>mousedown</code>：鼠标按下，包括左键、滚轮、右键
+<ul>
+<li><code>event.button</code>：0表示左键，1表示中键，2表示右键</li>
+</ul></li>
+<li><code>mouseup</code>：鼠标弹起，包括左键、滚轮、右键
+<ul>
+<li><code>event.button</code>：0表示左键，1表示中键，2表示右键</li>
+</ul></li>
 </ul>
-
+<h2 id="键盘">键盘</h2>
+<ul>
+<li><code>keydown</code>：某个键是否被按住，事件会连续触发
+<ul>
+<li><code>event.code</code>：返回按的是哪个键</li>
+<li><code>event.altKey</code>、<code>event.ctrlKey</code>、<code>event.shiftKey</code>分别表示是否同时按下了alt、ctrl、shift键。</li>
+</ul></li>
+<li><code>keyup</code>：某个按键是否被释放
+<ul>
+<li><code>event</code>常用属性同上</li>
+</ul></li>
+<li><code>keypress</code>：紧跟在<code>keydown</code>事件后触发，只有按下字符键时触发。适用于判定用户<strong>输入的字符</strong>
+<ul>
+<li><code>event</code>常用属性同上</li>
+<li>功能键如 F1、ESC键不会触发 <code>keypress</code> 事件</li>
+</ul></li>
+</ul>
+<p><code>keydown</code>、<code>keyup</code>、<code>keypress</code>的关系类似于鼠标的<code>mousedown</code>、<code>mouseup</code>、<code>click</code></p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/#more">more >></a>
+    
     
 
     
@@ -1224,7 +1294,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		
 		</ul>
@@ -1234,118 +1304,7 @@ href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/67595
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%9010.%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【前端】/css/tutorial/【1.样式定义方式】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/" target="_blank">【1. 样式定义方式】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="样式定义方式">【1. 样式定义方式】</h1>
-<h2 id="行内样式表inline-style-sheet">行内样式表（inline style
-sheet）</h2>
-<p>直接定义在标签的<code>style</code>属性中。</p>
-<ul>
-<li>作用范围：仅对当前标签产生影响。</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/images/mountain.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 300px; height: 200px;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="内部样式表internal-style-sheet">内部样式表（internal style
-sheet）</h2>
-<p>定义在<code>style</code>标签中，通过选择器影响对应的标签。</p>
-<ul>
-<li>作用范围：可以对同一个页面中的多个元素产生影响。</li>
-</ul>
-<h2 id="外部样式表external-style-sheet">外部样式表（external style
-sheet）</h2>
-<p>定义在 css 样式文件中，通过选择器影响对应的标签。可以用 link
-标签引入某些页面。</p>
-<ul>
-<li>作用范围：可以对多个页面产生影响。</li>
-</ul>
-<h2 id="注释">注释</h2>
-<p>注意不能使用//。</p>
-<p>只有：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 注释 */</span> </span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%901.%E6%A0%B7%E5%BC%8F%E5%AE%9A%E4%B9%89%E6%96%B9%E5%BC%8F%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/js/tutorial/10%20%E4%BA%8B%E4%BB%B6/">展开全文 >></a>
     </p>
     
 
@@ -1529,15 +1488,15 @@ sheet）</h2>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1553,15 +1512,11 @@ sheet）</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1569,11 +1524,19 @@ sheet）</h2>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1585,15 +1548,11 @@ sheet）</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1625,15 +1584,11 @@ sheet）</h2>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1641,7 +1596,15 @@ sheet）</h2>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1650,10 +1613,6 @@ sheet）</h2>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

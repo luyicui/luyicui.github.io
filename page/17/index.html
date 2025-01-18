@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/构建模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【pytorch】/加载数据/DataLoader" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/" target="_blank">构建模型</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/DataLoader/" target="_blank">DataLoader</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/DataLoader/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -242,149 +242,29 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="构建模型">构建模型</h1>
-<p>Pytorch 所有的模块（层）都是 <code>nn.Module</code>
-的子类，神经网络模型本身就是一个模块，它还包含了很多其他的模块。</p>
-<p>我们还是以前面加载的 FashionMNIST
-数据库为例，构建一个神经网络模型来完成图像分类。模型同样继承自
-<code>nn.Module</code> 类，通过 <code>__init__()</code>
-初始化模型中的层和参数，在 <code>forward()</code>
-中定义模型的操作，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line">device = <span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;Using <span class="subst">&#123;device&#125;</span> device&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NeuralNetwork</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(NeuralNetwork, self).__init__()</span><br><span class="line">        self.flatten = nn.Flatten()</span><br><span class="line">        self.linear_relu_stack = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">28</span>*<span class="number">28</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">256</span>, <span class="number">10</span>),</span><br><span class="line">            nn.Dropout(p=<span class="number">0.2</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        logits = self.linear_relu_stack(x)</span><br><span class="line">        <span class="keyword">return</span> logits</span><br><span class="line"></span><br><span class="line">model = NeuralNetwork().to(device)</span><br><span class="line"><span class="built_in">print</span>(model)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Using cpu device</span><br><span class="line">NeuralNetwork(</span><br><span class="line">  (flatten): Flatten(start_dim=1, end_dim=-1)</span><br><span class="line">  (linear_relu_stack): Sequential(</span><br><span class="line">    (0): Linear(in_features=784, out_features=512, bias=True)</span><br><span class="line">    (1): ReLU()</span><br><span class="line">    (2): Linear(in_features=512, out_features=256, bias=True)</span><br><span class="line">    (3): ReLU()</span><br><span class="line">    (4): Linear(in_features=256, out_features=10, bias=True)</span><br><span class="line">    (5): Dropout(p=0.2, inplace=False)</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>可以看到，我们构建的模型首先将二维图像通过 <code>Flatten</code>
-层压成一维向量，然后经过两个带有 <code>ReLU</code>
-激活函数的全连接隐藏层，最后送入到一个包含 10 个神经元的分类器以完成 10
-分类任务。我们还通过在最终输出前添加 Dropout 层来缓解过拟合。</p>
-<p>最终我们构建的模型会输出一个 10
-维向量（每一维对应一个类别的预测值），与先前介绍过的 pipeline
-模型一样，这里输出的是 logits 值，我们需要再接一个 Softmax
-层来计算最终的概率值。下面我们构建一个包含四个伪二维图像的 mini-batch
-来进行预测：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">X = torch.rand(<span class="number">4</span>, <span class="number">28</span>, <span class="number">28</span>, device=device)</span><br><span class="line">logits = model(X)</span><br><span class="line">pred_probab = nn.Softmax(dim=<span class="number">1</span>)(logits)</span><br><span class="line"><span class="built_in">print</span>(pred_probab.size())</span><br><span class="line">y_pred = pred_probab.argmax(-<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Predicted class: <span class="subst">&#123;y_pred&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([4, 10])</span><br><span class="line">Predicted class: tensor([3, 8, 3, 3])</span><br></pre></td></tr></table></figure>
-<p>可以看到，模型成功输出了维度为 (4,10) 的预测结果（每个样本输出一个 10
-维的概率向量）。最后我们通过 argmax
-操作，将输出的概率向量转换为对应的标签。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/elementwise compute" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/elementwise%20compute/" target="_blank">elementwise compute</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/elementwise%20compute/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>张量的加减乘除是按元素进行计算的，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], dtype=torch.double)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = torch.tensor([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], dtype=torch.double)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x + y)</span><br><span class="line">tensor([<span class="number">5.</span>, <span class="number">7.</span>, <span class="number">9.</span>], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x - y)</span><br><span class="line">tensor([-<span class="number">3.</span>, -<span class="number">3.</span>, -<span class="number">3.</span>], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x * y)</span><br><span class="line">tensor([ <span class="number">4.</span>, <span class="number">10.</span>, <span class="number">18.</span>], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x / y)</span><br><span class="line">tensor([<span class="number">0.2500</span>, <span class="number">0.4000</span>, <span class="number">0.5000</span>], dtype=torch.float64)</span><br></pre></td></tr></table></figure>
-<p>Pytorch 还提供了许多常用的计算函数，如 <code>torch.dot()</code>
-计算向量点积、<code>torch.mm()</code>
-计算矩阵相乘、三角函数和各种数学函数等：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.dot(y)</span><br><span class="line">tensor(<span class="number">32.</span>, dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.sin()</span><br><span class="line">tensor([<span class="number">0.8415</span>, <span class="number">0.9093</span>, <span class="number">0.1411</span>], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.exp()</span><br><span class="line">tensor([ <span class="number">2.7183</span>,  <span class="number">7.3891</span>, <span class="number">20.0855</span>], dtype=torch.float64)</span><br></pre></td></tr></table></figure>
-<p>除了数学运算，Pytorch 还提供了多种张量操作函数，如聚合
-(aggregation)、拼接
-(concatenation)、比较、随机采样、序列化等，详细使用方法可以参见 <a
-target="_blank" rel="noopener" href="https://pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">Pytorch
-官方文档</a>。</p>
+    <h1 id="dataloader">DataLoader</h1>
+<p>前面的数据集 <code>Dataset</code>
+类提供了一种按照索引访问样本的方式。不过在实际训练模型时，我们都需要先将数据集切分为很多的
+mini-batches，然后按批 (batch)
+将样本送入模型，并且循环这一过程，每一个完整遍历所有样本的循环称为一个
+epoch。</p>
 <blockquote>
-<p>对张量进行聚合（如求平均、求和、最大值和最小值等）或拼接操作时，可以指定进行操作的维度
-(dim)。例如，计算张量的平均值，在默认情况下会计算所有元素的平均值。：</p>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]], dtype=torch.double)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.mean()</span><br><span class="line">tensor(<span class="number">3.5000</span>, dtype=torch.float64)</span><br></pre></td></tr></table></figure></p>
-<p>更常见的情况是需要计算某一行或某一列的平均值，此时就需要设定计算的维度，例如分别对第
-0 维和第 1 维计算平均值：</p>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.mean(dim=<span class="number">0</span>)</span><br><span class="line">tensor([<span class="number">2.5000</span>, <span class="number">3.5000</span>, <span class="number">4.5000</span>], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.mean(dim=<span class="number">1</span>)</span><br><span class="line">tensor([<span class="number">2.</span>, <span class="number">5.</span>], dtype=torch.float64)</span><br></pre></td></tr></table></figure></p>
-<p>注意，上面的计算自动去除了多余的维度，因此结果从矩阵变成了向量，如果要保持维度不变，可以设置
-<code>keepdim=True</code>：</p>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.mean(dim=<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">tensor([[<span class="number">2.5000</span>, <span class="number">3.5000</span>, <span class="number">4.5000</span>]], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x.mean(dim=<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">tensor([[<span class="number">2.</span>],</span><br><span class="line">        [<span class="number">5.</span>]], dtype=torch.float64)</span><br></pre></td></tr></table></figure></p>
-<p>拼接 <code>torch.cat</code>
-操作类似，通过指定拼接维度，可以获得不同的拼接结果：</p>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>]], dtype=torch.double)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = torch.tensor([[<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]], dtype=torch.double)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.cat((x, y), dim=<span class="number">0</span>)</span><br><span class="line">tensor([[ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>],</span><br><span class="line">        [ <span class="number">4.</span>,  <span class="number">5.</span>,  <span class="number">6.</span>],</span><br><span class="line">        [ <span class="number">7.</span>,  <span class="number">8.</span>,  <span class="number">9.</span>],</span><br><span class="line">        [<span class="number">10.</span>, <span class="number">11.</span>, <span class="number">12.</span>]], dtype=torch.float64)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.cat((x, y), dim=<span class="number">1</span>)</span><br><span class="line">tensor([[ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>,  <span class="number">7.</span>,  <span class="number">8.</span>,  <span class="number">9.</span>],</span><br><span class="line">        [ <span class="number">4.</span>,  <span class="number">5.</span>,  <span class="number">6.</span>, <span class="number">10.</span>, <span class="number">11.</span>, <span class="number">12.</span>]], dtype=torch.float64)</span><br></pre></td></tr></table></figure></p>
+<p>训练模型时，我们通常会在每次 epoch
+循环开始前随机打乱样本顺序以缓解过拟合。</p>
 </blockquote>
-<p>组合使用这些操作就可以写出复杂的数学计算表达式。例如对于 <span
-class="math display">\[
-z=(x+y)×(y−2)
-\]</span> 当 <span class="math inline">\(x=2,y=3\)</span>
-时，很容易计算出 <span class="math inline">\(z=5\)</span>。使用 Pytorch
-来实现这一计算过程与 Python
-非常类似，唯一的不同是数据使用张量进行保存：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([<span class="number">2.</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = torch.tensor([<span class="number">3.</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = (x + y) * (y - <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(z)</span><br><span class="line">tensor([<span class="number">5.</span>])</span><br></pre></td></tr></table></figure>
-
+<h2 id="简介">简介</h2>
+<ol type="1">
+<li>作用：torch.utils.data.DataLoader 主要是对数据进行 batch
+的划分。数据加载器，结合了数据集和取样器，并且可以提供多个线程处理数据集。在训练模型时使用到此函数，用来
+<strong>把训练数据分成多个小组</strong> ，此函数
+<strong>每次抛出一组数据</strong>
+。直至把所有的数据都抛出。就是做一个数据的初始化。</li>
+<li>好处：使用 DataLoader
+的好处是，可以快速的迭代数据。用于生成迭代数据非常方便。</li>
+</ol>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/DataLoader/#more">more >></a>
+    
     
 
     
@@ -410,7 +290,7 @@ z=(x+y)×(y−2)
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/elementwise%20compute/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/DataLoader/">展开全文 >></a>
     </p>
     
 
@@ -440,7 +320,7 @@ z=(x+y)×(y−2)
 
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.softmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.matmul()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -448,7 +328,7 @@ z=(x+y)×(y−2)
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" target="_blank">torch.softmax()</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" target="_blank">torch.matmul()</a>
   
     </h1>
   
@@ -456,7 +336,7 @@ z=(x+y)×(y−2)
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -469,27 +349,23 @@ z=(x+y)×(y−2)
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="torch.softmax">torch.softmax()</h1>
-<h2 id="softmax-函数">Softmax 函数</h2>
-<p>首先说一下 Softmax 函数，公式如下：</p>
-<p><span class="math display">\[
-Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}
-\]</span></p>
-<p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">1</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.134</span></span><br><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">2</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.365</span></span><br></pre></td></tr></table></figure>
-<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365,
-0.365]。</p>
-<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft
-形式。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg"
-alt="36a034ac7464ecd31f8e582b254271c" />
-<figcaption
-aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
-</figure>
+    <h1 id="torch.matmul">torch.matmul()</h1>
+<h2 id="函数介绍">函数介绍</h2>
+<p>pytorch 中两个张量的乘法可以分为两种：</p>
+<ul>
+<li>两个张量对应元素相乘，在 PyTorch 中可以通过 <strong>torch.mul
+函数</strong>（或*运算符）实现</li>
+<li>两个张量矩阵相乘，在 PyTorch 中可以通过 <strong>torch.matmul
+函数</strong> 实现</li>
+</ul>
+<p><strong>torch.matmul(input, other) → Tensor</strong></p>
+<p>计算两个张量 input 和 other 的矩阵乘积</p>
+<blockquote>
+<p>【注意】：matmul
+函数没有强制规定维度和大小，可以用利用广播机制进行不同维度的相乘操作。</p>
+</blockquote>
     
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/#more">more >></a>
     
     
 
@@ -516,7 +392,7 @@ aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.matmul()/">展开全文 >></a>
     </p>
     
 
@@ -720,6 +596,112 @@ aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
 
 
   
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.softmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" target="_blank">torch.softmax()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="torch.softmax">torch.softmax()</h1>
+<h2 id="softmax-函数">Softmax 函数</h2>
+<p>首先说一下 Softmax 函数，公式如下：</p>
+<p><span class="math display">\[
+Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}
+\]</span></p>
+<p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">1</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.134</span></span><br><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">2</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.365</span></span><br></pre></td></tr></table></figure>
+<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365,
+0.365]。</p>
+<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft
+形式。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg"
+alt="36a034ac7464ecd31f8e582b254271c" />
+<figcaption
+aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.mul()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -783,6 +765,122 @@ alt="image-20250101012642971" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.mul()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/view()与reshape()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" target="_blank">view()与reshape()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="view与reshape">view()与reshape()</h1>
+<p>总之，两者都是用来重塑 tensor 的 shape 的。view
+只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
+同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
+能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
+<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
+<blockquote>
+<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
+张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
+（Storage）以及 tensor 的步长 Stride</p>
+</blockquote>
+<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
+<p>tensor 数据采用头信息区（Tensor）和存储区
+（Storage）分开存储的形式，如图 1
+所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
+tensor，tensor 名为 A，A 的形状 size、步长
+stride、数据的索引等信息都存储在头信息区，而 A
+所存储的真实数据则存储在存储区。另外，如果我们对 A
+进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
+的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
+的头信息区对数据的索引方式
+</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
+<strong>这种方式其实就是 <font color='green'> 浅拷贝
+</font></strong></p>
+<div style="text-align: center">
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
+&lt;br&gt;
+图 1 Torch 中 Tensor 的存储结构</code></pre>
+</div>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/">展开全文 >></a>
     </p>
     
 
@@ -995,122 +1093,6 @@ alt="image-20250101131549964" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/tranpose()%E4%B8%8Et()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/view()与reshape()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" target="_blank">view()与reshape()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="view与reshape">view()与reshape()</h1>
-<p>总之，两者都是用来重塑 tensor 的 shape 的。view
-只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
-同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
-能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
-<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
-<blockquote>
-<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
-张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
-（Storage）以及 tensor 的步长 Stride</p>
-</blockquote>
-<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
-<p>tensor 数据采用头信息区（Tensor）和存储区
-（Storage）分开存储的形式，如图 1
-所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
-tensor，tensor 名为 A，A 的形状 size、步长
-stride、数据的索引等信息都存储在头信息区，而 A
-所存储的真实数据则存储在存储区。另外，如果我们对 A
-进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
-的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
-的头信息区对数据的索引方式
-</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
-<strong>这种方式其实就是 <font color='green'> 浅拷贝
-</font></strong></p>
-<div style="text-align: center">
-<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
-&lt;br&gt;
-图 1 Torch 中 Tensor 的存储结构</code></pre>
-</div>
-    
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/">展开全文 >></a>
     </p>
     
 
@@ -1734,15 +1716,15 @@ class="math inline">\(1\)</span>，表示步长</li>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1758,15 +1740,11 @@ class="math inline">\(1\)</span>，表示步长</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1774,11 +1752,19 @@ class="math inline">\(1\)</span>，表示步长</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1790,15 +1776,11 @@ class="math inline">\(1\)</span>，表示步长</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1830,15 +1812,11 @@ class="math inline">\(1\)</span>，表示步长</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1846,7 +1824,15 @@ class="math inline">\(1\)</span>，表示步长</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1855,10 +1841,6 @@ class="math inline">\(1\)</span>，表示步长</li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="python相对导入常见问题和解决方案 根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是&quot;relative import&quot;。 123ValueError: attempted relative import beyond top-level package # 翻译：试图在顶级包之外进">
+  <meta name="description" content="python相对导入常见问题和解决方案根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是”relative import”。 123ValueError: attempted relative import beyond top-level package # 翻译：试图在顶级包之外进行相对导">
 <meta property="og:type" content="article">
 <meta property="og:title" content="python相对导入常见问题和解决方案">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="python相对导入常见问题和解决方案 根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是&quot;relative import&quot;。 123ValueError: attempted relative import beyond top-level package # 翻译：试图在顶级包之外进">
+<meta property="og:description" content="python相对导入常见问题和解决方案根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是”relative import”。 123ValueError: attempted relative import beyond top-level package # 翻译：试图在顶级包之外进行相对导">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-10T13:06:39.424Z">
@@ -300,78 +300,48 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1
-id="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</h1>
-<p>根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是"relative
-import"。</p>
+    <h1 id="python相对导入常见问题和解决方案"><a href="#python相对导入常见问题和解决方案" class="headerlink" title="python相对导入常见问题和解决方案"></a>python相对导入常见问题和解决方案</h1><p>根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是”relative import”。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: attempted relative <span class="keyword">import</span> beyond top-level package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在顶级包之外进行相对导入</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative <span class="keyword">import</span> <span class="keyword">with</span> no known parent package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：尝试相对导入，但没有已知的父包</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Attempted relative <span class="keyword">import</span> <span class="keyword">in</span> non-package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在非包中进行相对导入</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SystemError: Parent module <span class="string">&#x27;&#x27;</span> <span class="keyword">not</span> loaded, cannot perform relative <span class="keyword">import</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：父模块&#x27;xxx&#x27;未加载，不能执行相对导入。</span></span><br></pre></td></tr></table></figure>
 <p>既然关于相对导入的报错提示，说明我们在代码中一定用到了相对导入的语法。下面先简单介绍一下相对导入的概念，随后详细介绍相对导入可能的问题和原理，最后给出上面提到的每个报错的解决方案。</p>
-<h2 id="绝对导入">绝对导入</h2>
-<p>既然要介绍相对导入，那必然绕不开绝对导入。绝对导入的格式为 import A.B
-或 from A import B</p>
+<h2 id="绝对导入"><a href="#绝对导入" class="headerlink" title="绝对导入"></a>绝对导入</h2><p>既然要介绍相对导入，那必然绕不开绝对导入。绝对导入的格式为 import A.B 或 from A import B</p>
 <p>下面是绝对导入的一些🌰：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fibo    <span class="comment"># 隐式相对导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fibo1, fibo2    <span class="comment"># 绝对路径导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> fibo <span class="keyword">as</span> fib    <span class="comment"># 重命名</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fib <span class="keyword">as</span> fibonacci</span><br></pre></td></tr></table></figure>
-<h2 id="相对导入">相对导入</h2>
-<p>相对导入格式为 from .A import B 或 from ..X import
-Y， <strong>.</strong> 代表当前包， <strong>..</strong> 代表上层包， <strong>...</strong> 代表上上层包，依次类推。</p>
+<h2 id="相对导入"><a href="#相对导入" class="headerlink" title="相对导入"></a>相对导入</h2><p>相对导入格式为 from .A import B 或 from ..X import Y， <strong>.</strong> 代表当前包， <strong>..</strong> 代表上层包， <strong>…</strong> 代表上上层包，依次类推。</p>
 <p>相对导入的一些案例如下所示：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> echo    <span class="comment"># 表示从当前文件所在package导入echo这个module</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> .. <span class="keyword">import</span> formats    <span class="comment"># 表示从当前文件所在package的上层package导入formats这个子package或者moudle</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> ..filters <span class="keyword">import</span> equalizer <span class="comment"># 表示从当前文件所在package的上层package导入的filters这个子package或者子module中导入equalizer</span></span><br></pre></td></tr></table></figure>
-<p>相对导入基于当前模块的名称。由于主模块的名称始终为<code>"__main__"</code>，因此用作
-<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Python%20%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F&amp;spm=1001.2101.3001.7020">Python
-应用程序</a>主模块的模块必须始终使用绝对导入。<strong>主模块所在文件夹不会被视作package，因此除了主模块外，与主模块处在同个文件夹的模块（也就是同级的模块）也必须使用绝对导入。</strong></p>
+<p>相对导入基于当前模块的名称。由于主模块的名称始终为<code>&quot;__main__&quot;</code>，因此用作 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Python%20%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F&amp;spm=1001.2101.3001.7020">Python 应用程序</a>主模块的模块必须始终使用绝对导入。<strong>主模块所在文件夹不会被视作package，因此除了主模块外，与主模块处在同个文件夹的模块（也就是同级的模块）也必须使用绝对导入。</strong></p>
 <blockquote>
-<p><strong>还有个更专业的说法：</strong> 相对导入使用模块的名称属性来决定模块在包层次结构中的位置，如果模块的名称不包含任何包信息（例如：模块名称为'<strong>main</strong>'），那么相对导入则被解析为最顶层的位置，不管这个时候这个模块实际上位于文件系统中的什么位置。</p>
+<p><strong>还有个更专业的说法：</strong> 相对导入使用模块的名称属性来决定模块在包层次结构中的位置，如果模块的名称不包含任何包信息（例如：模块名称为’<strong>main</strong>‘），那么相对导入则被解析为最顶层的位置，不管这个时候这个模块实际上位于文件系统中的什么位置。</p>
 </blockquote>
 <p>乍一看是不是觉得云里雾里，感觉每个字都认识，但就是不知道是什么意思，没关系，看完本文就理解了。加油💪🏻。</p>
-<h2 id="包package">包package</h2>
-<p>文件夹被python解释器视作package需要满足两个条件：</p>
+<h2 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h2><p>文件夹被python解释器视作package需要满足两个条件：</p>
 <p>1、文件夹中必须有__init__.py文件，该文件可以为空，但必须存在该文件。</p>
-<p>2、不能作为顶层模块来执行该文件夹中的py文件（即不能作为主函数的入口）。顶层模块即是我们通常说的"<strong>main</strong>"方法所在的模块及其同级模块，其中"<strong>main</strong>"也常被称为主模块，即主模块所在文件夹不会被视作package。主模块的同级package被python解释器视为顶级包（也就是top-level
-package）。</p>
+<p>2、不能作为顶层模块来执行该文件夹中的py文件（即不能作为主函数的入口）。顶层模块即是我们通常说的”<strong>main</strong>“方法所在的模块及其同级模块，其中”<strong>main</strong>“也常被称为主模块，即主模块所在文件夹不会被视作package。主模块的同级package被python解释器视为顶级包（也就是top-level package）。</p>
 <blockquote>
 <p>如果想要导入顶层包更上层的包或者模块，需要将包路径添加到sys.path中</p>
 </blockquote>
 <p>第一点很容易理解，下面详细介绍一下第二点。</p>
-<h2 id="脚本-模块script-vs-module"><strong>脚本 &amp; 模块？（script vs
-module）</strong></h2>
-<p>python有两种加载文件的方法：一种是作为顶层的脚本，另一种是当做模块。如果你直接执行这个程序，那么这个文件就被当做是顶层脚本来执行了，在命令行里面输入
-python myfile.py 就是这个情况。如果你输入python -m
-myfile.py或者在其他的文件当中使用import来导入这个文件的时候，它就被当做模块来导入。在同一时间里，只有一个主模块，主模块常被称为顶层脚本，顶层脚本可以这样解释：它是一个能够让你的程序从这里开始的python文件。</p>
-<h3 id="将模块作为脚本执行">将模块作为脚本执行</h3>
-<p>test_script.py</p>
+<h2 id="脚本-amp-模块？（script-vs-module）"><a href="#脚本-amp-模块？（script-vs-module）" class="headerlink" title="脚本 &amp; 模块？（script vs module）"></a><strong>脚本 &amp; 模块？（script vs module）</strong></h2><p>python有两种加载文件的方法：一种是作为顶层的脚本，另一种是当做模块。如果你直接执行这个程序，那么这个文件就被当做是顶层脚本来执行了，在命令行里面输入 python myfile.py 就是这个情况。如果你输入python -m myfile.py或者在其他的文件当中使用import来导入这个文件的时候，它就被当做模块来导入。在同一时间里，只有一个主模块，主模块常被称为顶层脚本，顶层脚本可以这样解释：它是一个能够让你的程序从这里开始的python文件。</p>
+<h3 id="将模块作为脚本执行"><a href="#将模块作为脚本执行" class="headerlink" title="将模块作为脚本执行"></a>将模块作为脚本执行</h3><p>test_script.py</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment"># test_script.py</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>():    </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun1&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun2</span>():   </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun2&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line"> </span><br><span class="line">    fun1()</span><br><span class="line"> </span><br><span class="line">    fun2()</span><br></pre></td></tr></table></figure>
-<p>脚本中的__main__="<strong>name</strong>"下的代码仅在模块作为“主”文件执行时才运行：</p>
+<p>脚本中的__main__=”<strong>name</strong>“下的代码仅在模块作为“主”文件执行时才运行：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">python test_script.py</span></span><br><span class="line"> </span><br><span class="line">I&#x27;m fun1</span><br><span class="line">I&#x27;m fun2</span><br></pre></td></tr></table></figure>
 <p>如果module是作为导入的模块，则不会执行该模块的__main__代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> fibo</span><br><span class="line"> </span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
 <p>这通常用于为模块提供方便的用户界面，或用于测试目的（将模块作为脚本执行测试套件运行）。</p>
-<h2 id="模块的名称">模块的名称</h2>
-<p>当一个文件被加载进来，它就有一个名称（这个名称存储在__name__属性当中）。如果这个文件被当做一个主模块来执行，那么它的名字就是__main__。如果它被当做一个模块加载，那么它的名称就是文件名称，加上它所在的包名，以及所有的顶层的包名，这些名称中间是用点号隔开的。</p>
+<h2 id="模块的名称"><a href="#模块的名称" class="headerlink" title="模块的名称"></a>模块的名称</h2><p>当一个文件被加载进来，它就有一个名称（这个名称存储在__name__属性当中）。如果这个文件被当做一个主模块来执行，那么它的名字就是__main__。如果它被当做一个模块加载，那么它的名称就是文件名称，加上它所在的包名，以及所有的顶层的包名，这些名称中间是用点号隔开的。</p>
 <p>比如下面的例子</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package/</span><br><span class="line">|-- __init__.py</span><br><span class="line">|-- subpackage1/</span><br><span class="line">|   |-- __init__.py</span><br><span class="line">|   |-- moduleX.py</span><br><span class="line">|-- moduleA.py</span><br></pre></td></tr></table></figure>
-<p>比如你导入moduleX（from package.subpackag1 import
-moduleX），它的名称就package.subpackage1.mouleX。如果你导入moduleA的时候（from
-package import moduleA），它的名称就是package.moudleA。</p>
-<p>（注：这里是使用<strong>包导入</strong>,即把package以及里面的所有文件看做一个包，导入的时候使用from
-xxx import yyy的形式来进行，我们调用第三方包的时候就是这种情况），</p>
+<p>比如你导入moduleX（from package.subpackag1 import moduleX），它的名称就package.subpackage1.mouleX。如果你导入moduleA的时候（from package import moduleA），它的名称就是package.moudleA。</p>
+<p>（注：这里是使用<strong>包导入</strong>,即把package以及里面的所有文件看做一个包，导入的时候使用from xxx import yyy的形式来进行，我们调用第三方包的时候就是这种情况），</p>
 <p>但是，当你直接从命令行里面运行moduleX的时候，他的名称则被替换为__main__。如果你直接从命令行运行moduleA，它的名称也是__main__。当一个模块被当做一个顶层脚本来执行的时候，它原来的名称则会被__main__取代。</p>
-<h3 id="结论">结论</h3>
-<p>当一个模块的名称中没有包，也就是只有文件名的时候，说明这个模块是一个顶层模块。顶层模块中不能使用相对导入。相对导入使用模块的名称属性来决定模块在包层次结构中的位置，相对导入能向上相对多少级，完全取决于模块名称中有多少层。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>当一个模块的名称中没有包，也就是只有文件名的时候，说明这个模块是一个顶层模块。顶层模块中不能使用相对导入。相对导入使用模块的名称属性来决定模块在包层次结构中的位置，相对导入能向上相对多少级，完全取决于模块名称中有多少层。</p>
 <p>当你运行交互式的解释器的时候，交互式进程的名称永远是__main__，因此你不能在交互式进程当中使用相对导入。相对导入只能在模块文件当中使用。</p>
-<p><strong>参考：</strong> <a
-target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html"
-title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted
-relative import in non-package”错误</a></p>
-<h2 id="解决方案">解决方案：</h2>
-<h3
-id="importerror-attempted-relative-import-with-no-known-parent-package">1、ImportError:
-attempted <strong>relative import</strong> with no known parent
-package</h3>
-<p><strong>导致这个问题的原因：</strong> 主模块或者同级模块用到了相对导入，且引用了主模块所在包。因为主模块所在包不会被python解释器视为package，在python解释器看来主模块所在的包就是一个未知的父包，所以如果不小心以相对导入的方式引用到了，就会报<code>with no known parent package</code>这个错误。</p>
+<p><strong>参考：</strong> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html" title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted relative import in non-package”错误</a></p>
+<h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><h3 id="1、ImportError-attempted-relative-import-with-no-known-parent-package"><a href="#1、ImportError-attempted-relative-import-with-no-known-parent-package" class="headerlink" title="1、ImportError: attempted relative import with no known parent package"></a>1、ImportError: attempted <strong>relative import</strong> with no known parent package</h3><p><strong>导致这个问题的原因：</strong> 主模块或者同级模块用到了相对导入，且引用了主模块所在包。因为主模块所在包不会被python解释器视为package，在python解释器看来主模块所在的包就是一个未知的父包，所以如果不小心以相对导入的方式引用到了，就会报<code>with no known parent package</code>这个错误。</p>
 <p>案例一</p>
 <p>主模块的同级模块在使用相对导入时引入了主模块所在包的案例</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # from . import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
@@ -389,11 +359,7 @@ package</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">brother2</span><br><span class="line"> </span><br><span class="line">brother1</span><br><span class="line"> </span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
 <p>方案二</p>
 <p>案例2只能使用改为绝对导入这种方式，但是案例一还有一种解决方式是把main.py文件移动到TestModule文件夹外面，使之与TestModule文件夹平级，这样TestModule即会被解析器视为一个package，在其他模块中使用相对导入的方式引用到了也不会报错。</p>
-<h3
-id="valueerror-attempted-relative-import-beyond-top-level-package">ValueError:
-attempted <strong>relative import</strong> beyond top-level package</h3>
-<p><strong>导致这个问题的原因：</strong> 主模块所在同级包的子模块在使用相对导入时引用了主模块所在包。因为主模块所在包不会被python解释器视为package，主模块的同级package被视为顶级包（也就是top-level
-package），所以主模块所在包其实是在python解释器解析到的顶层包之外的，如果不小心以相对导入的方式引用到了，就会报<code>beyond top-level package</code>这个错误。</p>
+<h3 id="ValueError-attempted-relative-import-beyond-top-level-package"><a href="#ValueError-attempted-relative-import-beyond-top-level-package" class="headerlink" title="ValueError: attempted relative import beyond top-level package"></a>ValueError: attempted <strong>relative import</strong> beyond top-level package</h3><p><strong>导致这个问题的原因：</strong> 主模块所在同级包的子模块在使用相对导入时引用了主模块所在包。因为主模块所在包不会被python解释器视为package，主模块的同级package被视为顶级包（也就是top-level package），所以主模块所在包其实是在python解释器解析到的顶层包之外的，如果不小心以相对导入的方式引用到了，就会报<code>beyond top-level package</code>这个错误。</p>
 <p>一个案例：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── main.py # from Tom import tom; print(__name__)</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── Tom</span><br><span class="line">    │   ├── __init__.py # print(__name__)</span><br><span class="line">    │   ├── tom.py # from . import tom_brother; from ..Kate import kate; print(__name__)</span><br><span class="line">    │   └── tom_brother.py # print(__name__) </span><br><span class="line">    └── Kate      </span><br><span class="line">         ├── __init__.py # print(__name__)</span><br><span class="line">         └── kate.py # print(__name__)</span><br></pre></td></tr></table></figure>
 <p>python main.py</p>
@@ -411,50 +377,30 @@ package），所以主模块所在包其实是在python解释器解析到的顶�
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Tom</span><br><span class="line"> </span><br><span class="line">Tom.tom_brother</span><br><span class="line">Kate</span><br><span class="line">Kate.kate</span><br><span class="line">Tom.tom</span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
 <p><strong>关于为什么已经把TestModule加入了包查找路径还需要使用绝对导入来导入Kate的的解释：</strong></p>
 <p>从上面的运行结果可以看出，tom_brother.py的模块名还是Tom.tom_brother，模块名并没有因为把TestModule加入了包查找路径就发生改变，而相对导入是根据模块名来确定的，如果模块名中没有TestModule，那还是不能使用相对导入的方式来导入Kate，所以必须使用绝对导入的方式来导入Kate包</p>
-<h3 id="valueerror-attempted-relative-import-in-non-package">ValueError:
-Attempted relative import in non-package</h3>
-<h3
-id="systemerror-parent-module-not-loaded-cannot-perform-relative-import">SystemError:
-Parent module ' ' not loaded, cannot perform <strong>relative
-import</strong></h3>
-<p>3和4这两个报错的原因是一样的，都是把使用了相对导入的module当做主模块而直接运行了，即直接运行的脚本中包含了相对导入。但是我按这种方式操作了一下，发现无论怎么操作，报错提示始终是上面的第一个报错，即<code>ImportError: attempted relative import with no known parent package</code>。</p>
+<h3 id="ValueError-Attempted-relative-import-in-non-package"><a href="#ValueError-Attempted-relative-import-in-non-package" class="headerlink" title="ValueError: Attempted relative import in non-package"></a>ValueError: Attempted relative import in non-package</h3><h3 id="SystemError-Parent-module-‘-‘-not-loaded-cannot-perform-relative-import"><a href="#SystemError-Parent-module-‘-‘-not-loaded-cannot-perform-relative-import" class="headerlink" title="SystemError: Parent module ‘ ‘ not loaded, cannot perform relative import"></a>SystemError: Parent module ‘ ‘ not loaded, cannot perform <strong>relative import</strong></h3><p>3和4这两个报错的原因是一样的，都是把使用了相对导入的module当做主模块而直接运行了，即直接运行的脚本中包含了相对导入。但是我按这种方式操作了一下，发现无论怎么操作，报错提示始终是上面的第一个报错，即<code>ImportError: attempted relative import with no known parent package</code>。</p>
 <p>后来发现是python 版本的问题，</p>
 <p>python2在直接运行的脚本中使用相对导入时会报<code>ValueError: Attempted relative import in non-package</code>这个错误，</p>
-<p>python3.x（没测3.x具体是哪个版本）到python3.5报错<code>SystemError: Parent module '' not loaded, cannot perform relative import</code> ；</p>
+<p>python3.x（没测3.x具体是哪个版本）到python3.5报错<code>SystemError: Parent module &#39;&#39; not loaded, cannot perform relative import</code> ；</p>
 <p>python3.6及以上的报错提示是<code>ImportError: attempted relative import with no known parent package</code>。</p>
 <p><strong>解决方案是：</strong></p>
 <p>去除主模块（脚本）中的相对导入，改为绝对导入。</p>
 <blockquote>
 <p>这个问题的复现花我了好大一番功夫，找了好多博客，都说是主模块中用到了相对导入，但是我这么做就是不报这个错，而是报第一个错<code>ImportError: attempted relative import with no known parent package</code>，最后还是在一些博客中找到了蛛丝马迹，并且用docker快速拉取对应区间python版本镜像验证，得出结论，平时多学点东西还是很有用处的，比如docker，看似平时用不上，关键时刻还是真帮了大忙，否则重新在电脑上安装一个python版本，估计又得费老大功夫了。</p>
 </blockquote>
-<h2 id="相对导入对于包的优势"><strong>相对导入对于包的优势</strong></h2>
-<p>既然会引发这么多问题，那是不是我们以后就完全不用相对导入了呢。当然不！</p>
+<h2 id="相对导入对于包的优势"><a href="#相对导入对于包的优势" class="headerlink" title="相对导入对于包的优势"></a><strong>相对导入对于包的优势</strong></h2><p>既然会引发这么多问题，那是不是我们以后就完全不用相对导入了呢。当然不！</p>
 <p>相对导入相较于绝对导入还是有一些优势的</p>
-<ol type="1">
+<ol>
 <li>书写相较于绝对导入简单</li>
 <li>相对导入可以避免硬编码带来的包维护问题，例如我们改了某一层包的名称，那么其它模块对于其子包的所有绝对导入就不能用了，但是采用相对导入语句的模块，就会避免这个问题。</li>
 </ol>
-<p><strong>参考：</strong> <a
-target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html"
-title="Python 包内的导入问题（绝对导入和相对导入）">Python
-包内的导入问题（绝对导入和相对导入）</a></p>
-<h2 id="顺便一提">顺便一提</h2>
-<p>包查找路径是<code>sys.path</code>变量中。<code>sys.path</code>初始状态一般由三部分组成：python正在执行的脚本的目录，PYTHONPATH路径，包的默认安装路径。</p>
-<p>自从python2.6，模块的名称不在决定使用__name__属性，而是使用__packege__属性。这就是为什么我避免使用__name__这么明确的名称来代表一个模块的名称。自从python2.6，一个模块的名称是由__package__+'.'+__name__来确定的，如果__packege__是None的话，那么这个名称就是__name__了</p>
-<h2 id="参考"><strong>参考：</strong></h2>
-<p><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/modules.html#packages"
-title="6.模块">6.模块</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ArsenalfanInECNU/p/5346751.html"
-title="Python包的相对导入时出现错误的解决方法">Python包的相对导入时出现错误的解决方法</a>、</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html"
-title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted
-relative import in non-package”错误</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html"
-title="Python 包内的导入问题（绝对导入和相对导入）">Python
-包内的导入问题（绝对导入和相对导入）</a></p>
-<p><strong>源文：</strong><a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4-5pmTb4VlAo0m94ssrpnw"
-title="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</a></p>
+<p><strong>参考：</strong> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html" title="Python 包内的导入问题（绝对导入和相对导入）">Python 包内的导入问题（绝对导入和相对导入）</a></p>
+<h2 id="顺便一提"><a href="#顺便一提" class="headerlink" title="顺便一提"></a>顺便一提</h2><p>包查找路径是<code>sys.path</code>变量中。<code>sys.path</code>初始状态一般由三部分组成：python正在执行的脚本的目录，PYTHONPATH路径，包的默认安装路径。</p>
+<p>自从python2.6，模块的名称不在决定使用__name__属性，而是使用__packege__属性。这就是为什么我避免使用__name__这么明确的名称来代表一个模块的名称。自从python2.6，一个模块的名称是由__package__+’.’+__name__来确定的，如果__packege__是None的话，那么这个名称就是__name__了</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a><strong>参考：</strong></h2><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/modules.html#packages" title="6.模块">6.模块</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ArsenalfanInECNU/p/5346751.html" title="Python包的相对导入时出现错误的解决方法">Python包的相对导入时出现错误的解决方法</a>、</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html" title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted relative import in non-package”错误</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html" title="Python 包内的导入问题（绝对导入和相对导入）">Python 包内的导入问题（绝对导入和相对导入）</a></p>
+<p><strong>源文：</strong><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4-5pmTb4VlAo0m94ssrpnw" title="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</a></p>
 
     
 
@@ -594,18 +540,18 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          __init__.py
+          绝对导入与相对导入
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5%E4%B8%8E%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">绝对导入与相对导入</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E3%80%90Reference%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Python Object-Oriented Programming (OOP)</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -632,14 +578,7 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">python相对导入常见问题和解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5"><span class="toc-number">1.1.</span> <span class="toc-text">绝对导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">相对导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85package"><span class="toc-number">1.3.</span> <span class="toc-text">包package</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC-%E6%A8%A1%E5%9D%97script-vs-module"><span class="toc-number">1.4.</span> <span class="toc-text">脚本 &amp; 模块？（script vs
-module）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%A8%A1%E5%9D%97%E4%BD%9C%E4%B8%BA%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="toc-number">1.4.1.</span> <span class="toc-text">将模块作为脚本执行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E7%9A%84%E5%90%8D%E7%A7%B0"><span class="toc-number">1.5.</span> <span class="toc-text">模块的名称</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.6.</span> <span class="toc-text">解决方案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#importerror-attempted-relative-import-with-no-known-parent-package"><span class="toc-number">1.6.1.</span> <span class="toc-text">1、ImportError:
-attempted relative import with no known parent
-package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#valueerror-attempted-relative-import-beyond-top-level-package"><span class="toc-number">1.6.2.</span> <span class="toc-text">ValueError:
-attempted relative import beyond top-level package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#valueerror-attempted-relative-import-in-non-package"><span class="toc-number">1.6.3.</span> <span class="toc-text">ValueError:
-Attempted relative import in non-package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#systemerror-parent-module-not-loaded-cannot-perform-relative-import"><span class="toc-number">1.6.4.</span> <span class="toc-text">SystemError:
-Parent module &#39; &#39; not loaded, cannot perform relative
-import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%AF%B9%E4%BA%8E%E5%8C%85%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.7.</span> <span class="toc-text">相对导入对于包的优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%BA%E4%BE%BF%E4%B8%80%E6%8F%90"><span class="toc-number">1.8.</span> <span class="toc-text">顺便一提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.9.</span> <span class="toc-text">参考：</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">python相对导入常见问题和解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%9D%E5%AF%B9%E5%AF%BC%E5%85%A5"><span class="toc-number">1.1.</span> <span class="toc-text">绝对导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">相对导入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85package"><span class="toc-number">1.3.</span> <span class="toc-text">包package</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC-amp-%E6%A8%A1%E5%9D%97%EF%BC%9F%EF%BC%88script-vs-module%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">脚本 &amp; 模块？（script vs module）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%A8%A1%E5%9D%97%E4%BD%9C%E4%B8%BA%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="toc-number">1.4.1.</span> <span class="toc-text">将模块作为脚本执行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E7%9A%84%E5%90%8D%E7%A7%B0"><span class="toc-number">1.5.</span> <span class="toc-text">模块的名称</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A"><span class="toc-number">1.6.</span> <span class="toc-text">解决方案：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81ImportError-attempted-relative-import-with-no-known-parent-package"><span class="toc-number">1.6.1.</span> <span class="toc-text">1、ImportError: attempted relative import with no known parent package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ValueError-attempted-relative-import-beyond-top-level-package"><span class="toc-number">1.6.2.</span> <span class="toc-text">ValueError: attempted relative import beyond top-level package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ValueError-Attempted-relative-import-in-non-package"><span class="toc-number">1.6.3.</span> <span class="toc-text">ValueError: Attempted relative import in non-package</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SystemError-Parent-module-%E2%80%98-%E2%80%98-not-loaded-cannot-perform-relative-import"><span class="toc-number">1.6.4.</span> <span class="toc-text">SystemError: Parent module ‘ ‘ not loaded, cannot perform relative import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%AF%B9%E4%BA%8E%E5%8C%85%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.7.</span> <span class="toc-text">相对导入对于包的优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%BA%E4%BE%BF%E4%B8%80%E6%8F%90"><span class="toc-number">1.8.</span> <span class="toc-text">顺便一提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="toc-number">1.9.</span> <span class="toc-text">参考：</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -818,11 +757,11 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -842,19 +781,11 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -862,15 +793,15 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -878,11 +809,23 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -894,19 +837,7 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -922,7 +853,15 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -930,7 +869,7 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -950,11 +889,11 @@ import</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-l
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

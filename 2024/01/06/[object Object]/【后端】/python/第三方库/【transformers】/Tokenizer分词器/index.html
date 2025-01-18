@@ -10,18 +10,21 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Tokenizer分词器 今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了">
+  <meta name="description" content="Tokenizer分词器今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tokenizer分词器">
 <meta property="og:url" content="https://luyicui.github.io/2024/01/06/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="Tokenizer分词器 今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了">
+<meta property="og:description" content="Tokenizer分词器今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831051.png">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831023.png">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
 <meta property="article:modified_time" content="2024-12-24T02:11:43.304Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="transformers">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831051.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -300,12 +303,9 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="tokenizer分词器">Tokenizer分词器</h1>
-<p>今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging
-Face去玩就行了。</p>
-<h2 id="相关背景">相关背景</h2>
-<p>NLP要解决的任务：</p>
-<ol type="1">
+    <h1 id="Tokenizer分词器"><a href="#Tokenizer分词器" class="headerlink" title="Tokenizer分词器"></a>Tokenizer分词器</h1><p>今天要做的这个任务其实就是一个调包的过程，但是我们需要了解一下这个流程。这个流程熟悉了，NLP领域的很多问题都可以按照这个流程去做了，比如对话生成、机器翻译、文本摘要等任务，你脑海中就会浮现出一个通用模板了，你不需要在做所有的子任务之前都需要再熟悉一遍了。你只需要知道，到了今天在NLP领域的所有任务，都可以用Transformer结合Hugging Face去玩就行了。 </p>
+<h2 id="相关背景"><a href="#相关背景" class="headerlink" title="相关背景"></a>相关背景</h2><p>NLP要解决的任务：</p>
+<ol>
 <li>处理文本数据，首先对文本数据进行分词操作(分词的方法可能会不同，中文常见的就是分词或者分字)</li>
 <li>分完的词它不还是字符嘛，计算机还不认识，最终我们希望把这些字符映射成实际的特征（向量）</li>
 <li>输入搞定好了之后，接下来咱们要构建模型了（一般都用预训练模型，例如BERT,GPT系列等）</li>
@@ -315,13 +315,10 @@ Face去玩就行了。</p>
 <p>国内一般使用哈工大的或者清华的词向量库，我们调现成的就行，别觉得调现成的很low，这是最方便的做法。（你自己做，先不说你有没有这种级别的计算资源，你存都没地方存，真做起来电费你都交不起）。我们需要做的就是在别人的模型和词库基础上，对模型进行微调来解决自己的任务。</p>
 <p>NLP任务，主要分成两个方向来学习：一个是谷歌的bert，一个是openAI的gpt，二者都是2018年所出的模型基本同一时间，谁抄谁还不一定呢。</p>
 <span id="more"></span>
-<h2 id="安装测试">安装测试</h2>
-<p>首先看看怎么使用Hugging Face给我们提供的包，首先安装：</p>
+<h2 id="安装测试"><a href="#安装测试" class="headerlink" title="安装测试"></a>安装测试</h2><p>首先看看怎么使用Hugging Face给我们提供的包，首先安装：</p>
 <p>安装就是很简单，打开命令行，执行这个命令就是装，只需要这一步操作！（没有什么CPU、GPU版本，没有一大串恶心人的操作，可能之前装Pytorch、TF还有一些商汤做的一些包，已经把我们算法工程给装怕了。）</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install transformers</span><br></pre></td></tr></table></figure>
-<p>但是在此之前，你最起码要把深度学习的环境配置好，可以参考我这篇文章：<a
-target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/129845386?spm=1001.2014.3001.5502"
-title="PyTorch深度学习开发环境搭建全教程">PyTorch深度学习开发环境搭建全教程</a></p>
+<p>但是在此之前，你最起码要把深度学习的环境配置好，可以参考我这篇文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/129845386?spm=1001.2014.3001.5502" title="PyTorch深度学习开发环境搭建全教程">PyTorch深度学习开发环境搭建全教程</a></p>
 <p>先来瞅瞅多简单就干了一个大活</p>
 <p>Huggingface这个包基本上就是调用即可，开箱即用的过程</p>
 <p>对刚刚安装的包进行Hello Word级别任务测试：</p>
@@ -330,32 +327,24 @@ title="PyTorch深度学习开发环境搭建全教程">PyTorch深度学习开发
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;POSITIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9598050713539124</span>&#125;,</span><br><span class="line"> &#123;<span class="string">&#x27;label&#x27;</span>: <span class="string">&#x27;NEGATIVE&#x27;</span>, <span class="string">&#x27;score&#x27;</span>: <span class="number">0.9994558691978455</span>&#125;]</span><br></pre></td></tr></table></figure>
 <p>这就是从transformers调出一个pipeline模块，这个模块可以给你提供很多接口，比如<strong>sentiment-analysis</strong>就是情感分析接口，第一次执行这个代码的时候，会给你下载一些已经训练好的模型。（你跑这个可能不需要梯子，但是你玩HuggingFace没有梯子可能还真不行）</p>
 <p>下载的模型一般在这个位置：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831051.png" /></p>
-<h2 id="基本流程概述分析">基本流程概述分析</h2>
-<ol type="1">
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831051.png" alt=""></p>
+<h2 id="基本流程概述分析"><a href="#基本流程概述分析" class="headerlink" title="基本流程概述分析"></a>基本流程概述分析</h2><ol>
 <li>首先就是第一步Raw text输入文本（This course is amazing）</li>
-<li>不管是中文还是英文都会将文本转化为ID，（This course is
-amazing）是四个词为什么会有6个ID呢？后面解释。</li>
+<li>不管是中文还是英文都会将文本转化为ID，（This course is amazing）是四个词为什么会有6个ID呢？后面解释。</li>
 <li>ID直接输入到模型中（Bert、GPT），生成一个Logits结果</li>
 <li>在经过一个后处理词操作，把前面的结果转换成概率</li>
 </ol>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831023.png" /></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412221831023.png" alt=""></p>
 <p>NLP的流程比CV简单的多，在CV领域的任务流程处理方式百花齐放，但是在NLP领域就是Transformer一统天下的格局。NLP的流程非常非常固定，没有任何区别。人类学会人类语言需要两年，这两年过程中的每天可能需要听到上万个词，所以让计算机学会人类语言也是需要一个过程的。NLP任务基本上都是大同小小小异。</p>
-<h2 id="tokenizer需要做的事情">Tokenizer需要做的事情</h2>
-<ul>
+<h2 id="Tokenizer需要做的事情"><a href="#Tokenizer需要做的事情" class="headerlink" title="Tokenizer需要做的事情"></a>Tokenizer需要做的事情</h2><ul>
 <li>分词，分字以及特殊字符（起始，终止，间隔，分类等特殊字符可以自己设计的）</li>
 <li>对每一个token映射得到一个ID（每个词都会对应一个唯一的ID）</li>
 <li>还有一些辅助信息也可以得到，比如当前词属于哪个句子（还有一些MASK，表示是否事原来的词还是特殊字符等）</li>
 </ul>
 <p>上代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer<span class="comment">#自动判断</span></span><br><span class="line"> </span><br><span class="line">checkpoint = <span class="string">&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;</span><span class="comment">#根据这个模型所对应的来加载</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br></pre></td></tr></table></figure>
-<p>（Hugging
-Face一个特别牛逼的地方就是一个API玩儿所有东西，就不用在多个地方调分词器）</p>
-<p>从Transformers中调出一个自动分词器，这个“自动”分词器AutoTokenizer可以根据你选择的模型自动选择分词器，这就太省事儿，但是我们应该怎么选择模型呢？你去Hugging
-Face上去下载，不知道选哪个，按照销量（下载量）来呗。（现在NLP领域研究的论文，全都得根据Hugging
-Face去做，为什么？你得做对比试验啊，在HuggingFace就很方便去和别人作对比）</p>
+<p>（Hugging Face一个特别牛逼的地方就是一个API玩儿所有东西，就不用在多个地方调分词器）</p>
+<p>从Transformers中调出一个自动分词器，这个“自动”分词器AutoTokenizer可以根据你选择的模型自动选择分词器，这就太省事儿，但是我们应该怎么选择模型呢？你去Hugging Face上去下载，不知道选哪个，按照销量（下载量）来呗。（现在NLP领域研究的论文，全都得根据Hugging Face去做，为什么？你得做对比试验啊，在HuggingFace就很方便去和别人作对比）</p>
 <p>一个小例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">raw_inputs = [</span><br><span class="line">    <span class="string">&quot;I&#x27;ve been waiting for a this course my whole life.&quot;</span>,</span><br><span class="line">    <span class="string">&quot;I hate this so much!&quot;</span>,</span><br><span class="line">]</span><br><span class="line">inputs = tokenizer(raw_inputs, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br></pre></td></tr></table></figure>
 <p>解释一下tokenizer的参数：</p>
@@ -363,28 +352,21 @@ Face去做，为什么？你得做对比试验啊，在HuggingFace就很方便�
 <li><strong>raw_inputs</strong>：你选择的语言文本</li>
 <li><strong>padding</strong>：默认为True，你输入的句子长度不一样，不管你输入多少句子，按照最长的那个进行补齐，补得就是0，padding这个词，我们在卷积神经网络就已经见过了</li>
 <li><strong>truncation</strong>：截断操作，这里没用上，其实任务中需要制定一个max_longs参数，指定一个最大长度的句子，事实上所有的模型都指定来512个词为最大长度，谷歌、openAI亦是如此，在深度学习中科学家也很喜欢512个词。也就是说，一个句子最大长度就是512个词</li>
-<li><strong>return_tensors</strong>：在Hugging
-Face中支持多种框架，默认的是PyTorch，PyTorch的数据格式就是tensor，指定为pt</li>
+<li><strong>return_tensors</strong>：在Hugging Face中支持多种框架，默认的是PyTorch，PyTorch的数据格式就是tensor，指定为pt</li>
 </ul>
 <p>这段代码的输出结果：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;input_ids&#x27;: tensor([[ 101, 1045, 1005, 2310, 2042, 3403, 2005, 1037, 2023, 2607, 2026, 2878,</span><br><span class="line">         2166, 1012,  102],</span><br><span class="line">        [ 101, 1045, 5223, 2023, 2061, 2172,  999,  102,    0,    0,    0,    0,</span><br><span class="line">            0,    0,    0]]), &#x27;attention_mask&#x27;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],</span><br><span class="line">        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]])&#125;</span><br></pre></td></tr></table></figure>
 <p>你需要记住这个input_ids，input_ids这个名字是自动生成的，它是将每一个词都生成一个对应的索引。</p>
-<p>比如看第二句话 I hate this so much!
-一共有5个单词，但是还得加上标点符号，就是6个，但是在上面的结果中可以看到有8个编号后面再加上一下补长的0，其中101表示一个句子的开头，102表示一个句子的结束，所以有8个编号。（不同分词器的编号规则和内容不一定相同）</p>
+<p>比如看第二句话 I hate this so much! 一共有5个单词，但是还得加上标点符号，就是6个，但是在上面的结果中可以看到有8个编号后面再加上一下补长的0，其中101表示一个句子的开头，102表示一个句子的结束，所以有8个编号。（不同分词器的编号规则和内容不一定相同）</p>
 <p>也就是说当前的id可以转化为tensor，也可以转化为文本，可以做编码解码的工作</p>
 <p>使用这个编号，将句子解码出来，代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.decode([ <span class="number">101</span>, <span class="number">1045</span>, <span class="number">1005</span>, <span class="number">2310</span>, <span class="number">2042</span>, <span class="number">3403</span>, <span class="number">2005</span>, <span class="number">1037</span>, <span class="number">2023</span>, <span class="number">2607</span>, <span class="number">2026</span>, <span class="number">2878</span>,<span class="number">2166</span>, <span class="number">1012</span>,  <span class="number">102</span>])</span><br></pre></td></tr></table></figure>
 <p>输出的结果：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[CLS] i&#x27;ve been waiting for a this course my whole life. [SEP]&quot;</span></span><br></pre></td></tr></table></figure>
 <p>这里的CLS表示的是分类的字符，SEP表示终止的字符，也就是说101和102表示特殊字符。</p>
-<p>那后面0是什么？前面提到为来保证长度一致，做了padding补齐的操作，通过SEP做来分隔，SEP之前是实际内容，SEP之后是补0的内容，但是我们注意到了一个叫做attention_mask的东西。我们在做Transformer在做Self-Attention的时候，每一个词都需要跟所有的词计算关系（还不知道什么是Transformer去看<a
-target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131204351?spm=1001.2014.3001.5502"
-title="我的这篇文章">我的这篇文章</a>），那我后面补了0，需要前面的词需要和0计算关系吗？是不是不用啊。attention_mask表示的意思就是SEP后面的0，是不用计算的，全都是占位符而已。</p>
-<p>下篇内容：</p>
-<p><a
-target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131656563"
-title="Hugging Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客">Hugging
-Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客</a></p>
+<p>那后面0是什么？前面提到为来保证长度一致，做了padding补齐的操作，通过SEP做来分隔，SEP之前是实际内容，SEP之后是补0的内容，但是我们注意到了一个叫做attention_mask的东西。我们在做Transformer在做Self-Attention的时候，每一个词都需要跟所有的词计算关系（还不知道什么是Transformer去看<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131204351?spm=1001.2014.3001.5502" title="我的这篇文章">我的这篇文章</a>），那我后面补了0，需要前面的词需要和0计算关系吗？是不是不用啊。attention_mask表示的意思就是SEP后面的0，是不用计算的，全都是占位符而已。</p>
+<p> 下篇内容：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50592077/article/details/131656563" title="Hugging Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客">Hugging Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓越的博客-CSDN博客</a></p>
 
     
 
@@ -524,18 +506,18 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90ollama%E3%80%91/%E6%9C%AC%E5%9C%B0%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2Ollama%E8%BF%90%E8%A1%8CLLM%E8%AF%A6%E7%BB%86%E6%B5%81%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/git/%E3%80%90GitHub%E3%80%91/%E4%BF%AE%E6%94%B9GitHub%E4%BB%93%E5%BA%93%E7%9A%84%E9%BB%98%E8%AE%A4%E5%88%86%E6%94%AF/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          本地快速部署 Ollama 运行 LLM 详细流程
+          修改GitHub仓库的默认分支
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%BE%AE%E8%B0%83%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">第七章：微调预训练模型</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">第五章：模型与分词器</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -562,7 +544,7 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#tokenizer%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">Tokenizer分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%83%8C%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">相关背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">安装测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">基本流程概述分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tokenizer%E9%9C%80%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">1.4.</span> <span class="toc-text">Tokenizer需要做的事情</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">Tokenizer分词器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%83%8C%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">相关背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">安装测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">基本流程概述分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tokenizer%E9%9C%80%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">1.4.</span> <span class="toc-text">Tokenizer需要做的事情</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -741,11 +723,11 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -765,19 +747,11 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -785,15 +759,15 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -801,11 +775,23 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -817,19 +803,7 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -845,7 +819,15 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -853,7 +835,7 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -873,11 +855,11 @@ Face实战-系列教程2：AutoModel模型自动选择工具_机器学习杨卓�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

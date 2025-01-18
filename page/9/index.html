@@ -213,340 +213,6 @@
             
 
   
-    <article id="post-【后端】/python/Special Variables/&#39;__str__()和__repr__()&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__str__()%E5%92%8C__repr__()'/" target="_blank">__str__()和__repr__()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__str__()%E5%92%8C__repr__()'/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># <code>__str__()</code>和<code>__repr__()</code></p>
-<p>在学习类相关知识时，注意到了__str__() 和、__repr__()
-这两种方法，但对两者的异同不是很了解，因此写这篇博客记录一下学习过程，也供其他小伙伴参考。文中如有错误或者表述不当之处欢迎在评论区指出。</p>
-<p>首先，__repr__() 和、__str__() 都属于特殊方法（也称魔术方法，magic
-method），且作用都是根据对象的状态返回字符串。那两者的具体应用场景以及区别是什么呢？接下来一一进行介绍。</p>
-<h2 id="str__-方法">__str__() 方法</h2>
-<h3 id="调用场景">调用场景</h3>
-<p>对象的__str__() 方法在以下情况下会被调用：</p>
-<ul>
-<li>使用<strong>print()</strong>打印一个对象；</li>
-<li>将对象传入<strong>format()</strong>；</li>
-<li>将对象传入<strong>str.format()</strong>；</li>
-<li>将对象传入<strong>str()</strong>；</li>
-</ul>
-<p><strong>注意：</strong>如果对象中定义了__str__()
-方法，则在上述情况下__str__() 会被调用，否则将会调用__repr__()
-方法。</p>
-<h3 id="默认实现">默认实现</h3>
-<p><strong>python 中所有类默认会继承 object 类，object
-类中默认实现了__str__() 和__repr__() 方法，但由于 python 的源码是 C
-语言</strong>，所以对于普通 python 用户来说阅读难度较大，在这里我们用
-python 语言等价表示一下__str__() 方法默认实现的原理：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># __repr__() 默认实现同理</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&lt;&#123;0&#125;.&#123;1&#125; object at &#123;2&#125;&gt;&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">      <span class="built_in">type</span>(self).__module__, <span class="built_in">type</span>(self).__qualname__, <span class="built_in">hex</span>(<span class="built_in">id</span>(self)))</span><br></pre></td></tr></table></figure>
-<p>其中__module__() 表示对象来自哪个模块，__qualname__()
-我们可以暂时理解为类的名字（__qualname__和__name__的异同感兴趣的伙伴可自行查阅）。</p>
-<p>也就是说，object 类中默认实现的__str__()
-方法会输出<strong>对象所在的模块</strong>、<strong>对象所属的类的名字</strong>以及<strong>对象在内存中的十六进制地址表示</strong>。</p>
-<h3 id="实例分析">实例分析</h3>
-<p>了解了__str__()
-的具体应用场景以及默认实现，接下来结合几个例子进一步理解一下具体的调用过程。</p>
-<h4 id="例子-1">例子 1</h4>
-<p>自定义类，但并未在类中实现__str__()
-方法。可以先回忆一下如果没有实现__str__() 方法，情况会如何？</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">CustomClass</span>: <span class="keyword">pass</span> </span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(CustomClass())  <span class="comment"># 调用 print() 方法</span></span><br><span class="line">&lt;__main__.CustomClass <span class="built_in">object</span> at <span class="number">0x000001BFB5E13DC0</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span>(CustomClass())  <span class="comment"># 调用 str() 方法</span></span><br><span class="line"><span class="string">&#x27;&lt;__main__.CustomClass object at 0x000001BFB5E13DC0&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>结合上述例子，我们分析一下具体的调用过程。首先我们定义了一个名为
-CustomClass 的类，然后我们分别将它的一个实例对象传入 print() 和和 str()
-方法中，这两种方法都是调用对象的__str__() 方法；但是由于 CustomClass
-中没有实现__str__()
-方法，<strong>那么根据注意事项中提到的</strong>，会调用__repr__()
-方法，但显然 CustomClass 中也没有实现，最终就会调用基类 object
-中的__repr__() 方法。</p>
-<p><strong>注意：</strong>print() 和 str() 两者最终调用的都是 object
-中的__repr__() 方法，__repr__() 返回的是字符串，但</p>
-<ul>
-<li>print() 将字符串打印在了屏幕上</li>
-<li>而 str() 保留了字符串的格式。</li>
-</ul>
-<h4 id="例子-2">例子 2</h4>
-<p>自定义类，但实现了__str__() 方法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">CustomClass</span>:     </span><br><span class="line"><span class="meta">... </span>    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>): <span class="keyword">return</span> <span class="string">&#x27;foo&#x27;</span> </span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(CustomClass()) </span><br><span class="line">foo</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span>(CustomClass()) </span><br><span class="line"><span class="string">&#x27;foo&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>这个例子比较容易理解，就是调用了 CustomClass 类中实现的__str__()
-方法。</p>
-<h3 id="目的">目的</h3>
-<p>根据__str__() 的具体使用场景我们可以看出，主要是 print()、str()
-等函数会调用对象的__str__() 方法，而 print()、str()
-等函数的输出通常主要是给<strong>程序的使用者</strong>看的，且并非所有程序使用者都具有编程知识，所以__str__()
-的返回值一定是便于阅读的。这一点结合后面__repr__() 的目的进行理解。</p>
-<h2 id="repr__-方法">__repr__() 方法</h2>
-<h3 id="调用场景-1">调用场景</h3>
-<p>__repr__() 方法调用场景主要有以下两种：</p>
-<ul>
-<li>被内置函数 repr() 调用；</li>
-<li>我们输入能返回一个对象的表达式时，回车之后在 python shell
-中显示内容的过程会调用__repr__() 方法。</li>
-<li>debugger 时的变量表示</li>
-</ul>
-<p><strong>__repr__() 作为__str__()
-的备用方法，如果你只能实现其中一个的话，建议实现__repr__()
-方法。</strong></p>
-<h3 id="默认实现-1">默认实现</h3>
-<p>同__str__()</p>
-<h3 id="案例分析">案例分析</h3>
-<h4 id="例子-1-1">例子 1</h4>
-<p>自定义类，但没有实现__repr__() 方法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">C</span>: <span class="keyword">pass</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">repr</span>(C())</span><br><span class="line"><span class="string">&#x27;&lt;__main__.C object at 0x000001B277733DC0&gt;&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>C()</span><br><span class="line">&lt;__main__.C <span class="built_in">object</span> at <span class="number">0x000001B277733DC0</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>首先，我们自定义了一个名为 C 的类，在将 C 的实例对象传给 repr()
-时，去调用 C 的__repr__() 方法，但由于 C 中没有实现，最终调用的是基类
-object 中的__repr__() 方法。在解释器中输入 C() 回车后调用过程同理。</p>
-<p>注意：当在控制台直接输入 C() 并按回车键时，调用__repr__()
-并得到一个字符串返回值，但为了提高可读性，解释器只显示了这个字符串的内容，没有加引号。</p>
-<h4 id="例子-2-1">例子 2</h4>
-<p>自定义类且实现__repr__() 方法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">C</span>:     </span><br><span class="line"><span class="meta">... </span>    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>): <span class="keyword">return</span> <span class="string">&#x27;call __repr__() method&#x27;</span> </span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">repr</span>(C()) </span><br><span class="line"><span class="string">&#x27;call __repr__() method&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>C()</span><br><span class="line">call __repr__() method</span><br></pre></td></tr></table></figure>
-<h3 id="目的-1">目的</h3>
-<p>根据__repr__() 的应用场景——控制台输出、debugger
-等，可以看出，其输出的内容主要面向<strong>程序开发者</strong>，需要为开发者提供必要且有用的信息，包括但不限于对象对应的类名、对象属性值等。</p>
-<p>我们结合一个例子直观感受一下为什么说__str__()
-主要面向程序使用者，而__repr__() 主要面向程序开发者：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> datetime </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>datetime.datetime.now()  <span class="comment"># 调用__repr__()</span></span><br><span class="line">datetime.datetime(<span class="number">2024</span>, <span class="number">11</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">23</span>, <span class="number">18</span>, <span class="number">647770</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(datetime.datetime.now()) <span class="comment"># 调用__str__()</span></span><br><span class="line"><span class="number">2024</span>-<span class="number">11</span>-<span class="number">17</span> <span class="number">22</span>:<span class="number">23</span>:<span class="number">42.227722</span></span><br></pre></td></tr></table></figure>
-<p>因此对于__repr__()
-的返回值，我们希望其满足一定要求，具体来说就是：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="built_in">repr</span>(<span class="built_in">object</span>)) == <span class="built_in">object</span></span><br></pre></td></tr></table></figure>
-<p>其中 eval()
-函数用来执行一个字符串表达式，并返回表达式的值。也就是说，一个对象__repr__()
-的返回值，如果在控制台输入这个返回值，可以得到一个对象实例，结合例子具体理解一下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个表示二维向量的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x=<span class="number">0</span>, y=<span class="number">0</span></span>):</span><br><span class="line">        self.x = x</span><br><span class="line">        self.y = y</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        s = <span class="string">&#x27;Vector(%r, %r)&#x27;</span> % (self.x, self.y)</span><br><span class="line">        <span class="keyword">return</span> s</span><br></pre></td></tr></table></figure>
-<p>在上述例子中，对于使用默认参数的对象实例 Vector()，_repr__()
-返回值为<strong>'Vector(0, 0)'</strong>，而 eval()
-则会根据这个返回值再创建一个对象实例。但__repr__()
-的默认实现并不满足上述要求，因此在编写大型项目时通常需要自行实现。</p>
-<hr />
-<h2 id="总结">总结</h2>
-<p>最后总结一下__str__() 和__repr__() 两者的异同。</p>
-<p><strong>相同点</strong>：</p>
-<ul>
-<li>都属于特殊方法；</li>
-<li>返回值都是字符串；</li>
-<li>在默认实现中，两者的返回值相同。</li>
-</ul>
-<p><strong>不同点</strong>：</p>
-<ul>
-<li>应用场景不同，__str__() 是当对象传入 print()、str()、format() 和
-str.format() 时被调用，而__repr__() 是对象传入 repr()、控制台输出和
-debugger 时被调用；</li>
-<li>输出内容面向人群不同，__str__()
-返回值主要是给程序使用者看的，而__repr__()
-返回值是给程序开发者看的。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__str__()%E5%92%8C__repr__()'/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/Special Variables/属性相关的魔术方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E5%B1%9E%E6%80%A7%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" target="_blank">属性相关的魔法方法</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E5%B1%9E%E6%80%A7%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="属性相关的魔法方法">属性相关的魔法方法</h1>
-<h2 id="实例">实例</h2>
-<p>首先需要知道：python 中所有类默认继承 <code>object</code> 类</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># class User(object):</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>:</span><br><span class="line">    z = [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]  <span class="comment"># 类属性</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.money = <span class="number">10000</span></span><br><span class="line">        self.y = <span class="string">&quot;abc&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">u = User()</span><br><span class="line"><span class="built_in">print</span>(u.money)</span><br><span class="line"><span class="built_in">print</span>(u.abc)</span><br></pre></td></tr></table></figure>
-<p><strong>运行结果：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">10000</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    print(u.abc)  # 调用 __getattribute__ 和 __getattr__</span><br><span class="line">AttributeError: &#x27;User&#x27; object has no attribute &#x27;abc&#x27;</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>:</span><br><span class="line">    z = [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]  <span class="comment"># 类属性</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.money = <span class="number">10000</span></span><br><span class="line">        self.y = <span class="string">&quot;abc&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setattr__</span>(<span class="params">self, name, value</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;set %s = %s&quot;</span> % (name, value))</span><br><span class="line">        <span class="built_in">object</span>.__setattr__(self, name, value)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattribute__</span>(<span class="params">self, name</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;getattribute %s&quot;</span> % name)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">object</span>.__getattribute__(self, name)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, name</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;getattr %s&quot;</span> % name)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>  <span class="comment"># 属性不存在时返回默认值</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">u = User()  <span class="comment"># 调用 __init__ 和 __setattr__</span></span><br><span class="line"><span class="built_in">print</span>(u.money)  <span class="comment"># 调用 __getattribute__</span></span><br><span class="line"><span class="built_in">print</span>(u.abc)  <span class="comment"># 调用 __getattribute__ 和 __getattr__</span></span><br></pre></td></tr></table></figure>
-<p><strong>执行过程</strong>：</p>
-<ol type="1">
-<li><code>u = User()</code>：调用 <code>__init__()</code>，设置
-<code>money</code> 和 <code>y</code> 属性
-<ul>
-<li><code>self.money = 10000</code> 都会调用
-<code>self.__setattr__("money", 10000)</code></li>
-<li><code>self.y = "abc"</code> 都会调用
-<code>self.__setattr__("y", "abc")</code></li>
-</ul></li>
-<li><code>print(u.money)</code>：调用
-<code>u.__getattribute__("money")</code> 来访问 <code>money</code>
-属性</li>
-<li><code>print(u.abc)</code>：调用
-<code>u.__getattribute__("abc")</code> 尝试查找属性
-<code>abc</code>，发现不存在，调用
-<code>u.__getattr__("abc")</code></li>
-</ol>
-<p><strong>运行结果</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set money = 10000</span><br><span class="line">set y = abc</span><br><span class="line">getattribute money</span><br><span class="line">10000</span><br><span class="line">getattribute abc</span><br><span class="line">getattr abc</span><br><span class="line">-1</span><br></pre></td></tr></table></figure>
-<h2 id="setattr__">__setattr__()</h2>
-<ul>
-<li><p>在给对象设置属性时会自动调用</p></li>
-<li><p><strong>如果覆盖了 <code>__setattr__</code>，需要显式调用父类方法
-<code>object.__setattr__</code></strong>，否则会导致递归调用</p></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__setattr__</span>(<span class="params">self, name, value</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;set <span class="subst">&#123;name&#125;</span> = <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">object</span>.__setattr__(self, name, value)  <span class="comment"># 正确的方式</span></span><br></pre></td></tr></table></figure>
-<h2 id="getattribute__">__getattribute__()</h2>
-<ul>
-<li><p>在访问任何属性时都会触发此方法</p></li>
-<li><p>覆盖此方法需要特别小心，避免无限递归</p></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getattribute__</span>(<span class="params">self, name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;getattribute <span class="subst">&#123;name&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">object</span>.__getattribute__(self, name)</span><br></pre></td></tr></table></figure>
-<h2 id="getattr__">__getattr__()</h2>
-<ul>
-<li>当访问一个<strong>不存在的属性</strong>时会触发</li>
-<li>常用于提供默认值或处理动态属性</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;getattr <span class="subst">&#123;name&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>  <span class="comment"># 返回默认值</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E5%B1%9E%E6%80%A7%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/Special Variables/比较运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -647,93 +313,6 @@ debugger 时被调用；</li>
 
 
   
-    <article id="post-【后端】/python/Special Variables/算术运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" target="_blank">算数运算符相关的魔术方法</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="算数运算符相关的魔术方法">算数运算符相关的魔术方法</h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__add__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score + other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__sub__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score - other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__mul__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name * other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__truediv__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score / other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__mod__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score % other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__pow__</span>(<span class="params">self, power, modulo=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> self.score**power</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">95</span>)</span><br><span class="line"><span class="built_in">print</span>(s + <span class="number">1</span>)  <span class="comment"># 96</span></span><br><span class="line"><span class="built_in">print</span>(s - <span class="number">2</span>)  <span class="comment"># 93</span></span><br><span class="line"><span class="built_in">print</span>(s * <span class="number">2</span>)  <span class="comment"># zhangsanzhangsan</span></span><br><span class="line"><span class="built_in">print</span>(s / <span class="number">5</span>)  <span class="comment"># 19.0</span></span><br><span class="line"><span class="built_in">print</span>(s % <span class="number">5</span>)  <span class="comment"># 0</span></span><br><span class="line"><span class="built_in">print</span>(s**<span class="number">2</span>)  <span class="comment"># 9025</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/Special Variables/类型转换相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -792,6 +371,93 @@ debugger 时被调用；</li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/Special Variables/算术运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" target="_blank">算数运算符相关的魔术方法</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="算数运算符相关的魔术方法">算数运算符相关的魔术方法</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__add__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score + other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__sub__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score - other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__mul__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name * other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__truediv__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score / other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__mod__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score % other</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__pow__</span>(<span class="params">self, power, modulo=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> self.score**power</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">95</span>)</span><br><span class="line"><span class="built_in">print</span>(s + <span class="number">1</span>)  <span class="comment"># 96</span></span><br><span class="line"><span class="built_in">print</span>(s - <span class="number">2</span>)  <span class="comment"># 93</span></span><br><span class="line"><span class="built_in">print</span>(s * <span class="number">2</span>)  <span class="comment"># zhangsanzhangsan</span></span><br><span class="line"><span class="built_in">print</span>(s / <span class="number">5</span>)  <span class="comment"># 19.0</span></span><br><span class="line"><span class="built_in">print</span>(s % <span class="number">5</span>)  <span class="comment"># 0</span></span><br><span class="line"><span class="built_in">print</span>(s**<span class="number">2</span>)  <span class="comment"># 9025</span></span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
     </p>
     
 
@@ -910,6 +576,248 @@ debugger 时被调用；</li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9012.%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-命令操作/【Linux】/command/python -m 与 python 的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">python -m 与 python 的区别</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="python--m-与-python-的区别">python -m 与 python 的区别</h1>
+<h2 id="module">module</h2>
+<p>先看<code>python --help</code>看下<code>python -m</code>参数的解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-m mod : run library module as a script (terminates option list)</span><br></pre></td></tr></table></figure>
+<p><code>mod</code>是<code>module</code>的缩写，即<code>-m</code>后面跟的是模块
+(<code>module</code>) 名，意思是把模块当成脚本来运行。</p>
+<p><code>terminates option list</code>意味着<code>-m</code>之后的其它选项不起作用，在这点上它跟<code>-c</code>是类似，都是终极选项。</p>
+<p>既然涉及到模块，这里就多提几句。 在 Python
+中，一个<code>.py</code>文件就称之为一个模块（<code>Module</code>）。</p>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/biggbang/article/details/115942467?ops_request_misc=%7B%22request%5Fid%22%3A%220d7eea1321190be2bdd00f9e7160d8c4%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fblog.%22%7D&amp;request_id=0d7eea1321190be2bdd00f9e7160d8c4&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-1-115942467-null-null.nonecase&amp;utm_term=模块&amp;spm=1018.2226.3001.4450">Python
+模块与包详解</a></p>
+</blockquote>
+<p>比如一个顶层包名 <code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面<code>fly.py</code>模块的名字就是<code>bytesfly.fly</code>。</p>
+<blockquote>
+<p>注意： 模块名是不带 <code>.py</code> 后缀的，层级之间以
+<code>.</code> 作为分隔符</p>
+</blockquote>
+<h2 id="python--m-原理解析">python -m 原理解析</h2>
+<p>看了上面<code>python -m</code>几种常见用法，你是否好奇<code>python -m</code>到底做了什么事？</p>
+<p>不卖关子，一句话解释就是：</p>
+<blockquote>
+<p>对于<code>python -m module_name</code>，Python
+会检索<code>sys.path</code>，查找名字为<code>module_name</code>的模块或者包，并将其内容当成主程序入口来执行，换句话说在执行时，该脚本的<code>__name__</code>是<code>__main__</code>。</p>
+</blockquote>
+<p>拿文章开篇的<code>bytesfly.fly</code>模块来说，也就是<code>bytesfly</code>包下的<code>fly.py</code>文件内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----fly----&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;fly_main&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在<code>~</code>项目路径下执行<code>python -m bytesfly.fly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>如果直接执行呢？
+即相同路径下执行<code>python bytesfly/fly.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi/bytesfly&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>总结一下，<code>python -m module_name</code>与<code>python folder/file.py</code>，都会把定位到的
+Python
+脚本当成主程序入口来执行，即在执行时，该脚本的<code>__name__</code>都是<code>__main__</code>，与<code>import</code>导入模块不同。</p>
+<p>但是有注意到上面两种调用方式的不同之处吗？</p>
+<p><code>fly.py</code>程序输出了<code>sys.path</code>，可以看到两种调用方式的<code>Python Path</code>有区别，这种区别有什么影响呢？</p>
+<p>再看一个例子。
+比如一个顶层包名还是<code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>tool.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+<p>其中<code>run.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> bytesfly.b <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(tool.add(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>同样在<code>~</code>项目路径下执行<code>python -m bytesfly.a.run</code>，输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+<p>然后在<code>~</code>项目路径下执行<code>python bytesfly/a/run.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi/bytesfly/a&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;bytesfly/a/run.py&quot;, line 6, in </span><br><span class="line"> from bytesfly.b import tool</span><br><span class="line">ModuleNotFoundError: No module named &#x27;bytesfly&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个地方能 Get
+到这两种调用方式在<code>Python Path</code>上的区别？</p>
+<p>除此之外，<code>python -m module_name</code>与<code>python folder/file.py</code>，在实现上有什么不同呢？</p>
+<ul>
+<li>使用<code>python -m module_name</code>，解释器在不<code>import</code>模块的情况下，在所有模块命名空间中查找，定位到脚本的路径，然后执行。为了实现这个过程，解释器会借助两个模块：<code>pkgutil</code>和<code>runpy</code>，前者用于获取所有的模块列表，后者根据模块名来定位并执行脚本</li>
+<li>直接运行脚本时，相当于给出了脚本的完整路径（不管是绝对路径还是相对路径），解释器根据文件系统的查找机制，定位到该脚本，然后执行</li>
+</ul>
+<h2 id="python--m-补充说明">python -m 补充说明</h2>
+<p><code>python -m module_name</code>这里的<code>module_name</code>也可以是包名。</p>
+<p>还是用上面的顶层包名<code>bytesfly</code>举例，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>__main__.py</code>内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line"></span><br><span class="line">print(&quot;---bytesfly---&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    print(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>项目路径下执行<code>python -m bytesfly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---bytesfly---</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如果执行<code>python -m bytesfly.a</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">No module named bytesfly.a.__main__; &#x27;bytesfly.a&#x27; is a package and cannot be directly executed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>原来，<code>python -m bytesfly</code>等效于<code>python -m bytesfly.__main__</code>。</p>
+<h2 id="写在最后">写在最后</h2>
+<p>有了<code>python -m module_name</code>选项，在命令行中使用内置模块、标准包与第三方模块更加方便。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/%E3%80%90Linux%E3%80%91/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/装饰器/@dataclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/" target="_blank">@dataclass</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><a href="..\第三方库【dataclass模块】.md">【dataclass模块】</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/">展开全文 >></a>
     </p>
     
 
@@ -1099,92 +1007,6 @@ id="进一步优化添加类型提示和接口约束">进一步优化：添加�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@abstractmethod/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/装饰器/@dataclass" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/" target="_blank">@dataclass</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p><a href="..\第三方库【dataclass模块】.md">【dataclass模块】</a></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/">展开全文 >></a>
     </p>
     
 
@@ -1660,6 +1482,257 @@ Python 的描述符。</p>
 
 
   
+    <article id="post-【后端】/python/第三方库/【collections模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【collections模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="collections模块">【collections模块】</h1>
+<p>在日常 Python
+开发中，我们经常需要处理各种<strong>数据结构</strong>。Python
+标准库自带的 <code>collections</code>
+模块，为我们提供了一系列高效且灵活的容器数据类型，比基础数据结构（如
+<code>list</code>, <code>dict</code>, <code>set</code>,
+<code>tuple</code>）功能更丰富，应用场景更广泛。本文将详解
+<code>collections</code>
+模块中的常用数据结构，并通过实例展示它们在项目中的具体应用。</p>
+<h2 id="概述">概述</h2>
+<p><code>collections</code> 模块提供了以下几种常用的容器数据类型：</p>
+<ol type="1">
+<li><strong>Counter</strong>：计数器，统计可哈希对象的出现次数。</li>
+<li><strong>deque</strong>：双端队列，支持高效的双向插入和删除操作。</li>
+<li><strong>namedtuple</strong>：命名元组，创建具名字段的元组。</li>
+<li><strong>OrderedDict</strong>：有序字典，按插入顺序维护键值对。</li>
+<li><strong>defaultdict</strong>：带默认值的字典，避免
+<code>KeyError</code>。</li>
+<li><strong>ChainMap</strong>：多个字典的组合视图，便于管理多个上下文。</li>
+</ol>
+<p>接下来，我们将逐一介绍这些数据类型的特点及其应用场景。</p>
+<hr />
+<h2 id="counter快速统计元素频率">Counter：快速统计元素频率</h2>
+<p><code>Counter</code>
+是一个简单却非常实用的工具，用于统计元素的频率。在数据分析、文本处理等场景中，<code>Counter</code>
+十分高效。</p>
+<h3 id="示例统计字符出现频率">示例：统计字符出现频率</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 字符串中字符频率统计</span></span><br><span class="line">text = <span class="string">&quot;collections module is very useful in Python&quot;</span></span><br><span class="line">char_count = Counter(text)</span><br><span class="line"><span class="built_in">print</span>(char_count)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找最常见的 3 个字符</span></span><br><span class="line"><span class="built_in">print</span>(char_count.most_common(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Counter(&#123;&#x27; &#x27;: 6, &#x27;o&#x27;: 4, &#x27;l&#x27;: 4, &#x27;e&#x27;: 4, &#x27;i&#x27;: 3, &#x27;n&#x27;: 3, &#x27;s&#x27;: 3, &#x27;u&#x27;: 3, &#x27;c&#x27;: 2, &#x27;t&#x27;: 2, &#x27;y&#x27;: 2, &#x27;m&#x27;: 1, &#x27;d&#x27;: 1, &#x27;v&#x27;: 1, &#x27;r&#x27;: 1, &#x27;f&#x27;: 1, &#x27;P&#x27;: 1, &#x27;h&#x27;: 1&#125;)</span><br><span class="line">[(&#x27; &#x27;, 6), (&#x27;o&#x27;, 4), (&#x27;l&#x27;, 4)]</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景">应用场景</h3>
+<ul>
+<li><strong>文本分析</strong>：如统计词频、字符频率。</li>
+<li><strong>数据清洗</strong>：用于去重或筛选高频数据。</li>
+</ul>
+<hr />
+<h2 id="deque高效的双端队列">deque：高效的双端队列</h2>
+<p><code>deque</code>
+提供了高效的双向插入和删除操作，非常适合实现队列和栈结构。此外，<code>deque</code>
+还支持旋转、批量删除等高级操作。</p>
+<h3 id="示例实现简单的队列和栈">示例：实现简单的队列和栈</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 deque</span></span><br><span class="line">d = deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加元素</span></span><br><span class="line">d.append(<span class="number">6</span>)         <span class="comment"># 右侧添加</span></span><br><span class="line">d.appendleft(<span class="number">0</span>)     <span class="comment"># 左侧添加</span></span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除元素</span></span><br><span class="line">d.pop()             <span class="comment"># 右侧删除</span></span><br><span class="line">d.popleft()         <span class="comment"># 左侧删除</span></span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 旋转</span></span><br><span class="line">d.rotate(<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(d)            <span class="comment"># 右旋 2 位</span></span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deque([0, 1, 2, 3, 4, 5, 6])</span><br><span class="line">deque([1, 2, 3, 4, 5])</span><br><span class="line">deque([4, 5, 1, 2, 3])</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-1">应用场景</h3>
+<ul>
+<li><strong>队列和栈</strong>：高效实现双端队列、FIFO 队列、LIFO
+栈等。</li>
+<li><strong>滑动窗口</strong>：在滑动窗口算法中应用广泛，例如移动平均值计算。</li>
+</ul>
+<hr />
+<h2 id="namedtuple可读性更高的元组">namedtuple：可读性更高的元组</h2>
+<p><code>namedtuple</code>
+允许你创建一个具名字段的元组，让元组像对象一样操作。这种结构可读性高、性能好，适合存储轻量级的数据。</p>
+<h3 id="示例定义一个二维点的坐标">示例：定义一个二维点的坐标</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 Point 类型的 namedtuple</span></span><br><span class="line">Point = namedtuple(<span class="string">&#x27;Point&#x27;</span>, [<span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建命名元组对象</span></span><br><span class="line">p = Point(<span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问命名元组字段</span></span><br><span class="line"><span class="built_in">print</span>(p.x, p.y)</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 20</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-2">应用场景</h3>
+<ul>
+<li><strong>轻量级数据对象</strong>：适用于只读数据结构，如几何点、数据库行、API
+返回值。</li>
+<li><strong>可读性增强</strong>：与普通元组相比，<code>namedtuple</code>
+的字段访问更直观。</li>
+</ul>
+<hr />
+<h2
+id="ordereddict保持键值对插入顺序的字典">OrderedDict：保持键值对插入顺序的字典</h2>
+<p>Python 3.7 之后，标准的 <code>dict</code>
+默认保持插入顺序。但在一些特定场景下，<code>OrderedDict</code>
+仍然有优势。例如，你可以根据访问顺序进行重新排序。</p>
+<h3
+id="示例按访问顺序重新排列键值对">示例：按访问顺序重新排列键值对</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 OrderedDict</span></span><br><span class="line">ordered_dict = OrderedDict()</span><br><span class="line">ordered_dict[<span class="string">&#x27;banana&#x27;</span>] = <span class="number">3</span></span><br><span class="line">ordered_dict[<span class="string">&#x27;apple&#x27;</span>] = <span class="number">4</span></span><br><span class="line">ordered_dict[<span class="string">&#x27;orange&#x27;</span>] = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ordered_dict)   <span class="comment"># 按插入顺序显示</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移动键值对到末尾</span></span><br><span class="line">ordered_dict.move_to_end(<span class="string">&#x27;banana&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(ordered_dict)</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">OrderedDict([(&#x27;banana&#x27;, 3), (&#x27;apple&#x27;, 4), (&#x27;orange&#x27;, 2)])</span><br><span class="line">OrderedDict([(&#x27;apple&#x27;, 4), (&#x27;orange&#x27;, 2), (&#x27;banana&#x27;, 3)])</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-3">应用场景</h3>
+<ul>
+<li><strong>缓存实现</strong>：LRU 缓存（Least Recently Used
+缓存）。</li>
+<li><strong>数据序列化</strong>：保持顺序的情况下进行序列化，方便处理和阅读。</li>
+</ul>
+<hr />
+<h2 id="defaultdict带默认值的字典">defaultdict：带默认值的字典</h2>
+<p><code>defaultdict</code> 是 <code>collections</code>
+模块中的一个特殊字典类型，它允许你为字典的键提供一个默认值生成函数（如
+<code>int</code>、<code>list</code>、<code>set</code>、匿名函数
+<code>lambda</code> 等）。当访问不存在的键时，<code>defaultdict</code>
+会<strong>调用这个函数</strong>来生成一个默认值，而不是抛出
+<code>KeyError</code></p>
+<h3 id="示例按字符分类存储单词">示例：按字符分类存储单词</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个以 list 作为默认值的 defaultdict</span></span><br><span class="line">word_dict = defaultdict(<span class="built_in">list</span>)</span><br><span class="line">words = [<span class="string">&#x27;apple&#x27;</span>, <span class="string">&#x27;banana&#x27;</span>, <span class="string">&#x27;cherry&#x27;</span>, <span class="string">&#x27;avocado&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">    first_letter = word[<span class="number">0</span>]</span><br><span class="line">    word_dict[first_letter].append(word)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(word_dict)   <span class="comment"># 输出按首字母分组的单词</span></span><br><span class="line"><span class="built_in">print</span>(word_dict[<span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(word_dict[<span class="string">&#x27;apple&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">defaultdict(&lt;class &#x27;list&#x27;&gt;, &#123;&#x27;a&#x27;: [&#x27;apple&#x27;, &#x27;avocado&#x27;], &#x27;b&#x27;: [&#x27;banana&#x27;], &#x27;c&#x27;: [&#x27;cherry&#x27;]&#125;)</span><br><span class="line">[&#x27;apple&#x27;, &#x27;avocado&#x27;]</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-4">应用场景</h3>
+<ul>
+<li><strong>计数</strong>：可将 <code>int</code>
+作为默认工厂，用于元素计数。</li>
+<li><strong>分组</strong>：在数据清洗和分析中，将 <code>list</code> 或
+<code>set</code> 作为默认工厂进行分组。</li>
+</ul>
+<hr />
+<h2 id="chainmap多个字典的组合视图">ChainMap：多个字典的组合视图</h2>
+<p><code>ChainMap</code>
+可以将多个字典合并为一个视图，方便在不同上下文中查询数据。它不会合并字典数据，而是为多个字典创建了一个链接，查询时按顺序搜索。</p>
+<h3 id="示例合并多个字典">示例：合并多个字典</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> ChainMap</span><br><span class="line"></span><br><span class="line">dict1 = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;</span><br><span class="line">dict2 = &#123;<span class="string">&#x27;b&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">4</span>&#125;</span><br><span class="line">combined = ChainMap(dict1, dict2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;a&#x27;</span>])   <span class="comment"># 输出 1（在 dict1 中找到）</span></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;b&#x27;</span>])   <span class="comment"># 输出 2（dict1 优先）</span></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;c&#x27;</span>])   <span class="comment"># 输出 4（在 dict2 中找到）</span></span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-5">应用场景</h3>
+<ul>
+<li><strong>嵌套配置管理</strong>：合并多个配置文件或环境变量。</li>
+<li><strong>多级命名空间</strong>：在多级作用域中按优先级查找变量。</li>
+</ul>
+<hr />
+<h2 id="建议">建议</h2>
+<p><code>collections</code>
+模块提供了丰富且实用的容器数据结构，可以有效提升代码的简洁性和执行效率。在需要统计、存储、排序、分组等场景中，合理选用这些数据结构将极大简化代码逻辑，使代码更具可读性和效率。</p>
+<p>掌握 <code>collections</code>
+的这些数据结构，可以让你在实际项目中更加得心应手，也能进一步体会到
+Python 的灵活与强大。希望本文对你在 Python
+编程中使用高级数据结构有所帮助！</p>
+<h2 id="实战应用示例">实战应用示例</h2>
+<p>为了更好地展示 <code>collections</code>
+模块的实际用法，下面给出一个综合示例。假设我们有一个电商平台的用户购物记录，每个用户购买了不同类别的商品。我们需要完成以下任务：</p>
+<ol type="1">
+<li>统计每种商品类别的总购买量。</li>
+<li>找出购买最多的商品。</li>
+<li>按用户分组商品，并将数据存储为分组视图。</li>
+</ol>
+<h3 id="数据格式">数据格式</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Electronics&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Bob&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Books&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Books&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">5</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Electronics&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Bob&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Clothing&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">3</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Clothing&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="解决方案">解决方案</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter, defaultdict, ChainMap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 统计每种商品类别的总购买量</span></span><br><span class="line">category_counter = Counter()</span><br><span class="line"><span class="keyword">for</span> entry <span class="keyword">in</span> data:</span><br><span class="line">    category_counter[entry[<span class="string">&#x27;category&#x27;</span>]] += entry[<span class="string">&#x27;quantity&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Category totals:&quot;</span>, category_counter)</span><br><span class="line"><span class="comment"># 输出：Category totals: Counter(&#123;&#x27;Books&#x27;: 6, &#x27;Electronics&#x27;: 3, &#x27;Clothing&#x27;: 4&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 找出购买最多的商品</span></span><br><span class="line">most_common_category = category_counter.most_common(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Most purchased category:&quot;</span>, most_common_category)</span><br><span class="line"><span class="comment"># 输出：Most purchased category: [(&#x27;Books&#x27;, 6)]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 按用户分组商品</span></span><br><span class="line">user_purchases = defaultdict(<span class="built_in">list</span>)</span><br><span class="line"><span class="keyword">for</span> entry <span class="keyword">in</span> data:</span><br><span class="line">    user_purchases[entry[<span class="string">&#x27;user&#x27;</span>]].append((entry[<span class="string">&#x27;category&#x27;</span>], entry[<span class="string">&#x27;quantity&#x27;</span>]))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;User purchases:&quot;</span>, user_purchases)</span><br><span class="line"><span class="comment"># 输出：User purchases: defaultdict(&lt;class &#x27;list&#x27;&gt;, &#123;</span></span><br><span class="line"><span class="comment">#     &#x27;Alice&#x27;: [(&#x27;Electronics&#x27;, 2), (&#x27;Books&#x27;, 5), (&#x27;Electronics&#x27;, 1), (&#x27;Clothing&#x27;, 1)],</span></span><br><span class="line"><span class="comment">#     &#x27;Bob&#x27;: [(&#x27;Books&#x27;, 1), (&#x27;Clothing&#x27;, 3)]</span></span><br><span class="line"><span class="comment"># &#125;)</span></span><br></pre></td></tr></table></figure>
+<h2 id="如何选择合适的数据结构">如何选择合适的数据结构</h2>
+<p>在实际编程中，不同的任务和数据需求决定了我们选择的数据结构。以下是一些选择建议：</p>
+<ol type="1">
+<li><strong>计数需求</strong>：如果需要统计或查找高频元素，优先选择
+<code>Counter</code>。</li>
+<li><strong>队列/栈操作</strong>：如果需要双端插入、删除的队列或滑动窗口操作，选择
+<code>deque</code>。</li>
+<li><strong>简单数据对象</strong>：<code>namedtuple</code>
+可以代替轻量级类定义，减少代码复杂性。</li>
+<li><strong>维护顺序</strong>：如果插入顺序非常重要，<code>OrderedDict</code>
+是不错的选择。</li>
+<li><strong>避免KeyError</strong>：处理可能出现缺失键的字典时，使用
+<code>defaultdict</code>。</li>
+<li><strong>多级命名空间</strong>：在多层字典合并、配置或上下文管理中，<code>ChainMap</code>
+是很好的选择。</li>
+</ol>
+<hr />
+<h2 id="collections-与性能优化"><code>collections</code> 与性能优化</h2>
+<p>除了代码的简洁性，<code>collections</code>
+中的数据结构在性能方面也有优势。以 <code>Counter</code> 和
+<code>deque</code> 为例，<code>Counter</code> 是基于 <code>dict</code>
+实现的计数器，但它的统计操作更加高效；而 <code>deque</code>
+在大规模数据的插入、删除上明显快于 <code>list</code>。</p>
+<p>在实际应用中，合理选用 <code>collections</code>
+中的数据结构，不仅可以让代码更清晰，还能显著提升程序的执行效率。在数据处理、文本分析、数据聚合等场景中，<code>collections</code>
+是性能优化的利器。</p>
+<hr />
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/collections.html#collections.Counter">官方文档-中文</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://docs.python.org/3/library/collections.html#defaultdict-objects">官方文档-英文</a></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/8/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/10/">Next &amp;raquo;</a>
@@ -1814,15 +1887,15 @@ Python 的描述符。</p>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1834,6 +1907,10 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
@@ -1842,7 +1919,7 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1850,7 +1927,15 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1862,10 +1947,6 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -1874,27 +1955,11 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1910,7 +1975,11 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1918,15 +1987,11 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1934,11 +1999,19 @@ Python 的描述符。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/C++/算法/【贪心】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/C++/算法/【图论】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E8%B4%AA%E5%BF%83%E3%80%91/" target="_blank">【贪心】</a>
+	  <a class="article-title" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/" target="_blank">【图论】</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E8%B4%AA%E5%BF%83%E3%80%91/" class="archive-article-date">
+<a href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/" class="archive-article-date">
         <time datetime="2024-02-28T07:23:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-28</time>
 </a>
 
@@ -242,25 +242,513 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="贪心">贪心</h1>
-<p>​ 对于贪心问题，不要太关注过程或者方法，而应该关注结果的数据。</p>
-<h2 id="区间问题">区间问题</h2>
+    <ul>
+<li>图论的难点在于如何将具体问题
+<strong>抽象为图论中的模型</strong>，之后就是选择模板、默写代码</li>
+<li>选择模板时，在能过的基础上，选择最熟悉的、代码最短的写法即可</li>
+<li>对于无向树/图中的边 <span class="math inline">\(a\)</span> — <span
+class="math inline">\(b\)</span> ，存储两条有向边
+<code>a -&gt; b</code>、<code>b -&gt; a</code>
+即可，因此我们可以只考虑有向树/图的模型</li>
+</ul>
+<h1 id="树">树</h1>
+<dl>
+<dt>​ <strong>树是一种特殊的图</strong></dt>
+<dd>
+<p>apple: 无向树性质：</p>
+</dd>
+</dl>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101139307.png" alt="image-20240510113916052" style="zoom: 15%;" /></p>
+<ul>
+<li>无向树的 <strong>任意一个节点</strong> 都可以作为
+<strong>树的根节点</strong></li>
+</ul>
+<blockquote>
+<p>可以想象为节点是有质量，边是没有质量的，将这个根节点拎起来即可</p>
+</blockquote>
+<ul>
+<li>无向树中 <strong>任意 <span class="math inline">\(2\)</span>
+个节点</strong> 之间都是 <strong>连通的</strong>，且
+<strong>路径唯一</strong></li>
+</ul>
+<p>: orange: 有向树性质：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101139785.png" alt="image-20240510113948565" style="zoom:15%;" /></p>
+<ul>
+<li>有向树的 <strong>根节点是唯一的</strong>，即 <strong>入度为 <span
+class="math inline">\(0\)</span></strong> 的节点</li>
+<li>有向树中 <strong>任意 <span class="math inline">\(2\)</span>
+个节点</strong> 之间 <strong>未必连通</strong>，但
+<strong>从根节点到任意一个节点</strong> 都是 <strong>连通的</strong>，且
+<strong>路径唯一</strong></li>
+</ul>
+<h2 id="树的存储">树的存储</h2>
+<dl>
+<dt>​ <span class="math inline">\(n\)</span> 个顶点，无向树有 <span
+class="math inline">\(m=n-1\)</span> 条边，有向树有 <span
+class="math inline">\(m=2\times (n-1)\)</span> 条边</dt>
+<dd>
+<p>banana: <strong>树</strong> 的题目
+<strong>只会告诉你顶点的数量</strong>（因为已知顶点的数量，边的数量是确定的）</p>
+</dd>
+<dt><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 无向树 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = N;</span><br><span class="line"><span class="comment">/* 有向树 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = <span class="number">2</span> * N;</span><br></pre></td></tr></table></figure></dt>
+<dd>
+<p>heart: 树采用 <font color ='blue'> <strong>临界表</strong> </font>
+存储</p>
+</dd>
+</dl>
+<h3 id="有权树">有权树</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对于每个点 k，开一个单链表，存储 k 所有可以走到的点</span></span><br><span class="line"><span class="comment">// h[k] 存储这个单链表的头结点，w[] 存储边的权重</span></span><br><span class="line"><span class="type">int</span> h[N], w[M], e[M], ne[M], idx;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化</span></span><br><span class="line"><span class="built_in">memset</span>(h, <span class="number">-1</span>, <span class="keyword">sizeof</span> h);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加一条边 a-&gt;b，权重为 c</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c)</span></span><br><span class="line">&#123;</span><br><span class="line">    e[idx] = b, ne[idx] = h[a], w[idx] = c, h[a] = idx ++ ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="无权树">无权树</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对于每个点 k，开一个单链表，存储 k 所有可以走到的点</span></span><br><span class="line"><span class="comment">// h[k] 存储这个单链表的头结点</span></span><br><span class="line"><span class="type">int</span> h[N], e[M], ne[M], idx;	<span class="comment">// 全局变量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化</span></span><br><span class="line"><span class="built_in">memset</span>(h, <span class="number">-1</span>, <span class="keyword">sizeof</span> h);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加一条边 a-&gt;b</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span><br><span class="line">&#123;</span><br><span class="line">    e[idx] = b, ne[idx] = h[a], h[a] = idx ++ ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="例题">例题</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/249035/">AcWing 38.
+二叉树的镜像 - AcWing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/249034/">AcWing 39.
+对称的二叉树 - AcWing</a></li>
+</ul>
+<h2 id="树的遍历">树的遍历</h2>
+<ul>
+<li><strong>时间复杂度：</strong> <span
+class="math inline">\(O(n)\)</span>，<span
+class="math inline">\(n\)</span> 表示点数</li>
+</ul>
+<h3 id="无向树">无向树</h3>
+<ul>
+<li>无向树 <strong>任选</strong> 一个节点进行遍历即可，但需要
+<font color='red'> <strong>避免重复遍历</strong>
+</font>（否则一上一下会死循环，导致 <span
+class="math inline">\(TLE/MLE\)</span>），有 <span
+class="math inline">\(2\)</span> 种方式
+<ul>
+<li>使用 <code>st[]</code> 标记每个节点是否被遍历，代码与图的 <span
+class="math inline">\(dfs/bfs\)</span> 一摸一样</li>
+<li><span class="math inline">\(dfs\)</span>
+在遍历时也可以传入父节点，判断是否相同，从而避免重复</li>
+</ul></li>
+</ul>
+<h4 id="dfs">dfs</h4>
+<ul>
+<li>法 1：使用 <code>st[]</code> 标记每个节点是否被遍历，代码与 <a
+href="#图的dfs">图的 dfs</a> 一模一样</li>
+</ul>
+<hr />
+<ul>
+<li>法 2：传入参数 <code>fa</code>，表示父节点</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> fa)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (u != fa)</span><br><span class="line">            dfs(j);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="bfs">bfs</h4>
+<ul>
+<li>有向树遍历时 <strong>一定不会重复遍历</strong>，因此不需要
+<code>st[]</code></li>
+<li>使用 <code>st[]</code> 标记每个节点是否被遍历，代码与 <a
+href="#图的bfs">图的 bfs</a> 一模一样</li>
+</ul>
+<h3 id="有向树">有向树</h3>
+<ul>
+<li>有向树 <strong>必须从根节点开始</strong>
+进行遍历，永远不可能遍历一个节点两次，不需要判断是否重复遍历</li>
+<li>寻找根节点的办法如下：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> has_fa[N];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输入 n - 1 条边</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n - <span class="number">1</span>; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> a, b;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">    add(a, b);	<span class="comment">// 添加一条从 a 走向 b 的有向边</span></span><br><span class="line">    has_fa[b] = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 求树的根节点（没有父节点）</span></span><br><span class="line"><span class="type">int</span> root = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> (has_fa[root])</span><br><span class="line">    root++;</span><br></pre></td></tr></table></figure>
+<h4 id="dfs-1">dfs</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">            dfs(j);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>去掉了与 <code>st[]</code> 相关的部分</p>
+</blockquote>
+<h4 id="bfs-1">bfs</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    q.push(u);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (!q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q.front();</span><br><span class="line">        q.pop();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = h[t]; ~i; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            q.push(j);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>去掉了与 <code>st[]</code> 相关的部分</p>
+</blockquote>
+<h3 id="例题-1">例题</h3>
 <ul>
 <li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8193086/">AcWing
-905. 区间选点 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8201655/">AcWing
-908. 最大不相交区间数量 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8200554/">AcWing
-906. 区间分组 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8203105/">AcWing
-907. 区间覆盖 - AcWing</a></li>
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8792976/">AcWing
+1476. 数叶子结点 - AcWing</a></li>
 </ul>
+<h2 id="树的最短路">树的最短路</h2>
+<ul>
+<li>无向树中 <strong>任意 <span class="math inline">\(2\)</span>​
+个节点</strong> 之间都是 <strong>连通的</strong>，且
+<strong>路径唯一</strong></li>
+<li>有向树中 <strong>任意 <span class="math inline">\(2\)</span>
+个节点</strong> 之间 <strong>未必连通</strong>，但
+<strong>从根节点到任意一个节点</strong> 都是 <strong>连通的</strong>，且
+<strong>路径唯一</strong></li>
+</ul>
+<p>​ 因此：</p>
+<ul>
+<li>通常情况下，我们只对 <font color ='red'> <strong>无向树</strong>
+</font> 求最短路径</li>
+<li><strong>无向树</strong> 的最短路径即为 dfs / bfs 的一条
+<strong>有效路径</strong></li>
+</ul>
+<h3 id="dfs-2">dfs</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> dist[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> father, <span class="type">int</span> distance)</span></span><br><span class="line">&#123;</span><br><span class="line">    dist[u] = distance;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (j != father)</span><br><span class="line">            dfs(j, u, distance + w[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 假设求 1 号节点到其他所有点的最短距离</span></span><br><span class="line">dfs(<span class="number">1</span>, <span class="number">-1</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="bfs-2">bfs</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    q.push(u);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">memset</span>(dist, <span class="number">-1</span>, <span class="keyword">sizeof</span> dist);</span><br><span class="line">    dist[u] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(!q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q.front();</span><br><span class="line">        q.pop();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; i != <span class="number">-1</span>; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(dist[j] == <span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                dist[j] = dist[t] + w[i];</span><br><span class="line">                q.push(j);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="树的直径">树的直径</h2>
+<p><strong>树的直径</strong> 是 树中长度最长的路径，可以使用树型 <span
+class="math inline">\(DP\)</span> 求解</p>
+<p>​
+任选一个点作为无向树的根节点，将这个根节点拎起来（可以想象为节点是有质量，边是没有质量的），考虑从集合的角度划分问题：</p>
+<ul>
+<li><p>任何一条路径 都可以划分到其 <strong>路径最高节点</strong>
+对应的集合</p></li>
+<li><p><span class="math inline">\(dp[u]\)</span> 表示以 <span
+class="math inline">\(u\)</span>（<span class="math inline">\(u =
+1,2,...,n\)</span>）为 <strong>路径最高点</strong>
+的所有路径下的最长路径</p></li>
+</ul>
+<p>如下图，红色线便是 <span class="math inline">\(u\)</span>
+作为制高点的一条路径（同时也正好是 <span
+class="math inline">\(u\)</span> 集合下的一条最长路径）</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405101317859.png"
+alt="image-20240510131706551" />
+<figcaption aria-hidden="true">image-20240510131706551</figcaption>
+</figure>
+<p>​ 考虑上图，我们已知了 <span class="math inline">\(dp[2]\)</span> 和
+<span class="math inline">\(dp[3]\)</span>，如何使用树形 <span
+class="math inline">\(dp\)</span> 的思想求解 <span
+class="math inline">\(dp[1]\)</span>？我们可以发现：</p>
+<ul>
+<li><span class="math inline">\(dp[1]\)</span> 和 <span
+class="math inline">\(dp[2]\)</span>、<span
+class="math inline">\(dp[3]\)</span> 之间并没有直接关系</li>
+<li>但 <strong>以 <span class="math inline">\(1\)</span>​
+为制高点的最长路径</strong>：
+<ul>
+<li>要么选择其下方 <font color='blue'> <strong>最长的一条路径</strong>
+</font>（此时次长路径的长度 &lt; 0）</li>
+<li>要么选择其下方 <font color='blue'>
+<strong>每一个儿子方向上的路径最长的两条</strong>
+</font>（此时次长路径的长度 &gt; 0）</li>
+</ul></li>
+</ul>
+<p>所以我们可以存储 <strong>每个点往下能走的最长路径</strong>（记作
+<code>maxlen</code>），那么我们可以得到转移方程：</p>
+<p><span class="math display">\[
+dp [u] = max _1\left\{ \max len\left( son_i \right) +w\left [ u \right]
+\left [ son_i \right] \right\} +max _2\left\{ \max len\left( son_i
+\right) +w\left [ u \right] \left [ son_i \right] \right\}
+\]</span> 其中，<span class="math inline">\(max_1\)</span>​
+表示最大值，<span class="math inline">\(max_2\)</span>​ 表示次大值，<span
+class="math inline">\(maxlen\)</span> 显然是可以递归的，可以使用 <span
+class="math inline">\(dfs\)</span> 求解，即 <span
+class="math display">\[
+maxlen(u)= max(maxlen [son_i]+w [u][son_i])
+\]</span> 最终答案即为 <span class="math inline">\(dp\)</span>​
+数组中的最大值</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>假设顶点 <span class="math inline">\(u\)</span> 有 <span
+class="math inline">\(t\)</span> 个儿子节点 <span
+class="math inline">\(son_1\)</span>,..., <span
+class="math inline">\(son_t\)</span>，则 <span
+class="math inline">\(max_1\)</span>、<span
+class="math inline">\(max_2\)</span> 是从含有 <span
+class="math inline">\(t+1\)</span> 条路径的集合 { <span
+class="math inline">\(u\)</span>，<span
+class="math inline">\(u\)</span>-&gt; <span
+class="math inline">\(son_1\)</span>-&gt;...，<span
+class="math inline">\(u\)</span>-&gt; <span
+class="math inline">\(son_2\)</span>-&gt;...，······，<span
+class="math inline">\(u\)</span>-&gt; <span
+class="math inline">\(son_t\)</span>-&gt;...} 中选出最长的 <span
+class="math inline">\(d_1\)</span> 和次长的 <span
+class="math inline">\(d_2\)</span>
+<ul>
+<li>路径 <span class="math inline">\(\{u\}\)</span> 的长度为 <span
+class="math inline">\(0\)</span>，因此我们将 <span
+class="math inline">\(max_1\)</span>、<span
+class="math inline">\(max_2\)</span> 的初值赋为 <span
+class="math inline">\(0\)</span></li>
+</ul>
+<blockquote>
+<p>表示如果从当前节点 <span class="math inline">\(u\)</span>
+往每一个儿子方向上的 <span class="math inline">\(t\)</span>
+条路径长度最大值/次大值小于 <span
+class="math inline">\(0\)</span>，我们就 <strong>不</strong>
+从当前这个点往下走，这样路径即为 <span
+class="math inline">\(\{u\}\)</span>，距离为 <span
+class="math inline">\(0\)</span></p>
+</blockquote>
+<ul>
+<li>剩下的 <span class="math inline">\(t\)</span> 条路径是当前节点 <span
+class="math inline">\(u\)</span> 往下走，每一个儿子方向上的路径，从第
+<span class="math inline">\(2\)</span> 个点开始就各不相同，所以这 <span
+class="math inline">\(t\)</span> 条路径也一定是完全不同的路径</li>
+<li><span class="math inline">\(max_1\)</span> 一定是从当前顶点 <span
+class="math inline">\(u\)</span> 向下走的最大距离，但是 <span
+class="math inline">\(max_2\)</span> 不一定是从当前顶点 <span
+class="math inline">\(u\)</span>
+向下走的次大距离，因为最大距离和次大距离对应的路径有可能经过 <span
+class="math inline">\(u\)</span>
+的同一个儿子节点，但是我们的集合不包含这种情况</li>
+</ul></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> ans = <span class="number">0</span>; <span class="comment">// 全局变量，记录最长路径，便于在 dfs 中更新（当路径中只有一个节点的路径长度为 0）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 返回从根节点 u 往下走的最大距离 */</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">dfs</span><span class="params">(<span class="type">int</span> u, <span class="type">int</span> father)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> d1 = <span class="number">0</span>, d2 = <span class="number">0</span>; <span class="comment">// 根节点 u 往下走的最大距离 d1 和次大距离 d2，初始值为 0，表示不往下走，路径中只包含 u 的距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span> (j != father) <span class="comment">// 否则一上一下会死循环，导致 TLE/MLE</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> t = dfs(j, u) + w[i];</span><br><span class="line">            <span class="keyword">if</span> (t &gt;= d1) <span class="comment">// 这里必须是 ≥</span></span><br><span class="line">                d2 = d1, d1 = t;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (t &gt; d2) <span class="comment">// 这里可以是 &gt; 也可以是 ≥</span></span><br><span class="line">                d2 = t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ans = max(ans, d1 + d2); <span class="comment">// dp[u] = d1 + d2，直接更新最大值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> d1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dfs(<span class="number">1</span>, <span class="number">-1</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8409456/">AcWing
+1207. 大臣的旅费（蓝桥杯辅导课） - AcWing</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8493787/">AcWing
+1072. 树的最长路径 - AcWing</a></p></li>
+</ul>
+<h2 id="最近公共祖先-lca">最近公共祖先 LCA</h2>
+<p>​ 给定一棵有根树，若节点 <span class="math inline">\(z\)</span>
+既是节点 <span class="math inline">\(x\)</span> 的祖先，也是节点 <span
+class="math inline">\(y\)</span> 的祖先，则称 <span
+class="math inline">\(z\)</span> 是 <span
+class="math inline">\(x\)</span>、<span class="math inline">\(y\)</span>
+的公共祖先。在 <span class="math inline">\(x\)</span>、<span
+class="math inline">\(y\)</span> 的所有公共祖先中，深度最大的一个称为
+<span class="math inline">\(x\)</span>、<span
+class="math inline">\(y\)</span> 的最近公共祖先，记为 <span
+class="math inline">\(LCA(x,y)\)</span>​</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406081754498.png"
+alt="image-20240608175459145" />
+<figcaption aria-hidden="true">image-20240608175459145</figcaption>
+</figure>
+<p><span class="math inline">\(LCA(x,y)\)</span> 是 <span
+class="math inline">\(x\)</span> 到根的路径与 <span
+class="math inline">\(y\)</span> 到根的路径的交会点。它也是 <span
+class="math inline">\(x\)</span> 与 <span
+class="math inline">\(y\)</span>​
+之间的路径上深度最小的节点。求最近公共祖先的方法通常有三种：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406081937492.png"
+alt="image-20240608193703117" />
+<figcaption aria-hidden="true">image-20240608193703117</figcaption>
+</figure>
+<h3 id="树上倍增法">树上倍增法 ☆</h3>
+<p>【<strong>模板题</strong>：<a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8578980/">AcWing
+1172. 祖孙询问 - AcWing</a>】</p>
+<h4 id="预处理">预处理</h4>
+<p><span class="math inline">\(BFS\)</span> 预处理得到 <span
+class="math inline">\(depth[\ ]\)</span>、<span
+class="math inline">\(fa[\ ][\ ]\)</span></p>
+<ul>
+<li><span class="math inline">\(depth[i]\)</span> 表示 <span
+class="math inline">\(i\)</span> 的深度，<span
+class="math inline">\(1\le i \le n\)</span>​</li>
+<li><span class="math inline">\(fa\left[ i,j \right]\)</span> 表示从
+<span class="math inline">\(i\)</span> 开始向上走 <span
+class="math inline">\(2^j\)</span> 步到达的节点，<span
+class="math inline">\(0\le j \le logn\)</span></li>
+</ul>
+<p><span class="math display">\[
+\begin{cases}
+    fa\left [ i,0 \right] = i\ \text{的父节点}\\
+    \\
+    fa\left [ i, j \right] = fa\left [ fa\left[ i, j-1 \right] , j-1
+\right] ,  1\le j\le logn\\
+\end{cases}
+\]</span></p>
+<blockquote>
+<ol type="1">
+<li>由于 <span class="math inline">\(2^j=2^{j-1}+2^{j-1}\)</span>
+，因此从 <span class="math inline">\(i\)</span> 向上跳 <span
+class="math inline">\(2^{j}\)</span> 步到达 <span
+class="math inline">\(fa[i,j]\)</span>，等价于先从 <span
+class="math inline">\(i\)</span> 向上跳 <span
+class="math inline">\(2^{j-1}\)</span> 步到达 <span
+class="math inline">\(fa[i,j-1]\)</span>，再从 <span
+class="math inline">\(fa[i,j-1]\)</span> 向上跳 <span
+class="math inline">\(2^{j-1}\)</span> 步最终到达 <span
+class="math inline">\(fa[i,j]\)</span></li>
+<li>这类似于一个树型 <span class="math inline">\(DP\)</span>
+过程，“阶段”就是节点的深度。因此，我们可以对树进行广度优先遍历，按照层次顺序，在节点入队之前，计算它在
+<span class="math inline">\(fa[]\)</span> 中相应的值</li>
+</ol>
+</blockquote>
+<ul>
+<li><strong>哨兵 <span class="math inline">\(0\)</span>
+号节点</strong>：<span class="math inline">\(depth[0]=0\)</span>，如果从
+<span class="math inline">\(i\)</span> 开始跳 <span
+class="math inline">\(2^j\)</span> 步会跳过根节点，那么 <span
+class="math inline">\(fa[i,j]=0\)</span></li>
+<li><strong>时间复杂度</strong>：<span
+class="math inline">\(O(nlogn)\)</span></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">4e4</span> + <span class="number">5</span>, M = <span class="number">2</span> * N + <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"><span class="type">int</span> h[N], e[M], ne[M], idx;</span><br><span class="line"><span class="type">int</span> depth[N], fa[N][<span class="number">16</span>];	<span class="comment">// 16 = log(n) / log(2) 上取整</span></span><br><span class="line"><span class="type">int</span> q[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> root)</span></span><br><span class="line">&#123;</span><br><span class="line">    depth[root] = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> hh = <span class="number">0</span>, tt = <span class="number">-1</span>;</span><br><span class="line">    q[++ tt] = root;</span><br><span class="line">    <span class="comment">// 初始化 fa[root][...] = 0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(hh &lt;= tt)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> t = q[hh ++];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = h[t]; ~i; i = ne[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">int</span> j = e[i];</span><br><span class="line">            <span class="keyword">if</span>(!depth[j])	<span class="comment">// 无向树需要使用标记数组</span></span><br><span class="line">            &#123;</span><br><span class="line">                depth[j] = depth[t] + <span class="number">1</span>;</span><br><span class="line">                q[++ tt] = j;</span><br><span class="line">                <span class="comment">/* 树型 DP 计算 fa[j][] */</span></span><br><span class="line">                fa[j][<span class="number">0</span>] = t;</span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">1</span>; k &lt;= <span class="number">15</span>; k ++)</span><br><span class="line">                    fa[j][k] = fa[fa[j][k - <span class="number">1</span>]][k - <span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查询">查询</h4>
+<p>基于 <span class="math inline">\(depth[\ ]\)</span>、<span
+class="math inline">\(fa[\ ][\ ]\)</span> 计算 <span
+class="math inline">\(LCA(a,b)\)</span>​</p>
+<ul>
+<li><strong>算法思想</strong>：</li>
+</ul>
+<ol type="1">
+<li>先将两个点跳到同一层</li>
+<li>让两个点同时往上跳，一直跳到它们的 <font color='red'>
+<strong>最近公共祖先的下一层</strong> </font></li>
+</ol>
+<blockquote>
+<p>为什么要跳到最近公共祖先的下一层，而不是直接跳到最近公共祖先那一层呢？</p>
+<p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">假如 fa[x][k] == f[y][k] &lt;=&gt; f[x][k] or f[y][k] 是 x 和 y 的一个公共祖先，但不一定是最近的</span><br><span class="line">      1        </span><br><span class="line">     / \      </span><br><span class="line">    2   3    </span><br><span class="line">   / \      </span><br><span class="line">  4   5   </span><br><span class="line"> / \  /   </span><br><span class="line">x  y 6</span><br><span class="line">举个例子，此时f[x][1] == f[y][1] = 节点2 是 x 和 y 的一个公共祖先 但不是最近公共祖先 4</span><br><span class="line">但由于我们是从大到小拼凑的，假如拼凑终止条件为 f[x][k] == f[y][k]，则此时会停在公共祖先 2 而非最近公共祖先 4</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ul>
+<li><strong>实现步骤</strong>：</li>
+</ul>
+<ol type="1">
+<li>不妨设 <span class="math inline">\(depth[a] \ge
+depth[b]\)</span>（否则可交换 <span
+class="math inline">\(a\)</span>，<span
+class="math inline">\(b\)</span>）</li>
+<li>用二进制拆分思想，把 <span class="math inline">\(a\)</span>
+向上调整到与 <span class="math inline">\(b\)</span>​ 同一深度</li>
+</ol>
+<blockquote>
+<p>具体来说，就是依次尝试从 <span class="math inline">\(a\)</span>
+向上走 <span class="math inline">\(k=2^{logn},…,2^1,2^0\)</span>
+步，检查到达的节点是否比 <span class="math inline">\(b\)</span>
+深。在每次检查中，若是，则令 <span
+class="math inline">\(a=fa[a,k]\)</span></p>
+</blockquote>
+<ol start="3" type="1">
+<li><p>若此时 <span class="math inline">\(a=b\)</span>，说明已经找到了
+<span class="math inline">\(LCA\)</span>，<span
+class="math inline">\(LCA\)</span> 就等于 <span
+class="math inline">\(b\)</span>（这就是上面的图中的第三种情况）</p></li>
+<li><p>用 <strong>二进制拼凑</strong> 的思想，把 <span
+class="math inline">\(a\)</span>，<span class="math inline">\(b\)</span>
+同时向上跳，并保持深度一致且二者不相会</p></li>
+</ol>
+<blockquote>
+<p>具体来说，就是 <font color =’blue'> <strong>依次尝试</strong> </font>
+把 <span class="math inline">\(a\)</span>，<span
+class="math inline">\(b\)</span> 同时向上走 <span
+class="math inline">\(k=2^{logn},…,2^1,2^0\)</span> 步，在每次尝试中，若
+<span class="math inline">\(fa[a,k]\ne
+fa[b,k]\)</span>（即仍未相会），则令 <span
+class="math inline">\(x=F[x,k],y = F[y,k]\)</span></p>
+</blockquote>
+<ol start="5" type="1">
+<li><font color =’blue'> <strong>此时 <span
+class="math inline">\(a\)</span>，<span class="math inline">\(b\)</span>
+必定只差一步就相会了</strong> </font>，它们的父节点 <span
+class="math inline">\(fa[a,0]\)</span> 或 <span
+class="math inline">\(fa[b,0]\)</span> 就是 <span
+class="math inline">\(LCA(a,b)\)</span></li>
+</ol>
+<ul>
+<li><strong>时间复杂度</strong>：
+<ul>
+<li>对于每个询问，时间复杂度为 <span
+class="math inline">\(O(logn)\)</span></li>
+<li>如果有 <span class="math inline">\(n\)</span> 个点，<span
+class="math inline">\(m\)</span> 个询问，总共的时间复杂度为 <span
+class="math inline">\(O(mlogn)\)</span></li>
+</ul></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">lca</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(depth[a] &lt; depth[b])</span><br><span class="line">        swap(a, b);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> k = <span class="number">16</span>; k &gt;= <span class="number">0</span>; k --)</span><br><span class="line">    <span class="comment">// 哨兵作用1：如果跳过根节点，fa[a][k] 会返回 0，depth[0] = 0，由于树中任何一个节点的 depth[] 均大于 0，if 判断条件不成立，不会跳</span></span><br><span class="line">        <span class="keyword">if</span>(depth[fa[a][k]] &gt;= depth[b])</span><br><span class="line">            a = fa[a][k];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(a == b)</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> k =  <span class="number">16</span>; k &gt;= <span class="number">0</span>; k --)</span><br><span class="line">    <span class="comment">// 哨兵作用2：如果跳过根节点，由于 a 和 b 的深度相同，此时 fa[a][k] = fa[a][k] = 0，if 判断条件不成立，不会跳</span></span><br><span class="line">        <span class="keyword">if</span>(fa[a][k] != fa[b][k])</span><br><span class="line">        &#123;</span><br><span class="line">            a = fa[a][k];</span><br><span class="line">            b = fa[b][k];</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> fa[a][<span class="number">0</span>];	<span class="comment">// return fa[b][0];	也是正确的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="向上标记法">向上标记法</h3>
+<ul>
+<li><p>从 <span class="math inline">\(x\)</span>​
+向上走到根节点，并标记所有经过的节点。</p></li>
+<li><p>从 y 向上走到根节点，当第一次遇到已标记的节点时，就找到了 <span
+class="math inline">\(LCA(x,y)\)</span></p></li>
+<li><p><strong>时间复杂度</strong>：</p>
+<ul>
+<li>对于每个询问，时间复杂度为 <span
+class="math inline">\(O(n)\)</span>​</li>
+<li>如果有 <span class="math inline">\(n\)</span> 个点，<span
+class="math inline">\(m\)</span> 个询问，总共的时间复杂度为 <span
+class="math inline">\(O(nm)\)</span></li>
+</ul></li>
+</ul>
+<blockquote>
+<p>基本不用这种方法</p>
+</blockquote>
+<h3 id="tarjan-lca-算法">Tarjan-LCA 算法 ★</h3>
+<p>​ <span class="math inline">\(Tarjan-LCA\)</span> 算法本质上是
+<strong>使用并查集对“向上标记法”的优化</strong>。它是一个离线算法，需要把
+m 个询问一次性读入，统一计算，最后统一输出 -
+<strong>时间复杂度</strong>：<span
+class="math inline">\(O(n+m)\)</span>，其中 <span
+class="math inline">\(n\)</span> 为节点数量，<span
+class="math inline">\(m\)</span> 为询问数量</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406082139869.png"
+alt="image-20240608213845895" />
+<figcaption aria-hidden="true">image-20240608213845895</figcaption>
+</figure>
+<p>在深度优先遍历时，将所有树中节点分为三类：</p>
+<ol type="1">
+<li><p><strong>已经</strong> 访问完毕且 <strong>回溯</strong>
+的节点，标记为 <span class="math inline">\(2\)</span></p></li>
+<li><p>已经开始递归，但尚未回溯的节点，标记为 <span
+class="math inline">\(1\)</span></p></li>
+</ol>
+<blockquote>
+<p>这些节点就是当前正在访问的节点 <span class="math inline">\(x\)</span>
+以及的 <span class="math inline">\(x\)</span> 的祖先</p>
+</blockquote>
+<ol start="3" type="1">
+<li>尚未访问的节点，标记为 <span class="math inline">\(0\)</span></li>
+</ol>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406082140480.png"
+alt="image-20240608214025565" />
+<figcaption aria-hidden="true">image-20240608214025565</figcaption>
+</figure>
+<ul>
+<li><span class="math inline">\(tarjan\)</span> 本质是
+<font color='red'> <strong><span class="math inline">\(DFS\)</span>​ +
+并查集</strong> </font></li>
+<li>【<strong>模板题</strong>：<a
+target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8579327/">AcWing
+1171. 距离 - AcWing</a>】</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> p[N];</span><br><span class="line"><span class="type">int</span> st[M];              <span class="comment">// 用于 tarjan 标记节点</span></span><br><span class="line"><span class="type">int</span> res[M];             <span class="comment">// 存储离线查询结果</span></span><br><span class="line"><span class="built_in">vector</span>&lt;PII&gt; query[N];   <span class="comment">// query[i] 存储与节点 i 相关的查询：first 存储查询的另一个点， second 存储查询编号</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">find</span><span class="params">(<span class="type">int</span> x)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(p[x] != x)</span><br><span class="line">        p[x] = find(p[x]);</span><br><span class="line">    <span class="keyword">return</span> p[x];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">tarjan</span><span class="params">(<span class="type">int</span> u)</span></span><br><span class="line">&#123;</span><br><span class="line">    st[u] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = h[u]; ~i; i = ne[i])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> j = e[i];</span><br><span class="line">        <span class="keyword">if</span>(!st[j])</span><br><span class="line">        &#123;</span><br><span class="line">            tarjan(j);</span><br><span class="line">            p[j] = u;   <span class="comment">// p[u] = j 错误且一定要在回溯 tarjan(j) 结束后</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> item : query[u])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> y = item.first, id = item.second;</span><br><span class="line">        <span class="keyword">if</span>(st[y] == <span class="number">2</span>)</span><br><span class="line">            res[id] = find(y);</span><br><span class="line">    &#125;</span><br><span class="line">    st[u] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* ........................ */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> a, b;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;a, &amp;b);</span><br><span class="line">        <span class="comment">/* 如果 a == b 答案就是 res[] 初始值 0 */</span></span><br><span class="line">        <span class="keyword">if</span>(a != b)	<span class="comment">// 必须加 2 遍</span></span><br><span class="line">        &#123;</span><br><span class="line">            query[a].push_back(&#123;b, i&#125;);</span><br><span class="line">            query[b].push_back(&#123;a, i&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++)</span><br><span class="line">        p[i] = i;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 无向图任选一个节点作为根节点</span></span><br><span class="line">    tarjan(<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i ++)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, res[i]);</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="图">图</h1>
+<h2 id="图的存储">图的存储</h2>
+<p>​ <span class="math inline">\(n\)</span> 个顶点，无向图最多有 <span
+class="math inline">\(m=n(n-1)/2\)</span> 条边，有向图最多有 <span
+class="math inline">\(m=n(n-1)\)</span> 条边</p>
+<ul>
+<li>如果 <span class="math inline">\(m\)</span> 和 <span
+class="math inline">\(n\)</span>​ 是一个数量级的——<strong>稀疏图</strong>
+eg：</li>
+</ul>
+<p><span class="math display">\[
+1 ≤ n, m ≤ 10^5
+\]</span></p>
+<ul>
+<li>如果 <span class="math inline">\(m\)</span> 和 <span
+class="math inline">\(n^2\)</span>
+是一个数量级的——<strong>稠密图</strong> eg：</li>
+</ul>
+<p><span class="math display">\[
+1 ≤ n ≤ 500
+\\
+1 ≤ m ≤ 10^5
+\]</span></p>
+<ul>
+<li>如果题目 <strong>说明边的数量范围</strong>（假设顶点的数量为
+1e5，边点的数量为 2e5）</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 无向图 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = <span class="number">2</span> * <span class="number">2e5</span> + <span class="number">5</span>;		<span class="comment">// 注意一定要乘以 2</span></span><br><span class="line"><span class="comment">/* 有向图 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = <span class="number">2e5</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果题目 <strong>没有说明边的数量范围</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 无向图 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = N * N / <span class="number">2</span>;</span><br><span class="line"><span class="comment">/* 有向图 */</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>, M = N * N;</span><br></pre></td></tr></table></figure>
+<p>: taco: 注意：<span class="math inline">\(M\)</span> 很可能超过 <span
+class="math inline">\(int\)</span>，因此在这种情况下，我们通常采用
+<strong>邻接矩阵</strong> 存储图，这样我们就不需要关心边的范围了</p>
     
-    <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E8%B4%AA%E5%BF%83%E3%80%91/#more">more >></a>
+    <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/#more">more >></a>
     
     
 
@@ -287,7 +775,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E8%B4%AA%E5%BF%83%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/02/28/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E5%9B%BE%E8%AE%BA%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1407,406 +1895,6 @@ id="实例-5-如果你就是想要每次运行随机函数生成的结果都一�
 
 
   
-    <article id="post-命令操作/BT 介绍、问题解决教程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/BT%20%E4%BB%8B%E7%BB%8D%E3%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%95%99%E7%A8%8B/" target="_blank">BT 介绍、问题解决教程</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/BT%20%E4%BB%8B%E7%BB%8D%E3%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%95%99%E7%A8%8B/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="bt-介绍问题解决教程">BT 介绍、问题解决教程</h1>
-<h1 id="介绍篇">介绍篇</h1>
-<h2 id="公网和内网是什么">公网和内网是什么?</h2>
-<h3 id="公网">公网</h3>
-<p>公网也被称为“广域网”。是连接不同地区局域网或计算机通信的远程网。承接很大的物理范围，所覆盖范围从几十公里到几千公里，它能够连接多个地区、城市和国家，甚至可以横跨几个洲，提供远距离通信，形成国际性的远程网络。广域网并不等同于互联网。公网得到的
-IP
-地址是因特网的公用地址，是非保留的地址。公网的计算机和因特网上的其他计算机可互相访问。</p>
-<h3 id="内网">内网</h3>
-<p>由于人口数量庞大, 但 IPv4 中的 IP 地址的数量是有限的(所以现在都在搞
-IPv6 嘛)，每次把一部分地址分配出去，那么就意味着能够用来分配的 IP
-地址就更少了，而且随着现在手机，电脑等的快速发展，如果每个手机或者电脑都要求一个
-IP 地址，那么显然 IP 地址是不够用的。</p>
-<p>为了解决这个问题，我们可以采取这样的策略：例如对于一个公司来说，每个公司都会有一个属于自己公司的内网(也可以称之为局域网)。</p>
-<p>内网(学名应叫局域网(Local Area
-Network，LAN))是在一个局部的地理范围内，一般可以是是几米内(比如家庭内网)，也可以是方圆几千米以内(比如一个大学内网)，将各种计算机、外部设备和数据库等互相联接起来组成的计算机通信网。</p>
-<h2 id="端口是什么">端口是什么?</h2>
-<p>关于这个问题，得从网络端口说起, 这里的端口是指 TCP/UDP 协议中的端口,
-端口是一种操作系统的可分配资源, 有需要时进程会和某一端口绑定,
-绑定之后远程主机发给该端口的数据就能被相应进程接收, 反之亦然</p>
-<h2 id="为什么-bt-下载这么慢">为什么 BT 下载这么慢?</h2>
-<p>该部分引用自 <a
-target="_blank" rel="noopener" href="https://www.bigfun.cn/post/819305">【平泽唯】为什么你的 BT
-下载这么慢</a></p>
-<h3 id="预备知识">预备知识</h3>
-<h4 id="传统下载方式">传统下载方式</h4>
-<p>要想知道为什么 BT 下载速度慢，首先要简单了解 BT
-的原理及运作机制。</p>
-<p>如下图，服务器同时向用户 ABCD
-同时发送文件，但发送文件带宽都是有上限的，假如服务器和 ABCD
-用户他们的带宽都是
-100Mbps，在下载的过程中因为服务器要同时给四个人发送数据，所以 ABCD
-实际接收到服务器的速度只有 25Mbps，每个人都有 75mbps 的带宽在闲置。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138537.jpeg" /></p>
-<h4 id="p2p-下载方式">P2P 下载方式</h4>
-<p>如下图的 ABCD 四个人的 BT 网络，ABCD
-在下载文件时可以向其他三个人发送自己已下载好的文件，并从其他三个人接收自己正在下载的文件。这样每个人的最大带宽都被利用，理论上速度可以达到你当前最大的带宽。</p>
-<blockquote>
-<p>简单的理解就是，在 BT
-下载中，你下载的文件来自于其他用户的分享，你的下载速度来自于其他分享者的上传速度。</p>
-</blockquote>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138539.jpeg" /></p>
-<h3 id="原因-1-缺少开放环境">原因 1: 缺少开放环境</h3>
-<p>因为中国网络起步相对世界整体来说较晚，所以分到的 IPV4 地址只有 4
-亿个，但中国却有 14 亿人口，与之相反的是美国，它们只有 3 亿人口却拥有 15
-亿个 IPv4 地址。</p>
-<p>国内的 IPv4 地址是不够分的，于是各大运营商干脆不发放 IPv4
-地址，转而使用内网 IP。</p>
-<p>内网 IP 在 BT
-下载中速度不受限制，但在上传做种中受到运营商的限制只能在内网 IP
-池内分享。</p>
-<p>你可以理解为，传统的 BT 下载是在全球范围内组成 BT 网络，而国内的 BT
-下载只能在国内甚至省内组成 BT 网络。</p>
-<p>这样的结果就是同时下载的用户数量少，无法组成一个较为庞大的 BT
-网络来互相分享文件。进而下载速度下降</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138540.jpeg" /></p>
-<h3 id="原因-2-带宽上下行不对等">原因 2: 带宽上下行不对等</h3>
-<p>如果你测过网速你就会发现，自己的宽带只有下行带宽达到了运营商宣传的速度，而上行带宽只有下行带宽的三分之一或四分之一甚至更少。这是因为在上网中用户普遍是从互联网上获取信息而不是发布信息。</p>
-<p>假如一条 1Gbps
-的光纤，如果要做到上下行对等，运营商就要建立一个可以承担 2Gbps
-带宽的交换机和路由器。但如果上下行不对等，上行只有下行的四分之一或三分之一，这样运营商只需要建一个
-1.5Gbps 或 1.2Gbps 的交换机就足够了。</p>
-<p>别急着骂运营商，你现在宽带费这么便宜就是因为这个。如果运营商做到上下行对等，设备安装和维护成本最后都要平摊到用户上，带来的结果就是宽带费相比现在的价格要加
-70% 甚至更多。</p>
-<p>回到主题，上面说过，<strong>BT
-下载速度取决于其他用户的上传速度</strong>，在每个人上传速度都不理想的情况下整个
-BT 下载的速度就不理想。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138541.jpeg" /></p>
-<h3 id="原因-3-流氓软件吸血用户">原因 3: 流氓软件(吸血用户)</h3>
-<p>熟悉 BT 的都知道我说的是谁了: 迅雷。</p>
-<p>迅雷在 BT
-圈里名声非常臭，这是因为迅雷只下载，不上传或仅在迅雷用户内上传。(国外一些服务器
-ban 中国 IP 迅雷也有很大一部分责任)</p>
-<p>我举个栗子你就懂了。</p>
-<p>ABCDEF 六位用户同时用 BT 下载一个文件，组成了一个 6 人的 BT
-网。但因为 DEF 用的下载工具是迅雷，所以 ABC 无法接收到 DEF
-发送的数据，原本 6 人的 BT 网在 ABC 视角只能获得 3 人的收益，但 DEF
-却可以靠 ABC 发送的数据达到原本 6
-人网络的速度。这就是迅雷最恶心的行为，<strong>迅雷上传数据只发给用自己软件的用户，同时还吸其他用户的上传数据</strong>。</p>
-<p>迅雷做的不只有这些:</p>
-<p><strong>1.把用户下载的文件私自存到自己服务器里，来达到冷门资源只有迅雷才有速度这一现象。</strong></p>
-<p><strong>2.用 P2P
-这种本来用户对用户互惠互利的免费下载协议收费，只有迅雷下载会员才能用迅雷的“高速“下载</strong></p>
-<p><strong>3.把非会员作为会员的吸血工具，非会员下载到一定程度时会自动限速，延长下载时间给会员用户做种</strong></p>
-<p>结合上面内网 IP+ 上下行不对等，迅雷已经实现了国内 BT 垄断。</p>
-<p>国内用户想高速下载 BT
-文件只有选择加入迅雷的吸血网络，而随着用户的加入，迅雷的 BT
-网络也越来越大，速度也随之提升，速度的提升又吸引一批用户加入，再扩大，再提速，再吸引。已经形成了一个闭环。</p>
-<hr />
-<h3 id="原因-4-无人做种">原因 4: 无人做种</h3>
-<p>看这篇文章的人应该都是用过 BT 下载的，但有几个人做过种？</p>
-<p><strong>做种指将自己的上传带宽贡献出来，来方便 BT
-网络中的其他人下载。最简单的做法是下载后不移动下载好的文件，不关闭下载软件。</strong></p>
-<p>BT
-网络建立起来的本意是所有人一起贡献自己的带宽，来达到所有人高速下载。但现实中又有多少人贡献过自己的带宽呢？</p>
-<p>国内用户大部分不了解 P2P 也不愿意去了解什么是 P2P，不懂 BT
-的基本原理。知道种子原理的人很少，愿意做种且自身硬件支持做种的就更少了。</p>
-<h3 id="原因-5-网盘崛起">原因 5: 网盘崛起</h3>
-<p>这个不算直接影响 BT
-速度，网盘靠着不会坏种，超长时间保存，方便管理文件等优点在近年抢走了大量的
-BT
-用户。上面也说过，用户越多速度越快，用户总量变少了，速度自然就慢下来了</p>
-<h3 id="其他术语">其他术语</h3>
-<h4 id="做种">做种</h4>
-<p>只要不关闭软件，不停止任务就是做种，有其他人在下载这个资源你就会产生上传</p>
-<h4 id="吸血">吸血</h4>
-<p>不用纠结是否是吸血用户，只需要按照教程的最后开启反吸血即可</p>
-<h4 id="种子质量">种子质量</h4>
-<p>因为一些种子没人保种，就会出现断种死种的情况，断种就是下了一半，另一半下不动了，死种就是根本下不了的种子。判断种子质量很简单，只需要看任务的状态栏即可得知</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138542.png" /></p>
-<p>这里的种子指的是已连接的提供上传的用户，用户是指已连接的正在运行该任务的用户，总则是已连接
-+ 未连接的用户，健康度是用户的完成度</p>
-<blockquote>
-<p>以上信息是由 Tracker 服务器提供的，会有变化，仅供参考</p>
-</blockquote>
-<hr />
-<h1 id="教程篇">教程篇</h1>
-<h2 id="判断网络环境">判断网络环境</h2>
-<h3 id="所在网络环境">所在网络环境</h3>
-<p>首先需要知道自己的网络是否是家庭宽带；</p>
-<p>其它网络如校园网，出租屋主自拉网络等等的网络直接使用就即可，可能效果比较差，下载和上传基本随缘。如果是家庭宽带可以接着往下看，但因为网络环境各异非家庭宽带也可以参考教程</p>
-<h3 id="判断运营商">判断运营商</h3>
-<p>判断自己的网络是电信还是移动还是联通，或者是其它宽带</p>
-<h2
-id="是否可以获得公网并判断是否为公网环境">是否可以获得公网并判断是否为公网环境</h2>
-<h3 id="获取公网">获取公网</h3>
-<p>在运营商官网找人工客服或者拨打运营商客服电话询问是否可以给一个 IPV4
-的公网，理由可以用：有远程办公的需求，和好友联机需要。如果是电信不给
-IPV4
-可以用投诉进行威胁，如果是移动和联通可以打多几次换客服问一下，如果实在不给公网
-IPV4 请看下面的 IPV6 的教程</p>
-<h3 id="判断是否公网">判断是否公网</h3>
-<p>按 win(ctrl 旁边的那个图标)+R
-键，在弹出的框里复制并粘贴以下内容后确定：</p>
-<p>判断 IPV4 用：cmd /k tracert -4 -h 6 baidu.com</p>
-<p>判断 IPV6 用：cmd /k tracert -6 -h 6 <a
-target="_blank" rel="noopener" href="http://www.qq.com">www.qq.com</a></p>
-<p>以下是示例：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138543.png" /></p>
-<p>以上两个命令的执行情况在有必要时可完整截图发在群里（注意是完整截图，也不要打码）</p>
-<p><strong>补充：不论你需不需要 IPV4 公网都需要执行 IPV4
-的步骤，并且记下 192.168.x.x 出现的次数以及详细 IP</strong></p>
-<h4 id="ipv4">IPV4</h4>
-<ol type="1">
-<li>第一条为 192.168.x.x 第二条为 10.x.x.x 或者 100.x.x.x 或者
-172.x.x.x，该环境解释为上级有路由器且非 IPV4 公网，如果多次出现
-192.168.x.x，出现多少次则代表上级有多少个路由器</li>
-<li>直接出现 10.x.x.x 或者 100.x.x.x 或者
-172.x.x.x，该环境解释为光猫桥接</li>
-</ol>
-<p>此时判断为无 IPV4 公网环境, 需要联系运营商索要 ipv4 公网</p>
-<hr />
-<h4 id="ipv6">IPV6</h4>
-<p>如果提示”无法解析目标系统名称”说明你没有可用的 IPV6 地址。（FE80
-开头的 IP 地址没用）</p>
-<p>出现这种情况一般是 1.你的路由器不支持，2.运营商没有下发 IPV6 给你</p>
-<h4 id="如何判断是哪种情况">如何判断是哪种情况？</h4>
-<p>请登录光猫后台进行找到 WAN
-IPV6，并查看是否有长长一串的字符。如果有，那很大概率是路由器不支持，可以考虑更换，因为不支持
-IPV6
-的路由器已经是很久之前的老东西了，如果需要更换路由器请注意询问客服路由器的
-IPV6 防火墙是否可以关闭，不可以关闭的不要买！</p>
-<p>如果光猫后台的 WAN IPV6
-没有长长一串的字符，那可以打电话问运营商为什么没有 IPV6</p>
-<hr />
-<h2 id="进行路由器与光猫的设置">进行路由器与光猫的设置</h2>
-<h3 id="ipv4-公网">IPV4 公网：</h3>
-<h4 id="找到需要映射的端口和-ip">找到需要映射的端口和 IP</h4>
-<ul>
-<li><strong>需要映射的端口：</strong></li>
-</ul>
-<p>在端口映射之前，先找到你 BT 软件的端口，比如我的比特彗星端口如图为
-3939</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138544.png" />
-同时建议关闭软件里的随机端口</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138545.png" /></p>
-<ul>
-<li><strong>需要进行映射的本地 IP</strong></li>
-</ul>
-<p>按 win(ctrl 旁边的那个图标)+R 键，复制并粘贴该指令：cmd /k ipconfig
-/all</p>
-<p>然后记下带有首选后缀的 ipv4 地址</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138546.png" /></p>
-<h4
-id="进入登录路由器管理后台并进行端口映射">进入登录路由器管理后台并进行端口映射</h4>
-<p><strong>登录路由器管理后台</strong></p>
-<p>根据上面 IPV4 的结果判断你有多少个上级路由，需要对出现的每个
-192.168.x.x 进行设置，比如出现 <u> 192.168.2.1, 则路由器管理地址为
-192.168.2.1 </u>, 或者出现 <u> 192.168.31.1 则路由器管理地址为
-192.168.31.1 </u> 以此类推</p>
-<p><strong>找到端口映射的设置项</strong></p>
-<p>请自行在路由器管理页面找到端口映射(TP-LINK
-叫虚拟服务器)并填入相关信息</p>
-<p>名称：随便填</p>
-<p>协议：TCP and UDP（BOTH）(ALL) 不同的路由叫法不一样</p>
-<p>IP 地址：填上面带有首选的那个 IP 地址</p>
-<p>内部端口：填你的 BT 软件端口</p>
-<p>外部端口：与内部端口一致即可</p>
-<h3 id="ipv4-补充">IPV4 补充</h3>
-<p>如果本地 IP
-地址变化将会导致端口映射规则失效，需要重新对本机地址重新进行端口映射，可以在路由器开启静态
-ARP 绑定（MAC 绑定），该设置不是必要，但是建议开启，以防本地 IP 变动</p>
-<h3 id="ipv6-1">IPV6</h3>
-<p>光猫普遍有 IPV6 防火墙，无法直接在公网进行通信，需要在光猫超管关掉
-IPV6 防火墙，或者在能关掉 IPV6 防火墙的路由器上桥接</p>
-<h4 id="光猫需要超管密码">光猫（需要超管密码）</h4>
-<p>需要使用超管账户登录光猫后台，并找到 安全-防火墙
-把其中的防火墙等级调为低，还有把 IPV6 session
-的选项关闭（光猫不同设置可能大同小异，如果不一样的光猫不懂关哪个可以在群里问）</p>
-<h4 id="桥接">桥接</h4>
-<p><strong>桥接注意事项：桥接前一定务必确认自己是否有正确的宽带账户和宽带密码！！！</strong></p>
-<p>现在的宽带默认都是光猫进行拨号，所以一些设置的管理权会在光猫上，比如
-IPV6 防火墙。而桥接就可以绕过光猫的防火墙，<u>
-但是也需要你的拨号设备支持关闭 IPV6 防火墙
-</u>，现在市面上一些路由器是有 IPV6
-防火墙的，桥接前请确认自己的路由器是否有 IPV6 防火墙或者是否能关闭 IPV6
-防火墙（目前已知某些路由器正在逐步添加 IPV6
-防火墙开关）。在确定好之后可以打电话找装宽带给你的师傅问他要宽带账户和密码，顺便叫他改桥接，如果找不到宽带师傅的电话号码可以找运营商客服要宽带账户密码，改桥接他会让师傅联系你。</p>
-<p>改桥接后你将断网，此时你需要登录到路由器管理后台，然后在上网设置中把上网方式设置为
-PPPOE
-拨号，然后只需要输入宽带账户密码，其它不用管，然后确定保存就行。</p>
-<p><strong>桥接 IPV4
-用户也可以使用，如果路由器不是很差的话十分推荐进行桥接！！！</strong></p>
-<h1 id="软件设置篇">软件设置篇</h1>
-<p>该篇并不是必要设置，只是简单的说明 BC 个别设置</p>
-<h2 id="防吸血以及客户端屏蔽">防吸血以及客户端屏蔽</h2>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138547.png" /></p>
-<p>对于限速设置的原因是：强制提高下载者的在线时间，强行让对方长时间在线并进行上传，如果不打算长期做种的可以不限速</p>
-<hr />
-<h2 id="tracker-服务器">Tracker 服务器</h2>
-<p>首先需要明白 Tracker 服务器是什么？</p>
-<p>Tracker
-是指运行于服务器上的一个程序，这个程序能够追踪到底有多少人同时在下载或者上传同一个种子。
-客户端连上 tracker 服务器，就会获得一个下载人员的名单，根据这个，BT
-会自动连上别人的机器进行下载。该设置较为重要推荐进行设置</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138548.png" /></p>
-<p>下面推荐几个 Tracker 服务器列表：</p>
-<p>小樱豪华版自带：<a
-target="_blank" rel="noopener" href="http://github.itzmx.com/1265578519/OpenTracker/master/tracker.txt">http://github.itzmx.com/1265578519/OpenTracker/master/tracker.txt</a></p>
-<p>以下列表来自 XIU2/TrackersListCollection</p>
-<p>精选列表：(81 个)</p>
-<p><a
-target="_blank" rel="noopener" href="https://trackerslist.com/best.txt">https://trackerslist.com/best.txt</a></p>
-<p>完整列表：(163 个) <a
-target="_blank" rel="noopener" href="https://trackerslist.com/all.txt">https://trackerslist.com/all.txt</a></p>
-<p>HTTP(S)列表：(68 个) <a
-target="_blank" rel="noopener" href="https://trackerslist.com/http.txt">https://trackerslist.com/http.txt</a></p>
-<p>备用地址：</p>
-<p>以下为完整列表 all.txt 示例（末尾文件名可根据不同列表自行修改，选择一个速度快的地址）：</p>
-<p>https://github.do/https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt</p>
-<p>https://hk1.monika.love/XIU2/TrackersListCollection/master/all.txt</p>
-<p><a
-target="_blank" rel="noopener" href="https://raw.iqiq.io/XIU2/TrackersListCollection/master/all.txt">https://raw.iqiq.io/XIU2/TrackersListCollection/master/all.txt</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://gcore.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt">https://gcore.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://fastly.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt">https://fastly.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/all.txt">https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/all.txt</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://raw.fastgit.org/XIU2/TrackersListCollection/master/all.txt">https://raw.fastgit.org/XIU2/TrackersListCollection/master/all.txt</a></p>
-<h2 id="比特彗星断网">比特彗星断网</h2>
-<p>导致比特彗星断网可能是由于路由器性能较差而连接数较多导致，或由于宽带运营商限制了
-UDP 和连接数，因为 UDP 而断网的情况多发生在移动宽带。</p>
-<p>打开比特彗星如遇到断网，可在比特彗星点击 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138549.png" />
-然后选择 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138550.png" /></p>
-<p>选择以下几项逐个点击恢复默认值并点击应用确定以保存设置。</p>
-<p>关闭比特彗星，重启光猫和路由器，打开比特彗星，检查网络是否正常。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138551.png" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138552.png" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138553.png" /></p>
-<p>如修改后依旧遇到断网情况，可尝试将 DHT 关闭。</p>
-<p>鼠标右键点击比特彗星右下角 DHT 连接节点（如下图），取消允许加入 DHT
-网络的勾选即可关闭 DHT。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138554.png" />
-， <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138555.png" /></p>
-<h2 id="比特彗星崩溃">比特彗星崩溃</h2>
-<p>导致比特彗星崩溃可能是由于电脑性能较差，或内存容量较低导致。</p>
-<p>如遇到比特彗星崩溃可将以下几项逐个点击恢复默认值</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138556.png" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138557.png" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138558.png" /></p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411132138559.png" /></p>
-<h2 id="结尾">结尾</h2>
-<ul>
-<li>本教程仅面向新手，里面的各种技术介绍仅为表层，请大佬不要追究细节</li>
-<li>本教程于 2022 年 3 月 16 日在百度贴吧 比特彗星吧 QQ 群首次发表，截止
-2022 年 6 月 9 日当前已修改至第 5 版，最后修改时间为 2022 年 6 月 9
-日。</li>
-<li>未经授权的任何组织、个人不得对本教程的任何内容进行修改、删减或用于商业用途，版权归
-比特彗星吧 所有，如有任何建议或者意见欢迎在贴吧发帖。</li>
-<li>该教程的本意是增加开放网络的 BT
-用户群体，请各位开放网络用户在有空时多多做种，当然是否愿意做种取决于你，我们无法强迫你做种，但也请你知道你的下载来自其它用户的无私贡献。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/BT%20%E4%BB%8B%E7%BB%8D%E3%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%95%99%E7%A8%8B/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-命令操作/Postman操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2348,6 +2436,99 @@ alt="在这里插入图片描述" />
 
 
   
+    <article id="post-命令操作/mongo操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/mongo%E6%93%8D%E4%BD%9C/" target="_blank">mongo操作</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/mongo%E6%93%8D%E4%BD%9C/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="mongo操作">mongo操作</h1>
+<h2 id="错误">错误</h2>
+<h3 id="mongo-无法连接">mongo 无法连接</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/ycxie/data/mongo/mongodb-linux-x86_64-ubuntu2004-4.4.16/bin/mongod --config /home/ycxie/data/mongo/conf/mongo.conf</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202409300034003.png" /></p>
+    
+    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/mongo%E6%93%8D%E4%BD%9C/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/mongo%E6%93%8D%E4%BD%9C/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/21/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/23/">Next &amp;raquo;</a>
@@ -2502,15 +2683,15 @@ alt="在这里插入图片描述" />
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2522,6 +2703,10 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
@@ -2530,7 +2715,7 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2538,7 +2723,15 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2550,10 +2743,6 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -2562,27 +2751,11 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2598,7 +2771,11 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2606,15 +2783,11 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2622,11 +2795,19 @@ alt="在这里插入图片描述" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

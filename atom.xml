@@ -6,7 +6,7 @@
   <link href="https://luyicui.github.io/atom.xml" rel="self"/>
   
   <link href="https://luyicui.github.io/"/>
-  <updated>2025-01-16T15:50:43.292Z</updated>
+  <updated>2025-01-18T08:48:59.275Z</updated>
   <id>https://luyicui.github.io/</id>
   
   <author>
@@ -18,108 +18,20 @@
   
   <entry>
     <title></title>
-    <link href="https://luyicui.github.io/2025/01/16/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90vllm%E3%80%91/%E3%80%90tutorial%E3%80%91/"/>
-    <id>https://luyicui.github.io/2025/01/16/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90vllm%E3%80%91/%E3%80%90tutorial%E3%80%91/</id>
-    <published>2025-01-16T15:47:29.319Z</published>
-    <updated>2025-01-16T15:50:43.292Z</updated>
+    <link href="https://luyicui.github.io/2025/01/18/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/"/>
+    <id>https://luyicui.github.io/2025/01/18/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/</id>
+    <published>2025-01-18T04:11:09.193Z</published>
+    <updated>2025-01-18T08:48:59.275Z</updated>
     
-    <content type="html"><![CDATA[<h3 id="安装-vllm">安装 vLLM</h3><p>为了得到更好的推理性能，我们在这边使用 <ahref="https://github.com/vllm-project/vllm">vLLM</a>作为后端来加速推理。</p><p>通过 <code>pip</code> 安装 vLLM：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install vllm</span><br></pre></td></tr></table></figure><p>vLLM 通过 <strong>PagedAttention</strong><ahref="https://rudeigerc.dev/posts/llm-inference-with-fastchat/#user-content-fn-pagedattention">1</a>以及<strong>基于 Ray的张量并行</strong>来实现了高效的显存管理与并行计算</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h3 id=&quot;安装-vllm&quot;&gt;安装 vLLM&lt;/h3&gt;
-&lt;p&gt;为了得到更好的推理性能，我们在这边使用 &lt;a
-href=&quot;https://github.com/vllm-project/vllm&quot;&gt;vLLM&lt;/a&gt;
-作为后端来加速推理。&lt;/p&gt;
-&lt;p&gt;通过 &lt;code&gt;</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2025/01/13/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/5%20Tips%20To%20Organize%20Python%20Code/"/>
-    <id>https://luyicui.github.io/2025/01/13/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/5%20Tips%20To%20Organize%20Python%20Code/</id>
-    <published>2025-01-13T03:41:51.825Z</published>
-    <updated>2025-01-13T16:08:51.165Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="tips-to-organize-python-code">5 Tips To Organize PythonCode</h1><ol type="1"><li>Use modules and packages to better organize Python code.</li><li>Place each class in an individual file using Pascal case.</li><li>Group related functionality together in packages.</li><li>Place all utilities in a single file or package.</li><li>Organize import statements by third party, built-in, and localfiles.</li></ol>]]></content>
+    <content type="html"><![CDATA[<h1 id="global与nonlocal">global与nonlocal</h1><p>学习过程中，我们会遇到两个有趣的关键字，一个是<code>global</code>，一个是 <code>nonlocal</code>。</p><p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p><p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p><p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p><h2 id="python的定义域">Python的定义域</h2><p>先试看一个例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure><p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量<code>b</code> 的值 <code>1</code>。</p><p>来看第二个例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure><p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量<code>b</code> 的赋值。那它的结果是什么呢？</p><p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对<code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure><p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p><p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量<code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p><p>这是因为 Python在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python遵循以下规则：</p><ol type="1"><li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python会将该变量视为局部变量。<ul><li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code>函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的<code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code>时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了<code>UnboundLocalError</code> 错误）。</li></ul></li><li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。<ul><li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code>进行赋值操作，所以 Python 会认为 <code>b</code>是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量<code>b</code> 的值。</li></ul></li></ol><p>总结一下：</p><ul><li>如果在函数内对变量进行赋值，Python会认为这个变量是局部的，并会在函数内部查找它。</li><li>如果函数内没有赋值操作，Python会尝试访问外部作用域（如全局作用域）的变量。</li></ul><p>因此，在第二个例子中，虽然你想访问的是全局变量<code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将<code>b</code> 视为局部变量并抛出了错误。</p><h2 id="global的作用">global的作用</h2><p>那如何在函数中使用全局变量呢？用 <code>global</code>标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量<code>b</code> 而言的：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure><p>全局的问题解决了，再来看另外一个例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure><p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure><p>因为函数 <code>a()</code> 中，对 <code>count</code>变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行<code>count + 1</code> 操作时，却没有找到<code>count</code>，所以报错了。</p><p>那怎么处理呢？</p><h2 id="nonlocal的作用">nonlocal的作用</h2><p>我猜你会用 <code>global</code>标记一下，但是注意啊。<code>global</code>标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code>函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure><p>运行结果</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure><p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉<code>a()</code> 函数，<code>count</code>不在本地定义，但也不在全局变量里。在 Python中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用<code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而<code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure><ul><li><p><code>nonlocal</code> 告诉Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p></li><li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code>的变量，而不是重新定义新的局部变量</p></li></ul><h2 id="闭包">闭包</h2><p>学习 Python时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure><p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回<code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code>函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的<code>count</code> 变量。</p><p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code>已经“撒手人寰”了，没有办法再去找到其中的数据。</p><p>像函数 <code>a()</code> 中 <code>count</code>这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p><p>用 <code>nonlocal</code> 标记后呢，Python就会保留自由变量的绑定（或者说定义环境）。</p><p>因此最后例子中，整个函数 <code>a()</code> 的作用域是<code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p><p>因为 <code>a()</code>延伸了自己的作用域，所以这里就可以被称作“闭包”。</p><h2 id="总结">总结</h2><ul><li><p><code>global</code> 和 <code>nonlocal</code>的功能都是<strong>改变变量作用域</strong>。</p></li><li><p><code>global</code> 标记全局变量，<code>nonlocal</code>标记非全局、非本地的<strong>自由变量</strong>。</p></li><li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p></li></ul>]]></content>
     
     
       
       
-    <summary type="html">&lt;h1 id=&quot;tips-to-organize-python-code&quot;&gt;5 Tips To Organize Python
-Code&lt;/h1&gt;
-&lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;Use modules and packages to better organize P</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2025/01/12/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90fastchat%E3%80%91/vLLM%20Integration/"/>
-    <id>https://luyicui.github.io/2025/01/12/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90fastchat%E3%80%91/vLLM%20Integration/</id>
-    <published>2025-01-12T04:40:15.933Z</published>
-    <updated>2025-01-12T04:40:54.631Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="vllm-integration">vLLM Integration</h1><p>You can use <a href="https://vllm.ai/">vLLM</a> as an optimizedworker implementation in FastChat. It offers advanced continuousbatching and a much higher (~10x) throughput. See the supported models<ahref="https://vllm.readthedocs.io/en/latest/models/supported_models.html">here</a>.</p><h2 id="instructions">Instructions</h2><ol type="1"><li><p>Install vLLM.</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install vllm</span><br></pre></td></tr></table></figure></li><li><p>When you launch a model worker, replace the normal worker(<code>fastchat.serve.model_worker</code>) with the vLLM worker(<code>fastchat.serve.vllm_worker</code>). All other commands such ascontroller, gradio web server, and OpenAI API server are kept the same.启动模型工作程序时，将普通工作程序 (<code>fastchat.serve.model_worker</code> ) 替换为 vLLM 工作程序 (<code>fastchat.serve.vllm_worker</code> )。控制器、Gradio 网页服务器和OpenAI API 服务器等所有其他命令保持不变。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.vllm_worker --model-path lmsys/vicuna-7b-v1.5</span><br></pre></td></tr></table></figure><p>If you see tokenizer errors, try</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m fastchat.serve.vllm_worker --model-path lmsys/vicuna-7b-v1.5 --tokenizer hf-internal-testing/llama-tokenizer</span><br></pre></td></tr></table></figure><p>If you use an AWQ quantized model, try<code>python3 -m fastchat.serve.vllm_worker --model-path TheBloke/vicuna-7B-v1.5-AWQ --quantization awq</code></p></li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;vllm-integration&quot;&gt;vLLM Integration&lt;/h1&gt;
-&lt;p&gt;You can use &lt;a href=&quot;https://vllm.ai/&quot;&gt;vLLM&lt;/a&gt; as an optimized
-worker implementation i</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2025/01/11/[object%20Object]/others/%E7%94%9F%E6%B4%BB/%E8%8C%B6%E5%8F%B6/"/>
-    <id>https://luyicui.github.io/2025/01/11/[object%20Object]/others/%E7%94%9F%E6%B4%BB/%E8%8C%B6%E5%8F%B6/</id>
-    <published>2025-01-11T13:38:35.750Z</published>
-    <updated>2025-01-11T13:38:35.750Z</updated>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-    
-      
-      
-    <summary type="html">
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2025/01/11/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E5%B7%A5%E5%8E%82%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    <id>https://luyicui.github.io/2025/01/11/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E5%B7%A5%E5%8E%82%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</id>
-    <published>2025-01-11T06:10:04.405Z</published>
-    <updated>2025-01-11T06:10:04.405Z</updated>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-    
-      
-      
-    <summary type="html">
-</summary>
+    <summary type="html">&lt;h1 id=&quot;global与nonlocal&quot;&gt;global与nonlocal&lt;/h1&gt;
+&lt;p&gt;学习过程中，我们会遇到两个有趣的关键字，一个是
+&lt;code&gt;global&lt;/code&gt;，一个是 &lt;code&gt;nonlocal&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;如果直接对英文进行翻</summary>
       
     
     
@@ -141,120 +53,6 @@ worker implementation i</summary>
       
     <summary type="html">&lt;p&gt;&lt;a href=&quot;https://www.pythontutorial.net/python-concurrency/&quot;&gt;Python
 Concurrency&lt;/a&gt;&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.3%20%E8%AF%BE%E4%B8%8A%E9%A1%B9%E7%9B%AE%E7%9A%84API/"/>
-    <id>https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.3%20%E8%AF%BE%E4%B8%8A%E9%A1%B9%E7%9B%AE%E7%9A%84API/</id>
-    <published>2024-12-06T14:39:44.085Z</published>
-    <updated>2024-12-06T14:39:44.854Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="导航6.-vue3">导航：<a href="../6.%20Vue3.md">6. Vue3</a></h2><h2 id="获取json-web-tokenjwt">1. 获取Json Web Token（JWT）</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/api/token/</li><li>方法：<code>POST</code></li><li>是否验证jwt：否</li><li>输入参数：<ul><li><code>username</code>: 用户名</li><li><code>password</code>: 密码</li></ul></li><li>返回结果：<ul><li><code>access</code>: 访问令牌，有效期5分钟</li><li><code>refresh</code>: 刷新令牌，有效期14天</li></ul></li></ul><h2 id="刷新jwt令牌">2. 刷新JWT令牌</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/api/token/refresh/</li><li>方法：<code>POST</code></li><li>是否验证jwt：否</li><li>输入参数：<ul><li><code>refresh</code>: 刷新令牌</li></ul></li><li>返回结果：<ul><li><code>access</code>: 访问令牌，有效期5分钟</li></ul></li></ul><h2 id="获取用户列表">3. 获取用户列表</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/userlist/</li><li>方法：<code>GET</code></li><li>是否验证jwt：否</li><li>输入参数：无</li><li>返回结果：返回10个用户的信息</li></ul><h2 id="获取某个用户的信息">4. 获取某个用户的信息</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/getinfo/</li><li>方法：<code>GET</code></li><li>是否验证jwt：是</li><li>输入参数：<ul><li><code>user_id</code>：用户的ID</li></ul></li><li>返回结果：该用户的信息</li></ul><h2 id="获取某个用户的所有帖子">5. 获取某个用户的所有帖子</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/post/</li><li>方法：<code>GET</code></li><li>是否验证jwt：是</li><li>输入参数：<ul><li><code>user_id</code>：用户的ID</li></ul></li><li>返回结果：该用户的所有帖子</li></ul><h2 id="创建一个帖子">6. 创建一个帖子</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/post/</li><li>方法：<code>POST</code></li><li>是否验证jwt：是</li><li>输入参数：<ul><li><code>content</code>：帖子的内容</li></ul></li><li>返回结果：<code>result: success</code></li></ul><h2 id="删除一个帖子">7. 删除一个帖子</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/post/</li><li>方法：<code>DELETE</code></li><li>是否验证jwt：是</li><li>输入参数：<ul><li><code>post_id</code>：被删除帖子的ID</li></ul></li><li>返回结果：<code>result: success</code></li></ul><h2 id="更改关注状态">8. 更改关注状态</h2><p>如果未关注，则关注；如果已关注，则取消关注。</p><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/follow/</li><li>方法：<code>POST</code></li><li>是否验证jwt：是</li><li>输入参数：<ul><li><code>target_id</code>: 被关注的用户ID</li></ul></li><li>返回结果：<code>result: success</code></li></ul><h2 id="注册账号">9. 注册账号</h2><ul><li>地址：https://app165.acapp.acwing.com.cn/myspace/user/</li><li>方法：<code>POST</code></li><li>是否验证jwt：否</li><li>输入参数：<ul><li><code>username</code>: 用户名</li><li><code>password</code>：密码</li><li><code>password_confirm</code>：确认密码</li></ul></li><li>返回结果：<ul><li><code>result: success</code></li><li><code>result: 用户名和密码不能为空</code></li><li><code>result: 两个密码不一致</code></li><li><code>result: 用户名已存在</code></li></ul></li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;导航6.-vue3&quot;&gt;导航：&lt;a href=&quot;../6.%20Vue3.md&quot;&gt;6. Vue3&lt;/a&gt;&lt;/h2&gt;
-&lt;h2 id=&quot;获取json-web-tokenjwt&quot;&gt;1. 获取Json Web Token（JWT）&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;地址：h</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.2%20%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
-    <id>https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.2%20%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</id>
-    <published>2024-12-06T14:39:44.071Z</published>
-    <updated>2024-12-06T14:39:44.752Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="导航6.-vue3">导航：<a href="../6.%20Vue3.md">6. Vue3</a></h2><h2 id="script部分">script部分</h2><p><code>export default</code>对象的属性：</p><ul><li><code>name</code>：组件的名称</li><li><code>components</code>：存储<code>&lt;template&gt;</code>中用到的所有组件</li><li><code>props</code>：存储父组件传递给子组件的数据</li><li><code>watch()</code>：当某个数据发生变化时触发</li><li><code>computed</code>：动态计算某个数据</li><li><code>setup(props, context)</code>：初始化变量、函数<ul><li><code>ref</code>定义变量，可以用<code>.value</code>属性重新赋值</li><li><code>reactive</code>定义对象，不可重新赋值</li><li><code>props</code>存储父组件传递过来的数据</li><li><code>context.emit()</code>：触发父组件绑定的函数</li></ul></li></ul><h2 id="template部分">template部分</h2><ul><li><code>&lt;slot&gt;&lt;/slot&gt;</code>：存放父组件传过来的<code>children</code>。</li><li><code>v-on:click</code>或<code>@click</code>属性：绑定事件</li><li><code>v-if</code>、<code>v-else</code>、<code>v-else-if</code>属性：判断</li><li><code>v-for</code>属性：循环，<code>:key</code>循环的每个元素需要有唯一的<code>key</code></li><li><code>v-bind:</code>或<code>:</code>：绑定属性</li></ul><h2 id="style部分">style部分</h2><ul><li><code>&lt;style&gt;</code>标签添加`属性后，不同组件间的css不会相互影响。</li></ul><h2 id="第三方组件">第三方组件</h2><ul><li><code>view-router</code>包：实现路由功能。</li><li><code>vuex</code>：存储全局状态，全局唯一。<ul><li><code>state</code>:存储所有数据，可以用<code>modules</code>属性划分成若干模块</li><li><code>getters</code>：根据<code>state</code>中的值计算新的值</li><li><code>mutations</code>：所有对<code>state</code>的修改操作都需要定义在这里，不支持异步，可以通过<code>$store.commit()</code>触发</li><li><code>actions</code>：定义对<code>state</code>的复杂修改操作，支持异步，可以通过<code>$store.dispatch()</code>触发。注意不能直接修改<code>state</code>，只能通过<code>mutations</code>修改<code>state</code>。</li><li><code>modules</code>：定义<code>state</code>的子模块</li></ul></li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;导航6.-vue3&quot;&gt;导航：&lt;a href=&quot;../6.%20Vue3.md&quot;&gt;6. Vue3&lt;/a&gt;&lt;/h2&gt;
-&lt;h2 id=&quot;script部分&quot;&gt;script部分&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;export default&lt;/code&gt;对象的属性：&lt;/p&gt;</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.1%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83/"/>
-    <id>https://luyicui.github.io/2024/12/06/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/6.1%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83/</id>
-    <published>2024-12-06T14:39:44.059Z</published>
-    <updated>2024-12-06T14:39:44.870Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="导航6.-vue3">导航：<a href="../6.%20Vue3.md">6. Vue3</a></h2><p><a href="https://vuejs.org/">Vue官网</a></p><h2 id="终端">终端</h2><p><code>Linux</code>和<code>Mac</code>上可以用自带的终端。</p><p><code>Windows</code>上推荐用<code>powershell</code>或者<code>cmd</code>。<code>Git Bash</code>有些指令不兼容。</p><h2 id="安装nodejs">安装<code>Nodejs</code></h2><p><a href="https://nodejs.org/en/">安装地址</a></p><h2 id="安装vuecli">安装<code>@vue/cli</code></h2><p>打开<code>Git Bash</code>，执行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g @vue/cli</span><br></pre></td></tr></table></figure><p>如果执行后面的操作有bug，可能是最新版有问题，可以尝试安装早期版本，比如：<code>npm i -g @vue/cli@4</code></p><h2id="启动vue自带的图形化项目管理界面">启动<code>vue</code>自带的图形化项目管理界面</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue ui</span><br></pre></td></tr></table></figure><p>常见问题1：Windows上运行<code>vue</code>，提示无法加载文件，表示用户权限不足。</p><p>解决方案：用管理员身份打开终端，输入<code>set-ExecutionPolicy RemoteSigned</code>，然后输入<code>y</code></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;导航6.-vue3&quot;&gt;导航：&lt;a href=&quot;../6.%20Vue3.md&quot;&gt;6. Vue3&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://vuejs.org/&quot;&gt;Vue官网&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;终端&quot;&gt;终端&lt;/h2&gt;
-&lt;p&gt;&lt;co</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/11/27/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/%E3%80%900.Reference%E3%80%91/"/>
-    <id>https://luyicui.github.io/2024/11/27/[object%20Object]/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/%E3%80%900.Reference%E3%80%91/</id>
-    <published>2024-11-27T09:32:44.309Z</published>
-    <updated>2024-12-31T06:58:08.319Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="reference">【0.Reference】</h1><ul><li><a href="https://developer.mozilla.org/zh-CN/">MDN Web Docs</a></li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412061056151.png"alt="image-20241206105627960" /><figcaption aria-hidden="true">image-20241206105627960</figcaption></figure><ul><li><a href="https://www.runoob.com/">菜鸟教程 -学的不仅是技术，更是梦想！</a></li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412061054007.png"alt="image-20241206105434913" /><figcaption aria-hidden="true">image-20241206105434913</figcaption></figure><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412061055814.png"alt="image-20241206105508651" /><figcaption aria-hidden="true">image-20241206105508651</figcaption></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;reference&quot;&gt;【0.Reference】&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/zh-CN/&quot;&gt;MDN Web Docs&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure&gt;
-&lt;img</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="https://luyicui.github.io/2024/11/24/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/"/>
-    <id>https://luyicui.github.io/2024/11/24/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/</id>
-    <published>2024-11-24T06:55:36.030Z</published>
-    <updated>2024-12-20T09:26:39.894Z</updated>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-    
-      
-      
-    <summary type="html">
 </summary>
       
     
@@ -753,6 +551,572 @@ class=&quot;math inline&quot;&gt;&#92;(L(W)&#92;)&lt;/span&gt; 最小化。&lt;/
     
     
     <category term="优化算法" scheme="https://luyicui.github.io/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>深度学习中的优化算法探讨</title>
+    <link href="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/"/>
+    <id>https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/</id>
+    <published>2024-08-12T18:02:27.000Z</published>
+    <updated>2024-11-13T14:14:46.013Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="深度学习中的优化算法探讨">深度学习中的优化算法探讨</h1><p>​ 在深度学习的过程中，<strong>优化算法</strong>扮演着至关重要的角色。训练神经网络通常需要投入大量的时间和资源，而优化算法的选择和应用直接影响模型的训练效率和效果。数值优化是一个庞大的数学学科，本篇文章将探讨与深度学习，特别是训练过程密切相关的优化算法。</p><h2id="最优化理论和深度学习优化算法的区别">最优化理论和深度学习优化算法的区别</h2><h3 id="度量和损失函数">度量和损失函数</h3><ul><li><strong>最优化理论</strong>：研究如何找到函数的<strong>最优解</strong>，即最大值或最小值，通常有明确的度量标准。</li><li><strong>深度学习</strong>：使用代理损失函数（如负对数似然或交叉熵）来进行优化，通过<strong>最小化代理损失函数</strong> 来最大化原始度量。</li></ul><h3 id="数据关注点">数据关注点</h3><ul><li><strong>最优化理论</strong>：只关心现有数据的最优解。</li><li><strong>深度学习</strong>：关注模型的泛化能力，即模型<strong>在测试集</strong> 上的表现，避免过拟合现象。</li></ul><h3 id="研究内容">研究内容</h3><ul><li><strong>最优化理论</strong>：注重算法本身的研究。</li><li><strong>深度学习</strong>：关注实现细节，包括神经网络的结构、参数调整等。</li></ul><span id="more"></span><h2 id="训练误差与泛化误差">训练误差与泛化误差</h2><ul><li><strong>训练误差</strong>：模型在 <strong>训练集</strong>上的误差，只关注 <strong>训练过程</strong> 中的表现。</li><li><strong>泛化误差</strong>：模型在未见过的数据（<strong>测试集</strong>）上的误差，关注模型的<strong>泛化能力</strong>。</li></ul><p>泛化误差的衡量是深度学习优化的<strong>核心</strong>，理想的模型应该在新数据上也能表现良好。</p><h2 id="经验风险与真实风险">经验风险与真实风险</h2><ul><li><strong>经验风险（Empirical Risk）</strong>：<strong>训练集</strong>上的期望 <strong>损失</strong>，通过 <strong>最小化经验风险</strong>来优化模型。</li><li><strong>真实风险（Expected Risk）</strong>：使用<strong>真实数据</strong> 计算损失函数的期望值，由于无法直接计算<strong>真实风险</strong>，因此通过 <strong>优化经验风险</strong>来尽量减少泛化误差。</li></ul><h2 id="深度学习优化中的挑战">深度学习优化中的挑战</h2><h3 id="病态问题ill-conditioned-problem">病态问题（Ill-conditionedProblem）</h3><ul><li>问题解对条件非常敏感，即使微小的变化也会导致解的大幅变化。</li><li>解决方案：正则化技术、数据预处理等。</li></ul><h3 id="局部最小值问题local-minima">局部最小值问题（Local Minima）</h3><ul><li>优化过程中可能陷入局部最小值，而不是全局最优值。</li><li>解决方案：使用不同的优化算法，如随机梯度下降（SGD）、Adam 等。</li></ul><h3 id="鞍点问题saddle-points">鞍点问题（Saddle Points）</h3><ul><li>损失函数在某些点的曲率为零，但不是全局最优点。</li><li>解决方案：减少模型复杂度、增加训练数据、使用随机初始化等。</li></ul><h3 id="悬崖问题cliffs">悬崖问题（Cliffs）</h3><ul><li>多层神经网络中的损失函数可能存在陡峭的区域，导致梯度更新大幅改变参数值。</li><li>解决方案：梯度裁剪（Gradient Clipping）以控制梯度大小。</li></ul><h3id="长期依赖问题long-term-dependency-problem">长期依赖问题（Long-termDependency Problem）</h3><ul><li>深层网络结构使得模型难以学习到先前的信息，导致梯度消失或爆炸。</li><li>解决方案：使用 LSTM 或 GRU 等特殊的循环神经网络结构</li></ul><h2 id="总结">总结</h2><p>​优化算法是深度学习模型训练中的核心工具，两者有密切的联系但也有显著的区别。最优化理论关注的是<strong>训练误差</strong>，而深度学习关注的是<strong>泛化误差</strong>。深度学习通过 <strong>最小化经验风险</strong>来尽量减少<strong>泛化误差</strong>。优化过程中面临的挑战包括病态问题、局部最小值、鞍点、悬崖和长期依赖问题，这些问题需要通过不同的优化算法和策略来解决。</p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;深度学习中的优化算法探讨&quot;&gt;深度学习中的优化算法探讨&lt;/h1&gt;
+&lt;p&gt;​ 在深度学习的过程中，&lt;strong&gt;优化算法&lt;/strong&gt;
+扮演着至关重要的角色。训练神经网络通常需要投入大量的时间和资源，而优化算法的选择和应用直接影响模型的训练效率和效果。数值优化是一个庞大的数学学科，本篇文章将探讨与深度学习，特别是训练过程密切相关的优化算法。&lt;/p&gt;
+&lt;h2
+id=&quot;最优化理论和深度学习优化算法的区别&quot;&gt;最优化理论和深度学习优化算法的区别&lt;/h2&gt;
+&lt;h3 id=&quot;度量和损失函数&quot;&gt;度量和损失函数&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;最优化理论&lt;/strong&gt;：研究如何找到函数的
+&lt;strong&gt;最优解&lt;/strong&gt;，即最大值或最小值，通常有明确的度量标准。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;深度学习&lt;/strong&gt;：使用代理损失函数（如负对数似然或交叉熵）来进行优化，通过
+&lt;strong&gt;最小化代理损失函数&lt;/strong&gt; 来最大化原始度量。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;数据关注点&quot;&gt;数据关注点&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;最优化理论&lt;/strong&gt;：只关心现有数据的最优解。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;深度学习&lt;/strong&gt;：关注模型的泛化能力，即模型
+&lt;strong&gt;在测试集&lt;/strong&gt; 上的表现，避免过拟合现象。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;研究内容&quot;&gt;研究内容&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;最优化理论&lt;/strong&gt;：注重算法本身的研究。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;深度学习&lt;/strong&gt;：关注实现细节，包括神经网络的结构、参数调整等。&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    
+    <category term="优化算法" scheme="https://luyicui.github.io/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>信息熵、交叉熵、相对熵（KL散度）</title>
+    <link href="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/"/>
+    <id>https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/</id>
+    <published>2024-08-12T17:02:27.000Z</published>
+    <updated>2024-12-08T10:41:13.937Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="信息熵交叉熵相对熵kl-散度">信息熵、交叉熵、相对熵（KL散度）</h1><p>之前在代码中经常看见交叉熵损失函数(CrossEntropyLoss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个softmax函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。</p><h2 id="交叉熵简介">交叉熵简介</h2><p>交叉熵是信息论中的一个重要概念，主要用于度量两个概率分布间的差异性，要理解交叉熵，需要先了解下面几个概念。</p><h2 id="信息量">信息量</h2><p>信息奠基人香农（Shannon）认为“信息是用来 <strong>消除</strong> 随机<strong>不确定性</strong>的东西”，也就是说衡量信息量的大小就是看这个信息消除不确定性的程度。</p><p><strong>“太阳从东边升起”</strong>，这条信息并没有减少不确定性，因为太阳肯定是从东边升起的，这是一句废话，信息量为0。</p><p><strong>”2018年中国队成功进入世界杯“</strong>，从直觉上来看，这句话具有很大的信息量。因为中国队进入世界杯的不确定性因素很大，而这句话消除了进入世界杯的不确定性，所以按照定义，这句话的信息量很大。</p><p>根据上述可总结如下：<strong>信息量的大小与信息发生的概率成反比</strong>。概率越大，信息量越小。概率越小，信息量越大。</p><p>设某一事件发生的概率为 P(x)，其信息量表示为：<br /><span class="math display">\[I\left ( x \right ) = -\log\left ( P\left ( x \right ) \right )\]</span> 其中 <span class="math inline">\(I\left ( x \right )\)</span>表示信息量，这里 <span class="math inline">\(\log\)</span> 表示以 <spanclass="math inline">\(e\)</span> 为底的自然对数。</p><span id="more"></span><h2 id="信息熵">信息熵</h2><p>信息熵也被称为熵，用来表示所有信息量的期望。</p><p>期望是试验中每次可能结果的概率乘以其结果的总和。</p><p>所以信息量的熵可表示为：（这里的 <spanclass="math inline">\(X\)</span> 是一个离散型随机变量）<br /><span class="math display">\[H\left ( \mathbf{X} \right ) = -\sum \limits_{i = 1}^n P(x_{i}) \log\left ( P \left ( x_{i} \right ))) \qquad ( \mathbf{X}= x_{1}, x_{2},x_{3}..., x_{n} \right)\]</span> 使用明天的天气概率来计算其信息熵：</p><table><thead><tr class="header"><th style="text-align: center;">序号</th><th style="text-align: center;">事件</th><th style="text-align: center;">概率 P</th><th style="text-align: center;">信息量</th></tr></thead><tbody><tr class="odd"><td style="text-align: center;">1</td><td style="text-align: center;">明天是晴天</td><td style="text-align: center;">0.5</td><td style="text-align: center;"><span class="math inline">\(-\log \left( 0.5 \right )\)</span></td></tr><tr class="even"><td style="text-align: center;">2</td><td style="text-align: center;">明天出雨天</td><td style="text-align: center;">0.2</td><td style="text-align: center;"><span class="math inline">\(-\log \left( 0.2 \right )\)</span></td></tr><tr class="odd"><td style="text-align: center;">3</td><td style="text-align: center;">多云</td><td style="text-align: center;">0.3</td><td style="text-align: center;"><span class="math inline">\(-\log \left( 0.3 \right )\)</span></td></tr></tbody></table><p><span class="math display">\[H\left ( \mathbf{X} \right ) = -\left ( 0.5 * \log \left ( 0.5 \right )+ 0.2 * \log \left ( 0.2 \right ) + 0.3 * \log \left ( 0.3 \right )\right)\]</span></p><p>对于 0-1分布的问题，由于其结果只用两种情况，是或不是，设某一件事情发生的概率为<span class="math inline">\(P\left ( x \right )\)</span>，则另一件事情发生的概率为 <span class="math inline">\(1-P\left ( x\right )\)</span> ，所以对于 0-1分布的问题，计算熵的公式可以简化如下：<br /><span class="math display">\[H\left ( \mathbf{X} \right ) = -\sum \limits_{n = 1}^n P(x_{i}\log \left( P \left ( x_{i} \right )) \right) \\ = -\left [ P\left ( x \right)\log \left ( P\left ( x \right ) \right ) + \left ( 1 - P\left ( x\right ) \right) \log \left ( 1-P\left ( x \right ) \right ) \right] \\= -P\left ( x \right) \log \left ( P\left ( x \right ) \right ) - \left( 1 - P\left ( x \right ) \right) \log \left ( 1-P\left ( x \right )\right)\]</span></p><h2 id="相对熵kl-散度">相对熵（KL 散度）</h2><p>如果对于同一个随机变量 <span class="math inline">\(X\)</span>有两个单独的概率分布 <spanclass="math inline">\(P\left(x\right)\)</span> 和 <spanclass="math inline">\(Q\left(x\right)\)</span> ，则我们可以使用 KL散度来衡量这 <strong>两个概率分布之间的差异</strong>。</p><p>下面直接列出公式，再举例子加以说明。<br /><span class="math display">\[D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left (x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i}\right )} \right )\]</span></p><p>在机器学习中，常常使用 <spanclass="math inline">\(P\left(x\right)\)</span>来表示样本的真实分布，<span class="math inline">\(Q\left(x\right)\)</span>来表示模型所预测的分布，比如在一个三分类任务中（例如，猫狗马分类器），<spanclass="math inline">\(x_{1}, x_{2}, x_{3}\)</span>​分别代表猫，狗，马，例如一张猫的图片真实分布 <spanclass="math inline">\(P\left(X\right) = [1, 0, 0]\)</span> , 预测分布<span class="math inline">\(Q\left(X\right) = [0.7, 0.2, 0.1]\)</span>，计算 KL 散度：<br /><span class="math display">\[D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left (x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i}\right )} \right ) \\ = p\left ( x_{1}\right ) \log \left ( \frac{p\left( x_{1} \right )}{q\left ( x_{1} \right )} \right ) + p\left (x_{2}\right ) \log \left ( \frac{p\left ( x_{2} \right )}{q\left ( x_{2}\right )} \right ) + p\left ( x_{3}\right ) \log \left ( \frac{p\left (x_{3} \right )}{q\left ( x_{3} \right )} \right ) \\ = 1 * \log \left (\frac{1}{0.7} \right ) = 0.36\]</span></p><p>KL 散度越小，表示 <spanclass="math inline">\(P\left(x\right)\)</span> 与 <spanclass="math inline">\(Q\left(x\right)\)</span>的分布更加接近，可以通过反复训练 <span class="math inline">\(Q\left(x\right)\)</span> 来使 <span class="math inline">\(Q\left(x\right)\)</span> 的分布逼近 <span class="math inline">\(P\left(x\right)\)</span>。</p><h2 id="交叉熵">交叉熵</h2><p>首先将 KL 散度公式拆开：<br /><span class="math display">\[D_{KL}\left( p || q \right) = \sum \limits_{i = 1}^n p\left( x_{i}\right) \log \left( \frac{p\left( x_{i} \right)}{q\left( x_{i} \right)}\right)\\= \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( p\left(x_{i} \right) \right) - \sum \limits_{i = 1}^n p\left( x_{i} \right)\log \left( q\left( x_{i} \right) \right)\\= -H\left( p(x) \right) + \left [ - \sum \limits_{i = 1}^n p\left(x_{i} \right) \log \left( q\left( x_{i} \right) \right)\right]\]</span> 前者 <span class="math inline">\(H \left (p \left (x\right)\right)\)</span> 表示信息熵，后者即为交叉熵，<strong>KL 散度 =交叉熵 - 信息熵</strong></p><p>交叉熵公式表示为：<br /><span class="math display">\[H \left (p, q\right) = -\sum \limits_{i = 1}^n p \left (x_{i}\right) log\left(q \left (x_{i}\right)\right)\]</span></p><p>在机器学习训练网络时，输入数据与标签常常已经确定，那么真实概率分布<span class="math inline">\(P\left(x \right)\)</span>也就确定下来了，所以信息熵在这里就是一个常量。由于 KL散度的值表示真实概率分布 <spanclass="math inline">\(P\left(x\right)\)</span> 与预测概率分布 <spanclass="math inline">\(Q \left(x\right)\)</span>之间的差异，值越小表示预测的结果越好，所以需要最小化 KL散度，而交叉熵等于 KL 散度加上一个常量（信息熵），且公式相比 KL散度更加容易计算，所以在机器学习中常常使用交叉熵损失函数来计算 loss就行了。</p><h2 id="交叉熵在单分类问题中的应用">交叉熵在单分类问题中的应用</h2><p>在线性回归问题中，常常使用 MSE(Mean Squared Error)作为 loss函数，而在分类问题中常常使用交叉熵作为 loss 函数。</p><p>下面通过一个例子来说明如何计算交叉熵损失值。</p><p>假设我们输入一张狗的图片，标签与预测值如下：</p><table><thead><tr class="header"><th>*</th><th>猫</th><th>狗</th><th>马</th></tr></thead><tbody><tr class="odd"><td>Label</td><td>0</td><td>1</td><td>0</td></tr><tr class="even"><td>Pred</td><td>0.2</td><td>0.7</td><td>0.1</td></tr></tbody></table><p>那么 loss<br /><span class="math display">\[loss = -\left ( 0 * \log \left ( 0.2 \right ) + 1 * \log \left ( 0.7\right ) + 0 * \log \left ( 0.1 \right )\right) = 0.36\]</span></p><p>一个 batch 的 loss 为<br /><span class="math display">\[loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left(x_{ij}\right) log \left(q \left (x_{ij}\right)\right)\]</span></p><p>其中 <span class="math inline">\(m\)</span> 表示样本个数。</p><h2 id="总结">总结</h2><ul><li><p>交叉熵能够衡量同一个随机变量中的两个不同概率分布的差异程度，在机器学习中就表示为真实概率分布与预测概率分布之间的差异。交叉熵的值越小，模型预测效果就越好。</p></li><li><p>交叉熵在分类问题中常常与 softmax 是标配，softmax将输出的结果进行处理，使其多个分类的预测值和为1，再通过交叉熵来计算损失。</p></li></ul><h2 id="参考">参考</h2><p><em>https://blog.csdn.net/tsyccnh/article/details/79163834</em></p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;信息熵交叉熵相对熵kl-散度&quot;&gt;信息熵、交叉熵、相对熵（KL
+散度）&lt;/h1&gt;
+&lt;p&gt;之前在代码中经常看见交叉熵损失函数(CrossEntropy
+Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个
+softmax
+函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。&lt;/p&gt;
+&lt;h2 id=&quot;交叉熵简介&quot;&gt;交叉熵简介&lt;/h2&gt;
+&lt;p&gt;交叉熵是信息论中的一个重要概念，主要用于度量两个概率分布间的差异性，要理解交叉熵，需要先了解下面几个概念。&lt;/p&gt;
+&lt;h2 id=&quot;信息量&quot;&gt;信息量&lt;/h2&gt;
+&lt;p&gt;信息奠基人香农（Shannon）认为“信息是用来 &lt;strong&gt;消除&lt;/strong&gt; 随机
+&lt;strong&gt;不确定性&lt;/strong&gt;
+的东西”，也就是说衡量信息量的大小就是看这个信息消除不确定性的程度。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;“太阳从东边升起”&lt;/strong&gt;，这条信息并没有减少不确定性，因为太阳肯定是从东边升起的，这是一句废话，信息量为
+0。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;”2018
+年中国队成功进入世界杯“&lt;/strong&gt;，从直觉上来看，这句话具有很大的信息量。因为中国队进入世界杯的不确定性因素很大，而这句话消除了进入世界杯的不确定性，所以按照定义，这句话的信息量很大。&lt;/p&gt;
+&lt;p&gt;根据上述可总结如下：&lt;strong&gt;信息量的大小与信息发生的概率成反比&lt;/strong&gt;。概率越大，信息量越小。概率越小，信息量越大。&lt;/p&gt;
+&lt;p&gt;设某一事件发生的概率为 P(x)，其信息量表示为：&lt;br /&gt;
+&lt;span class=&quot;math display&quot;&gt;&#92;[
+I&#92;left ( x &#92;right ) = -&#92;log&#92;left ( P&#92;left ( x &#92;right ) &#92;right )
+&#92;]&lt;/span&gt; 其中 &lt;span class=&quot;math inline&quot;&gt;&#92;(I&#92;left ( x &#92;right )&#92;)&lt;/span&gt;
+表示信息量，这里 &lt;span class=&quot;math inline&quot;&gt;&#92;(&#92;log&#92;)&lt;/span&gt; 表示以 &lt;span
+class=&quot;math inline&quot;&gt;&#92;(e&#92;)&lt;/span&gt; 为底的自然对数。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="损失函数" scheme="https://luyicui.github.io/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>损失函数</title>
+    <link href="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/"/>
+    <id>https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/</id>
+    <published>2024-08-12T17:02:27.000Z</published>
+    <updated>2024-12-02T02:24:12.693Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="损失函数">损失函数</h1><p>​ 在 深度学习 和机器学习领域，损失函数（LossFunction）是优化问题的核心，决定了模型参数的调整方向和幅度。尽管损失函数种类繁多，但理解其起源和背后的理论有助于我们更好地选择和应用它们。</p><h2 id="损失函数-的起源">损失函数 的起源</h2><p>所有的优化问题都需要确立一个目标函数，通过最小化（或最大化）该目标函数来求解。在机器学习中，损失函数衡量模型预测值与真实值之间的差异，是优化模型参数的重要工具。</p><h2 id="最小二乘法mse">最小二乘法（MSE）</h2><p>损失函数的起源可以追溯到统计学中的最小二乘回归。其基本思想是最小化预测值与真实值之间的差异。假设预测值为<span class="math inline">\(\hat{y}_{i}\)</span>，真实值为 <spanclass="math inline">\(y_i\)</span>，则最小二乘误差为： <spanclass="math display">\[[\mathrm{MSE}=\frac{1}{n}\sum_{i = 1}^{n}(y_{i}-\hat{y}_{i})2]\]</span> 通过最小化 MSE，可以找到使损失函数最小的参数 <spanclass="math inline">\(\theta\)</span>。</p><span id="more"></span><h2 id="最大似然估计mle">最大似然估计（MLE）</h2><p>​ 最大似然估计（Maximum Likelihood Estimation,MLE）是另一种基础且重要的参数估计方法，从概率分布的角度来理解<strong>目标函数</strong> 或<strong>损失函数</strong>。假设我们有一组独立的样本数据集 <spanclass="math inline">\(\{x_1, x_2, ...,x_m\}\)</span>，来自于未知的真实数据分布 <spanclass="math inline">\(P_{\text{data}}(x)\)</span>。我们假设另一个分布<span class="math inline">\(P_{\text{model}}(x|\theta)\)</span>来近似真实分布。</p><p>最大似然估计的目标是找到参数 <spanclass="math inline">\(\theta\)</span>，使得在给定数据的情况下，模型的似然函数最大化。即：<span class="math display">\[[\hat{\theta}=\arg\max_{\theta}\prod_{i =1}^{m}P_{\mathrm{model}}(x_{i}|\theta)]\]</span> 为了简化计算，我们通常使用对数似然： <spanclass="math display">\[[\hat{\theta}=\arg\max_{\theta}\sum_{i = 1}^{m}\logP_{\mathrm{model}}(x_{i}|\theta)]\]</span> 在假设数据符合 <strong>高斯分布</strong> 的情况下，MLE与最小化均方误差（MSE）等价。</p><h2 id="交叉熵损失">交叉熵损失</h2><p>​ 交叉熵损失（Cross-Entropy Loss）是 <strong>分类</strong>问题中常用的损失函数。假设数据符合伯努利分布或多项式分布，交叉熵损失用于衡量两个概率分布之间的差异。对于二分类问题，交叉熵损失定义为：</p><p><span class="math display">\[[L =-\frac{1}{m}\sum_{i =1}^{m}[y_{i}\log\hat{y}_{i}+(1-y_{i})\log(1-\hat{y}_{i})]]\]</span>交叉熵损失从概率分布角度来看，本质上也是最大似然估计的一种形式。</p><h2 id="正则化与最大后验估计map">正则化与最大后验估计（MAP）</h2><p><strong>正则化</strong> 技术是解决 <strong>过拟合</strong>问题的重要手段措施。正则化可以理解为在损失函数中加入<strong>惩罚项</strong>，以<strong>限制模型的复杂度</strong>，从而提高模型的<strong>泛化能力</strong>。正则化可以视作最大后验估计（Maximum APosteriori Estimation, MAP）的特殊情况。</p><h3 id="l2-正则化ridge-回归">L2 正则化（Ridge 回归）</h3><p>L2 正则化通过在损失函数中加入 <strong>参数的平方和项</strong>来惩罚过大的参数。其目标函数为：</p><p><span class="math display">\[[ \text{L2 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} \theta_{j}^{2}]\]</span></p><p>其中，<span class="math inline">\(\lambda\)</span>是正则化参数，用于控制惩罚项的权重。<spanclass="math inline">\(L2\)</span>正则化可以视为假设参数符合高斯分布时的最大后验估计。</p><h3 id="l1-正则化lasso-回归">L1 正则化（Lasso 回归）</h3><p>L1正则化通过在损失函数中加入参数的绝对值和项来惩罚过大的参数。其目标函数为：</p><p><span class="math display">\[[ \text{L1 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} |\theta_j| ]\]</span> L1正则化可以视为假设参数符合拉普拉斯分布时的最大后验估计。</p><h3 id="最大后验估计map">最大后验估计（MAP）</h3><p>MAP 估计在 MLE 的基础上，考虑了参数的先验分布。其目标函数为： <spanclass="math display">\[[\hat{\theta}=\arg\max_{\theta}P(\theta|X)]\]</span> 利用贝叶斯定理可以展开为：</p><p><span class="math display">\[[\hat{\theta}=\arg\max_\theta\left[\log P(X|\theta)+\logP(\theta)\right]]\]</span> 前者是似然函数，后者是先验分布。通过对数变换和相加的方式，将<strong>最大化后验概率</strong> 的问题转化为<strong>最大化对数似然函数</strong> 与 <strong>对数先验分布之和</strong>的问题。</p><h2 id="贝叶斯估计bayesian-estimation">贝叶斯估计（BayesianEstimation）</h2><p>贝叶斯估计（BayesianEstimation）与频率学派的视角不同。贝叶斯学派认为数据是固定的，但参数是随机的，并且参数的估计应基于其全分布而不是点估计。</p><p>贝叶斯估计的核心在于求解后验分布： <span class="math display">\[[P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}]\]</span> 其中，<span class="math inline">\(P(X)\)</span>是证据（evidence），用于归一化。</p><p>在实际应用中，贝叶斯估计通常也会使用对数形式： <spanclass="math display">\[\log P(\theta|X) = \log P(X|\theta) + \log P(\theta) - \log P(X)\]</span>通过这种方式，我们可以更加灵活地处理不确定性，并且可以自然地引入先验信息。</p><h2 id="统一理解">统一理解</h2><p>​损失函数在深度学习中的应用广泛，虽然种类繁多，但从概率分布和参数估计的角度，我们可以将其统一起来理解。通过最大似然估计（MLE）、最大后验估计（MAP）和贝叶斯估计（BayesianEstimation），我们能够更系统地理解损失函数及其背后的统计学原理。</p><h3 id="回归问题">回归问题</h3><p>​回归问题中常用的是均方误差（MSE），其本质是最大似然估计在假设误差服从高斯分布下的特例。L2和 L1 正则化则分别对应参数服从高斯分布和拉普拉斯分布的最大后验估计。</p><h3 id="分类问题">分类问题</h3><p>​分类问题中常用的是交叉熵损失，其本质是最大似然估计在假设数据服从伯努利分布或多项分布下的特例。</p><h3 id="正则化">正则化</h3><p>​正则化可以视为在最大似然估计的基础上引入先验分布，从而转化为最大后验估计。L2正则化对应高斯分布的先验，L1 正则化对应拉普拉斯分布的先验。</p><h2 id="总结">总结</h2><p>通过从概率分布和参数估计的角度重新梳理损失函数的定义，我们可以更高效地理解和应用各种损失函数及其变体。最大似然估计、最大后验估计和贝叶斯估计提供了统一的框架，使我们能够更系统地看待损失函数及其在机器学习和深度学习中的应用。</p><p>希望这篇文章能帮助大家在学习和应用损失函数时，从更高的角度和更深的层次理解其精髓。随着对这些概念的深入理解，我们可以更灵活地选择和设计适合具体问题的损失函数，从而提升模型的性能和泛化能力。</p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;损失函数&quot;&gt;损失函数&lt;/h1&gt;
+&lt;p&gt;​ 在 深度学习 和机器学习领域，损失函数（Loss
+Function）是优化问题的核心，决定了模型参数的调整方向和幅度。尽管损失函数种类繁多，但理解其起源和背后的理论有助于我们更好地选择和应用它们。&lt;/p&gt;
+&lt;h2 id=&quot;损失函数-的起源&quot;&gt;损失函数 的起源&lt;/h2&gt;
+&lt;p&gt;所有的优化问题都需要确立一个目标函数，通过最小化（或最大化）该目标函数来求解。在
+机器学习
+中，损失函数衡量模型预测值与真实值之间的差异，是优化模型参数的重要工具。&lt;/p&gt;
+&lt;h2 id=&quot;最小二乘法mse&quot;&gt;最小二乘法（MSE）&lt;/h2&gt;
+&lt;p&gt;损失函数的起源可以追溯到统计学中的最小二乘回归。其基本思想是最小化预测值与真实值之间的差异。假设预测值为
+&lt;span class=&quot;math inline&quot;&gt;&#92;(&#92;hat{y}_{i}&#92;)&lt;/span&gt;，真实值为 &lt;span
+class=&quot;math inline&quot;&gt;&#92;(y_i&#92;)&lt;/span&gt;，则最小二乘误差为： &lt;span
+class=&quot;math display&quot;&gt;&#92;[
+[&#92;mathrm{MSE}=&#92;frac{1}{n}&#92;sum_{i = 1}^{n}(y_{i}-&#92;hat{y}_{i})2]
+&#92;]&lt;/span&gt; 通过最小化 MSE，可以找到使损失函数最小的参数 &lt;span
+class=&quot;math inline&quot;&gt;&#92;(&#92;theta&#92;)&lt;/span&gt;。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="损失函数" scheme="https://luyicui.github.io/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>scanf()函数与printf()中的格式说明符</title>
+    <link href="https://luyicui.github.io/2024/08/11/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E3%80%90%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E3%80%91/"/>
+    <id>https://luyicui.github.io/2024/08/11/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E3%80%90%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E3%80%91/</id>
+    <published>2024-08-11T09:29:49.000Z</published>
+    <updated>2024-09-25T04:42:57.810Z</updated>
+    
+    <content type="html"><![CDATA[<h1id="scanf函数与printf中的格式说明符">scanf()函数与printf()中的格式说明符</h1><h2id="scanf与printf中格式说明符几乎相同的一部分">scanf（）与printf（）中格式说明符几乎相同的一部分</h2><table border="1" cellpadding="1" cellspacing="1" style="width: 600px; text-align: central;"><tbody><tr><td>%d</td><td>用来输入和输出int</td></tr><tr><td>%ld</td><td>用来输入和输出long</td></tr><tr><td>%lld</td><td>用来输入和输出long long</td></tr><tr><td>%hd</td><td>用来输入和输出short</td></tr><tr><td>%i</td><td>用来输入和输出有符号十进制整数</td></tr><tr><td>%u</td><td>用来输入和输出无符号十进制整数</td></tr><tr><td>%lu</td><td>用来输入和输出无符号十进制长整数</td></tr><tr><td>%llu</td><td>用来输入和输出无符号十进制长长整数</td></tr><tr><td>%hu</td><td>用来输入和输出无符号短十进制整数</td></tr><tr><td>%o</td><td>用来输入和输出八进制整数</td></tr><tr><td>%lo</td><td>用来输入和输出长八进制整数</td></tr><tr><td>%ho</td><td>用来输入和输出短八进制整数</td></tr><tr><td>%#o</td><td>用来输出八进制整数，数字前有0</td></tr><tr><td>%x</td><td>用来输入和输出十六制整数，字母小写</td></tr><tr><td>%#x</td><td>用来输出十六制整数，字母小写，数字前有0x</td></tr><tr><td>%lx</td><td>用来输入和输出长十六制整数，字母小写</td></tr><tr><td>%X</td><td>用来输入和输出十六制整数，字母大写 </td></tr><tr><td>%#X</td><td>用来输出十六制整数，字母大写 ，数字前有0X</td></tr><tr><td>%lX</td><td>用来输入和输出长十六制整数，字母大写</td></tr><tr><td>%c</td><td>用来输入和输出单个字符</td></tr><tr><td>%s</td><td><p>用来输入和输出一串字符串</p><p>输入时遇空格，<a            href="https://so.csdn.net/so/search?q=%E5%88%B6%E8%A1%A8%E7%AC%A6&amp;spm=1001.2101.3001.7020"            target="_blank"            class="hl hl-1"            data-report-click='{"spm":"1001.2101.3001.7020","dest":"https://so.csdn.net/so/search?q=%E5%88%B6%E8%A1%A8%E7%AC%A6&amp;spm=1001.2101.3001.7020","extra":"{\"searchword\":\"制表符\"}"}'            data-tit="制表符"            data-pretit="制表符"            >制表符</a          >或换行符结束</p><p>输出时连格式说明符一起输出</p><p>printf（"%s","%d%f",a,b）;输出 %d%f</p></td></tr><tr><td>%f</td><td>用来输入和输出float，输出double</td></tr><tr><td>%lf</td><td>用来输入和输出double（double输出用%f和%lf都可以）</td></tr><tr><td>%Lf</td><td>用来输入和输出long double</td></tr><tr><td>%e</td><td>用来输入和输出指数，字母小写</td></tr><tr><td>%le</td><td>用来输入和输出长指数，字母小写</td></tr><tr><td>%E</td><td>用来输入和输出指数，字母大写</td></tr><tr><td>%lE</td><td>用来输入和输出长指数，字母大写</td></tr><tr><td>%g</td><td>用来输入和输出指数或float（输出最短的一种），字母小写</td></tr><tr><td>%lg</td><td>用来输入和输出长指数或double（输出最短的一种），字母小写</td></tr><tr><td>%G</td><td>用来输入和输出指数或float（输出最短的一种），字母大写</td></tr><tr><td>%lG</td><td>用来输入和输出长指数或double（输出最短的一种），字母大写</td></tr></tbody></table><span id="more"></span><h2 id="scanf独有">scanf()独有</h2><table border="1" cellpadding="1" cellspacing="1" style="width: 600px"><tbody><tr><td>%<em>（所有类型），如%</em>d</td><td><p>用来输入一个数，字符或字符串而不赋值（跳过无关输入）</p><p>如scanf("%d%*c%d",&amp;a,&amp;b);</p><p>这样就可以只将1+2中的1和2赋值给a和b。</p></td></tr><tr><td><p>%m（所有类型），其中m为常数</p></td><td>限定输入范围，如scanf（“%4d”，&amp;a）时输入123456，只把1234赋值给a</td></tr><tr><td>，(逗号）</td><td>无实际用处，仅用于美观。如scanf（“%d,%d,%d”,&amp;a,&amp;b,&amp;c）;</td></tr><tr><td>-（横杠）    ：（冒号）</td><td><p>方便日期等输入，但不赋值</p><p>scanf（“%d-%d-%d”,&amp;a,&amp;b,&amp;c）;需输入2018-11-20</p><p>scanf（“%d：%d：%d”：&amp;a,&amp;b,&amp;c）;需输入2018:11:20</p></td></tr><tr><td><p>所有字符串，符号（包括空格）</p><p>数字（不与输入数相挨）</p></td><td><p>任何所写的东西都必须如横杠一般先输入（不赋值），不然系统报错</p><p>scanf（“%d 456 %d”,&amp;a,&amp;b）;</p><p>需输入  1 456 7（1和7之间有 456 （前后各一个空格））</p><p>结果为a=1  b=7</p></td></tr></tbody></table><h2 id="printf独有">printf()独有</h2><table border="1" cellpadding="1" cellspacing="1" style="width: 600px"><tbody><tr><td><p>%m.nd     %-m.nd</p><p>（m和n为常数）</p></td><td><p>m用于在d位数小于m时补空格（<a            href="https://so.csdn.net/so/search?q=%E5%8F%B3%E5%AF%B9%E9%BD%90&amp;spm=1001.2101.3001.7020"            target="_blank"            class="hl hl-1"            data-report-click='{"spm":"1001.2101.3001.7020","dest":"https://so.csdn.net/so/search?q=%E5%8F%B3%E5%AF%B9%E9%BD%90&amp;spm=1001.2101.3001.7020","extra":"{\"searchword\":\"右对齐\"}"}'            data-tit="右对齐"            data-pretit="右对齐"            >右对齐</a          >）d位数大于m时忽略</p><p>如%5d，输出123，          <u            ><span style="color: #3399ea">  </span></u          >123（123前面两个空格）</p><p></p><p>.n用于在d位数小于n时补0（右对齐）d位数大于n时忽略</p><p>如%.5d，输出123，          00123（123前面两个0）</p><p></p><p>%-m.nd则为左对齐</p></td></tr><tr><td><p>%m.nf  %m.nlf  %m.nLf</p><p>%-m.nf %-m.nlf %-m.nLf</p></td><td><p>m用于在小数位数小于m时补空格（右对齐）</p><p>小数位数大于m时忽略      (小数点算一位）</p><p>如%6f  需输出3.14            结果为<u>  </u>3.14（3.14前面两个空格）</p><p></p><p>.n用于控制小数位数      小数部分长度大于n则四舍五入</p><p>小数部分长度小于于n则补0</p><p>如%.6f  需输出3.14           结果为3.140000</p><p>如%6f  需输出3.1415926  结果为3.141593</p><p></p><p>%-m.nf %-m.nlf %-m.nLf   则为左对齐</p></td></tr><tr><td>%m.ns     %-m.ns</td><td><p>m用于在字符串位数小于m时补空格（右对齐）字符串位数大于m时忽略</p><p>如%5s，输出abc，          <u            ><span style="color: #3399ea">  </span></u          >abc（abc前面两个空格）</p><p></p><p>.n用于控制字符串位数      长度大于n则仅输出前n位</p><p>字符串长度小于于n时忽略</p><p>如%.6s 需输出abcdefg      结果为abcdef</p><p>如%6f  需输出abc              结果为abc</p><p></p><p>%-m.ns则为左对齐</p></td></tr><tr><td>%mc        %-mc</td><td><p>m限制char的输出长度       当m&gt;1时，在左方补m-1个空格</p><p></p><p>%-mc则为左对齐</p></td></tr><tr><td><p>%m.ne     %-m.ne</p><p>%m.nE     %-m.nE</p></td><td><p>m用于控制指数长度，在QT中，指数部分占五位（如 e+001 ）</p><p>位数小于m时左方补空格   位数大于m时忽略</p><p>如printf("%15.5e",a);          设a为123.456789</p><p>结果为 <u>   </u>1.23457e+002（三个空格）</p><p></p><p>.n用于控制小数长度           小数部分长度大于n则四舍五入</p><p>小数部分长度小于于n则补0</p><p>如printf("%15.5e",a);          设a为123.456789</p><p>结果为 <u>   </u>1.23457e+002（三个空格）</p><p></p><p>%-m.ne   %-m.nE则为左对齐</p></td></tr><tr><td><p>%<em>（整型）如%</em>d</p><p>%-*（整型）</p></td><td><p>在输出项中规定整型数据的宽度，少于限制补空格，大于忽略</p><p>如printf（“%*d”,a,b）;</p><p>a=5  b=123</p><p>结果为 <u>  </u>123（前面有两个空格）</p><p></p><p>%-*（整型） 左对齐</p></td></tr><tr><td>%0*（整型）</td><td><p>在输出项中规定整型数据的宽度，少于限制补0，大于忽略</p><p>如printf（“%0*d”,a,b）;</p><p>a=5  b=123</p><p>结果为 00123</p></td></tr><tr><td>注意</td><td><p>printf（）中的运算是从右至左，而输出是从做左至右</p><p>如a=1，printf（“%d %d %d”,a++,a++,a++）;</p><p>结果为3 2 1</p></td></tr></tbody></table>]]></content>
+    
+    
+    <summary type="html">&lt;h1
+id=&quot;scanf函数与printf中的格式说明符&quot;&gt;scanf()函数与printf()中的格式说明符&lt;/h1&gt;
+&lt;h2
+id=&quot;scanf与printf中格式说明符几乎相同的一部分&quot;&gt;scanf（）与printf（）中格式说明符几乎相同的一部分&lt;/h2&gt;
+&lt;table border=&quot;1&quot; cellpadding=&quot;1&quot; cellspacing=&quot;1&quot; style=&quot;width: 600px; text-align: central;&quot;&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%d
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出int
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%ld
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出long
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lld
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出long long
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%hd
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出short
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%i
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出有符号十进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%u
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出无符号十进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lu
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出无符号十进制长整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%llu
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出无符号十进制长长整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%hu
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出无符号短十进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%o
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出八进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lo
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长八进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%ho
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出短八进制整数
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%#o
+&lt;/td&gt;
+&lt;td&gt;
+用来输出八进制整数，数字前有0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%x
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出十六制整数，字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%#x
+&lt;/td&gt;
+&lt;td&gt;
+用来输出十六制整数，字母小写，数字前有0x
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lx
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长十六制整数，字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%X
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出十六制整数，字母大写 
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%#X
+&lt;/td&gt;
+&lt;td&gt;
+用来输出十六制整数，字母大写 ，数字前有0X
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lX
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长十六制整数，字母大写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%c
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出单个字符
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%s
+&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;
+用来输入和输出一串字符串
+&lt;/p&gt;
+&lt;p&gt;
+输入时遇空格，&lt;a
+            href=&quot;https://so.csdn.net/so/search?q=%E5%88%B6%E8%A1%A8%E7%AC%A6&amp;amp;spm=1001.2101.3001.7020&quot;
+            target=&quot;_blank&quot;
+            class=&quot;hl hl-1&quot;
+            data-report-click=&#39;{&quot;spm&quot;:&quot;1001.2101.3001.7020&quot;,&quot;dest&quot;:&quot;https://so.csdn.net/so/search?q=%E5%88%B6%E8%A1%A8%E7%AC%A6&amp;amp;spm=1001.2101.3001.7020&quot;,&quot;extra&quot;:&quot;{&#92;&quot;searchword&#92;&quot;:&#92;&quot;制表符&#92;&quot;}&quot;}&#39;
+            data-tit=&quot;制表符&quot;
+            data-pretit=&quot;制表符&quot;
+            &gt;制表符&lt;/a
+          &gt;或换行符结束
+&lt;/p&gt;
+&lt;p&gt;
+输出时连格式说明符一起输出
+&lt;/p&gt;
+&lt;p&gt;
+printf（&quot;%s&quot;,&quot;%d%f&quot;,a,b）;输出 %d%f
+&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%f
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出float，输出double
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lf
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出double（double输出用%f和%lf都可以）
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%Lf
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出long double
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%e
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出指数，字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%le
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长指数，字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%E
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出指数，字母大写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lE
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长指数，字母大写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%g
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出指数或float（输出最短的一种），字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lg
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长指数或double（输出最短的一种），字母小写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%G
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出指数或float（输出最短的一种），字母大写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+%lG
+&lt;/td&gt;
+&lt;td&gt;
+用来输入和输出长指数或double（输出最短的一种），字母大写
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</summary>
+    
+    
+    
+    
+    <category term="C++" scheme="https://luyicui.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CRC</title>
+    <link href="https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CRC/"/>
+    <id>https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CRC/</id>
+    <published>2024-05-19T01:46:27.000Z</published>
+    <updated>2024-11-05T01:33:39.978Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="crc">CRC</h1><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191656975.jpg"alt="258a1611faa096e4f1367a79335fb90" /><figcaptionaria-hidden="true">258a1611faa096e4f1367a79335fb90</figcaption></figure><span id="more"></span><p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191656977.jpg" alt="3b36f8ff943c741c889d81022a745df" style="zoom:67%;" /></p><blockquote><ol type="1"><li>生成多项式==&gt;除数</li><li>除数为n位<ul><li>余数为n-1位<strong><font color='red'>(不够的在前面补0)</font></strong></li><li>被除数后面加上<strong><font color='red'>n-1位‘0’</font></strong></li></ul></li></ol></blockquote><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191656978.jpg"alt="05c133fba1b7e11497708c5df82366d" /><figcaptionaria-hidden="true">05c133fba1b7e11497708c5df82366d</figcaption></figure>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;crc&quot;&gt;CRC&lt;/h1&gt;
+&lt;figure&gt;
+&lt;img
+src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191656975.jpg&quot;
+alt=&quot;258a1611faa096e4f1367a79335fb90&quot; /&gt;
+&lt;figcaption
+aria-hidden=&quot;true&quot;&gt;258a1611faa096e4f1367a79335fb90&lt;/figcaption&gt;
+&lt;/figure&gt;</summary>
+    
+    
+    
+    
+    <category term="计算机网络" scheme="https://luyicui.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTTP例题</title>
+    <link href="https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP%E4%BE%8B%E9%A2%98/"/>
+    <id>https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP%E4%BE%8B%E9%A2%98/</id>
+    <published>2024-05-19T01:46:27.000Z</published>
+    <updated>2024-11-05T01:33:50.367Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="http">HTTP</h1><h2 id="http协议">HTTP协议</h2><ul><li><span class="math inline">\(HTTP/1.1\)</span>默认使用<strong><font color='red'>持续</font></strong>、<strong><font color='blue'>非流水线</font></strong>方式</li></ul><h2 id="持续http连接">持续HTTP连接</h2><p>Client向 Server 请求共包含 4 个对象（1 个 HTML 基文件和 3 个 JPEG图片)的页面</p><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406111656225.jpg"alt="8713353fc94f5ca8948d4f31e81012a" /><figcaptionaria-hidden="true">8713353fc94f5ca8948d4f31e81012a</figcaption></figure><span id="more"></span><h2 id="非持续连接">非持续连接</h2><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406111659324.png"alt="image-20240611165958239" /><figcaption aria-hidden="true">image-20240611165958239</figcaption></figure><blockquote><p>==<strong>先请求HTML基文件，接收方收到HTML文件之后，才能再请求HTML的内嵌对象</strong>==</p></blockquote><h2 id="例题">例题</h2><h3 id="例1">例1</h3><ol type="1"><li>假设在客户端浏览器中通过点击某个超链接获得另一个Web页面。如果客户端只知道Web页面所在服务器的名字，但不知道该服务器的IP地址。因此，客户端必须使用DNS查询服务器的IP地址。假设，客户端使用DNS获得Web服务器的IP地址共耗时t<sub>dns</sub>。进一步假定，该Web页面共有10个非常小的对象。令RTT<sub>0</sub>表示客户端和Web服务器间数据传输的RTT值，<strong>HTML文档及内嵌对象的<font color='red'>传输时间(发送时间)均忽略不计</font></strong>。在下列情况下，从点击该超链接开始，到接收到完整的页面分别需要多少时间？(注意，比须解释所得结果的理由)</li></ol><p>(1)<font color='blue'><strong>无并行</strong></font>连接的<strong><font color='blue'>非持续</font></strong>HTTP</p><blockquote><p><strong>答:(1)DNS解析所需的tdns；使用串行非持续连接，获得一个对象需要2RTT0。因此，共需20RTT0+tdns</strong>。</p></blockquote><p>(2)<strong><font color='blue'>有流水线</font></strong>的持续HTTP</p><blockquote><p><strong>答:(2) 有流水线的持续HTTP，DNS解析需要tdns。建立TCP连接耗时RTT0；然后，获得页面的html文档耗时RTT0；获得页面其他对象耗时RTT0。综上，共耗时：3RTT0+tdns。</strong></p></blockquote><h3 id="例2">例2</h3><p>​浏览器与WWW服务器之间的网络路径被抽象为一条传输速率为100Mbps的链路。假设浏览器要从服务器下载100Kbits(1K=1000)长的页面，并包含10个嵌入的图像（文件名分别img01.jpg,img02.jpg……img10.jpg），每个图像文件大小都是100Kbits，页面和10个图像存储在同一服务器中。从浏览器到服务器的往返时间（RTT）为300毫秒。由于GET方法的request消息比较小，<strong><font color='red'>忽略客户端发送GETrequest消息需要的时间</font></strong>，但需要考虑在链路上<strong><font color='red'>传输HTML基文件和嵌入对象所需的时间</font></strong>，以及建立TCP连接所需要的时间（假设TCP连接建立时间为1RTT）。</p><ol type="1"><li>使用<strong><font color='blue'>非持续HTTP</font></strong>（假设在浏览器和服务器之间<strong><font color='blue'>没有并行连接</font></strong>），响应时间多长？即从用户请求URL到页面和嵌入的图像都到达浏览器需要多长时间？注意要描述导致延迟的不同部分。</li></ol><blockquote><p><strong>一个RTT时间请求，一个RTT响应并返回请求的文件+文件传数据时间。由于是没有并行链接的非持续HTTP链接，每个对象都需要逐个请求所以是：(2RTT+0.001)*11=6.611s</strong>*</p></blockquote><ol start="2" type="1"><li>仍然使用<strong>非持续连接</strong>，假设浏览器想打开多少到服务器的并行连接都可以。这种情况下，响应时间是多少？</li></ol><blockquote><p><strong><font color='blue'>先请求HTML基文件，2RTT+文件传输时间。</font>现在知道了对象的个数，创建一个TCP链接2RTT，但是由于文件储存在同一服务器中，所以服务器需要逐个发送文件，因此时间是10个文件传输时间，所以总时间是：(2RTT+0.001)+(2RTT+10*0.001)=1s</strong></p></blockquote><ol start="3" type="1"><li>假设使用<strong><font color='blue'>持续</font></strong>HTTP连接，但<strong>没有使用流水线机制</strong>。这种情况下响应时间是多少？</li></ol><blockquote><p><strong>使用无流水的持续HTTP链接，服务器的连续发送基文档和内嵌文件对象，建立连接1个RTT，每个对象是1RTT+文件传输时间所以总时间是：1RTT+11*(1RTT+对象传输时间)=0.3+11(0.3+0.001)=3.611s。</strong></p></blockquote><ol start="4" type="1"><li>假设使用<strong><font color='blue'>流水线的持续</font></strong>HTTP，响应时间是多少？</li></ol><blockquote><p><strong>使用流水线的持续HTTP，首先建立链接1个RTT，然后获取HTML基文档1RTT+文件传输时间，内嵌对象的请求背靠背的从客户端发送1RTT，服务器则一次发送文件对象10个文件传输时间，所以总时间是：3RTT+11*0.001=0.911s</strong></p></blockquote><h3 id="例3">例3</h3><p>​假设在浏览器键入地址(URL)后从某个WWW服务器获取一个Web页面，<strong><font color='blue'>该服务器的IP地址已缓存在本地</font></strong>。用RTT表示从客户机到Web服务器的往返时间（RTT）。假设该Web页面由一个基本的HTML文件和五个小图像组成，<strong><font color='red'>每个对象的发送时间与RTT相比很小，可以忽略不计。</font></strong>在下列情况下，从用户输入地址后按下回车键到接收到完整的Web页面需要多长时间？</p><ol type="1"><li><p>没有并行连接的非持续HTTP——<strong>12RTT</strong></p></li><li><p><strong><font color='blue'>最多有五个并行连接的非持续</font></strong>HTTP——<strong>4RTT</strong></p></li><li><p>使用流水线的持续HTTP——<strong>3RTT</strong></p></li></ol><h3 id="例4">例4</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191658229.png"alt="image-20230129172238917" /><figcaption aria-hidden="true">image-20230129172238917</figcaption></figure><h3 id="例5">例5</h3><p>17.【2022 统考真题】假设主机 H 通过 HTTP/1.1 请求浏览某 Web 服务器S上的 Web页news408.html，news408.html引用了同目录下的1幅图像，news408.html文件大小为1MSS(最大段长)，图像文件大小为3MSS，H访问S的往返时间 RTT=10 ms，忽略HTTP响应报文的首部开销和 TCP段传输时延。若H已完成域名解析,则从H请求与S建立TCP连接时刻起，到接收到全部内容止，所需的时间至少是（）</p><p>A.30ms B. 40ms C.50ms D.60ms</p><ul><li><p><span class="math inline">\(HTTP/1.1\)</span>默认使用<strong><font color='red'>持续</font></strong>、<strong><font color='blue'>非流水线</font></strong>方式</p></li><li><p>要求最少时间，理想的情况是TCP在第3次握手的报文段中捎带了 HTTP请求，以及传输过程中的慢开始阶段不考虑拥塞</p></li><li><p>假设接收方有足够大的缓存空间，即发送窗口等同于拥塞窗口，共需要经过：</p><ul><li>第1个RTT，进行TCP连接建立的前两次握手</li><li>第2个RTT，主机C发送第3次握手报文并捎带了对html文件的HTTP请求，<strong>TCP连接刚建立时服务器S的发送窗口=1MSS</strong>，服务器S发送大小为1MSS的 html文件</li><li>第3个RTT，主机C发送对 html 文件的确认并捎带了对图形文件的HTTP请求，<strong>服务器S收到确认后发送窗口变为2MSS</strong>，然后服务器S发送大小为2MSS的图像文件</li><li>第4个RTT，主机C向服务器S发送对收到的部分图像文件的确认，<strong>服务器S收到确认后发送窗口变为4MSS</strong>，然后服务器S发送剩下的1MSS 图像文件，完成传输，</li></ul><p>共需要4个RTT，即 40ms。整个传输过程如下图所示：</p></li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202407071335383.png"alt="img" /><figcaption aria-hidden="true">img</figcaption></figure>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;http&quot;&gt;HTTP&lt;/h1&gt;
+&lt;h2 id=&quot;http协议&quot;&gt;HTTP协议&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&quot;math inline&quot;&gt;&#92;(HTTP/1.1&#92;)&lt;/span&gt;
+默认使用&lt;strong&gt;&lt;font color=&#39;red&#39;&gt;持续&lt;/font&gt;&lt;/strong&gt;、&lt;strong&gt;&lt;font color=&#39;blue&#39;&gt;非流水线&lt;/font&gt;&lt;/strong&gt;方式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;持续http连接&quot;&gt;持续HTTP连接&lt;/h2&gt;
+&lt;p&gt;Client向 Server 请求共包含 4 个对象（1 个 HTML 基文件和 3 个 JPEG
+图片)的页面&lt;/p&gt;
+&lt;figure&gt;
+&lt;img
+src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202406111656225.jpg&quot;
+alt=&quot;8713353fc94f5ca8948d4f31e81012a&quot; /&gt;
+&lt;figcaption
+aria-hidden=&quot;true&quot;&gt;8713353fc94f5ca8948d4f31e81012a&lt;/figcaption&gt;
+&lt;/figure&gt;</summary>
+    
+    
+    
+    
+    <category term="计算机网络" scheme="https://luyicui.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>交换机自学习功能</title>
+    <link href="https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%BA%A4%E6%8D%A2%E6%9C%BA%E8%87%AA%E5%AD%A6%E4%B9%A0%E5%8A%9F%E8%83%BD/"/>
+    <id>https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E4%BA%A4%E6%8D%A2%E6%9C%BA%E8%87%AA%E5%AD%A6%E4%B9%A0%E5%8A%9F%E8%83%BD/</id>
+    <published>2024-05-19T01:46:27.000Z</published>
+    <updated>2024-11-05T01:32:05.124Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="交换机自学习功能">交换机自学习功能</h1><h2 id="步骤">步骤</h2><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701401.png"alt="image-20221126151441804" /><figcaption aria-hidden="true">image-20221126151441804</figcaption></figure><span id="more"></span><h2 id="举例">举例</h2><h3 id="例一一台交换机">例一：一台交换机</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701402.png"alt="image-20221126152111230" /><figcaption aria-hidden="true">image-20221126152111230</figcaption></figure><blockquote><p>总结：MAC帧每<strong><font color='gree'>进入交换机</font></strong></p><ul><li><p>首先，==对<strong><font color='red'>源MAC地址和进入接口</font></strong>进行更新==（没有添加，有则更新时间）</p></li><li><p>然后，查找交换表中是否有<strong><font color='red'>目的MAC地址</font></strong>，</p><ul><li>若无，则对==<strong><font color='red'>除进入接口以外的接口</font></strong>广播==</li><li>若有，则通过 指定接口 转发出去</li></ul></li></ul></blockquote><h3 id="例二两台交换机">例二：两台交换机</h3><h4 id="section">(1)</h4><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701403.png"alt="image-20221126152145618" /><figcaption aria-hidden="true">image-20221126152145618</figcaption></figure><ul><li>注意区别</li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701404.png"alt="image-20230129143609233" /><figcaption aria-hidden="true">image-20230129143609233</figcaption></figure><ol start="2" type="1"><li></li></ol><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701405.png"alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption></figure><h3 id="例三三台交换机">例三：三台交换机</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701406.png"alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption></figure><h4 id="交换机1">交换机1</h4><table><thead><tr class="header"><th>MAC地址</th><th>接口</th></tr></thead><tbody><tr class="odd"><td>B</td><td>2</td></tr><tr class="even"><td>D</td><td>4</td></tr><tr class="odd"><td>E</td><td>4</td></tr><tr class="even"><td>C</td><td>3</td></tr></tbody></table><h4 id="交换机2">交换机2</h4><table><thead><tr class="header"><th>MAC地址</th><th>接口</th></tr></thead><tbody><tr class="odd"><td>B</td><td>2</td></tr><tr class="even"><td>D</td><td>1</td></tr><tr class="odd"><td>G</td><td>4</td></tr><tr class="even"><td>E</td><td>3</td></tr></tbody></table><h4 id="交换机3">交换机3</h4><table><thead><tr class="header"><th>MAC地址</th><th>接口</th></tr></thead><tbody><tr class="odd"><td>B</td><td>2</td></tr><tr class="even"><td>D</td><td>2</td></tr><tr class="odd"><td>G</td><td>4</td></tr><tr class="even"><td>E</td><td>2</td></tr><tr class="odd"><td>F</td><td>1</td></tr></tbody></table><h3 id="例四">例四</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701407.png"alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption></figure><p>答案：A</p><ul><li><strong><font color='red'>PDU</font></strong>的意思是<strong><font color='red'>协议数据单元</font></strong>，它是计算机网络体系结构中对等实体间逻辑通信的对象。</li><li>以太网交换机工作在数据链路层（也包括物理层），他接受并转发的PDU通常称为帧。</li><li>以太网交换机收到帧后，在帧交换表中查找<strong>帧的目的MAC地址</strong>所对应的接口号，然后通过该接口转发帧。</li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701408.png"alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption></figure><h3 id="例五">例五</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701409.png"alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption></figure><p><strong><font color='red'>B</font></strong></p><h3 id="例六">例六</h3><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701410.jpg"alt="bdb2e0db0d76b99f974063fbd19a1d6" /><figcaptionaria-hidden="true">bdb2e0db0d76b99f974063fbd19a1d6</figcaption></figure>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;交换机自学习功能&quot;&gt;交换机自学习功能&lt;/h1&gt;
+&lt;h2 id=&quot;步骤&quot;&gt;步骤&lt;/h2&gt;
+&lt;figure&gt;
+&lt;img
+src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191701401.png&quot;
+alt=&quot;image-20221126151441804&quot; /&gt;
+&lt;figcaption aria-hidden=&quot;true&quot;&gt;image-20221126151441804&lt;/figcaption&gt;
+&lt;/figure&gt;</summary>
+    
+    
+    
+    
+    <category term="计算机网络" scheme="https://luyicui.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>端到端 &amp;&amp; 点到点</title>
+    <link href="https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%AB%AF%E5%88%B0%E7%AB%AF%20&amp;&amp;%20%E7%82%B9%E5%88%B0%E7%82%B9/"/>
+    <id>https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%AB%AF%E5%88%B0%E7%AB%AF%20&amp;&amp;%20%E7%82%B9%E5%88%B0%E7%82%B9/</id>
+    <published>2024-05-19T01:46:27.000Z</published>
+    <updated>2024-11-05T01:31:15.074Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="端到端-点到点">端到端 &amp;&amp; 点到点</h1><ul><li>数据传输的可靠性是通过<strong>数据链路层和网络层的点对点</strong>和<strong>传输层的端对端</strong>保证的。</li><li>端到端与点到点是针对网络中传输的<strong>两端设备间的关系</strong>而言的。</li><li>在一个网络系统的不同分层中，可能用到端到端传输，也可能用到点到点传输。<ul><li>如Internet网，IP及以下各层采用点到点传输</li><li>4层以上采用端到端传输。</li></ul></li></ul><span id="more"></span><h2 id="端到端通信">端到端通信</h2><p>端到端通信是针对<strong><font color='red'>传输层</font></strong>来说的，它是一个网络连接，指的是在数据传输之前，在发送端与接收端之间（忽略中间有多少设备）为数据的传输建立一条链路，链路建立以后，发送端就可以发送数据，知道数据发送完毕，接收端确认接收成功。也就是说在数据传输之前，先为数据的传输开辟一条通道，然后在进行传输。从发送端发出数据到接收端接收完毕，结束。</p><h3 id="端到端优点">端到端优点：</h3><p>链路建立之后，发送端知道接收端一定能收到，而且经过中间交换设备时不需要进行存储转发，因此传输延迟小。</p><h3 id="端到端缺点">端到端缺点：</h3><ul><li><p>直到接收端收到数据为止，发送端的设备一直要参与传输。如果整个传输的延迟很长，那么对发送端的设备造成很大的浪费。</p></li><li><p>如果接收设备关机或故障，那么端到端传输不可能实现。</p></li></ul><h2 id="点到点通信">点到点通信</h2><p>点到点通信是针对数据链路层或网络层来说的，点对点是基于MAC地址和或者IP地址，是指一个设备发数据给与该这边直接连接的其他设备，这台设备又在合适的时候将数据传递给与它相连的下一个设备，通过一台一台直接相连的设备把数据传递到接收端。</p><h3 id="点到点优点">点到点优点：</h3><ul><li><p>发送端设备送出数据后，它的任务已经完成，不需要参与整个传输过程，这样不会浪费发送端设备的资源。</p></li><li><p>即使接收端设备关机或故障，点到点传输也可以采用存储转发技术进行缓冲。</p></li></ul><h3 id="点到点缺点">点到点缺点：</h3><ul><li>发送端发出数据后，不知道接收端能否收到或何时能收到数据。</li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;端到端-点到点&quot;&gt;端到端 &amp;amp;&amp;amp; 点到点&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;数据传输的可靠性是通过&lt;strong&gt;数据链路层和网络层的点对点&lt;/strong&gt;和&lt;strong&gt;传输层的端对端&lt;/strong&gt;保证的。&lt;/li&gt;
+&lt;li&gt;端到端与点到点是针对网络中传输的&lt;strong&gt;两端设备间的关系&lt;/strong&gt;而言的。&lt;/li&gt;
+&lt;li&gt;在一个网络系统的不同分层中，可能用到端到端传输，也可能用到点到点传输。
+&lt;ul&gt;
+&lt;li&gt;如Internet网，IP及以下各层采用点到点传输&lt;/li&gt;
+&lt;li&gt;4层以上采用端到端传输。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    
+    <category term="计算机网络" scheme="https://luyicui.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>网络层提供的2种服务</title>
+    <link href="https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%BD%91%E7%BB%9C%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%842%E7%A7%8D%E6%9C%8D%E5%8A%A1/"/>
+    <id>https://luyicui.github.io/2024/05/19/[object%20Object]/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%BD%91%E7%BB%9C%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%842%E7%A7%8D%E6%9C%8D%E5%8A%A1/</id>
+    <published>2024-05-19T01:46:27.000Z</published>
+    <updated>2024-11-05T01:33:33.381Z</updated>
+    
+    <content type="html"><![CDATA[<p># 网络层提供的2种服务</p><h2 id="虚电路服务">虚电路服务</h2><ul><li><p><strong>传统电信网提供的主要业务是提供电话服务。电信网使用昂贵的程控交换机，用面向连接的通信方式，使电信网络能够向用户(实际上就是电话机)提供可靠传输的服务</strong></p></li><li><p><strong>两个计算机进行通信的步骤：</strong></p><p>（1）应当先建立连接(但在分组交换中是建立一条虚电路VC(VirtualCircuit)，以保证通信双方所需的一切网络资源。</p><p>（2）然后双方就沿着已建立的虚电路发送分组。</p><p>（3）这样的分组的首部就不需要填写完整的目的主机地址，而只需填写这条虚电路的编号(一个不大的整数)，因而减少了分组的开销。</p><p>（4）如果这种通信方式再使用可靠传输的网络协议，就可使所发送的分组无差错按序地到达终点，当然也不丢失、不重复。</p><p>（5）在通信结束后，要释放建立的虚电路</p></li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191749015.png"alt="这里写图片描述" /><figcaption aria-hidden="true">这里写图片描述</figcaption></figure><span id="more"></span><h2 id="数据报服务">数据报服务</h2><ul><li><p><strong>因特网在设计上就采用了和电信网完全不同的思路。</strong></p></li><li><p>由于传输网络不提供端到端的可靠传输服务，这就使网络中的路由器可以做得比较简单，而且价格低廉(与电信网的交换机相比较)。</p></li><li><p><strong>因特网的设计思路：</strong></p><p>（1）网络层向上只提供简单灵活的、无连接的、尽最大努力交付的数据报服务。网络在发送分组时不需要先建立连接。每个分组(也就是IP数据报)独立发送，与其前后的分组无关(不进行编号)</p><p>（2）网络层不提供服务质量的承诺。也就是说所传送的分组，可能出错、丢失、重复或失序，当然也不保证分组交付的时限</p></li><li><p>这种设计思路的好处：</p><p>（1）网络的造价大大降低 （2）运行方式灵活（3）能够适应多种应用</p></li></ul><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191753937.png"alt="这里写图片描述" /><figcaption aria-hidden="true">这里写图片描述</figcaption></figure><h2 id="虚电路服务-vs-数据报服务">虚电路服务 vs 数据报服务</h2><figure><imgsrc="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191749010.png"alt="这里写图片描述" /><figcaption aria-hidden="true">这里写图片描述</figcaption></figure><hr /><p><strong>参考文献：</strong><br />[1]《计算机网络(第5版)》谢希仁——第四章 4.1</p><p>本文转自 <ahref="https://blog.csdn.net/cainv89/article/details/50654483"class="uri">https://blog.csdn.net/cainv89/article/details/50654483</a>，如有侵权，请联系删除。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;# 网络层提供的2种服务&lt;/p&gt;
+&lt;h2 id=&quot;虚电路服务&quot;&gt;虚电路服务&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;传统电信网提供的主要业务是提供电话服务。电信网使用昂贵的程控交换机，用面向连接的通信方式，使电信网络能够向用户(实际上就是电话机)提供可靠传输的服务&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;两个计算机进行通信的步骤：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;（1）应当先建立连接(但在分组交换中是建立一条虚电路VC(Virtual
+Circuit)，以保证通信双方所需的一切网络资源。&lt;/p&gt;
+&lt;p&gt;（2）然后双方就沿着已建立的虚电路发送分组。&lt;/p&gt;
+&lt;p&gt;（3）这样的分组的首部就不需要填写完整的目的主机地址，而只需填写这条虚电路的编号(一个不大的整数)，因而减少了分组的开销。&lt;/p&gt;
+&lt;p&gt;（4）如果这种通信方式再使用可靠传输的网络协议，就可使所发送的分组无差错按序地到达终点，当然也不丢失、不重复。&lt;/p&gt;
+&lt;p&gt;（5）在通信结束后，要释放建立的虚电路&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure&gt;
+&lt;img
+src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202405191749015.png&quot;
+alt=&quot;这里写图片描述&quot; /&gt;
+&lt;figcaption aria-hidden=&quot;true&quot;&gt;这里写图片描述&lt;/figcaption&gt;
+&lt;/figure&gt;</summary>
+    
+    
+    
+    
+    <category term="计算机网络" scheme="https://luyicui.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
     
   </entry>
   

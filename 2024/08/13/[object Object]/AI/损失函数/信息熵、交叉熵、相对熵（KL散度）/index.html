@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="信息熵、交叉熵、相对熵（KL 散度）之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵简介交叉熵是信">
+  <meta name="description" content="信息熵、交叉熵、相对熵（KL 散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵">
 <meta property="og:type" content="article">
 <meta property="og:title" content="信息熵、交叉熵、相对熵（KL散度）">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="信息熵、交叉熵、相对熵（KL 散度）之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵简介交叉熵是信">
+<meta property="og:description" content="信息熵、交叉熵、相对熵（KL 散度） 之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。 交叉熵">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-08-12T17:02:27.000Z">
 <meta property="article:modified_time" content="2024-12-08T10:41:13.937Z">
@@ -89,7 +89,7 @@
       <div align="center">
         
         <div class="tag-cloud">
-          <a href="/tags/AI/" style="font-size: 17.35px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 17.35px;">Anaconda</a> <a href="/tags/C/" style="font-size: 23.82px;">C++</a> <a href="/tags/GitHub/" style="font-size: 20.29px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 23.24px;">LLM</a> <a href="/tags/Linux/" style="font-size: 21.47px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.18px;">OpenAI</a> <a href="/tags/Others/" style="font-size: 16.18px;">Others</a> <a href="/tags/STL/" style="font-size: 21.47px;">STL</a> <a href="/tags/css/" style="font-size: 22.06px;">css</a> <a href="/tags/git/" style="font-size: 17.94px;">git</a> <a href="/tags/gradio/" style="font-size: 16.18px;">gradio</a> <a href="/tags/html/" style="font-size: 20.88px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.18px;">huggingface</a> <a href="/tags/js/" style="font-size: 23.24px;">js</a> <a href="/tags/numpy/" style="font-size: 19.71px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.59px;">ollama</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/others/" style="font-size: 19.71px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 24.41px;">pytorch</a> <a href="/tags/react/" style="font-size: 18.53px;">react</a> <a href="/tags/shell/" style="font-size: 16.18px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15.59px;">sklearn</a> <a href="/tags/transformers/" style="font-size: 16.76px;">transformers</a> <a href="/tags/vllm/" style="font-size: 15px;">vllm</a> <a href="/tags/vue/" style="font-size: 16.18px;">vue</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 19.12px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 20.88px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 22.65px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.59px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 22.06px;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 22.65px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 19.12px;">计算机网络</a>
+          <a href="/tags/AI/" style="font-size: 17.35px;">AI</a> <a href="/tags/Anaconda/" style="font-size: 17.35px;">Anaconda</a> <a href="/tags/C/" style="font-size: 23.82px;">C++</a> <a href="/tags/GitHub/" style="font-size: 20.29px;">GitHub</a> <a href="/tags/LLM/" style="font-size: 23.24px;">LLM</a> <a href="/tags/Linux/" style="font-size: 21.47px;">Linux</a> <a href="/tags/OpenAI/" style="font-size: 16.18px;">OpenAI</a> <a href="/tags/Others/" style="font-size: 16.18px;">Others</a> <a href="/tags/STL/" style="font-size: 21.47px;">STL</a> <a href="/tags/css/" style="font-size: 22.06px;">css</a> <a href="/tags/git/" style="font-size: 17.94px;">git</a> <a href="/tags/gradio/" style="font-size: 16.18px;">gradio</a> <a href="/tags/html/" style="font-size: 20.88px;">html</a> <a href="/tags/huggingface/" style="font-size: 16.18px;">huggingface</a> <a href="/tags/js/" style="font-size: 23.24px;">js</a> <a href="/tags/numpy/" style="font-size: 19.71px;">numpy</a> <a href="/tags/ollama/" style="font-size: 15.59px;">ollama</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/others/" style="font-size: 19.71px;">others</a> <a href="/tags/pandas/" style="font-size: 15px;">pandas</a> <a href="/tags/python/" style="font-size: 25px;">python</a> <a href="/tags/pytorch/" style="font-size: 24.41px;">pytorch</a> <a href="/tags/react/" style="font-size: 18.53px;">react</a> <a href="/tags/shell/" style="font-size: 16.18px;">shell</a> <a href="/tags/sklearn/" style="font-size: 15.59px;">sklearn</a> <a href="/tags/test/" style="font-size: 15px;">test</a> <a href="/tags/transformers/" style="font-size: 16.76px;">transformers</a> <a href="/tags/vllm/" style="font-size: 15px;">vllm</a> <a href="/tags/vue/" style="font-size: 16.18px;">vue</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 19.12px;">优化算法</a> <a href="/tags/%E4%BF%9D%E7%A0%94/" style="font-size: 20.88px;">保研</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" style="font-size: 22.65px;">命令操作</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 15.59px;">损失函数</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 22.06px;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 22.65px;">算法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 19.12px;">计算机网络</a>
         </div>
         
       </div>
@@ -300,77 +300,169 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="信息熵、交叉熵、相对熵（KL-散度）"><a href="#信息熵、交叉熵、相对熵（KL-散度）" class="headerlink" title="信息熵、交叉熵、相对熵（KL 散度）"></a>信息熵、交叉熵、相对熵（KL 散度）</h1><p>之前在代码中经常看见交叉熵损失函数(CrossEntropy Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个 softmax 函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。</p>
-<h2 id="交叉熵简介"><a href="#交叉熵简介" class="headerlink" title="交叉熵简介"></a>交叉熵简介</h2><p>交叉熵是信息论中的一个重要概念，主要用于度量两个概率分布间的差异性，要理解交叉熵，需要先了解下面几个概念。</p>
-<h2 id="信息量"><a href="#信息量" class="headerlink" title="信息量"></a>信息量</h2><p>信息奠基人香农（Shannon）认为“信息是用来 <strong>消除</strong> 随机 <strong>不确定性</strong> 的东西”，也就是说衡量信息量的大小就是看这个信息消除不确定性的程度。</p>
-<p><strong>“太阳从东边升起”</strong>，这条信息并没有减少不确定性，因为太阳肯定是从东边升起的，这是一句废话，信息量为 0。</p>
-<p><strong>”2018 年中国队成功进入世界杯“</strong>，从直觉上来看，这句话具有很大的信息量。因为中国队进入世界杯的不确定性因素很大，而这句话消除了进入世界杯的不确定性，所以按照定义，这句话的信息量很大。</p>
+    <h1 id="信息熵交叉熵相对熵kl-散度">信息熵、交叉熵、相对熵（KL
+散度）</h1>
+<p>之前在代码中经常看见交叉熵损失函数(CrossEntropy
+Loss)，只知道它是分类问题中经常使用的一种损失函数，对于其内部的原理总是模模糊糊，而且一般使用交叉熵作为损失函数时，在模型的输出层总会接一个
+softmax
+函数，至于为什么要怎么做也是不懂，所以专门花了一些时间打算从原理入手，搞懂它，故在此写一篇博客进行总结，以便以后翻阅。</p>
+<h2 id="交叉熵简介">交叉熵简介</h2>
+<p>交叉熵是信息论中的一个重要概念，主要用于度量两个概率分布间的差异性，要理解交叉熵，需要先了解下面几个概念。</p>
+<h2 id="信息量">信息量</h2>
+<p>信息奠基人香农（Shannon）认为“信息是用来 <strong>消除</strong> 随机
+<strong>不确定性</strong>
+的东西”，也就是说衡量信息量的大小就是看这个信息消除不确定性的程度。</p>
+<p><strong>“太阳从东边升起”</strong>，这条信息并没有减少不确定性，因为太阳肯定是从东边升起的，这是一句废话，信息量为
+0。</p>
+<p><strong>”2018
+年中国队成功进入世界杯“</strong>，从直觉上来看，这句话具有很大的信息量。因为中国队进入世界杯的不确定性因素很大，而这句话消除了进入世界杯的不确定性，所以按照定义，这句话的信息量很大。</p>
 <p>根据上述可总结如下：<strong>信息量的大小与信息发生的概率成反比</strong>。概率越大，信息量越小。概率越小，信息量越大。</p>
-<p>设某一事件发生的概率为 P(x)，其信息量表示为：  </p>
-<script type="math/tex; mode=display">
-I\left ( x \right ) = -\log\left ( P\left ( x \right ) \right )</script><p>其中 $I\left ( x \right )$ 表示信息量，这里 $\log$ 表示以 $e$ 为底的自然对数。</p>
+<p>设某一事件发生的概率为 P(x)，其信息量表示为：<br />
+<span class="math display">\[
+I\left ( x \right ) = -\log\left ( P\left ( x \right ) \right )
+\]</span> 其中 <span class="math inline">\(I\left ( x \right )\)</span>
+表示信息量，这里 <span class="math inline">\(\log\)</span> 表示以 <span
+class="math inline">\(e\)</span> 为底的自然对数。</p>
 <span id="more"></span>
-<h2 id="信息熵"><a href="#信息熵" class="headerlink" title="信息熵"></a>信息熵</h2><p>信息熵也被称为熵，用来表示所有信息量的期望。</p>
+<h2 id="信息熵">信息熵</h2>
+<p>信息熵也被称为熵，用来表示所有信息量的期望。</p>
 <p>期望是试验中每次可能结果的概率乘以其结果的总和。</p>
-<p>所以信息量的熵可表示为：（这里的 $X$ 是一个离散型随机变量）  </p>
-<script type="math/tex; mode=display">
-H\left ( \mathbf{X} \right ) = -\sum \limits_{i = 1}^n P(x_{i}) \log \left ( P \left ( x_{i} \right ))) \qquad ( \mathbf{X}= x_{1}, x_{2}, x_{3}..., x_{n} \right)</script><p>使用明天的天气概率来计算其信息熵：</p>
-<div class="table-container">
+<p>所以信息量的熵可表示为：（这里的 <span
+class="math inline">\(X\)</span> 是一个离散型随机变量）<br />
+<span class="math display">\[
+H\left ( \mathbf{X} \right ) = -\sum \limits_{i = 1}^n P(x_{i}) \log
+\left ( P \left ( x_{i} \right ))) \qquad ( \mathbf{X}= x_{1}, x_{2},
+x_{3}..., x_{n} \right)
+\]</span> 使用明天的天气概率来计算其信息熵：</p>
 <table>
 <thead>
-<tr>
-<th style="text-align:center">序号</th>
-<th style="text-align:center">事件</th>
-<th style="text-align:center">概率 P</th>
-<th style="text-align:center">信息量</th>
+<tr class="header">
+<th style="text-align: center;">序号</th>
+<th style="text-align: center;">事件</th>
+<th style="text-align: center;">概率 P</th>
+<th style="text-align: center;">信息量</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">明天是晴天</td>
-<td style="text-align:center">0.5</td>
-<td style="text-align:center">$-\log \left ( 0.5 \right )$</td>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">明天是晴天</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;"><span class="math inline">\(-\log \left
+( 0.5 \right )\)</span></td>
 </tr>
-<tr>
-<td style="text-align:center">2</td>
-<td style="text-align:center">明天出雨天</td>
-<td style="text-align:center">0.2</td>
-<td style="text-align:center">$-\log \left ( 0.2 \right )$</td>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">明天出雨天</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;"><span class="math inline">\(-\log \left
+( 0.2 \right )\)</span></td>
 </tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">多云</td>
-<td style="text-align:center">0.3</td>
-<td style="text-align:center">$-\log \left ( 0.3 \right )$</td>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">多云</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;"><span class="math inline">\(-\log \left
+( 0.3 \right )\)</span></td>
 </tr>
 </tbody>
 </table>
-</div>
-<script type="math/tex; mode=display">
-H\left ( \mathbf{X} \right ) = -\left ( 0.5 * \log \left ( 0.5 \right ) + 0.2 * \log \left ( 0.2 \right ) + 0.3 * \log \left ( 0.3 \right ) \right)</script><p>对于 0-1 分布的问题，由于其结果只用两种情况，是或不是，设某一件事情发生的概率为 $P\left ( x \right )$ ，则另一件事情发生的概率为 $1-P\left ( x \right )$ ，所以对于 0-1 分布的问题，计算熵的公式可以简化如下：  </p>
-<script type="math/tex; mode=display">
-H\left ( \mathbf{X} \right ) = -\sum \limits_{n = 1}^n P(x_{i}\log \left ( P \left ( x_{i} \right )) \right) \\ = -\left [ P\left ( x \right) \log \left ( P\left ( x \right ) \right ) + \left ( 1 - P\left ( x \right ) \right) \log \left ( 1-P\left ( x \right ) \right ) \right] \\ = -P\left ( x \right) \log \left ( P\left ( x \right ) \right ) - \left ( 1 - P\left ( x \right ) \right) \log \left ( 1-P\left ( x \right ) \right)</script><h2 id="相对熵（KL-散度）"><a href="#相对熵（KL-散度）" class="headerlink" title="相对熵（KL 散度）"></a>相对熵（KL 散度）</h2><p>如果对于同一个随机变量 $X$ 有两个单独的概率分布 $P\left(x\right)$ 和 $Q\left(x\right)$ ，则我们可以使用 KL 散度来衡量这 <strong>两个概率分布之间的差异</strong>。</p>
-<p>下面直接列出公式，再举例子加以说明。  </p>
-<script type="math/tex; mode=display">
-D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left ( x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i} \right )} \right )</script><p>在机器学习中，常常使用 $P\left(x\right)$ 来表示样本的真实分布，$Q \left(x\right)$ 来表示模型所预测的分布，比如在一个三分类任务中（例如，猫狗马分类器），$x<em>{1}, x</em>{2}, x_{3}$ ​分别代表猫，狗，马，例如一张猫的图片真实分布 $P\left(X\right) = [1, 0, 0]$ , 预测分布 $Q\left(X\right) = [0.7, 0.2, 0.1]$ ，计算 KL 散度：  </p>
-<script type="math/tex; mode=display">
-D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left ( x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i} \right )} \right ) \\ = p\left ( x_{1}\right ) \log \left ( \frac{p\left ( x_{1} \right )}{q\left ( x_{1} \right )} \right ) + p\left ( x_{2}\right ) \log \left ( \frac{p\left ( x_{2} \right )}{q\left ( x_{2} \right )} \right ) + p\left ( x_{3}\right ) \log \left ( \frac{p\left ( x_{3} \right )}{q\left ( x_{3} \right )} \right ) \\ = 1 * \log \left ( \frac{1}{0.7} \right ) = 0.36</script><p>KL 散度越小，表示 $P\left(x\right)$ 与 $Q\left(x\right)$ 的分布更加接近，可以通过反复训练 $Q\left(x \right)$ 来使 $Q\left(x \right)$ 的分布逼近 $P\left(x \right)$。</p>
-<h2 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h2><p>首先将 KL 散度公式拆开：  </p>
-<script type="math/tex; mode=display">
-D_{KL}\left( p || q \right) = \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( \frac{p\left( x_{i} \right)}{q\left( x_{i} \right)} \right) 
-\\= \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( p\left( x_{i} \right) \right) - \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( q\left( x_{i} \right) \right) 
-\\= -H\left( p(x) \right) + \left [ - \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( q\left( x_{i} \right) \right)\right]</script><p>前者 $H \left (p \left (x \right)\right)$ 表示信息熵，后者即为交叉熵，<strong>KL 散度 = 交叉熵 - 信息熵</strong></p>
-<p>交叉熵公式表示为：  </p>
-<script type="math/tex; mode=display">
-H \left (p, q\right) = -\sum \limits_{i = 1}^n p \left (x_{i}\right) log \left(q \left (x_{i}\right)\right)</script><p>在机器学习训练网络时，输入数据与标签常常已经确定，那么真实概率分布 $P\left(x \right)$ 也就确定下来了，所以信息熵在这里就是一个常量。由于 KL 散度的值表示真实概率分布 $P\left(x\right)$ 与预测概率分布 $Q \left(x\right)$ 之间的差异，值越小表示预测的结果越好，所以需要最小化 KL 散度，而交叉熵等于 KL 散度加上一个常量（信息熵），且公式相比 KL 散度更加容易计算，所以在机器学习中常常使用交叉熵损失函数来计算 loss 就行了。</p>
-<h2 id="交叉熵在单分类问题中的应用"><a href="#交叉熵在单分类问题中的应用" class="headerlink" title="交叉熵在单分类问题中的应用"></a>交叉熵在单分类问题中的应用</h2><p>在线性回归问题中，常常使用 MSE(Mean Squared Error)作为 loss 函数，而在分类问题中常常使用交叉熵作为 loss 函数。</p>
+<p><span class="math display">\[
+H\left ( \mathbf{X} \right ) = -\left ( 0.5 * \log \left ( 0.5 \right )
++ 0.2 * \log \left ( 0.2 \right ) + 0.3 * \log \left ( 0.3 \right )
+\right)
+\]</span></p>
+<p>对于 0-1
+分布的问题，由于其结果只用两种情况，是或不是，设某一件事情发生的概率为
+<span class="math inline">\(P\left ( x \right )\)</span>
+，则另一件事情发生的概率为 <span class="math inline">\(1-P\left ( x
+\right )\)</span> ，所以对于 0-1
+分布的问题，计算熵的公式可以简化如下：<br />
+<span class="math display">\[
+H\left ( \mathbf{X} \right ) = -\sum \limits_{n = 1}^n P(x_{i}\log \left
+( P \left ( x_{i} \right )) \right) \\ = -\left [ P\left ( x \right)
+\log \left ( P\left ( x \right ) \right ) + \left ( 1 - P\left ( x
+\right ) \right) \log \left ( 1-P\left ( x \right ) \right ) \right] \\
+= -P\left ( x \right) \log \left ( P\left ( x \right ) \right ) - \left
+( 1 - P\left ( x \right ) \right) \log \left ( 1-P\left ( x \right )
+\right)
+\]</span></p>
+<h2 id="相对熵kl-散度">相对熵（KL 散度）</h2>
+<p>如果对于同一个随机变量 <span class="math inline">\(X\)</span>
+有两个单独的概率分布 <span
+class="math inline">\(P\left(x\right)\)</span> 和 <span
+class="math inline">\(Q\left(x\right)\)</span> ，则我们可以使用 KL
+散度来衡量这 <strong>两个概率分布之间的差异</strong>。</p>
+<p>下面直接列出公式，再举例子加以说明。<br />
+<span class="math display">\[
+D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left (
+x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i}
+\right )} \right )
+\]</span></p>
+<p>在机器学习中，常常使用 <span
+class="math inline">\(P\left(x\right)\)</span>
+来表示样本的真实分布，<span class="math inline">\(Q
+\left(x\right)\)</span>
+来表示模型所预测的分布，比如在一个三分类任务中（例如，猫狗马分类器），<span
+class="math inline">\(x_{1}, x_{2}, x_{3}\)</span>
+​分别代表猫，狗，马，例如一张猫的图片真实分布 <span
+class="math inline">\(P\left(X\right) = [1, 0, 0]\)</span> , 预测分布
+<span class="math inline">\(Q\left(X\right) = [0.7, 0.2, 0.1]\)</span>
+，计算 KL 散度：<br />
+<span class="math display">\[
+D_{KL}\left ( p || q \right) = \sum \limits_{i = 1}^n p\left (
+x_{i}\right ) \log \left ( \frac{p\left ( x_{i} \right )}{q\left ( x_{i}
+\right )} \right ) \\ = p\left ( x_{1}\right ) \log \left ( \frac{p\left
+( x_{1} \right )}{q\left ( x_{1} \right )} \right ) + p\left (
+x_{2}\right ) \log \left ( \frac{p\left ( x_{2} \right )}{q\left ( x_{2}
+\right )} \right ) + p\left ( x_{3}\right ) \log \left ( \frac{p\left (
+x_{3} \right )}{q\left ( x_{3} \right )} \right ) \\ = 1 * \log \left (
+\frac{1}{0.7} \right ) = 0.36
+\]</span></p>
+<p>KL 散度越小，表示 <span
+class="math inline">\(P\left(x\right)\)</span> 与 <span
+class="math inline">\(Q\left(x\right)\)</span>
+的分布更加接近，可以通过反复训练 <span class="math inline">\(Q\left(x
+\right)\)</span> 来使 <span class="math inline">\(Q\left(x
+\right)\)</span> 的分布逼近 <span class="math inline">\(P\left(x
+\right)\)</span>。</p>
+<h2 id="交叉熵">交叉熵</h2>
+<p>首先将 KL 散度公式拆开：<br />
+<span class="math display">\[
+D_{KL}\left( p || q \right) = \sum \limits_{i = 1}^n p\left( x_{i}
+\right) \log \left( \frac{p\left( x_{i} \right)}{q\left( x_{i} \right)}
+\right)
+\\= \sum \limits_{i = 1}^n p\left( x_{i} \right) \log \left( p\left(
+x_{i} \right) \right) - \sum \limits_{i = 1}^n p\left( x_{i} \right)
+\log \left( q\left( x_{i} \right) \right)
+\\= -H\left( p(x) \right) + \left [ - \sum \limits_{i = 1}^n p\left(
+x_{i} \right) \log \left( q\left( x_{i} \right) \right)\right]
+\]</span> 前者 <span class="math inline">\(H \left (p \left (x
+\right)\right)\)</span> 表示信息熵，后者即为交叉熵，<strong>KL 散度 =
+交叉熵 - 信息熵</strong></p>
+<p>交叉熵公式表示为：<br />
+<span class="math display">\[
+H \left (p, q\right) = -\sum \limits_{i = 1}^n p \left (x_{i}\right) log
+\left(q \left (x_{i}\right)\right)
+\]</span></p>
+<p>在机器学习训练网络时，输入数据与标签常常已经确定，那么真实概率分布
+<span class="math inline">\(P\left(x \right)\)</span>
+也就确定下来了，所以信息熵在这里就是一个常量。由于 KL
+散度的值表示真实概率分布 <span
+class="math inline">\(P\left(x\right)\)</span> 与预测概率分布 <span
+class="math inline">\(Q \left(x\right)\)</span>
+之间的差异，值越小表示预测的结果越好，所以需要最小化 KL
+散度，而交叉熵等于 KL 散度加上一个常量（信息熵），且公式相比 KL
+散度更加容易计算，所以在机器学习中常常使用交叉熵损失函数来计算 loss
+就行了。</p>
+<h2 id="交叉熵在单分类问题中的应用">交叉熵在单分类问题中的应用</h2>
+<p>在线性回归问题中，常常使用 MSE(Mean Squared Error)作为 loss
+函数，而在分类问题中常常使用交叉熵作为 loss 函数。</p>
 <p>下面通过一个例子来说明如何计算交叉熵损失值。</p>
 <p>假设我们输入一张狗的图片，标签与预测值如下：</p>
-<div class="table-container">
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>*</th>
 <th>猫</th>
 <th>狗</th>
@@ -378,13 +470,13 @@ H \left (p, q\right) = -\sum \limits_{i = 1}^n p \left (x_{i}\right) log \left(q
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Label</td>
 <td>0</td>
 <td>1</td>
 <td>0</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Pred</td>
 <td>0.2</td>
 <td>0.7</td>
@@ -392,19 +484,26 @@ H \left (p, q\right) = -\sum \limits_{i = 1}^n p \left (x_{i}\right) log \left(q
 </tr>
 </tbody>
 </table>
-</div>
-<p>那么 loss  </p>
-<script type="math/tex; mode=display">
-loss = -\left ( 0 * \log \left ( 0.2 \right ) + 1 * \log \left ( 0.7 \right ) + 0 * \log \left ( 0.1 \right )\right) = 0.36</script><p>一个 batch 的 loss 为  </p>
-<script type="math/tex; mode=display">
-loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}\right) log \left(q \left (x_{ij}\right)\right)</script><p>其中 $m$ 表示样本个数。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li><p>交叉熵能够衡量同一个随机变量中的两个不同概率分布的差异程度，在机器学习中就表示为真实概率分布与预测概率分布之间的差异。交叉熵的值越小，模型预测效果就越好。</p>
-</li>
-<li><p>交叉熵在分类问题中常常与 softmax 是标配，softmax 将输出的结果进行处理，使其多个分类的预测值和为 1，再通过交叉熵来计算损失。</p>
-</li>
+<p>那么 loss<br />
+<span class="math display">\[
+loss = -\left ( 0 * \log \left ( 0.2 \right ) + 1 * \log \left ( 0.7
+\right ) + 0 * \log \left ( 0.1 \right )\right) = 0.36
+\]</span></p>
+<p>一个 batch 的 loss 为<br />
+<span class="math display">\[
+loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left
+(x_{ij}\right) log \left(q \left (x_{ij}\right)\right)
+\]</span></p>
+<p>其中 <span class="math inline">\(m\)</span> 表示样本个数。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li><p>交叉熵能够衡量同一个随机变量中的两个不同概率分布的差异程度，在机器学习中就表示为真实概率分布与预测概率分布之间的差异。交叉熵的值越小，模型预测效果就越好。</p></li>
+<li><p>交叉熵在分类问题中常常与 softmax 是标配，softmax
+将输出的结果进行处理，使其多个分类的预测值和为
+1，再通过交叉熵来计算损失。</p></li>
 </ul>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><em><a target="_blank" rel="noopener" href="https://blog.csdn.net/tsyccnh/article/details/79163834">https://blog.csdn.net/tsyccnh/article/details/79163834</a></em></p>
+<h2 id="参考">参考</h2>
+<p><em>https://blog.csdn.net/tsyccnh/article/details/79163834</em></p>
 
     
 
@@ -544,18 +643,18 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
 
 <nav id="article-nav">
   
-    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          损失函数
+          深度学习中的优化算法探讨
         
       </div>
     </a>
   
   
-    <a href="/2024/08/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E3%80%90%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">scanf()函数与printf()中的格式说明符</div>
+    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">损失函数</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -582,7 +681,8 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL-%E6%95%A3%E5%BA%A6%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">信息熵、交叉熵、相对熵（KL 散度）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">交叉熵简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text">信息量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5"><span class="toc-number">1.3.</span> <span class="toc-text">信息熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL-%E6%95%A3%E5%BA%A6%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">相对熵（KL 散度）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5"><span class="toc-number">1.5.</span> <span class="toc-text">交叉熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E5%9C%A8%E5%8D%95%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">交叉熵在单分类问题中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.8.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9B%B8%E5%AF%B9%E7%86%B5kl-%E6%95%A3%E5%BA%A6"><span class="toc-number">1.</span> <span class="toc-text">信息熵、交叉熵、相对熵（KL
+散度）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">交叉熵简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text">信息量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E7%86%B5"><span class="toc-number">1.3.</span> <span class="toc-text">信息熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%AF%B9%E7%86%B5kl-%E6%95%A3%E5%BA%A6"><span class="toc-number">1.4.</span> <span class="toc-text">相对熵（KL 散度）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5"><span class="toc-number">1.5.</span> <span class="toc-text">交叉熵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E5%9C%A8%E5%8D%95%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">交叉熵在单分类问题中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.8.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -761,6 +861,10 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">test</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
@@ -785,11 +889,23 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -798,10 +914,6 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -817,15 +929,7 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -833,15 +937,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -861,11 +961,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -873,11 +973,15 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -893,11 +997,11 @@ loss = -\frac{1}{m}\sum \limits_{i = 1}^m \sum \limits_{j = 1}^n p \left (x_{ij}
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

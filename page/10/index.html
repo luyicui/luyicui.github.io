@@ -488,7 +488,7 @@
 
 
   
-    <article id="post-【后端】/python/第三方库/【jsonlines模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【importlib模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -496,7 +496,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【jsonlines模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【importlib模块】</a>
   
     </h1>
   
@@ -504,7 +504,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -517,57 +517,51 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【jsonlines模块】"><a href="#【jsonlines模块】" class="headerlink" title="【jsonlines模块】"></a>【jsonlines模块】</h1><p><code>jsonlines</code> 是一个用于处理 <strong>JSON Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Python 库，提供了简单易用的接口，方便读写以行为单位存储的 JSON 数据。</p>
-<hr>
-<h2 id="JSON-Lines-格式"><a href="#JSON-Lines-格式" class="headerlink" title="JSON Lines 格式"></a>JSON Lines 格式</h2><ul>
-<li><p><strong>特点</strong>：</p>
+    <h1 id="【importlib模块】"><a href="#【importlib模块】" class="headerlink" title="【importlib模块】"></a>【importlib模块】</h1><p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code> 语句，比如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
+<h2 id="import-module-用法"><a href="#import-module-用法" class="headerlink" title="import_module 用法"></a>import_module 用法</h2><p><code>importlib</code> 是 Python3.1 增加的系统库，其中最常用的函数是其中的<code>import_module</code> ，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(name, package=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>参数含义:</strong></p>
 <ul>
-<li>每一行是一个独立的 JSON 对象。</li>
-<li>数据之间用<strong>换行符</strong>分隔。</li>
+<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如 <code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或 <code>..module</code>）</li>
+<li><code>package</code>：<ul>
+<li>当前包的上下文，用于处理相对导入</li>
+<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）时，<code>package</code> 才会生效</li>
 </ul>
 </li>
-<li><p><strong>适用情况</strong>：</p>
+</ul>
+<p><strong>导入规则：</strong></p>
 <ul>
-<li><p><strong>当数据以行为单位独立存储，并且每行数据之间没有明确的分隔符时</strong></p>
-</li>
-<li><p>当需要逐行处理数据，以节省内存和提高处理速度时。</p>
-</li>
-<li><p>当数据量非常大，无法一次性加载到内存中时，JSONL 格式提供了一种流式处理数据的方式。</p>
-</li>
+<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code> 参数，直接导入</li>
+<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）：<ul>
+<li>基于 <code>package</code> 参数的上下文来计算实际路径</li>
+<li>若未指定 <code>package</code> 或 <code>package</code> 无效，会报错</li>
 </ul>
 </li>
-<li><p><strong>示例内容</strong>：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-</li>
 </ul>
-<hr>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a><strong>安装</strong></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jsonlines</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a><strong>常见用法</strong></h2><h3 id="读取-JSON-Lines-文件"><a href="#读取-JSON-Lines-文件" class="headerlink" title="读取 JSON Lines 文件"></a>读取 JSON Lines 文件</h3><p><code>jsonlines</code> 提供了简单的方式读取 JSON Lines 格式的文件。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>假设文件 content.jsonl 内容如上，运行下面的代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;content.jsonl&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(reader), reader)</span><br><span class="line">    <span class="keyword">for</span> obj <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">type</span>(obj), obj)  <span class="comment"># 每一行是一个字典</span></span><br></pre></td></tr></table></figure>
-<p><strong>输出</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;jsonlines.jsonlines.Reader&#x27;&gt; &lt;jsonlines.Reader at 0x2bac64fae50 wrapping &#x27;content.jsonl&#x27;&gt;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Alice&#x27;, &#x27;age&#x27;: 25&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Bob&#x27;, &#x27;age&#x27;: 30&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Charlie&#x27;, &#x27;age&#x27;: 35&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="写入-JSON-Lines-文件"><a href="#写入-JSON-Lines-文件" class="headerlink" title="写入 JSON Lines 文件"></a>写入 JSON Lines 文件</h3><h4 id="一次性写入"><a href="#一次性写入" class="headerlink" title="一次性写入"></a>一次性写入</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(data)  <span class="comment"># 一次性写入多个 JSON 对象</span></span><br></pre></td></tr></table></figure>
-<p><strong>生成的 <code>output.jsonl</code> 文件内容</strong>：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h4 id="逐行写入"><a href="#逐行写入" class="headerlink" title="逐行写入"></a>逐行写入</h4><p>如果数据量较大，可以逐行写入。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">        writer.write(item)  <span class="comment"># 写入一行并自动换行</span></span><br></pre></td></tr></table></figure>
-<p>通过 <code>mode=&#39;a&#39;</code>，也可以在现有文件末尾追加内容。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">new_data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;David&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">40</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Eve&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">45</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(new_data)</span><br></pre></td></tr></table></figure>
-<p><strong><code>output.jsonl</code> 文件内容</strong>（追加后的结果）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Charlie&quot;, &quot;age&quot;: 35&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;David&quot;, &quot;age&quot;: 40&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Eve&quot;, &quot;age&quot;: 45&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="json-文件转为-jsonlines"><a href="#json-文件转为-jsonlines" class="headerlink" title="json 文件转为 jsonlines"></a>json 文件转为 jsonlines</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON 转为 JSON Lines</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">json_to_jsonl</span>(<span class="params">json_file, jsonl_file</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = json.load(f)  <span class="comment"># 加载 JSON 文件</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(data, <span class="built_in">list</span>):  <span class="comment"># 如果是数组，逐行写入</span></span><br><span class="line">            <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">                writer.write(item)</span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 如果是单个对象，直接写入</span></span><br><span class="line">            writer.write(data)</span><br></pre></td></tr></table></figure>
-<h3 id="jsonlines-转为-json-文件"><a href="#jsonlines-转为-json-文件" class="headerlink" title="jsonlines 转为 json 文件"></a>jsonlines 转为 json 文件</h3><p>原因是 jsonlines 虽然好用，但并未通用，很多配置文件等都用的 json 格式</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON Lines 转为 JSON</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">jsonl_to_json</span>(<span class="params">jsonl_file, json_file</span>):</span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">        data = [obj <span class="keyword">for</span> obj <span class="keyword">in</span> reader]  <span class="comment"># 逐行读取并存入列表</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        json.dump(data, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)  <span class="comment"># 保存为 JSON 文件</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a><strong>优点</strong></h2><ol>
-<li><strong>流式处理</strong>：逐行读取和写入，适合大文件处理。</li>
-<li><strong>简洁高效</strong>：直接操作 JSON 对象，无需手动解析。</li>
-<li><strong>格式灵活</strong>：可以方便地追加数据或部分读取。</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import time 效果一样</span></span><br><span class="line">time = importlib.import_module(<span class="string">&#x27;time&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;os.path&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，一级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;.path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，二级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;..path&#x27;</span>, package=<span class="string">&#x27;os.time&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者 <code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(<span class="string">&#x27;path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line"><span class="comment"># ModuleNotFoundError: No module named &#x27;path&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>如果光看这几个例子的话，貌似跟<code>import</code> 没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
+<p>其实不是的，<strong>个人认为，<code>importlib</code></strong> <strong>的强大之处是将<code>import</code></strong> <strong>语句中写死的字面值改成了<code>import_module</code></strong> <strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import 的包或者模块，大大地增加了灵活性。</strong> 下面会举一个稍微实用一些的例子。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>假设我们在设计一个深度学习工具库，里面包含了 N 个网络模型（ResNet50、HRNet、MobileNet 等等），每个模型的实现都有一个<code>load_model</code> 的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际 load 哪一个模型。</p>
+<p>虽然采用<code>import</code> 语句+<code>if-else</code> 判断也能完成这个需求，举例实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="keyword">if</span> model_name == <span class="string">&#x27;resnet_50&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> resnet_50.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;hrnet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> hrnet.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;moblienet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> mobilenet.model <span class="keyword">import</span> load_model</span><br><span class="line"></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>这种写法存在下面的两个问题：</p>
+<ol>
+<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p>
+</li>
+<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p>
+</li>
+</ol>
+<p>这时候采用<code>importlib</code> 就能比较简洁地解决这个问题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="comment"># 等价于</span></span><br><span class="line">    <span class="comment"># model = importlib.import_module(f&quot;&#123;model_name&#125;.model&quot;)</span></span><br><span class="line">    <span class="comment"># load_model = model.load_model</span></span><br><span class="line">    load_model = importlib.import_module(<span class="string">f&quot;<span class="subst">&#123;model_name&#125;</span>.model&quot;</span>).load_model</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载模型并进行推理</span></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<p>可以看到在这种场景下<code>importlib</code> 确实能大大简化代码。</p>
+<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code> 针对普通用户场景的函数貌似就只有<code>import_module</code> 这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
+<p>参考</p>
+<ol>
+<li><a href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
 </ol>
 
     
@@ -595,7 +589,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -842,7 +836,7 @@
 
 
   
-    <article id="post-【后端】/python/第三方库/【importlib模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【jsonlines模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -850,7 +844,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【importlib模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【jsonlines模块】</a>
   
     </h1>
   
@@ -858,7 +852,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -871,51 +865,57 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【importlib模块】"><a href="#【importlib模块】" class="headerlink" title="【importlib模块】"></a>【importlib模块】</h1><p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code> 语句，比如</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
-<h2 id="import-module-用法"><a href="#import-module-用法" class="headerlink" title="import_module 用法"></a>import_module 用法</h2><p><code>importlib</code> 是 Python3.1 增加的系统库，其中最常用的函数是其中的<code>import_module</code> ，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(name, package=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>参数含义:</strong></p>
+    <h1 id="【jsonlines模块】"><a href="#【jsonlines模块】" class="headerlink" title="【jsonlines模块】"></a>【jsonlines模块】</h1><p><code>jsonlines</code> 是一个用于处理 <strong>JSON Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Python 库，提供了简单易用的接口，方便读写以行为单位存储的 JSON 数据。</p>
+<hr>
+<h2 id="JSON-Lines-格式"><a href="#JSON-Lines-格式" class="headerlink" title="JSON Lines 格式"></a>JSON Lines 格式</h2><ul>
+<li><p><strong>特点</strong>：</p>
 <ul>
-<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如 <code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或 <code>..module</code>）</li>
-<li><code>package</code>：<ul>
-<li>当前包的上下文，用于处理相对导入</li>
-<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）时，<code>package</code> 才会生效</li>
+<li>每一行是一个独立的 JSON 对象。</li>
+<li>数据之间用<strong>换行符</strong>分隔。</li>
 </ul>
 </li>
-</ul>
-<p><strong>导入规则：</strong></p>
+<li><p><strong>适用情况</strong>：</p>
 <ul>
-<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code> 参数，直接导入</li>
-<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）：<ul>
-<li>基于 <code>package</code> 参数的上下文来计算实际路径</li>
-<li>若未指定 <code>package</code> 或 <code>package</code> 无效，会报错</li>
-</ul>
+<li><p><strong>当数据以行为单位独立存储，并且每行数据之间没有明确的分隔符时</strong></p>
+</li>
+<li><p>当需要逐行处理数据，以节省内存和提高处理速度时。</p>
+</li>
+<li><p>当数据量非常大，无法一次性加载到内存中时，JSONL 格式提供了一种流式处理数据的方式。</p>
 </li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import time 效果一样</span></span><br><span class="line">time = importlib.import_module(<span class="string">&#x27;time&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;os.path&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，一级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;.path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，二级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;..path&#x27;</span>, package=<span class="string">&#x27;os.time&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者 <code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(<span class="string">&#x27;path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line"><span class="comment"># ModuleNotFoundError: No module named &#x27;path&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>如果光看这几个例子的话，貌似跟<code>import</code> 没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
-<p>其实不是的，<strong>个人认为，<code>importlib</code></strong> <strong>的强大之处是将<code>import</code></strong> <strong>语句中写死的字面值改成了<code>import_module</code></strong> <strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import 的包或者模块，大大地增加了灵活性。</strong> 下面会举一个稍微实用一些的例子。</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>假设我们在设计一个深度学习工具库，里面包含了 N 个网络模型（ResNet50、HRNet、MobileNet 等等），每个模型的实现都有一个<code>load_model</code> 的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际 load 哪一个模型。</p>
-<p>虽然采用<code>import</code> 语句+<code>if-else</code> 判断也能完成这个需求，举例实现如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="keyword">if</span> model_name == <span class="string">&#x27;resnet_50&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> resnet_50.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;hrnet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> hrnet.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;moblienet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> mobilenet.model <span class="keyword">import</span> load_model</span><br><span class="line"></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>这种写法存在下面的两个问题：</p>
-<ol>
-<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p>
 </li>
-<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p>
+<li><p><strong>示例内容</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 </li>
-</ol>
-<p>这时候采用<code>importlib</code> 就能比较简洁地解决这个问题：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="comment"># 等价于</span></span><br><span class="line">    <span class="comment"># model = importlib.import_module(f&quot;&#123;model_name&#125;.model&quot;)</span></span><br><span class="line">    <span class="comment"># load_model = model.load_model</span></span><br><span class="line">    load_model = importlib.import_module(<span class="string">f&quot;<span class="subst">&#123;model_name&#125;</span>.model&quot;</span>).load_model</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载模型并进行推理</span></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
-<p>可以看到在这种场景下<code>importlib</code> 确实能大大简化代码。</p>
-<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code> 针对普通用户场景的函数貌似就只有<code>import_module</code> 这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
-<p>参考</p>
-<ol>
-<li><a href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
+</ul>
+<hr>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a><strong>安装</strong></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jsonlines</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a><strong>常见用法</strong></h2><h3 id="读取-JSON-Lines-文件"><a href="#读取-JSON-Lines-文件" class="headerlink" title="读取 JSON Lines 文件"></a>读取 JSON Lines 文件</h3><p><code>jsonlines</code> 提供了简单的方式读取 JSON Lines 格式的文件。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>假设文件 content.jsonl 内容如上，运行下面的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;content.jsonl&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(reader), reader)</span><br><span class="line">    <span class="keyword">for</span> obj <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">type</span>(obj), obj)  <span class="comment"># 每一行是一个字典</span></span><br></pre></td></tr></table></figure>
+<p><strong>输出</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;jsonlines.jsonlines.Reader&#x27;&gt; &lt;jsonlines.Reader at 0x2bac64fae50 wrapping &#x27;content.jsonl&#x27;&gt;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Alice&#x27;, &#x27;age&#x27;: 25&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Bob&#x27;, &#x27;age&#x27;: 30&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Charlie&#x27;, &#x27;age&#x27;: 35&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="写入-JSON-Lines-文件"><a href="#写入-JSON-Lines-文件" class="headerlink" title="写入 JSON Lines 文件"></a>写入 JSON Lines 文件</h3><h4 id="一次性写入"><a href="#一次性写入" class="headerlink" title="一次性写入"></a>一次性写入</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(data)  <span class="comment"># 一次性写入多个 JSON 对象</span></span><br></pre></td></tr></table></figure>
+<p><strong>生成的 <code>output.jsonl</code> 文件内容</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h4 id="逐行写入"><a href="#逐行写入" class="headerlink" title="逐行写入"></a>逐行写入</h4><p>如果数据量较大，可以逐行写入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">        writer.write(item)  <span class="comment"># 写入一行并自动换行</span></span><br></pre></td></tr></table></figure>
+<p>通过 <code>mode=&#39;a&#39;</code>，也可以在现有文件末尾追加内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">new_data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;David&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">40</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Eve&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">45</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(new_data)</span><br></pre></td></tr></table></figure>
+<p><strong><code>output.jsonl</code> 文件内容</strong>（追加后的结果）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Charlie&quot;, &quot;age&quot;: 35&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;David&quot;, &quot;age&quot;: 40&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Eve&quot;, &quot;age&quot;: 45&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="json-文件转为-jsonlines"><a href="#json-文件转为-jsonlines" class="headerlink" title="json 文件转为 jsonlines"></a>json 文件转为 jsonlines</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON 转为 JSON Lines</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">json_to_jsonl</span>(<span class="params">json_file, jsonl_file</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = json.load(f)  <span class="comment"># 加载 JSON 文件</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(data, <span class="built_in">list</span>):  <span class="comment"># 如果是数组，逐行写入</span></span><br><span class="line">            <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">                writer.write(item)</span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 如果是单个对象，直接写入</span></span><br><span class="line">            writer.write(data)</span><br></pre></td></tr></table></figure>
+<h3 id="jsonlines-转为-json-文件"><a href="#jsonlines-转为-json-文件" class="headerlink" title="jsonlines 转为 json 文件"></a>jsonlines 转为 json 文件</h3><p>原因是 jsonlines 虽然好用，但并未通用，很多配置文件等都用的 json 格式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON Lines 转为 JSON</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">jsonl_to_json</span>(<span class="params">jsonl_file, json_file</span>):</span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">        data = [obj <span class="keyword">for</span> obj <span class="keyword">in</span> reader]  <span class="comment"># 逐行读取并存入列表</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        json.dump(data, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)  <span class="comment"># 保存为 JSON 文件</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a><strong>优点</strong></h2><ol>
+<li><strong>流式处理</strong>：逐行读取和写入，适合大文件处理。</li>
+<li><strong>简洁高效</strong>：直接操作 JSON 对象，无需手动解析。</li>
+<li><strong>格式灵活</strong>：可以方便地追加数据或部分读取。</li>
 </ol>
 
     
@@ -943,102 +943,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【logging模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【logging模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="【logging模块】"><a href="#【logging模块】" class="headerlink" title="【logging模块】"></a>【logging模块】</h1><p>Python 日志输出是一种重要的工具，用于记录和跟踪应用程序的关键信息。本文将详细介绍 Python 中的日志输出，包括日志级别、日志记录器、日志处理器以及如何配置和定制日志输出。我们还将提供代码示例，帮助您快速上手并充分利用 Python 日志输出功能。</p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
-<li>👻👻相信很多初学 Python 的小伙伴们，在碰到自己辛辛苦苦码的代码报错的时候，你们自己动手解决 BUG 的方法大多都是——通过加很多的 print() 函数，一点点缩小范围，直到找到 BUG 所在位置并解决之！👻👻</li>
-</ol>
-<blockquote>
-<p>比如：下面通过 result1 到 result5 模拟小伙伴们辛辛苦苦编写的五个函数，结果在最后调用实现终极功能的时候它报错了！这可怎么办——还好有 print() 函数，一个个打印看看到哪打印不正常：</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">result1 = <span class="string">&#x27;第一个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result1)</span><br><span class="line">result2 = <span class="string">&#x27;第二个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result2)</span><br><span class="line">result3 = <span class="string">&#x27;第三个函数运行不 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result3)</span><br><span class="line">result4 = <span class="string">&#x27;第四个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result4)</span><br><span class="line">result5 = <span class="string">&#x27;第五个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result5)</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1167,7 +1072,7 @@
 
 
   
-    <article id="post-【后端】/python/第三方库/【os模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【logging模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1175,7 +1080,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【os模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【logging模块】</a>
   
     </h1>
   
@@ -1183,7 +1088,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1196,12 +1101,16 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【os模块】"><a href="#【os模块】" class="headerlink" title="【os模块】"></a>【os模块】</h1><p>大家好，我是水滴~~</p>
-<p>Python 的 <code>os</code> 模块是一个与 操作系统 交互的模块，它提供了许多函数和方法，可以用于操作文件和目录。本教程将深入介绍 <code>os</code> 模块的各种功能和用法。</p>
-<h2 id="文件和目录的基本操作"><a href="#文件和目录的基本操作" class="headerlink" title="文件和目录的基本操作"></a>文件和目录的基本操作</h2><h3 id="获取当前工作目录"><a href="#获取当前工作目录" class="headerlink" title="获取当前工作目录"></a>获取当前工作目录</h3><p><code>os.getcwd()</code> 方法可以获取当前工作目录的路径，即 Python 解释器当前所在的目录。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前工作目录</span></span><br><span class="line">cwd = os.getcwd()</span><br><span class="line"><span class="built_in">print</span>(cwd)</span><br></pre></td></tr></table></figure>
+    <h1 id="【logging模块】"><a href="#【logging模块】" class="headerlink" title="【logging模块】"></a>【logging模块】</h1><p>Python 日志输出是一种重要的工具，用于记录和跟踪应用程序的关键信息。本文将详细介绍 Python 中的日志输出，包括日志级别、日志记录器、日志处理器以及如何配置和定制日志输出。我们还将提供代码示例，帮助您快速上手并充分利用 Python 日志输出功能。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
+<li>👻👻相信很多初学 Python 的小伙伴们，在碰到自己辛辛苦苦码的代码报错的时候，你们自己动手解决 BUG 的方法大多都是——通过加很多的 print() 函数，一点点缩小范围，直到找到 BUG 所在位置并解决之！👻👻</li>
+</ol>
+<blockquote>
+<p>比如：下面通过 result1 到 result5 模拟小伙伴们辛辛苦苦编写的五个函数，结果在最后调用实现终极功能的时候它报错了！这可怎么办——还好有 print() 函数，一个个打印看看到哪打印不正常：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">result1 = <span class="string">&#x27;第一个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result1)</span><br><span class="line">result2 = <span class="string">&#x27;第二个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result2)</span><br><span class="line">result3 = <span class="string">&#x27;第三个函数运行不 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result3)</span><br><span class="line">result4 = <span class="string">&#x27;第四个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result4)</span><br><span class="line">result5 = <span class="string">&#x27;第五个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result5)</span><br></pre></td></tr></table></figure>
     
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
     
     
 
@@ -1228,7 +1137,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1551,6 +1460,97 @@
 
 
   
+    <article id="post-【后端】/python/第三方库/【os模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【os模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="【os模块】"><a href="#【os模块】" class="headerlink" title="【os模块】"></a>【os模块】</h1><p>大家好，我是水滴~~</p>
+<p>Python 的 <code>os</code> 模块是一个与 操作系统 交互的模块，它提供了许多函数和方法，可以用于操作文件和目录。本教程将深入介绍 <code>os</code> 模块的各种功能和用法。</p>
+<h2 id="文件和目录的基本操作"><a href="#文件和目录的基本操作" class="headerlink" title="文件和目录的基本操作"></a>文件和目录的基本操作</h2><h3 id="获取当前工作目录"><a href="#获取当前工作目录" class="headerlink" title="获取当前工作目录"></a>获取当前工作目录</h3><p><code>os.getcwd()</code> 方法可以获取当前工作目录的路径，即 Python 解释器当前所在的目录。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前工作目录</span></span><br><span class="line">cwd = os.getcwd()</span><br><span class="line"><span class="built_in">print</span>(cwd)</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【random模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1648,7 +1648,7 @@
 
 
   
-    <article id="post-【后端】/python/第三方库/【re模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【tqdm模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1656,7 +1656,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90re%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【re 模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【tqdm模块】</a>
   
     </h1>
   
@@ -1664,7 +1664,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90re%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1677,228 +1677,108 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【re模块】"><a href="#【re模块】" class="headerlink" title="【re模块】"></a>【re模块】</h1><p>大家好，我是水滴~~</p>
-<p>Python 标准库中的<code>re</code>模块是用于处理正则表达式的模块。正则表达式是一种用于匹配字符串的强大工具，可以方便地从文本中提取和处理数据。在本教程中，我们将介绍<code>re</code>模块的基本用法和示例。</p>
-<h2 id="导入-re-模块"><a href="#导入-re-模块" class="headerlink" title="导入 re 模块"></a>导入 re 模块</h2><p>在使用<code>re</code>模块之前，需要先导入它。可以使用以下代码导入<code>re</code>模块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br></pre></td></tr></table></figure>
-<h2 id="re-模块中的常用函数"><a href="#re-模块中的常用函数" class="headerlink" title="re 模块中的常用函数"></a>re 模块中的常用函数</h2><p>Python 的 <code>re</code> 模块提供了众多用于处理正则表达式的函数。下面是一些常用的函数：</p>
-<h3 id="re-search"><a href="#re-search" class="headerlink" title="re.search()"></a>re.search()</h3><p><code>re.search()</code> 函数用于在字符串中搜索正则表达式的第一个匹配项：</p>
-<p>如果匹配成功，返回匹配对象；否则返回<code>None</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)	<span class="comment"># &lt;class &#x27;re.Match&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, <span class="keyword">match</span>.group())	<span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
-<h3 id="re-findall"><a href="#re-findall" class="headerlink" title="re.findall()"></a>re.findall()</h3><p><code>re.findall()</code>函数用于在字符串中查找所有匹配的子串，并以列表形式返回。如果没有找到匹配，返回空列表。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">matches: <span class="built_in">list</span>[<span class="built_in">str</span>] = re.findall(<span class="string">&quot;o&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> matches:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, matches)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: [<span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="re-sub"><a href="#re-sub" class="headerlink" title="re.sub()"></a>re.sub()</h3><p><code>re.sub()</code>函数用于在字符串中用指定的字符串替换所有匹配的子串，并返回新的字符串。可以使用正则表达式来指定要替换的模式。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">new_string: <span class="built_in">str</span> = re.sub(<span class="string">&quot;fox&quot;</span>, <span class="string">&quot;cat&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Old string:&quot;</span>, string)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New string:&quot;</span>, new_string)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Old string: The quick brown fox jumps over the lazy dog.</span><br><span class="line">New string: The quick brown cat jumps over the lazy dog.</span><br></pre></td></tr></table></figure>
-<h3 id="re-compile"><a href="#re-compile" class="headerlink" title="re.compile()"></a>re.compile()</h3><p><code>re.compile()</code>函数用于将正则表达式编译成一个正则表达式对象，以便在后续的匹配中重复使用。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">&quot;fox&quot;</span>)</span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = pattern.search(string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, <span class="keyword">match</span>.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
-<h3 id="re-split"><a href="#re-split" class="headerlink" title="re.split()"></a>re.split()</h3><p><code>re.split()</code>函数用于根据正则表达式来分割字符串，并返回分割后的列表。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">words: <span class="built_in">list</span>[<span class="built_in">str</span>] = re.split(<span class="string">&quot;\W+&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(words)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;The&#x27;</span>, <span class="string">&#x27;quick&#x27;</span>, <span class="string">&#x27;brown&#x27;</span>, <span class="string">&#x27;fox&#x27;</span>, <span class="string">&#x27;jumps&#x27;</span>, <span class="string">&#x27;over&#x27;</span>, <span class="string">&#x27;the&#x27;</span>, <span class="string">&#x27;lazy&#x27;</span>, <span class="string">&#x27;dog&#x27;</span>, <span class="string">&#x27;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="正则表达式的语法"><a href="#正则表达式的语法" class="headerlink" title="正则表达式的语法"></a>正则表达式的语法</h2><p>在使用 Python 的<code>re</code>模块时，需要使用正则表达式来指定要匹配的模式。正则表达式由一系列字符和特殊字符组成。下面是一些常用的特殊字符：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>字符</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>.</td>
-<td>匹配除了换行符外的任意单个字符</td>
-</tr>
-<tr>
-<td>*</td>
-<td>匹配前面的字符 0 次或多次</td>
-</tr>
-<tr>
-<td>+</td>
-<td>匹配前面的字符 1 次或多次</td>
-</tr>
-<tr>
-<td>?</td>
-<td>匹配前面的字符 0 次或 1 次</td>
-</tr>
-<tr>
-<td>{n}</td>
-<td>匹配前面的字符 n 次</td>
-</tr>
-<tr>
-<td>{n,}</td>
-<td>匹配前面的字符至少 n 次</td>
-</tr>
-<tr>
-<td>{n,m}</td>
-<td>匹配前面的字符至少 n 次，但不超过 m 次</td>
-</tr>
-<tr>
-<td>[]</td>
-<td>匹配方括号中的任意单个字符</td>
-</tr>
-<tr>
-<td>[^]</td>
-<td>匹配不在方括号中的任意单个字符</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>()</td>
-<td>分组，可以在匹配中引用</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>下面是一些示例：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>正则表达式</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>abc</td>
-<td>匹配字符串”abc”</td>
-</tr>
-<tr>
-<td>.</td>
-<td>匹配任意单个字符</td>
-</tr>
-<tr>
-<td>a*</td>
-<td>匹配零个或多个字符”a”</td>
-</tr>
-<tr>
-<td>a+</td>
-<td>匹配一个或多个字符”a”</td>
-</tr>
-<tr>
-<td>a?</td>
-<td>匹配零个或一个字符”a”</td>
-</tr>
-<tr>
-<td>a{3}</td>
-<td>匹配三个字符”a”</td>
-</tr>
-<tr>
-<td>a{3,}</td>
-<td>匹配至少三个字符”a”</td>
-</tr>
-<tr>
-<td>a{3,6}</td>
-<td>匹配三到六个字符”a”</td>
-</tr>
-<tr>
-<td>[abc]</td>
-<td>匹配单个字符”a”、“b”或”c”</td>
-</tr>
-<tr>
-<td>[^abc]</td>
-<td>匹配除了字符”a”、”b”和”c”以外的任意单个字符</td>
-</tr>
-<tr>
-<td>(ab)+</td>
-<td>匹配一个或多个”ab”字符串</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="匹配对象的属性和方法"><a href="#匹配对象的属性和方法" class="headerlink" title="匹配对象的属性和方法"></a>匹配对象的属性和方法</h2><p>当使用 <code>re</code> 模块的 <code>search</code> 函数对字符串进行匹配时，将返回一个匹配对象<code>&lt;class &#39;re.Match&#39;&gt;</code>。匹配对象具有以下常用属性和方法：</p>
-<h3 id="group"><a href="#group" class="headerlink" title="group()"></a>group()</h3><p><code>group()</code>方法返回匹配的子串。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, <span class="keyword">match</span>.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
-<h3 id="start"><a href="#start" class="headerlink" title="start()"></a>start()</h3><p><code>start()</code>方法返回匹配的子串在原始字符串中的开始位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Start index:&quot;</span>, <span class="keyword">match</span>.start())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Start index: <span class="number">16</span></span><br></pre></td></tr></table></figure>
-<h3 id="end"><a href="#end" class="headerlink" title="end()"></a>end()</h3><p><code>end()</code>方法返回匹配的子串在原始字符串中的结束位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;End index:&quot;</span>, <span class="keyword">match</span>.end())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">End index: <span class="number">19</span></span><br></pre></td></tr></table></figure>
-<h3 id="span"><a href="#span" class="headerlink" title="span()"></a>span()</h3><p><code>span()</code>方法返回匹配的子串在原始字符串中的开始和结束位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Span:&quot;</span>, <span class="keyword">match</span>.span())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Span: (<span class="number">16</span>, <span class="number">19</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="常用示例"><a href="#常用示例" class="headerlink" title="常用示例"></a>常用示例</h2><p>正则表达式是一种强大的文本匹配工具，可以用于处理字符串中的数据和信息。在 Python 中，可以使用<code>re</code>模块来处理正则表达式。下面是一些常见的正则表达式示例，用于展示如何使用 Python 中的正则表达式。</p>
-<h3 id="匹配数字"><a href="#匹配数字" class="headerlink" title="匹配数字"></a>匹配数字</h3><p>匹配数字非常常见，可以使用<code>\d</code>元字符来匹配任意数字。例如，下面的正则表达式将匹配任意数字：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;There are 123 apples in the basket.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;\d+&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;123&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配邮箱"><a href="#匹配邮箱" class="headerlink" title="匹配邮箱"></a>匹配邮箱</h3><p>匹配邮箱也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配有效的邮箱地址：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">email = <span class="string">&quot;example@domain.com&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$&quot;</span></span><br><span class="line">matches = re.findall(pattern, email)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;example@domain.com&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配-URL"><a href="#匹配-URL" class="headerlink" title="匹配 URL"></a>匹配 URL</h3><p>匹配 URL 也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配有效的 URL 地址：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://www.google.com/search?q=python&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;https?://(?:[-\w.]|(?:%[\da-fA-F]&#123;2&#125;))+&quot;</span></span><br><span class="line">matches = re.findall(pattern, url)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;https://www.google.com&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配日期"><a href="#匹配日期" class="headerlink" title="匹配日期"></a>匹配日期</h3><p>匹配日期也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配格式为 YYYY-MM-DD 的日期：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">date = <span class="string">&quot;Today is 2023-07-29.&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;&quot;</span></span><br><span class="line">matches = re.findall(pattern, date)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;2023-07-29&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配-IP-地址"><a href="#匹配-IP-地址" class="headerlink" title="匹配 IP 地址"></a>匹配 IP 地址</h3><p>匹配 IP 地址也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配有效的 IP 地址：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">ip = <span class="string">&quot;192.168.1.1&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\b\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;\b&quot;</span></span><br><span class="line">matches = re.findall(pattern, ip)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;192.168.1.1&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配-HTML-标签"><a href="#匹配-HTML-标签" class="headerlink" title="匹配 HTML 标签"></a>匹配 HTML 标签</h3><p>匹配 HTML 标签也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配 HTML 标签：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">html = <span class="string">&quot;&lt;p&gt;This is a paragraph.&lt;/p&gt;&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;&lt;.*?&gt;&quot;</span></span><br><span class="line">matches = re.findall(pattern, html)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;&lt;p&gt;&#x27;</span>, <span class="string">&#x27;&lt;/p&gt;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配手机号码"><a href="#匹配手机号码" class="headerlink" title="匹配手机号码"></a>匹配手机号码</h3><p>匹配手机号码也是一种常见的需求，可以使用正则表达式来实现。下面的正则表达式将匹配有效的手机号码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">phone = <span class="string">&quot;13812345678&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;1[3-9]\d&#123;9&#125;&quot;</span></span><br><span class="line">matches = re.findall(pattern, phone)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;13812345678&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配身份证号码"><a href="#匹配身份证号码" class="headerlink" title="匹配身份证号码"></a>匹配身份证号码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">idcard = <span class="string">&quot;310101198001010001&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d&#123;6&#125;(?:19|20)\d&#123;2&#125;(?:0[1-9]|1[0-2])(?:0[1-9]|[1-2]\d|3[0-1])\d&#123;3&#125;[0-9Xx]&quot;</span></span><br><span class="line">matches = re.findall(pattern, idcard)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;310101198001010001&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配-QQ-号码"><a href="#匹配-QQ-号码" class="headerlink" title="匹配 QQ 号码"></a>匹配 QQ 号码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">qq = <span class="string">&quot;123456&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;^[1-9]\d&#123;4,10&#125;$&quot;</span></span><br><span class="line">matches = re.findall(pattern, qq)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;123456&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配微信号"><a href="#匹配微信号" class="headerlink" title="匹配微信号"></a>匹配微信号</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">wechat = <span class="string">&quot;wx123456&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;^[a-zA-Z][-_a-zA-Z0-9]&#123;5,19&#125;$&quot;</span></span><br><span class="line">matches = re.findall(pattern, wechat)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;wx123456&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配邮政编码"><a href="#匹配邮政编码" class="headerlink" title="匹配邮政编码"></a>匹配邮政编码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">zipcode = <span class="string">&quot;12345-6789&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d&#123;5&#125;(?:-\d&#123;4&#125;)?&quot;</span></span><br><span class="line">matches = re.findall(pattern, zipcode)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;12345-6789&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配中文字符"><a href="#匹配中文字符" class="headerlink" title="匹配中文字符"></a>匹配中文字符</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;这是一段中文文本。&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;[\u4e00-\u9fa5]+&quot;</span></span><br><span class="line">matches = re.findall(pattern, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;这是一段中文文本&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配空白字符"><a href="#匹配空白字符" class="headerlink" title="匹配空白字符"></a>匹配空白字符</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;This is a sentence with spaces.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;\s+&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27; &#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配非空白字符"><a href="#匹配非空白字符" class="headerlink" title="匹配非空白字符"></a>匹配非空白字符</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;This is a sentence with spaces.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;\S+&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;This&#x27;</span>, <span class="string">&#x27;is&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;sentence&#x27;</span>, <span class="string">&#x27;with&#x27;</span>, <span class="string">&#x27;spaces.&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配多行文本"><a href="#匹配多行文本" class="headerlink" title="匹配多行文本"></a>匹配多行文本</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;Line 1\nLine 2\nLine 3&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">r&quot;^.*$&quot;</span>, text, re.MULTILINE)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;Line 1&#x27;</span>, <span class="string">&#x27;Line 2&#x27;</span>, <span class="string">&#x27;Line 3&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配特定字符集"><a href="#匹配特定字符集" class="headerlink" title="匹配特定字符集"></a>匹配特定字符集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;[aeiou]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;i&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;o&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配特定字符集的补集"><a href="#匹配特定字符集的补集" class="headerlink" title="匹配特定字符集的补集"></a>匹配特定字符集的补集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;[^aeiou]&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;T&#x27;</span>, <span class="string">&#x27;h&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;q&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;k&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, <span class="string">&#x27;n&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;j&#x27;</span>, <span class="string">&#x27;m&#x27;</span>, <span class="string">&#x27;p&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;v&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;t&#x27;</span>, <span class="string">&#x27;h&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;l&#x27;</span>, <span class="string">&#x27;z&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;g&#x27;</span>, <span class="string">&#x27;.&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="匹配重复字符"><a href="#匹配重复字符" class="headerlink" title="匹配重复字符"></a>匹配重复字符</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">text = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">matches = re.findall(<span class="string">&quot;o+&quot;</span>, text)</span><br><span class="line"><span class="built_in">print</span>(matches)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;oo&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>这些示例展示了如何使用 Python 中的正则表达式进行文本匹配。正则表达式是一种非常强大的文本处理工具，可以用于处理各种文本数据和信息。在处理和清洗大量文本数据时，正则表达式可以提高工作效率和准确性。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>re</code> 模块是 Python 标准库中用于处理正则表达式的模块。它提供了一系列函数和方法，用于在字符串中搜索、替换和分割子串。要使用 <code>re</code> 模块，需要熟悉正则表达式的语法和常用特殊字符。在匹配成功后，将返回一个匹配对象，可以使用其属性和方法来获取匹配的子串和位置等信息。</p>
-
+    <h1 id="【tqdm模块】"><a href="#【tqdm模块】" class="headerlink" title="【tqdm模块】"></a>【tqdm模块】</h1><p>有时候在使用 Python 处理比较耗时操作的时候，为了便于观察处理进度，这时候就需要通过进度条将处理情况进行可视化展示，以便我们能够及时了解情况。</p>
+<p>tqdm 就能非常完美的支持和解决这些问题，可以实时输出处理进度而且占用的 CPU 资源非常少，支持 windows、Linux、mac 等系统，支持①循环处理、②多进程、③递归处理、还可以结合 Linux 的命令来查看处理情况，等进度展示。</p>
+<h2 id="tqdm导入"><a href="#tqdm导入" class="headerlink" title="tqdm导入"></a><code>tqdm</code>导入</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：不是 import tqdm</span></span><br></pre></td></tr></table></figure>
+<h2 id="tqdm-对可迭代对象进行封装"><a href="#tqdm-对可迭代对象进行封装" class="headerlink" title="tqdm()对可迭代对象进行封装"></a><code>tqdm()</code>对可迭代对象进行封装</h2><h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法 1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm（可迭代对象）:</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法 2</span></span><br><span class="line"><span class="keyword">for</span> idx, i <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm（可迭代对象）):</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>对于可以迭代的对象都可以使用 tqdm 进行封装实现可视化进度，使用起来非常方便。</p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>Q</strong>：为什么结果会一直新建一行？</p>
+<p><strong>A</strong>：这是因为每次的 print 内容都不一样，为了能够显示新的内容，所以会这样。</p>
+<p>我们看下面这个程序，它因为没有控制台输出，所以进度条就很正常。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932044.gif" alt="在这里插入图片描述"></p>
+<h3 id="带有参数的tqdm"><a href="#带有参数的tqdm" class="headerlink" title="带有参数的tqdm()"></a>带有参数的<code>tqdm()</code></h3><p><strong>Q</strong>：进度条可以加一些其他信息吗？</p>
+<p><strong>A</strong>：当然可以，需要对 tqdm 进行一些参数调整</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">format_meter</span>(<span class="params">n, total, elapsed, ncols=<span class="literal">None</span>, prefix=<span class="string">&#x27;&#x27;</span>, <span class="built_in">ascii</span>=<span class="literal">False</span>, unit=<span class="string">&#x27;it&#x27;</span>,</span></span><br><span class="line"><span class="params">                 unit_scale=<span class="literal">False</span>, rate=<span class="literal">None</span>, bar_format=<span class="literal">None</span>, postfix=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 unit_divisor=<span class="number">1000</span>, initial=<span class="number">0</span>, colour=<span class="literal">None</span>, **extra_kwargs</span>):</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>iterable</code>: 可迭代的对象，在⼿动更新时不需要进⾏设置</li>
+<li><code>desc</code>: 字符串，左边进度条描述⽂字</li>
+<li><code>total</code>: 总的项⽬数</li>
+<li><code>leave</code>: bool 值，迭代完成后是否保留进度条</li>
+<li><code>file</code>: 输出指向位置，默认是终端，⼀般不需要设置</li>
+<li><code>ncols</code>: 调整进度条宽度，默认是根据环境⾃动调节长度，如果设置为 0, 就没有进度条，只有输出的信息</li>
+<li><code>unit</code>: 描述处理项⽬的⽂字，默认是<code>it</code>, 例如：100 it/s, 处理照⽚的话设置为<code>img</code> , 则为 100 img/s</li>
+<li><code>unit_scale</code>: ⾃动根据国际标准进⾏项⽬处理速度单位的换算，例如 100000 it/s &gt;&gt; 100k it/s</li>
+<li><code>colour</code>: 进度条颜色</li>
+</ul>
+<h4 id="例子-1"><a href="#例子-1" class="headerlink" title="例子 1"></a>例子 1</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">d = &#123;<span class="string">&#x27;loss&#x27;</span>:<span class="number">0.2</span>,<span class="string">&#x27;learn&#x27;</span>:<span class="number">0.8</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    desc 设置名称</span></span><br><span class="line"><span class="string">    ncols 设置进度条长度 -&gt; 建议设置在 100 以内</span></span><br><span class="line"><span class="string">    postfix 以字典形式传入详细信息</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm(<span class="built_in">range</span>(<span class="number">50</span>),desc=<span class="string">&#x27;名称&#x27;</span>,ncols=<span class="number">100</span>,postfix=d):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932025.gif" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>其中<code>xxxit/s</code>表示每秒迭代的次数</p>
+</blockquote>
+<h4 id="例子-2"><a href="#例子-2" class="headerlink" title="例子 2"></a>例子 2</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">iter_object = <span class="built_in">range</span>(<span class="number">10</span>, <span class="number">21</span>)</span><br><span class="line">pbar = tqdm(iter_object, </span><br><span class="line">                 total=<span class="built_in">len</span>(iter_object),</span><br><span class="line">                 leave=<span class="literal">True</span>, </span><br><span class="line">                 ncols=<span class="number">100</span>, </span><br><span class="line">                 unit=<span class="string">&quot;个&quot;</span>, </span><br><span class="line">                 unit_scale=<span class="literal">False</span>, </span><br><span class="line">                 colour=<span class="string">&quot;red&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;正在处理的元素为&quot;</span>: element&#125;)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932058.gif" alt="在这里插入图片描述"></p>
+<h2 id="自定义进度条显示信息"><a href="#自定义进度条显示信息" class="headerlink" title="自定义进度条显示信息"></a>自定义进度条显示信息</h2><p><strong>Q</strong>：我就是想 print 一些东西，可以吗？</p>
+<p><strong>A</strong>：当然可以，tqdm 提供了两个个方法：</p>
+<ol>
+<li><code>set_description()</code></li>
+<li><code>set_postfix()</code></li>
+</ol>
+<p>这两个方法就类似于 print，可以在进度条中显示一些变动的信息</p>
+<h3 id="例子-1-1"><a href="#例子-1-1" class="headerlink" title="例子 1"></a>例子 1</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;d&quot;</span>, <span class="string">&quot;e&quot;</span>, <span class="string">&quot;f&quot;</span>, <span class="string">&quot;g&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932038.gif" alt="在这里插入图片描述"></p>
+<h3 id="例子-2-1"><a href="#例子-2-1" class="headerlink" title="例子 2"></a>例子 2</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">epochs = <span class="number">150</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description() 和 set_postfix() 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm(<span class="built_in">range</span>(epochs), ncols=<span class="number">100</span>)  <span class="comment"># ncols 设置进度条显示的字符长度，小了就显示不全了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;Epoch <span class="subst">&#123;idx&#125;</span>/<span class="subst">&#123;epochs&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;class&quot;</span>: element&#125;, loss=random.random(), cost_time = random.randrange(<span class="number">0</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932156.gif" alt="在这里插入图片描述"></p>
+<h3 id="两种方法传参注意事项"><a href="#两种方法传参注意事项" class="headerlink" title="两种方法传参注意事项"></a>两种方法传参注意事项</h3><p><code>set_description</code>和<code>set_postfix</code>都用的 kwargs 传参，所以我们可以：</p>
+<ol>
+<li>用字典传参 -&gt; <code>pbar.set_postfix(&#123;&quot;key_1&quot;: &quot;value_1&quot;, ...&#125;)</code></li>
+<li>直接用关键字传参 -&gt; <code>pbar.set_postfix(key_1 = value_1, key_2 = value_2, ...)</code></li>
+<li>混着用 -&gt; <code>pbar.set_postfix(&#123;&quot;key_1&quot;: value_1, &quot;key_2&quot;: value_2, ...&#125;, key_3 = value_3, ...)</code></li>
+</ol>
+<h2 id="tqdm内置生成可迭代对象方法-—-trange"><a href="#tqdm内置生成可迭代对象方法-—-trange" class="headerlink" title="tqdm内置生成可迭代对象方法 — trange()"></a><code>tqdm</code>内置生成可迭代对象方法 — <code>trange()</code></h2><p><code>trange(i)</code> 是 <code>tqdm(range(i))</code> 的简单写法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> trange</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">pbar = trange(<span class="number">300</span>, <span class="number">400</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span> -&gt; <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932030.gif" alt="在这里插入图片描述"></p>
+<h2 id="自定义方法更新进度"><a href="#自定义方法更新进度" class="headerlink" title="自定义方法更新进度"></a>自定义方法更新进度</h2><p>有时候我们不仅仅是通过一个 for 训练来更新进度条，我们也希望在做完某些操作后更新一次进度条，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tqdm(total=<span class="number">10</span>) <span class="keyword">as</span> bar:  <span class="comment"># total 为进度条总的迭代次数</span></span><br><span class="line">    <span class="comment"># 操作 1</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">1</span>)  <span class="comment"># bar.update() 里面的数表示更新的次数，和 optimizer.step 方法类似</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 2</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">3</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 3</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">6</span>)  <span class="comment"># 建议不要超过 total</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932571.gif" alt="在这里插入图片描述"></p>
+<h2 id="在深度学习中如何使用"><a href="#在深度学习中如何使用" class="headerlink" title="在深度学习中如何使用"></a>在深度学习中如何使用</h2><p>下面是一段手写数字识别代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,in_channels=<span class="number">1</span>,num_classes=<span class="number">10</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(in_channels=<span class="number">1</span>,out_channels=<span class="number">8</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.pool = nn.MaxPool2d(kernel_size=(<span class="number">2</span>,<span class="number">2</span>),stride=(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">        self.conv2 = nn.Conv2d(in_channels=<span class="number">8</span>,out_channels=<span class="number">16</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">16</span>*<span class="number">7</span>*<span class="number">7</span>,num_classes)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = F.relu(self.conv1(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = F.relu(self.conv2(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = x.reshape(x.shape[<span class="number">0</span>],-<span class="number">1</span>)</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set device</span></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span><span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(device)</span><br><span class="line"><span class="comment"># Hyperparameters</span></span><br><span class="line">in_channels = <span class="number">1</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load Data</span></span><br><span class="line">train_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">True</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">train_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">False</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">test_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize network</span></span><br><span class="line">model = CNN().to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss and optimizer</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(),lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train Network</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loader):</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>如果不给<code>train_loader</code>加上<code>tqdm</code>会什么也不现实，加入后显示如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 152.23it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.74it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 155.11it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.08it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.57it/s]</span></span><br></pre></td></tr></table></figure>
+<p>对应 5 个 eopch 的 5 个进度显示</p>
+<p>如果我们想要它显示在一行，在 tqdm 中添加 <code>leave=False</code> 参数即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loadr,leave=<span class="literal">False</span>) <span class="comment"># 进度显示在一行</span></span><br></pre></td></tr></table></figure>
+<p>我们觉得还有点不太满足现在的进度条，我们得给他加上我们需要的信息，比如准确率，loss 值，如何加呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    losses = []</span><br><span class="line">    accuracy = []</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    loop = tqdm((train_loader), total = <span class="built_in">len</span>(train_loader))</span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> loop:</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line">        losses.append(loss)</span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        _,predictions = scores.<span class="built_in">max</span>(<span class="number">1</span>)</span><br><span class="line">        num_correct = (predictions == targets).<span class="built_in">sum</span>()</span><br><span class="line">        running_train_acc = <span class="built_in">float</span>(num_correct) / <span class="built_in">float</span>(data.shape[<span class="number">0</span>])</span><br><span class="line">        accuracy.append(running_train_acc)</span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        loop.set_description(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>]&#x27;</span>)</span><br><span class="line">        loop.set_postfix(loss = loss.item(),acc = running_train_acc)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932545.png" alt="在这里插入图片描述">  </p>
+<p>可以看到我们的 acc 和 epoch 还有 loss 都打在了控制台中。以上就是相关 tqdm 的使用</p>
+<h2 id="进度条的含义"><a href="#进度条的含义" class="headerlink" title="进度条的含义"></a>进度条的含义</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<p>我们以以下一行 <code>tqdm</code> 输出为例说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]</span><br></pre></td></tr></table></figure>
+<ol>
+<li><strong><code>10%|█ |</code></strong><ul>
+<li>当前任务完成了 10%。</li>
+<li>可视化进度条显示 <code>█</code>。</li>
+</ul>
+</li>
+<li><strong><code>1/10</code></strong><ul>
+<li><strong>已完成</strong> 1 次迭代，总共需要完成 10 次。</li>
+<li><strong>目前正在</strong>处理<strong>第 2 次迭代</strong></li>
+</ul>
+</li>
+<li><strong><code>00:27</code></strong>：<strong>已完成</strong>的迭代次数（这里为 1 次）累计耗时 27 秒。</li>
+<li><strong><code>&lt;04:05</code></strong>：预计剩余时间是 4 分 5 秒。</li>
+<li><strong><code>27.29s/it</code></strong>：当前每次迭代的<strong>指数移动平均耗时</strong>为 27.29 秒。</li>
+</ol>
+<p><code>tqdm</code> 使用了<strong>指数移动平均（EMA）</strong>来平滑显示的速度，因此 <code>s/it</code> 并不是严格基于当前累计耗时和迭代次数计算的，而是对历史耗时进行平滑处理后的结果。</p>
+<p>平滑公式如下：</p>
+<script type="math/tex; mode=display">
+\text{smoothed\_s/it} = \alpha \cdot \text{current\_s/it} + (1 - \alpha) \cdot \text{previous\_smoothed\_{s/it}}</script><ul>
+<li>$\alpha$ 是平滑系数（默认值为 0.3）。</li>
+<li><strong>current_s/it</strong> 是当前最新一个 item 处理的即时时间（即时速率）</li>
+<li><strong>previous_smoothed_s/it</strong> 是上一次的平滑结果。</li>
+</ul>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501051501858.png" alt="image-20250105150122678"></p>
+<p>举例：</p>
+<script type="math/tex; mode=display">
+7.29\ne \left( 28*60+43 \right) /307
+\\
+7.29=0.3*7.77+\left( 1-0.3 \right) *7.08</script>
     
 
     
@@ -1924,7 +1804,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90re%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -2128,15 +2008,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2148,11 +2028,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2168,19 +2056,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2188,11 +2064,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2204,11 +2084,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2236,19 +2116,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2260,15 +2140,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

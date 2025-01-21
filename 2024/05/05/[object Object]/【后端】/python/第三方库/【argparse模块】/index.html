@@ -18,7 +18,7 @@
 <meta property="og:description" content="【argparse 模块】 当处理 命令行参数 时，Python 的 argparse 模块是一个强大而 灵活的 工具。它提供了一个简单且一致的方式来定义命令行参数、选项和子命令，并帮助你解析和验证用户提供的输入。本教程将详细介绍 argparse 模块的使用方法和常见用例。  本文收录于《Python 入门核心技术》专栏   前言  在开发命令行工具或需要从命令行接收用户">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
-<meta property="article:modified_time" content="2024-12-29T16:26:21.988Z">
+<meta property="article:modified_time" content="2025-01-20T14:26:13.765Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">4.2k字</span>
+      <span class="post-count">4.7k字</span>
     </span>
   </span>
 
@@ -251,7 +251,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">17分</span>
+      <span class="post-count">20分</span>
     </span>
   </span>
 </div>
@@ -448,9 +448,11 @@ alt="image-20241103201857827" />
 <code>args.arg2</code> 来获取对应参数的值。</p>
 <blockquote>
 <p>注意，如果参数 <code>arg1</code> 或 <code>arg2</code> 中含有
-<code>-</code> ，在使用 <code>parser.parse_args()</code>
-之后会自动转化为 <code>_</code>（因为在 python 中 <code>-</code>
-是减号的含义）</p>
+<code>-</code> （比如 <code>arg-test1</code>），在使用
+<code>parser.parse_args()</code> 之后会自动转化为 <code>_</code>（因为在
+python 中 <code>-</code> 是减号的含义），此时打印 args.arg-test1
+报错，打印 args.arg_test1 才正确，但是在终端中却仍然必须要输入
+<code>-</code>，否则也会报错</p>
 </blockquote>
 <h2 id="各类参数实例">各类参数实例</h2>
 <blockquote>
@@ -620,6 +622,13 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411032034202.png"
 alt="image-20241103173324619" />
 <figcaption aria-hidden="true">image-20241103173324619</figcaption>
 </figure>
+<h2 id="综合运用">综合运用</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> argparse <span class="keyword">import</span> ArgumentParser</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> utils <span class="keyword">import</span> str2bool</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.创建参数解析器</span></span><br><span class="line">parser = ArgumentParser(description=<span class="string">&quot;这是一个解析命令行参数示例&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.添加参数</span></span><br><span class="line">parser = ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">&quot;--LM&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--RM&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;dummy&quot;</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--controller_addr&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;http://0.0.0.0:28778&quot;</span>)</span><br><span class="line"><span class="comment"># task config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--task_name&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;gsm8k&quot;</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--test&quot;</span>, <span class="built_in">type</span>=str2bool, default=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--is_few_shot&quot;</span>, <span class="built_in">type</span>=str2bool, default=<span class="literal">False</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--seed&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># method config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--method&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--num_sequence&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">1</span>)</span><br><span class="line"><span class="comment"># LM gen config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--temperature&quot;</span>, <span class="built_in">type</span>=<span class="built_in">float</span>, default=<span class="number">0.0</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--top_k&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=-<span class="number">1</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--top_p&quot;</span>, <span class="built_in">type</span>=<span class="built_in">float</span>, default=<span class="number">1</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--max_new_tokens&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">256</span>)</span><br><span class="line"><span class="comment"># Tree construction config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--tree_max_depth&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="literal">None</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--tree_max_width&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="literal">None</span>)</span><br><span class="line"><span class="comment"># ckpg config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--save_dir&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">None</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--resume_dir&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">None</span>)</span><br><span class="line"><span class="comment"># parallel config</span></span><br><span class="line">parser.add_argument(<span class="string">&quot;--local&quot;</span>, action=<span class="string">&quot;store_true&quot;</span>, default=<span class="literal">False</span>)</span><br><span class="line">parser.add_argument(<span class="string">&quot;--num-worker&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">32</span>)       <span class="comment"># 注意这里参数名有 - 符号，后面会转化为 _ 符号</span></span><br><span class="line">config = parser.parse_args()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.解析命令行参数</span></span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.获取并打印参数值</span></span><br><span class="line"><span class="built_in">print</span>(args)</span><br></pre></td></tr></table></figure>
+<p>在 Linux 终端中执行下面的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(pytorch) D:\Document\Projects\temp&gt;python reason/evaluation/evaluate.py \</span><br><span class="line">    --LM Qwen2.5-Math-1.5B-Instruct \</span><br><span class="line">    --RM Qwen2.5-Math-PRM-7B \</span><br><span class="line">    --task_name MATH \</span><br><span class="line">    --temperature 0.7 \</span><br><span class="line">    --num_sequence 8 \</span><br><span class="line">    --max_new_tokens 2048 \</span><br><span class="line">    --save_dir results \</span><br><span class="line">    --method best_of_n \</span><br><span class="line">    --num-worker 16 \</span><br><span class="line">    --controller_addr http://0.0.0.0:28777</span><br></pre></td></tr></table></figure>
+<p>注意下面的输出中 <code>--num-worker</code> 选项对应的参数为
+<code>args.num_worker</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Namespace(LM=&#x27;Qwen2.5-Math-1.5B-Instruct&#x27;, RM=&#x27;Qwen2.5-Math-PRM-7B&#x27;, controller_addr=&#x27;http://0.0.0.0:28777&#x27;, is_few_shot=False, local=False, max_new_tokens=2048, method=&#x27;best_of_n&#x27;, num_sequence=8, num_worker=16, resume_dir=None, save_dir=&#x27;results&#x27;, seed=0, task_name=&#x27;MATH&#x27;, temperature=0.7, test=True, top_k=-1, top_p=1, tree_max_depth=None, tree_max_width=None</span><br></pre></td></tr></table></figure>
 <h2 id="总结">总结</h2>
 <p><code>argparse</code> 模块是 Python
 的一个标准库模块，用于处理命令行参数。通过
@@ -767,18 +776,18 @@ alt="image-20241103173324619" />
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@staticmethod%E3%80%81@classmethod/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@dataclass/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          @staticmethod、@classmethod
+          @dataclass
         
       </div>
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90dataclass%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【dataclass模块】</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【collections模块】</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -805,7 +814,7 @@ alt="image-20241103173324619" />
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">【argparse 模块】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.</span> <span class="toc-text">使用 argparse 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5-argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.1.</span> <span class="toc-text">引入 argparse 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">创建参数解析器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">添加命令行参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#metavar-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">metavar 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#required-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">required 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dest-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">dest 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#default-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">default 参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">解析命令行参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0%E5%80%BC"><span class="toc-number">1.2.5.</span> <span class="toc-text">获取参数值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E7%B1%BB%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">各类参数实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">添加位置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">添加可选参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.3.</span> <span class="toc-text">添加行为参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E7%9F%AD%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.4.</span> <span class="toc-text">添加短参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%B8%AE%E5%8A%A9%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.</span> <span class="toc-text">查看帮助信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.5.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text">位置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">可选参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%AD%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.3.</span> <span class="toc-text">短参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">【argparse 模块】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.</span> <span class="toc-text">使用 argparse 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5-argparse-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.1.</span> <span class="toc-text">引入 argparse 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">创建参数解析器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">添加命令行参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#metavar-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">metavar 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#required-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">required 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dest-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">dest 参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#default-%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">default 参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">解析命令行参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0%E5%80%BC"><span class="toc-number">1.2.5.</span> <span class="toc-text">获取参数值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E7%B1%BB%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">各类参数实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">添加位置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">添加可选参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.3.</span> <span class="toc-text">添加行为参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E7%9F%AD%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.4.</span> <span class="toc-text">添加短参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%B8%AE%E5%8A%A9%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.</span> <span class="toc-text">查看帮助信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.5.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text">位置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">可选参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%AD%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.3.</span> <span class="toc-text">短参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%BC%E5%90%88%E8%BF%90%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">综合运用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -984,15 +993,11 @@ alt="image-20241103173324619" />
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1000,43 +1005,11 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1044,23 +1017,19 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1068,7 +1037,35 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1080,23 +1077,23 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1112,11 +1109,19 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1124,7 +1129,7 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1136,7 +1141,11 @@ alt="image-20241103173324619" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1145,6 +1154,10 @@ alt="image-20241103173324619" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

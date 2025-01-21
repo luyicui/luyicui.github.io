@@ -18,7 +18,7 @@
 <meta property="og:description" content="索引和切片 前言 切片其实也是索引操作，所以切片经常被称为切片索引，为了更方便叙述，本文将切片称为切片索引。索引和切片操作可以帮助我们快速提取张量中的部分数据。 基本索引 PyTorch 支持与 Python 和 NumPy 类似的基本索引操作，PyTorch 中的基本索引可以通过整数值来索引张量。 12345678910111213141516&gt;&gt;&gt; import">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-26T06:33:49.000Z">
-<meta property="article:modified_time" content="2025-01-01T04:55:35.029Z">
+<meta property="article:modified_time" content="2025-01-20T13:16:44.386Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="pytorch">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">2.8k字</span>
+      <span class="post-count">3.6k字</span>
     </span>
   </span>
 
@@ -251,7 +251,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">12分</span>
+      <span class="post-count">15分</span>
     </span>
   </span>
 </div>
@@ -342,6 +342,80 @@ PyTorch 支持绝大多数 NumPy
 <code>a[0, 0]</code> 和
 <code>a[2, 0]</code>，相当于索引张量的第二行第一列的元素、张量第一行和第一列的元素以及张量第三行和第一列的元素；</li>
 </ul>
+<h2 id="布尔索引">布尔索引</h2>
+<p>布尔索引（Boolean Indexing）是通过布尔值（<code>True</code> 或
+<code>False</code>）选择张量中特定元素的一种强大的索引方式。在 PyTorch
+中，它允许根据条件筛选张量中的元素，而无需显式地提供具体的索引位置。</p>
+<hr />
+<h3 id="布尔索引的基本原理">布尔索引的基本原理</h3>
+<h4 id="布尔张量">布尔张量</h4>
+<ul>
+<li>布尔索引基于一个布尔张量（元素值为 <code>True</code> 或
+<code>False</code>）。</li>
+<li>布尔张量的形状必须与被索引的张量形状相同。</li>
+</ul>
+<h4 id="机制">机制</h4>
+<p>当布尔张量用于索引另一个张量时，布尔张量中值为 <code>True</code>
+的位置对应的元素会被提取，而值为 <code>False</code>
+的位置的元素会被忽略。</p>
+<hr />
+<h3 id="示例代码">示例代码</h3>
+<h4 id="创建张量">创建张量</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个张量</span></span><br><span class="line">a = torch.tensor([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">                  [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]])</span><br></pre></td></tr></table></figure>
+<h4 id="基本布尔索引">基本布尔索引</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建布尔张量</span></span><br><span class="line">mask = a &gt; <span class="number">2</span>  <span class="comment"># 条件：元素大于 2</span></span><br><span class="line"><span class="built_in">print</span>(mask)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># tensor([[False, False, False],</span></span><br><span class="line"><span class="comment">#         [ True,  True,  True]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用布尔张量索引</span></span><br><span class="line">selected = a[mask]</span><br><span class="line"><span class="built_in">print</span>(selected)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># tensor([3, 4, 5])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="布尔索引的条件">布尔索引的条件</h3>
+<p>布尔张量通常由条件语句生成。例如：</p>
+<h4 id="常见条件语句">常见条件语句</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成布尔张量</span></span><br><span class="line">a = torch.tensor([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">                  [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a &gt; <span class="number">2</span>)       <span class="comment"># 元素大于 2</span></span><br><span class="line"><span class="built_in">print</span>(a % <span class="number">2</span> == <span class="number">0</span>)  <span class="comment"># 元素是偶数</span></span><br><span class="line"><span class="built_in">print</span>((a &gt; <span class="number">1</span>) &amp; (a &lt; <span class="number">4</span>))  <span class="comment"># 元素在 1 到 4 之间</span></span><br></pre></td></tr></table></figure>
+<h4 id="输出">输出</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># a &gt; 2:</span></span><br><span class="line"><span class="comment"># tensor([[False, False, False],</span></span><br><span class="line"><span class="comment">#         [ True,  True,  True]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># a % 2 == 0:</span></span><br><span class="line"><span class="comment"># tensor([[ True, False,  True],</span></span><br><span class="line"><span class="comment">#         [False,  True, False]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># (a &gt; 1) &amp; (a &lt; 4):</span></span><br><span class="line"><span class="comment"># tensor([[False, False,  True],</span></span><br><span class="line"><span class="comment">#         [ True, False, False]])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="布尔索引操作">布尔索引操作</h3>
+<p>布尔索引允许你对张量执行多种操作，例如提取、修改或删除元素。</p>
+<h4 id="提取元素">提取元素</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 提取所有满足条件的元素</span></span><br><span class="line"><span class="built_in">print</span>(a[a &gt; <span class="number">2</span>])</span><br><span class="line"><span class="comment"># 输出：tensor([3, 4, 5])</span></span><br></pre></td></tr></table></figure>
+<h4 id="修改元素">修改元素</h4>
+<p>通过布尔索引，可以直接修改满足条件的元素：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改所有大于 2 的元素为 -1</span></span><br><span class="line">a[a &gt; <span class="number">2</span>] = -<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># tensor([[ 0,  1,  2],</span></span><br><span class="line"><span class="comment">#         [-1, -1, -1]])</span></span><br></pre></td></tr></table></figure>
+<h4 id="删除元素">删除元素</h4>
+<p>你可以结合布尔索引和 <code>torch.masked_select</code>
+删除某些元素：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = torch.tensor([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">                  [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]])</span><br><span class="line"><span class="comment"># 只保留偶数元素</span></span><br><span class="line">result = torch.masked_select(a, a % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># 输出：tensor([0, 2, 4])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="适用场景">适用场景</h3>
+<p>布尔索引在以下场景中非常有用：</p>
+<ol type="1">
+<li><strong>筛选满足条件的元素</strong>：根据特定规则提取数据。</li>
+<li><strong>数据清洗和处理</strong>：过滤或删除异常值。</li>
+<li><strong>多张量操作</strong>：在多个张量间进行元素级别的筛选。</li>
+</ol>
+<hr />
+<h3 id="注意事项">注意事项</h3>
+<h4 id="布尔张量的形状">布尔张量的形状</h4>
+<ul>
+<li><p>布尔张量的形状必须与被索引的张量相同，或者可以广播到相同的形状。</p></li>
+<li><p>如果形状不匹配，会报错：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = torch.tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">mask = torch.tensor([[<span class="literal">True</span>, <span class="literal">False</span>, <span class="literal">True</span>]])</span><br><span class="line">a[mask]  <span class="comment"># 会报错，因为形状不匹配</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="返回的张量是一维的">返回的张量是一维的</h4>
+<ul>
+<li><p>使用布尔索引提取元素时，返回的结果总是一维张量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = torch.tensor([[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">2</span>, <span class="number">3</span>]])</span><br><span class="line">mask = a &gt; <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(a[mask])  <span class="comment"># 输出：tensor([2, 3])</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="不改变原张量的形状">不改变原张量的形状</h4>
+<ul>
+<li>布尔索引的操作不会改变原始张量的形状，只会提取符合条件的元素。</li>
+</ul>
+<hr />
+<h3 id="高级应用">高级应用</h3>
+<h4 id="多条件索引">多条件索引</h4>
+<p>可以使用逻辑运算符（<code>&amp;</code>、<code>|</code>
+等）组合多个条件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 提取所有大于 1 且为偶数的元素</span></span><br><span class="line">result = a[(a &gt; <span class="number">1</span>) &amp; (a % <span class="number">2</span> == <span class="number">0</span>)]</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<h4 id="按索引修改特定列行">按索引修改特定列/行</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只修改第 0 行中大于 1 的元素</span></span><br><span class="line">a = torch.tensor([[<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">                  [<span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>]])</span><br><span class="line">a[<span class="number">0</span>, a[<span class="number">0</span>] &gt; <span class="number">1</span>] = -<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># tensor([[-1, -1, -1],</span></span><br><span class="line"><span class="comment">#         [ 1,  4,  5]])</span></span><br></pre></td></tr></table></figure>
 <h1 id="索引练习">索引练习</h1>
 <p>构造示例数组 <code>x</code>，为一个三维 tesnor：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">x = torch.arange(<span class="number">16</span>).reshape(<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">x</span><br></pre></td></tr></table></figure>
@@ -585,7 +659,7 @@ PyTorch 支持绝大多数 NumPy
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87"><span class="toc-number">1.</span> <span class="toc-text">索引和切片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%B4%A2%E5%BC%95"><span class="toc-number">1.2.</span> <span class="toc-text">基本索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87%E7%B4%A2%E5%BC%95"><span class="toc-number">1.3.</span> <span class="toc-text">切片索引</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%83%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">索引练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%B4%A2%E5%BC%95"><span class="toc-number">2.1.</span> <span class="toc-text">简单索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E8%8A%B1%E5%BC%8F%E7%B4%A2%E5%BC%95"><span class="toc-number">2.2.</span> <span class="toc-text">一般的花式索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%9A%84%E8%8A%B1%E5%BC%8F%E7%B4%A2%E5%BC%95"><span class="toc-number">2.3.</span> <span class="toc-text">复杂的花式索引</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87"><span class="toc-number">1.</span> <span class="toc-text">索引和切片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%B4%A2%E5%BC%95"><span class="toc-number">1.2.</span> <span class="toc-text">基本索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87%E7%B4%A2%E5%BC%95"><span class="toc-number">1.3.</span> <span class="toc-text">切片索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.</span> <span class="toc-text">布尔索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%B4%A2%E5%BC%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">布尔索引的基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E5%BC%A0%E9%87%8F"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">布尔张量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%BA%E5%88%B6"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">机制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">1.4.2.</span> <span class="toc-text">示例代码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BC%A0%E9%87%8F"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">创建张量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%B8%83%E5%B0%94%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">基本布尔索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%B4%A2%E5%BC%95%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.4.3.</span> <span class="toc-text">布尔索引的条件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">常见条件语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">输出</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.4.</span> <span class="toc-text">布尔索引操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E5%8F%96%E5%85%83%E7%B4%A0"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">提取元素</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%85%83%E7%B4%A0"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">修改元素</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="toc-number">1.4.4.3.</span> <span class="toc-text">删除元素</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.4.5.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.4.6.</span> <span class="toc-text">注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E5%BC%A0%E9%87%8F%E7%9A%84%E5%BD%A2%E7%8A%B6"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">布尔张量的形状</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E7%9A%84%E5%BC%A0%E9%87%8F%E6%98%AF%E4%B8%80%E7%BB%B4%E7%9A%84"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">返回的张量是一维的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E6%94%B9%E5%8F%98%E5%8E%9F%E5%BC%A0%E9%87%8F%E7%9A%84%E5%BD%A2%E7%8A%B6"><span class="toc-number">1.4.6.3.</span> <span class="toc-text">不改变原张量的形状</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.7.</span> <span class="toc-text">高级应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%9D%A1%E4%BB%B6%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.7.1.</span> <span class="toc-text">多条件索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%89%E7%B4%A2%E5%BC%95%E4%BF%AE%E6%94%B9%E7%89%B9%E5%AE%9A%E5%88%97%E8%A1%8C"><span class="toc-number">1.4.7.2.</span> <span class="toc-text">按索引修改特定列&#x2F;行</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%83%E4%B9%A0"><span class="toc-number">2.</span> <span class="toc-text">索引练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%B4%A2%E5%BC%95"><span class="toc-number">2.1.</span> <span class="toc-text">简单索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E8%8A%B1%E5%BC%8F%E7%B4%A2%E5%BC%95"><span class="toc-number">2.2.</span> <span class="toc-text">一般的花式索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%9A%84%E8%8A%B1%E5%BC%8F%E7%B4%A2%E5%BC%95"><span class="toc-number">2.3.</span> <span class="toc-text">复杂的花式索引</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -764,15 +838,11 @@ PyTorch 支持绝大多数 NumPy
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -780,43 +850,11 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -824,23 +862,19 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -848,7 +882,35 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -860,23 +922,23 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -892,11 +954,19 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -904,7 +974,7 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -916,7 +986,11 @@ PyTorch 支持绝大多数 NumPy
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -925,6 +999,10 @@ PyTorch 支持绝大多数 NumPy
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

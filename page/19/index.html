@@ -213,6 +213,270 @@
             
 
   
+    <article id="post-【后端】/python/Special Variables/&#39;__slots__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/" target="_blank">__slots__</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="slots__"><code>__slots__</code></h1>
+<p>由于 python 是一种动态语言，python
+类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；<code>__slots__</code>
+的使用；<span class="citation" data-cites="property">@property</span>
+的使用</p>
+<h2 id="实例属性和类属性的绑定">实例属性和类属性的绑定</h2>
+<p>由于 Python
+是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过
+self 变量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&#x27;Bob&#x27;</span>)</span><br><span class="line">s.score = <span class="number">90</span></span><br></pre></td></tr></table></figure>
+<p>但是，如果 Student 类本身需要绑定一个属性呢？可以直接在 class
+中定义属性，这种属性是<strong>类属性</strong>，归 Student 类所有：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name = <span class="string">&#x27;Student&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>当我们定义了一个类属性后，这个属性虽然归类所有，但类的所有实例都可以访问到。来测试一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">... </span>    name = <span class="string">&#x27;Student&#x27;</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建实例 s</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 打印 name 属性，因为实例并没有 name 属性，所以会继续查找 class 的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 打印类的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 给实例绑定 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 由于实例属性优先级比类属性高，因此，它会屏蔽掉类的 name 属性</span></span><br><span class="line">Michael</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 但是类属性并未消失，用 Student.name 仍然可以访问</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> s.name <span class="comment"># 如果删除实例的 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 再次调用 s.name，由于实例的 name 属性没有找到，类的 name 属性就显示出来了</span></span><br><span class="line">Student</span><br></pre></td></tr></table></figure>
+<p>从上面的例子可以看出，在编写程序的时候，千万不要对实例属性和类属性使用相同的名字，因为相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性。</p>
+<h2 id="动态绑定属性和方法">动态绑定属性和方法</h2>
+<p>正常情况下，当我们定义了一个 class，创建了一个 class
+的实例后，我们可以给该实例绑定任何属性和方法，这就是动态语言的灵活性。先定义
+class：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>然后，尝试给实例<strong>绑定一个属性</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 动态给实例绑定一个属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name)</span><br><span class="line">Michael</span><br></pre></td></tr></table></figure>
+<p>还可以尝试给实例<strong>绑定一个方法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">set_age</span>(<span class="params">self, age</span>): <span class="comment"># 定义一个函数作为实例方法</span></span><br><span class="line"><span class="meta">... </span>    self.age = age</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> types <span class="keyword">import</span> MethodType</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_age = MethodType(set_age, s) <span class="comment"># 给实例绑定一个方法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_age(<span class="number">25</span>) <span class="comment"># 调用实例方法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.age <span class="comment"># 测试结果</span></span><br><span class="line"><span class="number">25</span></span><br></pre></td></tr></table></figure>
+<p>但是，给一个实例绑定的方法，对另一个实例是不起作用的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2 = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2.set_age(<span class="number">25</span>) <span class="comment"># 尝试调用方法</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;set_age&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>为了给所有实例都绑定方法，可以给 class 绑定方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, score</span>):</span><br><span class="line"><span class="meta">... </span>    self.score = score</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Student.set_score = set_score</span><br></pre></td></tr></table></figure>
+<p>给 class 绑定方法后，所有实例均可调用：通常情况下，上面的 set_score
+方法可以直接定义在 class 中，但动态绑定允许我们在程序运行的过程中动态给
+class 加上功能，这在静态语言中很难实现。</p>
+<h2 id="使用__slots__">使用<code>__slots__</code></h2>
+<p>但是，如果我们想要限制实例的属性怎么办？比如，只允许对 Student
+实例添加 name 和 age 属性。</p>
+<p>为了达到限制的目的，Python 允许在定义 class
+的时候，定义一个特殊的<code>__slots__</code>变量，来限制该 class
+实例能添加的属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    __slots__ = (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;age&#x27;</span>) <span class="comment"># 用 tuple 定义允许绑定的属性名称</span></span><br></pre></td></tr></table></figure>
+<p>然后，我们试试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 绑定属性&#x27;name&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.age = <span class="number">25</span> <span class="comment"># 绑定属性&#x27;age&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">99</span> <span class="comment"># 绑定属性&#x27;score&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;score&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>由于’score’没有被放到<code>__slots__</code>中，所以不能绑定 score
+属性，试图绑定 score 将得到 AttributeError 的错误。</p>
+<p>使用<code>__slots__</code>要注意，<code>__slots__</code>定义的属性仅对当前类实例起作用，<strong>对继承的子类是不起作用的：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">GraduateStudent</span>(<span class="title class_ inherited__">Student</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">pass</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = GraduateStudent()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
+<p>除非在子类中也定义<code>__slots__</code>，这样<strong>子类实例允许定义的属性就是自身的<code>__slots__</code>加上父类的<code>__slots__</code></strong></p>
+<h2 id="使用property">使用@property</h2>
+<p>在绑定属性时，如果我们直接把属性暴露出去，虽然写起来很简单，但是，没办法检查参数，导致可以把成绩随便改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = Student()</span><br><span class="line">s.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
+<p>这显然不合逻辑。为了限制 score 的范围，可以通过一个 set_score()
+方法来设置成绩，再通过一个 get_score() 来获取成绩，这样，在 set_score()
+方法里，就可以检查参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_score</span>(<span class="params">self</span>):</span><br><span class="line">         <span class="keyword">return</span> self._score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value</span><br></pre></td></tr></table></figure>
+<p>现在，对任意的 Student 实例进行操作，就不能随心所欲地设置 score
+了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">60</span>) <span class="comment"># ok!</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.get_score()</span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">9999</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
+<p>但是，上面的<strong>调用方法</strong>又略显复杂，没有直接用属性这么直接简单。有没有既能检查参数，又可以用类似属性这样简单的方式来访问类的变量呢？Python
+内置的@property 装饰器就是负责把一个方法变成属性调用的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._score  <span class="comment">#注意有一个短下划线</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @score.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value  <span class="comment">#注意有一个短下划线</span></span><br></pre></td></tr></table></figure>
+<p><span class="citation" data-cites="property">@property</span>
+的实现比较复杂，我们先考察如何使用。把一个 getter
+方法变成属性，只需要加上@property 就可以了，此时，<span class="citation"
+data-cites="property">@property</span>
+本身又创建了另一个装饰器@score.setter，负责把一个 setter
+方法变成属性赋值，于是，我们就拥有一个可控的属性操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">60</span> <span class="comment"># OK，实际转化为 s.set_score(60)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score <span class="comment"># OK，实际转化为 s.get_score()</span></span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">9999</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
+<p>注意到这个神奇的@property，我们在对实例属性操作的时候，就知道该属性很可能不是直接暴露的，而是通过
+getter 和 setter
+方法来实现的。还可以定义<strong>只读属性</strong>，<strong>只定义 getter
+方法，不定义 setter 方法就是一个只读属性：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="comment"># 可读写属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._birth</span><br><span class="line"></span><br><span class="line"><span class="meta">    @birth.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self, value</span>):</span><br><span class="line">        self._birth = value</span><br><span class="line">    <span class="comment"># 只读属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">age</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2018</span> - self._birth</span><br></pre></td></tr></table></figure>
+<p>上面的 birth 是可读写属性，而 age 就是一个只读属性，因为 age 可以根据
+birth 和当前时间计算出来</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/Feature Scaling" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/" target="_blank">Feature Scaling</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="feature-scaling">Feature Scaling</h1>
+<h2 id="特征缩放">特征缩放</h2>
+<p><strong>原因：</strong></p>
+<ul>
+<li>数量级的差异将导致量级较大的属性占据主导地位</li>
+<li>数量级的差异将导致迭代收敛速度减慢</li>
+<li>依赖于样本距离的算法对于数据的数量级非常敏感</li>
+</ul>
+<p><strong>好处：</strong></p>
+<ul>
+<li>提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的
+RBF 内核或线性模型的 <span class="math inline">\(l_1\)</span> 和 <span
+class="math inline">\(l_2\)</span>
+正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差比其他特征大几个数量级，那么它就会在学习算法中占据主导位置，导致学习器并不能像我们期望的那样，从其他特征中学习</li>
+<li>提升收敛速度：对于线性模型来说，数据归一化后，寻找最优解的过程明显会变得平缓，更容易正确地收敛到最优解</li>
+</ul>
+<h3 id="standardization-z-score-normalization">Standardization (Z-score
+normalization)</h3>
+<p>通过减去均值然后除以标准差，将数据按比例缩放，使之落入一个小的特定区间，处理后的数据均值为
+0，标准差为 1</p>
+<p>$$ x=</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/Python_Data_Science/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -832,260 +1096,6 @@ scikit-learn）要求特征数组是二维的，其中每一行代表一个样�
 
 
   
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/np.tile()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/" target="_blank">np.tile()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="np.tile">np.tile()</h1>
-<p>本着函数取名必有所依的原理，博主百度了一下 tile 的英文意思，发现 tile
-有平铺的意思。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411250013198.png"
-alt="image-20241125001356867" />
-<figcaption aria-hidden="true">image-20241125001356867</figcaption>
-</figure>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/astype()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/" target="_blank">astype()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="astype">astype()</h1>
-<p><code>numpy</code> 中的 <code>astype()</code>
-是一个非常常用的函数，用于将 <code>numpy</code>
-数组的数据类型（dtype）转换为其他类型。它可以创建一个新的数组，新的数组的元素会按照指定的数据类型进行转换。该方法通常用于数据类型的强制转换，例如从浮点数转换为整数，或者在机器学习等应用中进行数据预处理。</p>
-<h2 id="语法">语法</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.ndarray.astype(dtype, order=<span class="string">&#x27;K&#x27;</span>, casting=<span class="string">&#x27;unsafe&#x27;</span>, subok=<span class="literal">True</span>, copy=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="参数">参数</h2>
-<ul>
-<li><strong>dtype</strong>：目标数据类型，可以是：
-<ul>
-<li><code>numpy</code> 提供的类型（如 <code>np.float32</code>,
-<code>np.int64</code> 等）</li>
-<li>标准的 Python 类型（如 <code>int</code>, <code>float</code>
-等）</li>
-<li>一个字符代码，表示数据类型的类型代码（如 <code>'f'</code>
-表示浮点数，<code>'i'</code> 表示整数等）</li>
-</ul></li>
-<li><strong>order</strong>：决定多维数组存储的顺序。可选的值有：
-<ul>
-<li><code>'C'</code>：按行优先（C-style）顺序存储（默认值）。</li>
-<li><code>'F'</code>：按列优先（Fortran-style）顺序存储。</li>
-<li><code>'K'</code>：保持原来的顺序。</li>
-</ul></li>
-<li><strong>casting</strong>：指定转换类型的规则，决定了哪些转换是被允许的。可选值有：
-<ul>
-<li><code>'no'</code>：禁止转换。</li>
-<li><code>'equiv'</code>：只允许相同或更高精度的转换。</li>
-<li><code>'safe'</code>：只允许没有丢失数据的转换。</li>
-<li><code>'unsafe'</code>：允许任何类型的转换，包括可能丢失数据的转换（默认值）。</li>
-</ul></li>
-<li><strong>subok</strong>：如果为
-<code>True</code>，则返回的数组将拥有输入数组的子类类型；如果为
-<code>False</code>，则返回标准 <code>ndarray</code> 类型。</li>
-<li><strong>copy</strong>：是否返回新的数组，默认为
-<code>True</code>。如果为
-<code>False</code>，则会尽量避免复制，可能返回原始数组的视图。</li>
-</ul>
-<h2 id="返回值">返回值</h2>
-<p>返回一个新的数组，它的数据类型为指定的 <code>dtype</code>。如果
-<code>copy=True</code>，会返回一个副本；如果
-<code>copy=False</code>，返回的是原数组的视图（如果可能的话）。</p>
-<h2 id="示例">示例</h2>
-<h3 id="基本用法类型转换">基本用法：类型转换</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">arr = np.array([<span class="number">1.2</span>, <span class="number">3.4</span>, <span class="number">5.6</span>])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为整数类型</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int)  <span class="comment"># 输出: [1 3 5]</span></span><br><span class="line"><span class="built_in">print</span>(arr_int.dtype)  <span class="comment"># 输出: int64</span></span><br></pre></td></tr></table></figure>
-<p>在上面的例子中，原数组是 <code>float64</code> 类型，使用
-<code>astype(int)</code>
-将其转换为整数类型。<strong>转换时，浮点数的值会被截断（即直接去除小数部分）</strong></p>
-<h3 id="强制转换数据类型">强制转换数据类型</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: int64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为浮点数</span></span><br><span class="line">arr_float = arr.astype(<span class="built_in">float</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_float)  <span class="comment"># 输出: [1. 2. 3.]</span></span><br><span class="line"><span class="built_in">print</span>(arr_float.dtype)  <span class="comment"># 输出: float64</span></span><br></pre></td></tr></table></figure>
-<p>在这个例子中，整数数组被转换成了浮点数数组</p>
-<h3 id="处理多维数组">处理多维数组</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1.5</span>, <span class="number">2.5</span>], [<span class="number">3.5</span>, <span class="number">4.5</span>]])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为整数类型</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int)  </span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># [[1 2]</span></span><br><span class="line"><span class="comment">#  [3 4]]</span></span><br><span class="line"><span class="built_in">print</span>(arr_int.dtype)  <span class="comment"># 输出: int64</span></span><br></pre></td></tr></table></figure>
-<p>对于多维数组，<code>astype()</code> 也能有效地按元素进行转换。</p>
-<h3 id="错误的转换会抛出异常">错误的转换（会抛出异常）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"><span class="comment"># 尝试转换为整数类型会失败，因为包含非数字字符</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br></pre></td></tr></table></figure>
-<p>在这种情况下，由于数组中包含无法转换为整数的字符串，<code>astype()</code>
-会抛出 <code>ValueError</code>。</p>
-<h3 id="使用-casting-控制转换规则">使用 <code>casting</code>
-控制转换规则</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1.5</span>, <span class="number">2.7</span>, <span class="number">3.8</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制将浮点数转换为整数，并且使用 &#x27;safe&#x27; casting</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>, casting=<span class="string">&#x27;safe&#x27;</span>)  <span class="comment"># 默认是 &#x27;safe&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(arr_int)  <span class="comment"># 输出: [1 2 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 &#x27;unsafe&#x27; casting 强制转换</span></span><br><span class="line">arr_int_unsafe = arr.astype(<span class="built_in">int</span>, casting=<span class="string">&#x27;unsafe&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int_unsafe)  <span class="comment"># 输出: [1 2 3]</span></span><br></pre></td></tr></table></figure>
-<p>在这里，<code>casting='safe'</code> 表示只会进行安全的转换，而
-<code>casting='unsafe'</code>
-允许任何类型的转换，包括可能会丢失精度或数据的转换。</p>
-<h2 id="总结">总结</h2>
-<ul>
-<li><code>astype()</code>
-是一个强大的方法，可以用来显式地转换数组的数据类型</li>
-<li><strong><code>astype()</code> 返回的是一个新的数组（除非
-<code>copy=False</code>），不会修改原始数组</strong></li>
-<li><code>astype()</code>
-提供了丰富的选项，可以控制转换的方式，例如是否强制复制、是否安全转换等</li>
-</ul>
-<p>常见的使用场景包括数据预处理（如将浮点数转换为整数）、处理精度转换等。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/order参数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1289,7 +1299,7 @@ aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
 
 
   
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/轴axis" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/astype()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1297,7 +1307,7 @@ aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/" target="_blank">axis 轴</a>
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/" target="_blank">astype()</a>
   
     </h1>
   
@@ -1305,7 +1315,7 @@ aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
 
   
   
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/" class="archive-article-date">
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/" class="archive-article-date">
         <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
 </a>
 
@@ -1318,13 +1328,80 @@ aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="axis-轴">axis 轴</h1>
-<p><a
-target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/details/114777623?ops_request_misc=%7B%22request%5Fid%22%3A%22e51c121be6f5816716b045a2ea578b1e%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=e51c121be6f5816716b045a2ea578b1e&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-5-114777623-null-null.142%5Ev100%5Econtrol&amp;utm_term=axis&amp;spm=1018.2226.3001.4187">Python
-的 numpy 中 axis=0、axis=1、axis=2 解释-CSDN 博客</a></p>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/#more">more >></a>
-    
+    <h1 id="astype">astype()</h1>
+<p><code>numpy</code> 中的 <code>astype()</code>
+是一个非常常用的函数，用于将 <code>numpy</code>
+数组的数据类型（dtype）转换为其他类型。它可以创建一个新的数组，新的数组的元素会按照指定的数据类型进行转换。该方法通常用于数据类型的强制转换，例如从浮点数转换为整数，或者在机器学习等应用中进行数据预处理。</p>
+<h2 id="语法">语法</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.ndarray.astype(dtype, order=<span class="string">&#x27;K&#x27;</span>, casting=<span class="string">&#x27;unsafe&#x27;</span>, subok=<span class="literal">True</span>, copy=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="参数">参数</h2>
+<ul>
+<li><strong>dtype</strong>：目标数据类型，可以是：
+<ul>
+<li><code>numpy</code> 提供的类型（如 <code>np.float32</code>,
+<code>np.int64</code> 等）</li>
+<li>标准的 Python 类型（如 <code>int</code>, <code>float</code>
+等）</li>
+<li>一个字符代码，表示数据类型的类型代码（如 <code>'f'</code>
+表示浮点数，<code>'i'</code> 表示整数等）</li>
+</ul></li>
+<li><strong>order</strong>：决定多维数组存储的顺序。可选的值有：
+<ul>
+<li><code>'C'</code>：按行优先（C-style）顺序存储（默认值）。</li>
+<li><code>'F'</code>：按列优先（Fortran-style）顺序存储。</li>
+<li><code>'K'</code>：保持原来的顺序。</li>
+</ul></li>
+<li><strong>casting</strong>：指定转换类型的规则，决定了哪些转换是被允许的。可选值有：
+<ul>
+<li><code>'no'</code>：禁止转换。</li>
+<li><code>'equiv'</code>：只允许相同或更高精度的转换。</li>
+<li><code>'safe'</code>：只允许没有丢失数据的转换。</li>
+<li><code>'unsafe'</code>：允许任何类型的转换，包括可能丢失数据的转换（默认值）。</li>
+</ul></li>
+<li><strong>subok</strong>：如果为
+<code>True</code>，则返回的数组将拥有输入数组的子类类型；如果为
+<code>False</code>，则返回标准 <code>ndarray</code> 类型。</li>
+<li><strong>copy</strong>：是否返回新的数组，默认为
+<code>True</code>。如果为
+<code>False</code>，则会尽量避免复制，可能返回原始数组的视图。</li>
+</ul>
+<h2 id="返回值">返回值</h2>
+<p>返回一个新的数组，它的数据类型为指定的 <code>dtype</code>。如果
+<code>copy=True</code>，会返回一个副本；如果
+<code>copy=False</code>，返回的是原数组的视图（如果可能的话）。</p>
+<h2 id="示例">示例</h2>
+<h3 id="基本用法类型转换">基本用法：类型转换</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">arr = np.array([<span class="number">1.2</span>, <span class="number">3.4</span>, <span class="number">5.6</span>])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为整数类型</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int)  <span class="comment"># 输出: [1 3 5]</span></span><br><span class="line"><span class="built_in">print</span>(arr_int.dtype)  <span class="comment"># 输出: int64</span></span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，原数组是 <code>float64</code> 类型，使用
+<code>astype(int)</code>
+将其转换为整数类型。<strong>转换时，浮点数的值会被截断（即直接去除小数部分）</strong></p>
+<h3 id="强制转换数据类型">强制转换数据类型</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: int64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为浮点数</span></span><br><span class="line">arr_float = arr.astype(<span class="built_in">float</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_float)  <span class="comment"># 输出: [1. 2. 3.]</span></span><br><span class="line"><span class="built_in">print</span>(arr_float.dtype)  <span class="comment"># 输出: float64</span></span><br></pre></td></tr></table></figure>
+<p>在这个例子中，整数数组被转换成了浮点数数组</p>
+<h3 id="处理多维数组">处理多维数组</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1.5</span>, <span class="number">2.5</span>], [<span class="number">3.5</span>, <span class="number">4.5</span>]])</span><br><span class="line"><span class="built_in">print</span>(arr.dtype)  <span class="comment"># 输出: float64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为整数类型</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int)  </span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># [[1 2]</span></span><br><span class="line"><span class="comment">#  [3 4]]</span></span><br><span class="line"><span class="built_in">print</span>(arr_int.dtype)  <span class="comment"># 输出: int64</span></span><br></pre></td></tr></table></figure>
+<p>对于多维数组，<code>astype()</code> 也能有效地按元素进行转换。</p>
+<h3 id="错误的转换会抛出异常">错误的转换（会抛出异常）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"><span class="comment"># 尝试转换为整数类型会失败，因为包含非数字字符</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>)</span><br></pre></td></tr></table></figure>
+<p>在这种情况下，由于数组中包含无法转换为整数的字符串，<code>astype()</code>
+会抛出 <code>ValueError</code>。</p>
+<h3 id="使用-casting-控制转换规则">使用 <code>casting</code>
+控制转换规则</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1.5</span>, <span class="number">2.7</span>, <span class="number">3.8</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制将浮点数转换为整数，并且使用 &#x27;safe&#x27; casting</span></span><br><span class="line">arr_int = arr.astype(<span class="built_in">int</span>, casting=<span class="string">&#x27;safe&#x27;</span>)  <span class="comment"># 默认是 &#x27;safe&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(arr_int)  <span class="comment"># 输出: [1 2 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 &#x27;unsafe&#x27; casting 强制转换</span></span><br><span class="line">arr_int_unsafe = arr.astype(<span class="built_in">int</span>, casting=<span class="string">&#x27;unsafe&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(arr_int_unsafe)  <span class="comment"># 输出: [1 2 3]</span></span><br></pre></td></tr></table></figure>
+<p>在这里，<code>casting='safe'</code> 表示只会进行安全的转换，而
+<code>casting='unsafe'</code>
+允许任何类型的转换，包括可能会丢失精度或数据的转换。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li><code>astype()</code>
+是一个强大的方法，可以用来显式地转换数组的数据类型</li>
+<li><strong><code>astype()</code> 返回的是一个新的数组（除非
+<code>copy=False</code>），不会修改原始数组</strong></li>
+<li><code>astype()</code>
+提供了丰富的选项，可以控制转换的方式，例如是否强制复制、是否安全转换等</li>
+</ul>
+<p>常见的使用场景包括数据预处理（如将浮点数转换为整数）、处理精度转换等。</p>
+
     
 
     
@@ -1350,7 +1427,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E8%BD%B4axis/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/astype()/">展开全文 >></a>
     </p>
     
 
@@ -1380,7 +1457,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
 
 
   
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/【References】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/np.tile()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1388,7 +1465,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/" target="_blank">References</a>
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/" target="_blank">np.tile()</a>
   
     </h1>
   
@@ -1396,7 +1473,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
 
   
   
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/" class="archive-article-date">
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/" class="archive-article-date">
         <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
 </a>
 
@@ -1409,9 +1486,18 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p><a target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-numpy/">Python Numpy
-Tutorial</a></p>
-
+    <h1 id="np.tile">np.tile()</h1>
+<p>本着函数取名必有所依的原理，博主百度了一下 tile 的英文意思，发现 tile
+有平铺的意思。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411250013198.png"
+alt="image-20241125001356867" />
+<figcaption aria-hidden="true">image-20241125001356867</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/#more">more >></a>
+    
     
 
     
@@ -1437,7 +1523,7 @@ Tutorial</a></p>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/">展开全文 >></a>
     </p>
     
 
@@ -1621,11 +1707,11 @@ Tutorial</a></p>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1641,7 +1727,11 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1649,11 +1739,7 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1661,7 +1747,19 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1669,7 +1767,15 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1681,15 +1787,7 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1697,23 +1795,7 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1721,7 +1803,15 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1737,10 +1827,6 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
@@ -1749,11 +1835,11 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ray</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1761,11 +1847,11 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1773,7 +1859,7 @@ Tutorial</a></p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">

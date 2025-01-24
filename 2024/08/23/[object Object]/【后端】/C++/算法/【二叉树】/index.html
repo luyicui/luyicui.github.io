@@ -10,18 +10,21 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="二叉树 存储 1unordered_map&lt;int, int&gt; l, r;	&#x2F;&#x2F; l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号  不定义为 int l[N], r[N] 的原因是：二叉树的结点个数最大为 N，但是结点权值可以大于 N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦  非递归遍历 结论 【结论】用 栈 模拟实现 中序遍历， Push">
+  <meta name="description" content="二叉树存储1unordered_map&lt;int, int&gt; l, r;	&#x2F;&#x2F; l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号    不定义为 int l[N], r[N] 的原因是：二叉树的结点个数最大为 N，但是结点权值可以大于 N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦  非递归遍历结论【结论】用 栈 模拟实现 中序遍历， Push  操作的数据过程是  先">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【二叉树】">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/23/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%91/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="二叉树 存储 1unordered_map&lt;int, int&gt; l, r;	&#x2F;&#x2F; l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号  不定义为 int l[N], r[N] 的原因是：二叉树的结点个数最大为 N，但是结点权值可以大于 N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦  非递归遍历 结论 【结论】用 栈 模拟实现 中序遍历， Push">
+<meta property="og:description" content="二叉树存储1unordered_map&lt;int, int&gt; l, r;	&#x2F;&#x2F; l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号    不定义为 int l[N], r[N] 的原因是：二叉树的结点个数最大为 N，但是结点权值可以大于 N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦  非递归遍历结论【结论】用 栈 模拟实现 中序遍历， Push  操作的数据过程是  先">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408232259283.png">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408230026116.jpeg">
 <meta property="article:published_time" content="2024-08-22T17:02:27.000Z">
 <meta property="article:modified_time" content="2024-11-13T14:13:34.984Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408232259283.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -262,172 +265,80 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="二叉树">二叉树</h1>
-<h2 id="存储">存储</h2>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt; l, r;	<span class="comment">// l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号</span></span><br></pre></td></tr></table></figure>
+    <h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt; l, r;	<span class="comment">// l[i] 和 r[i] 分别存储节点 i 的左、右孩子编号</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>不定义为 <code>int l[N], r[N]</code> 的原因是：二叉树的结点个数最大为
-N，但是结点权值可以大于
-N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦</p>
+<p>  不定义为 <code>int l[N], r[N]</code> 的原因是：二叉树的结点个数最大为 N，但是结点权值可以大于 N，此时就会导致段错误，而定义成哈希表就避免了很多麻烦</p>
 </blockquote>
-<h2 id="非递归遍历">非递归遍历</h2>
-<h3 id="结论">结论</h3>
-<p>【<strong>结论</strong>】用 <strong>栈</strong> 模拟实现
-<strong>中序遍历</strong>，<font color='red'> <strong>Push</strong>
-</font> 操作的数据过程是 <font color='blue'> <strong>先序</strong>
-</font> 遍历，<font color='red'> <strong>Pop</strong> </font>
-操作的数据过程是 <font color='blue'> <strong>中序</strong> </font>
-遍历</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408232259283.png"
-alt="树的遍历.png" />
-<figcaption aria-hidden="true">树的遍历.png</figcaption>
-</figure>
-<p>​ 如图所示，⊗ 是先序遍历，☆ 是中序遍历，△ 是后序遍历。我们发现：树的
-<strong>前序、中序、后序</strong> 实际上都是将整棵树以
-<strong>上图所示的路线</strong> 跑了 <span
-class="math inline">\(1\)</span> 遍，每个结点都碰到了 <span
-class="math inline">\(3\)</span> 次，三者唯一不同之处在于
-<strong>访问节点的时机不同</strong></p>
+<h2 id="非递归遍历"><a href="#非递归遍历" class="headerlink" title="非递归遍历"></a>非递归遍历</h2><h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>【<strong>结论</strong>】用 <strong>栈</strong> 模拟实现 <strong>中序遍历</strong>，<font color='red'> <strong>Push</strong> </font> 操作的数据过程是 <font color='blue'> <strong>先序</strong> </font> 遍历，<font color='red'> <strong>Pop</strong> </font> 操作的数据过程是 <font color='blue'> <strong>中序</strong> </font> 遍历</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408232259283.png" alt="树的遍历.png"></p>
+<p>​    如图所示，⊗ 是先序遍历，☆ 是中序遍历，△ 是后序遍历。我们发现：树的 <strong>前序、中序、后序</strong> 实际上都是将整棵树以 <strong>上图所示的路线</strong> 跑了 $1$ 遍，每个结点都碰到了 $3$ 次，三者唯一不同之处在于 <strong>访问节点的时机不同</strong></p>
 <ul>
-<li><strong>先序</strong> 遍历在第 <span
-class="math inline">\(1\)</span> 次碰到结点时访问</li>
-<li><strong>中序</strong> 遍历在第 <span
-class="math inline">\(2\)</span> 次碰到结点时访问</li>
-<li><strong>后序</strong> 遍历在第 <span
-class="math inline">\(3\)</span> 次碰到结点时访问</li>
+<li><strong>先序</strong> 遍历在第 $1$ 次碰到结点时访问</li>
+<li><strong>中序</strong> 遍历在第 $2$ 次碰到结点时访问</li>
+<li><strong>后序</strong> 遍历在第 $3$ 次碰到结点时访问</li>
 </ul>
-<h3 id="例题">例题</h3>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8792912/">AcWing
-1576. 再次树遍历 - AcWing</a></li>
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8792912/">AcWing 1576. 再次树遍历 - AcWing</a></li>
 </ul>
 <span id="more"></span>
-<h2 id="层序遍历">层序遍历</h2>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> q[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> root)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> hh = <span class="number">0</span>, tt = <span class="number">-1</span>;</span><br><span class="line">    q[++ tt] = root;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(hh &lt;= tt)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">auto</span> t = q[hh ++];</span><br><span class="line">        <span class="keyword">if</span>(l.count(t))		<span class="comment">// 存在左孩子</span></span><br><span class="line">            q[++ tt] = l[t];</span><br><span class="line">        <span class="keyword">if</span>(r.count(t))		<span class="comment">// 存在右孩子</span></span><br><span class="line">            q[++ tt] = r[t];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bfs(root);</span><br><span class="line"><span class="comment">// 输出层序序列</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, q[i]);</span><br></pre></td></tr></table></figure>
-<h2 id="后序中序建树">后序中序建树</h2>
-<h3 id="模板">模板</h3>
-<ul>
-<li><strong>时间复杂度</strong>：<span
-class="math inline">\(O(n)\)</span></li>
+<h2 id="层序遍历"><a href="#层序遍历" class="headerlink" title="层序遍历"></a>层序遍历</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> q[N];</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">bfs</span><span class="params">(<span class="type">int</span> root)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> hh = <span class="number">0</span>, tt = <span class="number">-1</span>;</span><br><span class="line">    q[++ tt] = root;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(hh &lt;= tt)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">auto</span> t = q[hh ++];</span><br><span class="line">        <span class="keyword">if</span>(l.count(t))		<span class="comment">// 存在左孩子</span></span><br><span class="line">            q[++ tt] = l[t];</span><br><span class="line">        <span class="keyword">if</span>(r.count(t))		<span class="comment">// 存在右孩子</span></span><br><span class="line">            q[++ tt] = r[t];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bfs(root);</span><br><span class="line"><span class="comment">// 输出层序序列</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, q[i]);</span><br></pre></td></tr></table></figure>
+<h2 id="后序中序建树"><a href="#后序中序建树" class="headerlink" title="后序中序建树"></a>后序中序建树</h2><h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><ul>
+<li><strong>时间复杂度</strong>：$O(n)$</li>
 </ul>
 <blockquote>
-<p>注意：前提是二叉树中
-<strong>节点编号或权值互不相同</strong>，我们才能用
-<strong>哈希表</strong>
-记录中序序列各节点对应的下标，从而将时间复杂度优化为 <span
-class="math inline">\(O(n)\)</span>。如果
-<strong>二叉树节点编号或权值可能重复</strong>，则只能遍历搜索位置，此时时间复杂度为
-<span class="math inline">\(O(n^2)\)</span></p>
+<p>  注意：前提是二叉树中 <strong>节点编号或权值互不相同</strong>，我们才能用 <strong>哈希表</strong> 记录中序序列各节点对应的下标，从而将时间复杂度优化为 $O(n)$。如果 <strong>二叉树节点编号或权值可能重复</strong>，则只能遍历搜索位置，此时时间复杂度为 $O(n^2)$</p>
 </blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> in[N], post[N];			<span class="comment">// n 个节点的中序序列、后序序列</span></span><br><span class="line"><span class="type">int</span> pre[N], cnt;			<span class="comment">// 建图的同时记录 n 个节点的前序序列</span></span><br><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt; l, r, pos;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">build</span><span class="params">(<span class="type">int</span> il, <span class="type">int</span> ir, <span class="type">int</span> pl, <span class="type">int</span> pr)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> root = post[pr];</span><br><span class="line">    <span class="type">int</span> k = pos[root];		<span class="comment">// 优化时间复杂度 O(1)</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 记录前序序列 */</span></span><br><span class="line">    <span class="comment">// pre[cnt ++] = root;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(il &lt; k)</span><br><span class="line">        l[root] = build(il, k - <span class="number">1</span>, pl, pl + (k - <span class="number">1</span> - il));</span><br><span class="line">    <span class="keyword">if</span>(k &lt; ir)</span><br><span class="line">        r[root] = build(k + <span class="number">1</span>, ir, pl + (k - <span class="number">1</span> - il) + <span class="number">1</span>, pr - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> root;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;post[i]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;in[i]);</span><br><span class="line">        pos[in[i]] = i;        <span class="comment">// 哈希表记录每个数在中序遍历的下标</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// root 为二叉树的根节点</span></span><br><span class="line">    <span class="type">int</span> root = build(<span class="number">0</span>, n - <span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="例题-1">例题</h3>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790598/">AcWing
-1497. 树的遍历 - AcWing</a></li>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790623/">AcWing
-1620. Z 字形遍历二叉树 - AcWing</a></li>
+<h3 id="例题-1"><a href="#例题-1" class="headerlink" title="例题"></a>例题</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790598/">AcWing 1497. 树的遍历 - AcWing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790623/">AcWing 1620. Z 字形遍历二叉树 - AcWing</a></li>
 </ul>
-<h2 id="中序建树">中序建树</h2>
-<h3 id="模板-1">模板</h3>
-<ul>
-<li><strong>时间复杂度</strong>：<span
-class="math inline">\(O(n)\)</span></li>
+<h2 id="中序建树"><a href="#中序建树" class="headerlink" title="中序建树"></a>中序建树</h2><h3 id="模板-1"><a href="#模板-1" class="headerlink" title="模板"></a>模板</h3><ul>
+<li><strong>时间复杂度</strong>：$O(n)$</li>
 </ul>
 <blockquote>
-<p>注意：前提是二叉树中每个节点的权值互不相同，我们才能用哈希表记录中序序列各节点对应的下标</p>
+<p>  注意：前提是二叉树中每个节点的权值互不相同，我们才能用哈希表记录中序序列各节点对应的下标</p>
 </blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> in[N], pre[N];			<span class="comment">// n 个节点的中序序列、前序序列</span></span><br><span class="line"><span class="type">int</span> post[N], cnt;			<span class="comment">// 建图的同时记录 n 个节点的后序序列</span></span><br><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt; l, r, pos;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">build</span><span class="params">(<span class="type">int</span> il, <span class="type">int</span> ir, <span class="type">int</span> pl, <span class="type">int</span> pr)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> root = pre[pl];</span><br><span class="line">    <span class="type">int</span> k = pos[root];		<span class="comment">// 优化时间复杂度 O(1)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(il &lt; k)</span><br><span class="line">        l[root] = build(il, k - <span class="number">1</span>, pl + <span class="number">1</span>, pl + <span class="number">1</span> + k - <span class="number">1</span> - il);</span><br><span class="line">    <span class="keyword">if</span>(k &lt; ir)</span><br><span class="line">        r[root] = build(k + <span class="number">1</span>, ir, pl + <span class="number">1</span> + k - <span class="number">1</span> - il + <span class="number">1</span>, pr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 记录后序序列 */</span></span><br><span class="line">    <span class="comment">// post[cnt ++] = root;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> root;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;pre[i]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;in[i]);</span><br><span class="line">        pos[in[i]] = i;        <span class="comment">// 哈希表记录每个数在中序遍历的下标</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// root 为二叉树的根节点</span></span><br><span class="line">    <span class="type">int</span> root = build(<span class="number">0</span>, n - <span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="例题-2">例题</h3>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790607/">AcWing
-1631. 后序遍历 - AcWing</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251933/">AcWing
-2019 清华软院 T2. 二叉树算权 - AcWing</a></li>
+<h3 id="例题-2"><a href="#例题-2" class="headerlink" title="例题"></a>例题</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790607/">AcWing 1631. 后序遍历 - AcWing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251933/">AcWing 2019 清华软院 T2. 二叉树算权 - AcWing</a></li>
 </ul>
-<h2 id="前序和后序">前序和后序</h2>
-<p>已知二叉树的前序序列和后序序列，<strong>无法唯一确定</strong>
-这个二叉树，但是我们可以确定每个子树的形状和个数，仅仅是子树的位置不能确定</p>
+<h2 id="前序和后序"><a href="#前序和后序" class="headerlink" title="前序和后序"></a>前序和后序</h2><p>已知二叉树的前序序列和后序序列，<strong>无法唯一确定</strong> 这个二叉树，但是我们可以确定每个子树的形状和个数，仅仅是子树的位置不能确定</p>
 <ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8793054/">AcWing
-1609. 前序和后序遍历 - AcWing</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251849/">AcWing
-3486. 前序和后序 - AcWing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8793054/">AcWing 1609. 前序和后序遍历 - AcWing</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251849/">AcWing 3486. 前序和后序 - AcWing</a></li>
 </ul>
-<h1 id="完全二叉树">完全二叉树</h1>
-<h2 id="存储-1">存储</h2>
-<p>完全二叉树采用 <strong>数组</strong> 存储</p>
+<h1 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h1><h2 id="存储-1"><a href="#存储-1" class="headerlink" title="存储"></a>存储</h2><p>完全二叉树采用 <strong>数组</strong> 存储</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">5</span>;</span><br><span class="line"><span class="type">int</span> a[N];</span><br></pre></td></tr></table></figure>
-<h2 id="性质">性质</h2>
-<p>完全二叉树的性质如下：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408230026116.jpeg"
-alt="7476a7cbe9d1fbd33df03cf13ab37b4" />
-<figcaption
-aria-hidden="true">7476a7cbe9d1fbd33df03cf13ab37b4</figcaption>
-</figure>
-<ol type="1">
-<li><strong><font color='red'> 从 1 号单元开始存储树节点
-</font></strong>（0 号单元存节点的个数）</li>
-<li>节点 <span class="math inline">\(i\)</span> 左子树是 <span
-class="math inline">\(2i\)</span>，右子树是 <span
-class="math inline">\(2i+1\)</span>，根节点是 <span
-class="math inline">\(\lfloor i/2 \rfloor\)</span>，左兄弟是 <span
-class="math inline">\(i-1\)</span>，右兄弟 <span
-class="math inline">\(i+1\)</span></li>
-<li>第 <span class="math inline">\(d\)</span> 层最多有 <span
-class="math inline">\(2^{d-1}\)</span>，<strong>起始节点</strong> 编号为
-<span class="math inline">\(2^{d-1}\)</span>（<span
-class="math inline">\(d\)</span> 从 <span
-class="math inline">\(1\)</span> 开始）</li>
-<li>如果完全二叉树一共有 <span class="math inline">\(n\)</span>
-个节点，则 <strong>非</strong> 叶子节点为 <span
-class="math inline">\(T[0…n/2]\)</span>，叶节点为 <span
-class="math inline">\(T[n/2+1,…,n]\)</span></li>
+<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>完全二叉树的性质如下：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408230026116.jpeg" alt="7476a7cbe9d1fbd33df03cf13ab37b4"></p>
+<ol>
+<li><strong><font color='red'> 从 1 号单元开始存储树节点 </font></strong>（0 号单元存节点的个数）</li>
+<li>节点 $i$ 左子树是 $2i$，右子树是 $2i+1$，根节点是 $\lfloor i/2 \rfloor$，左兄弟是 $i-1$，右兄弟 $i+1$</li>
+<li>第 $d$ 层最多有 $2^{d-1}$，<strong>起始节点</strong> 编号为 $2^{d-1}$（$d$ 从 $1$ 开始）</li>
+<li>如果完全二叉树一共有 $n$ 个节点，则 <strong>非</strong> 叶子节点为 $T[0…n/2]$，叶节点为 $T[n/2+1,…,n]$</li>
 </ol>
-<h2 id="例题-3">例题</h2>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251776/">AcWing
-1240. 完全二叉树的权值 - AcWing</a></li>
+<h2 id="例题-3"><a href="#例题-3" class="headerlink" title="例题"></a>例题</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/solution/content/251776/">AcWing 1240. 完全二叉树的权值 - AcWing</a></li>
 </ul>
-<h1 id="二叉搜索树bst">二叉搜索树(BST)</h1>
-<p>==<strong><font color='blue'> 二叉搜索树 </font></strong> ==
-<strong><font color='blue'> 二叉查找树 </font></strong> （Binary Search
-Tree） == <strong><font color='blue'> 二叉排序树 </font></strong>
-（Binary Sort Tree）==</p>
+<h1 id="二叉搜索树-BST"><a href="#二叉搜索树-BST" class="headerlink" title="二叉搜索树(BST)"></a>二叉搜索树(BST)</h1><p>==<strong><font color='blue'> 二叉搜索树 </font></strong> == <strong><font color='blue'> 二叉查找树 </font></strong> （Binary Search Tree） == <strong><font color='blue'> 二叉排序树 </font></strong> （Binary Sort Tree）==</p>
 <ul>
-<li>若它的左子树不空，则 <strong>左子树</strong> 上
-<strong>所有</strong> 结点的值均 <font color='red'>
-<strong>小于</strong> </font> 根结点的值;</li>
-<li>若它的右子树不空，则 <strong>右子树</strong> 上
-<strong>所有</strong> 结点的值均 <font color='red'>
-<strong>大于等于</strong> </font> 根结点的值;</li>
+<li>若它的左子树不空，则 <strong>左子树</strong> 上 <strong>所有</strong> 结点的值均 <font color='red'> <strong>小于</strong> </font> 根结点的值;</li>
+<li>若它的右子树不空，则 <strong>右子树</strong> 上 <strong>所有</strong> 结点的值均 <font color='red'> <strong>大于等于</strong> </font> 根结点的值;</li>
 <li>它的左、右子树也都分别是 <strong>二又搜索树</strong></li>
 </ul>
 <blockquote>
-<p>注意：上述定义在不同题目中，等号的位置可能不一样（即也有可能左子树均小于等于根节点，右子树均大于根节点）</p>
+<p>  注意：上述定义在不同题目中，等号的位置可能不一样（即也有可能左子树均小于等于根节点，右子树均大于根节点）</p>
 </blockquote>
-<h2 id="性质-1">性质</h2>
-<ul>
-<li><strong>二叉排序树</strong> 的 <strong><font color='red'> 中序遍历
-</font></strong> 是 <strong><font color='gree'> 递增 </font></strong>
-序列</li>
+<h2 id="性质-1"><a href="#性质-1" class="headerlink" title="性质"></a>性质</h2><ul>
+<li><strong>二叉排序树</strong> 的 <strong><font color='red'> 中序遍历 </font></strong> 是 <strong><font color='gree'> 递增 </font></strong> 序列</li>
 </ul>
 <blockquote>
-<p>在构造二叉排序树时，若关键字序列有序，则二叉排序树的高度最大</p>
+<p>  在构造二叉排序树时，若关键字序列有序，则二叉排序树的高度最大</p>
 </blockquote>
-<h2 id="例题-4">例题</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790764/">AcWing
-1527. 判断二叉搜索树 - AcWing</a></li>
+<h2 id="例题-4"><a href="#例题-4" class="headerlink" title="例题"></a>例题</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/code/content/8790764/">AcWing 1527. 判断二叉搜索树 - AcWing</a></li>
 </ul>
 
     
@@ -606,7 +517,7 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8"><span class="toc-number">1.1.</span> <span class="toc-text">存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86"><span class="toc-number">1.2.</span> <span class="toc-text">非递归遍历</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="toc-number">1.3.</span> <span class="toc-text">层序遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E5%BA%8F%E4%B8%AD%E5%BA%8F%E5%BB%BA%E6%A0%91"><span class="toc-number">1.4.</span> <span class="toc-text">后序中序建树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.4.1.</span> <span class="toc-text">模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-1"><span class="toc-number">1.4.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E5%BA%8F%E5%BB%BA%E6%A0%91"><span class="toc-number">1.5.</span> <span class="toc-text">中序建树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-2"><span class="toc-number">1.5.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E5%BA%8F%E5%92%8C%E5%90%8E%E5%BA%8F"><span class="toc-number">1.6.</span> <span class="toc-text">前序和后序</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">2.</span> <span class="toc-text">完全二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8-1"><span class="toc-number">2.1.</span> <span class="toc-text">存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8"><span class="toc-number">2.2.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-3"><span class="toc-number">2.3.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91bst"><span class="toc-number">3.</span> <span class="toc-text">二叉搜索树(BST)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8-1"><span class="toc-number">3.1.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-4"><span class="toc-number">3.2.</span> <span class="toc-text">例题</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8"><span class="toc-number">1.1.</span> <span class="toc-text">存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86"><span class="toc-number">1.2.</span> <span class="toc-text">非递归遍历</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="toc-number">1.3.</span> <span class="toc-text">层序遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E5%BA%8F%E4%B8%AD%E5%BA%8F%E5%BB%BA%E6%A0%91"><span class="toc-number">1.4.</span> <span class="toc-text">后序中序建树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.4.1.</span> <span class="toc-text">模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-1"><span class="toc-number">1.4.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E5%BA%8F%E5%BB%BA%E6%A0%91"><span class="toc-number">1.5.</span> <span class="toc-text">中序建树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-2"><span class="toc-number">1.5.2.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E5%BA%8F%E5%92%8C%E5%90%8E%E5%BA%8F"><span class="toc-number">1.6.</span> <span class="toc-text">前序和后序</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">2.</span> <span class="toc-text">完全二叉树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8-1"><span class="toc-number">2.1.</span> <span class="toc-text">存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8"><span class="toc-number">2.2.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-3"><span class="toc-number">2.3.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91-BST"><span class="toc-number">3.</span> <span class="toc-text">二叉搜索树(BST)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8-1"><span class="toc-number">3.1.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98-4"><span class="toc-number">3.2.</span> <span class="toc-text">例题</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -789,11 +700,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -817,19 +728,19 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,11 +752,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -857,7 +768,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -865,19 +784,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -885,7 +796,19 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -901,27 +824,15 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -941,11 +852,11 @@ target="_blank" rel="noopener" href="https://www.acwing.com/activity/content/cod
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

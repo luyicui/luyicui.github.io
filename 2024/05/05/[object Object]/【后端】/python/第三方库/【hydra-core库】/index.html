@@ -10,22 +10,20 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="【hydra-core库】在训练深度学习模型的时候，我们经常需要在很多模型&#x2F;超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用 Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到 Slurm 管理的远程计算集群运行。 Hydra 简介Hydra 是一个开源的 Python 框架，它可以通过组合（composition）动态地创建分层配置，并通过">
+  <meta name="description" content="【hydra-core库】 在训练深度学习模型的时候，我们经常需要在很多模型&#x2F;超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用 Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到 Slurm 管理的远程计算集群运行。 Hydra 简介 Hydra 是一个开源的 Python 框架，它可以通过组合（composition）动态地创建">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【hydra-core库】">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90hydra-core%E5%BA%93%E3%80%91/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="【hydra-core库】在训练深度学习模型的时候，我们经常需要在很多模型&#x2F;超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用 Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到 Slurm 管理的远程计算集群运行。 Hydra 简介Hydra 是一个开源的 Python 框架，它可以通过组合（composition）动态地创建分层配置，并通过">
+<meta property="og:description" content="【hydra-core库】 在训练深度学习模型的时候，我们经常需要在很多模型&#x2F;超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用 Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到 Slurm 管理的远程计算集群运行。 Hydra 简介 Hydra 是一个开源的 Python 框架，它可以通过组合（composition）动态地创建">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031019429.jpeg">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501030038365.jpeg">
 <meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031311137.png">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-05T16:01:50.791Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031019429.jpeg">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031311137.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -266,71 +264,104 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【hydra-core库】"><a href="#【hydra-core库】" class="headerlink" title="【hydra-core库】"></a>【hydra-core库】</h1><p>在训练深度学习模型的时候，我们经常需要在很多模型/超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用 Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到 Slurm 管理的远程计算集群运行。</p>
-<h2 id="Hydra-简介"><a href="#Hydra-简介" class="headerlink" title="Hydra 简介"></a>Hydra 简介</h2><p>Hydra 是一个开源的 Python 框架，它可以通过组合（composition）动态地创建分层配置，并通过配置文件和命令行覆写配置。Hydra 意为“九头蛇”，因其可以处理多任务而得名。</p>
-<p>这里是 Hydra 的官方文档 <a href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/intro/">Getting started | Hydra</a> 。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031019429.jpeg" alt="img"></p>
-<h2 id="YAML"><a href="#YAML" class="headerlink" title="YAML"></a>YAML</h2><ul>
-<li>YAML（YAML Ain’t Markup Language）是一种人类可读的数据序列化语言。它的设计目标是使数据在不同编程语言之间交换和共享变得简单。YAML 采用了一种简洁、直观的语法，以易于阅读和编写的方式表示数据结构。</li>
-<li>YAML 广泛应用于配置文件、数据序列化、API 设计和许多其他领域。它被许多编程语言和框架所支持，包括 Python、Java、Ruby 等。在 Python 中，可以使用 PyYAML 库来读取和写入 YAML 文件。</li>
-<li>YAML 的优点包括易读性高、易于理解、与多种编程语言兼容以及支持丰富的数据结构。它的简洁语法使得配置文件变得更加直观和可维护。无论是作为配置文件格式还是数据交换格式，YAML 都是一个强大而受欢迎的选择。</li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/145173920">一文看懂 YAML - 知乎</a></li>
+    <h1 id="hydra-core库">【hydra-core库】</h1>
+<p>在训练深度学习模型的时候，我们经常需要在很多模型/超参数配置上做实验，手动一个个跑通常难以管理而且费时费力。本文将介绍如何使用
+Hydra 框架高效地跑各种超参数配置的深度学习实验，包括在本地运行以及提交到
+Slurm 管理的远程计算集群运行。</p>
+<h2 id="hydra-简介">Hydra 简介</h2>
+<p>Hydra 是一个开源的 Python
+框架，它可以通过组合（composition）动态地创建分层配置，并通过配置文件和命令行覆写配置。Hydra
+意为“九头蛇”，因其可以处理多任务而得名。</p>
+<p>这里是 Hydra 的官方文档 <a
+href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/intro/">Getting
+started | Hydra</a> 。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031019429.jpeg"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h2 id="yaml">YAML</h2>
+<ul>
+<li>YAML（YAML Ain't Markup
+Language）是一种人类可读的数据序列化语言。它的设计目标是使数据在不同编程语言之间交换和共享变得简单。YAML
+采用了一种简洁、直观的语法，以易于阅读和编写的方式表示数据结构。</li>
+<li>YAML 广泛应用于配置文件、数据序列化、API
+设计和许多其他领域。它被许多编程语言和框架所支持，包括
+Python、Java、Ruby 等。在 Python 中，可以使用 PyYAML 库来读取和写入 YAML
+文件。</li>
+<li>YAML
+的优点包括易读性高、易于理解、与多种编程语言兼容以及支持丰富的数据结构。它的简洁语法使得配置文件变得更加直观和可维护。无论是作为配置文件格式还是数据交换格式，YAML
+都是一个强大而受欢迎的选择。</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/145173920">一文看懂 YAML -
+知乎</a></li>
 </ul>
-<h3 id="YAML-语法规范"><a href="#YAML-语法规范" class="headerlink" title="YAML 语法规范"></a>YAML 语法规范</h3><p>YAML 的语法特点包括：</p>
-<ol>
+<h3 id="yaml-语法规范">YAML 语法规范</h3>
+<p>YAML 的语法特点包括：</p>
+<ol type="1">
 <li><p>YAML 使用空格进行<strong>缩进</strong>来表示层级关系</p>
-<ol>
+<ol type="1">
 <li>缩进不允许使用 tab，只允许空格</li>
 <li>缩进的空格数不重要，但同一层级必须左对齐。</li>
-<li><strong>缩进的空格数目可以是 2 个或 4 个，但在整个文档中必须保持一致</strong></li>
+<li><strong>缩进的空格数目可以是 2 个或 4
+个，但在整个文档中必须保持一致</strong></li>
 </ol>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">train_setting1:</span></span><br><span class="line">    <span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line"><span class="attr">train_setting2:</span></span><br><span class="line">    <span class="attr">n_epoches:</span> <span class="number">4</span></span><br><span class="line">    <span class="attr">lr:</span> <span class="number">5e-3</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>大小写敏感</p>
-</li>
-<li><p>YAML 使用键值对的形式存储数据，键和值之间以<strong>冒号+空格</strong>分开</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line"><span class="attr">dataset:</span> <span class="string">ogbn-arxiv</span></span><br><span class="line"><span class="attr">add_self_loop:</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>支持列表和嵌套结构</p>
-</li>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">train_setting1:</span></span><br><span class="line">    <span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line"><span class="attr">train_setting2:</span></span><br><span class="line">    <span class="attr">n_epoches:</span> <span class="number">4</span></span><br><span class="line">    <span class="attr">lr:</span> <span class="number">5e-3</span></span><br></pre></td></tr></table></figure></li>
+<li><p>大小写敏感</p></li>
+<li><p>YAML
+使用键值对的形式存储数据，键和值之间以<strong>冒号+空格</strong>分开</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line"><span class="attr">dataset:</span> <span class="string">ogbn-arxiv</span></span><br><span class="line"><span class="attr">add_self_loop:</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure></li>
+<li><p>支持列表和嵌套结构</p></li>
 <li><p>YAML 支持单行注释，以井号（#）开头</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span> <span class="comment"># epoch数量</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span> <span class="comment"># 学习率</span></span><br><span class="line"><span class="attr">dataset:</span> <span class="string">ogbn-arxiv</span> <span class="comment"># 数据集</span></span><br><span class="line"><span class="attr">add_self_loop:</span> <span class="literal">False</span> <span class="comment"># 是否加入自环</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>支持引用和锚点，可以在文档中引用其他部分的数据</p>
-</li>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span> <span class="comment"># epoch数量</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span> <span class="comment"># 学习率</span></span><br><span class="line"><span class="attr">dataset:</span> <span class="string">ogbn-arxiv</span> <span class="comment"># 数据集</span></span><br><span class="line"><span class="attr">add_self_loop:</span> <span class="literal">False</span> <span class="comment"># 是否加入自环</span></span><br></pre></td></tr></table></figure></li>
+<li><p>支持引用和锚点，可以在文档中引用其他部分的数据</p></li>
 </ol>
-<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><p>YAML（YAML Ain’t Markup Language）支持多种数据类型，包括字符串、数字、布尔值、列表、字典和空值。下面是每种数据类型的示例代码和相应的语法规范：</p>
-<h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><ul>
+<h3 id="数据类型">数据类型</h3>
+<p>YAML（YAML Ain't Markup
+Language）支持多种数据类型，包括字符串、数字、布尔值、列表、字典和空值。下面是每种数据类型的示例代码和相应的语法规范：</p>
+<h4 id="字符串">字符串</h4>
+<ul>
 <li>语法规范：使用单引号或双引号将字符串括起来。字符串的引号也可以省略</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 字符串可以加双引号也可以不加</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">&quot;John&quot;</span></span><br><span class="line"><span class="attr">dataset:</span> <span class="string">gsm8k</span></span><br></pre></td></tr></table></figure>
-<h4 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h4><ul>
+<h4 id="数字">数字</h4>
+<ul>
 <li>语法规范：直接写入数字即可。</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span> <span class="comment"># 整数</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span> <span class="comment"># 科学计数法表示的浮点数</span></span><br></pre></td></tr></table></figure>
-<h4 id="布尔值"><a href="#布尔值" class="headerlink" title="布尔值"></a>布尔值</h4><ul>
+<h4 id="布尔值">布尔值</h4>
+<ul>
 <li>语法规范：使用 true 表示真，使用 false 表示假。</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">isStudent:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">isTeacher:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h4 id="列表-数组"><a href="#列表-数组" class="headerlink" title="列表/数组"></a>列表/数组</h4><ul>
+<h4 id="列表数组">列表/数组</h4>
+<ul>
 <li>语法规范：包括区块格式（短杠+空格行）和内联格式（方括号包裹）</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 区块格式</span></span><br><span class="line"><span class="attr">lr_list:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="number">1e-3</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="number">3e-4</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="number">1e-4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 内联格式</span></span><br><span class="line"><span class="attr">dataset_list:</span> [<span class="string">ogbn-arxiv</span>, <span class="string">ogbn-papers100M</span>]</span><br></pre></td></tr></table></figure>
-<h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><ul>
+<h4 id="字典">字典</h4>
+<ul>
 <li>语法规范：使用冒号（:）表示键值对，键值对之间使用空格进行分隔。</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">person:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">&quot;John&quot;</span></span><br><span class="line">    <span class="attr">age:</span> <span class="number">30</span></span><br></pre></td></tr></table></figure>
-<h4 id="空值"><a href="#空值" class="headerlink" title="空值"></a>空值</h4><ul>
+<h4 id="空值">空值</h4>
+<ul>
 <li>语法规范：使用 null 表示空值。</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">status:</span> <span class="literal">null</span></span><br></pre></td></tr></table></figure>
-<p>这些是 YAML 支持的常见数据类型和相应的示例代码。您可以根据需要使用这些数据类型来构建复杂的数据结构。</p>
-<h3 id="python-操作-YAML"><a href="#python-操作-YAML" class="headerlink" title="python 操作 YAML"></a>python 操作 YAML</h3><ul>
-<li>Python 提供了 pyyaml 库来操作 YAML 文件，操作 yaml 文件之前，先安装好 <code>pyyaml</code> 库。</li>
-<li>在终端 (Pycharm-Terminal) 或命令提示符 (cmd) 中运行以下命令来安装 pyyaml 库：<code>pip install pyyaml</code></li>
+<p>这些是 YAML
+支持的常见数据类型和相应的示例代码。您可以根据需要使用这些数据类型来构建复杂的数据结构。</p>
+<h3 id="python-操作-yaml">python 操作 YAML</h3>
+<ul>
+<li>Python 提供了 pyyaml 库来操作 YAML 文件，操作 yaml
+文件之前，先安装好 <code>pyyaml</code> 库。</li>
+<li>在终端 (Pycharm-Terminal) 或命令提示符 (cmd) 中运行以下命令来安装
+pyyaml 库：<code>pip install pyyaml</code></li>
 </ul>
-<h4 id="python-读取-yaml-文件"><a href="#python-读取-yaml-文件" class="headerlink" title="python 读取 yaml 文件"></a>python 读取 yaml 文件</h4><ul>
-<li>第一步：提前准备好的 yaml 文件，yaml 文件后缀为 <code>.yaml</code> 或者 <code>.yml</code></li>
+<h4 id="python-读取-yaml-文件">python 读取 yaml 文件</h4>
+<ul>
+<li>第一步：提前准备好的 yaml 文件，yaml 文件后缀为 <code>.yaml</code>
+或者 <code>.yml</code></li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">&quot;John&quot;</span></span><br><span class="line"><span class="attr">addr:</span> <span class="string">&quot;长沙&quot;</span></span><br><span class="line"><span class="attr">age:</span> <span class="number">18</span></span><br><span class="line"><span class="attr">status:</span> <span class="literal">null</span></span><br><span class="line"><span class="attr">isStudent:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">fruits:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">apple</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">banana</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">orange</span></span><br><span class="line"><span class="attr">teacher:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">&quot;Alex&quot;</span></span><br><span class="line">    <span class="attr">age:</span> <span class="number">30</span></span><br></pre></td></tr></table></figure>
 <ul>
@@ -338,40 +369,65 @@
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> yaml</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(file=<span class="string">&quot;d.yaml&quot;</span>, mode=<span class="string">&quot;r&quot;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    res = yaml.safe_load(f)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
 <ul>
-<li><code>yaml.safe_load()</code> 方法：读取 YAML 文件中的数据，其参数是文件对象</li>
-<li>运行结果：<strong>会自动将 yaml 中的数据转为 python 所支持的数据类型</strong></li>
+<li><code>yaml.safe_load()</code> 方法：读取 YAML
+文件中的数据，其参数是文件对象</li>
+<li>运行结果：<strong>会自动将 yaml 中的数据转为 python
+所支持的数据类型</strong></li>
 </ul>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501030038365.jpeg" alt=""></p>
-<h4 id="python-将数据写入-yaml-文件"><a href="#python-将数据写入-yaml-文件" class="headerlink" title="python 将数据写入 yaml 文件"></a>python 将数据写入 yaml 文件</h4><ul>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501030038365.jpeg" /></p>
+<h4 id="python-将数据写入-yaml-文件">python 将数据写入 yaml 文件</h4>
+<ul>
 <li><p>第一步：将 python 指定的变量值写入 yaml 文件中</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> yaml</span><br><span class="line"> </span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;Person&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;name&quot;</span>: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">        <span class="string">&quot;age&quot;</span>: <span class="number">30</span>,</span><br><span class="line">        <span class="string">&quot;address&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;street&quot;</span>: <span class="string">&quot;123 Main St&quot;</span>,</span><br><span class="line">            <span class="string">&quot;city&quot;</span>: <span class="string">&quot;Anytown&quot;</span>,</span><br><span class="line">            <span class="string">&quot;state&quot;</span>: <span class="string">&quot;CA&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 将 data 变量存储的数据写入 YAML 文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(file=<span class="string">&quot;example.yaml&quot;</span>, mode=<span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    yaml.dump(data, f)</span><br></pre></td></tr></table></figure>
-<p><code>yaml.dump()</code> 方法：将数据写入到 yaml 文件中。<code>yaml.dump()</code> 方法的第一个参数是写入数据，第二个参数是文件对象。</p>
-</li>
+<p><code>yaml.dump()</code> 方法：将数据写入到 yaml
+文件中。<code>yaml.dump()</code>
+方法的第一个参数是写入数据，第二个参数是文件对象。</p></li>
 <li><p>第二步：查看 example.yaml 中的显示</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Person:</span></span><br><span class="line">  <span class="attr">address:</span></span><br><span class="line">    <span class="attr">city:</span> <span class="string">Anytown</span></span><br><span class="line">    <span class="attr">state:</span> <span class="string">CA</span></span><br><span class="line">    <span class="attr">street:</span> <span class="number">123</span> <span class="string">Main</span> <span class="string">St</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">30</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">John</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Person:</span></span><br><span class="line">  <span class="attr">address:</span></span><br><span class="line">    <span class="attr">city:</span> <span class="string">Anytown</span></span><br><span class="line">    <span class="attr">state:</span> <span class="string">CA</span></span><br><span class="line">    <span class="attr">street:</span> <span class="number">123</span> <span class="string">Main</span> <span class="string">St</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">30</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">John</span></span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><p>这一段主要基于官方的 Getting Started （<a href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/intro/%23basic-example">Getting started | Hydra</a>），我加入了一些自己的解释和拓展，并做了一些改编使之更贴近于深度学习的场景。</p>
-<h3 id="安装-Hydra"><a href="#安装-Hydra" class="headerlink" title="安装 Hydra"></a>安装 Hydra</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::hydra-core</span><br></pre></td></tr></table></figure>
-<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h4><p>Hydra使用YAML文件进行配置管理，我们首先把需要的配置写在 <code>config.yaml</code> 中</p>
+<h2 id="基本用法">基本用法</h2>
+<p>这一段主要基于官方的 Getting Started （<a
+href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/intro/%23basic-example">Getting
+started |
+Hydra</a>），我加入了一些自己的解释和拓展，并做了一些改编使之更贴近于深度学习的场景。</p>
+<h3 id="安装-hydra">安装 Hydra</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::hydra-core</span><br></pre></td></tr></table></figure>
+<h3 id="基本操作">基本操作</h3>
+<h4 id="创建配置文件">创建配置文件</h4>
+<p>Hydra使用YAML文件进行配置管理，我们首先把需要的配置写在
+<code>config.yaml</code> 中</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">train_setting:</span></span><br><span class="line">    <span class="attr">model:</span> <span class="string">GCN</span></span><br><span class="line">    <span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line">    <span class="attr">batch_size:</span> <span class="number">512</span></span><br></pre></td></tr></table></figure>
-<p>并把这个配置文件放在和我们的程序 <code>my_app.py</code> 同一级的文件夹 <code>conf</code> 里，文件树如下。</p>
+<p>并把这个配置文件放在和我们的程序 <code>my_app.py</code>
+同一级的文件夹 <code>conf</code> 里，文件树如下。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├── conf</span><br><span class="line">│   ├── config.yaml</span><br><span class="line">│   └── __init__.py  </span><br><span class="line">│── my_app.py</span><br><span class="line">└── main.py</span><br></pre></td></tr></table></figure>
-<h4 id="加载配置"><a href="#加载配置" class="headerlink" title="加载配置"></a>加载配置</h4><p>要加载配置文件，可以使用 Hydra 的 <code>@hydra.main</code> 装饰器和 <code>hydra.utils.to_absolute_path</code> 函数，例如我们在程序 <code>my_app.py</code> 中：</p>
+<h4 id="加载配置">加载配置</h4>
+<p>要加载配置文件，可以使用 Hydra 的 <code>@hydra.main</code> 装饰器和
+<code>hydra.utils.to_absolute_path</code> 函数，例如我们在程序
+<code>my_app.py</code> 中：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hydra  </span><br><span class="line"><span class="keyword">from</span> omegaconf <span class="keyword">import</span> DictConfig, OmegaConf</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">model: <span class="built_in">str</span>, n_epoches: <span class="built_in">int</span>, lr: <span class="built_in">float</span>, batch_size: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Start training...&quot;</span>)</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># version_base用于选择Hydra在不同版本下的表现，不是很重要，具体请自行查阅https://hydra.cc/docs/upgrades/version_base/</span></span><br><span class="line"><span class="comment"># config_path表示配置文件所在路径</span></span><br><span class="line"><span class="comment"># config_name表示配置文件文件名，不包含后缀</span></span><br><span class="line"><span class="meta">@hydra.main(<span class="params">version_base = <span class="literal">None</span>, config_path=<span class="string">&quot;conf&quot;</span>, config_name=<span class="string">&quot;config&quot;</span></span>)  </span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_app</span>(<span class="params">cfg: DictConfig</span>) -&gt; <span class="literal">None</span>: </span><br><span class="line">    <span class="built_in">print</span>(OmegaConf.to_yaml(cfg)) <span class="comment"># 打印配置</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 像属性一样访问配置</span></span><br><span class="line">    model: <span class="built_in">str</span> = cfg.train_setting.model </span><br><span class="line">    n_epoches: <span class="built_in">int</span> = cfg.train_setting.n_epoches</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 像字典一样访问配置</span></span><br><span class="line">    lr: <span class="built_in">float</span> = cfg[<span class="string">&#x27;train_setting&#x27;</span>][<span class="string">&#x27;lr&#x27;</span>]</span><br><span class="line">    batch_size: <span class="built_in">int</span> = cfg[<span class="string">&#x27;train_setting&#x27;</span>][<span class="string">&#x27;batch_size&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    train(model, n_epoches, lr, batch_size) <span class="comment"># 用给定配置训练模型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:  </span><br><span class="line">    my_app()</span><br></pre></td></tr></table></figure>
 <p>这时，我们运行程序，配置 <code>config.yaml</code> 会被自动加载。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py</span><br><span class="line"></span><br><span class="line">train_setting:</span><br><span class="line">    model: GCN</span><br><span class="line">    n_epoches: 3</span><br><span class="line">    lr: 5e-4</span><br><span class="line">    batch_size: 512</span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
-<h4 id="命令行覆盖"><a href="#命令行覆盖" class="headerlink" title="命令行覆盖"></a>命令行覆盖</h4><p>我们也可以通过命令行覆盖配置中的值。</p>
+<h4 id="命令行覆盖">命令行覆盖</h4>
+<p>我们也可以通过命令行覆盖配置中的值。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py train_setting.model=SAGE train_setting.n_epoches=4</span><br><span class="line"></span><br><span class="line">train_setting:</span><br><span class="line">    model: SAGE</span><br><span class="line">    n_epoches: 4</span><br><span class="line">    lr: 5e-4</span><br><span class="line">    batch_size: 512</span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
-<h4 id="动态配置"><a href="#动态配置" class="headerlink" title="动态配置"></a>动态配置</h4><p>Hydra支持在运行时生成和修改配置。例如我们在程序 <code>main.py</code> 中：</p>
+<h4 id="动态配置">动态配置</h4>
+<p>Hydra支持在运行时生成和修改配置。例如我们在程序 <code>main.py</code>
+中：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hydra</span><br><span class="line"><span class="keyword">from</span> omegaconf <span class="keyword">import</span> DictConfig, OmegaConf</span><br><span class="line"> </span><br><span class="line"><span class="meta">@hydra.main(<span class="params">version_base = <span class="literal">None</span>, config_path=<span class="string">&quot;conf&quot;</span>, config_name=<span class="string">&quot;config&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">cfg: DictConfig</span>):</span><br><span class="line">    <span class="comment"># 动态创建新配置</span></span><br><span class="line">    new_config = OmegaConf.create(&#123;<span class="string">&quot;save_dir&quot;</span>: <span class="string">&quot;results&quot;</span>, <span class="string">&quot;num_worker&quot;</span>: <span class="number">16</span>&#125;)</span><br><span class="line">    <span class="comment"># 合并配置</span></span><br><span class="line">    cfg = OmegaConf.merge(cfg, new_config)</span><br><span class="line">    <span class="built_in">print</span>(cfg)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-<h3 id="高级功能"><a href="#高级功能" class="headerlink" title="高级功能"></a>高级功能</h3><h4 id="配置组"><a href="#配置组" class="headerlink" title="配置组"></a>配置组</h4><p>有时我们希望能对不同模型设置不同的超参数。我们可以在 <code>conf</code> 下创建一个名为 <code>train_setting</code> 的文件夹，为每个模型编写一个配置文件放入其中，这被称为一个配置组（configuration group）。文件树以及两个配置文件如下所示。</p>
+<h3 id="高级功能">高级功能</h3>
+<h4 id="配置组">配置组</h4>
+<p>有时我们希望能对不同模型设置不同的超参数。我们可以在
+<code>conf</code> 下创建一个名为 <code>train_setting</code>
+的文件夹，为每个模型编写一个配置文件放入其中，这被称为一个配置组（configuration
+group）。文件树以及两个配置文件如下所示。</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">├── conf  </span><br><span class="line">│   ├── config.yaml  </span><br><span class="line">│   ├── train_setting</span><br><span class="line">│       ├── GCN.yaml  </span><br><span class="line">│       └── SAGE.yaml  </span><br><span class="line">└── my_app.py</span><br></pre></td></tr></table></figure>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GCN.yaml</span></span><br><span class="line"><span class="attr">model:</span> <span class="string">GCN</span></span><br><span class="line"><span class="attr">n_epoches:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">5e-4</span></span><br><span class="line"><span class="attr">batch_size:</span> <span class="number">512</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># SAGE.yaml</span></span><br><span class="line"><span class="attr">model:</span> <span class="string">SAGE</span></span><br><span class="line"><span class="attr">n_epoches:</span> <span class="number">4</span></span><br><span class="line"><span class="attr">lr:</span> <span class="number">1e-4</span></span><br><span class="line"><span class="attr">batch_size:</span> <span class="number">1024</span></span><br></pre></td></tr></table></figure>
 <p>我们还需要在 <code>config.yaml</code> 中指定一个默认配置。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting:</span> <span class="string">GCN</span> </span><br><span class="line"><span class="comment"># 注意：这是一个数组，而非字典。在有冲突时，后面的配置会覆盖前面的。</span></span><br></pre></td></tr></table></figure>
-<p><code>defaults</code> 是一个特殊的指令，告诉 Hydra 在组合配置文件时使用 <code>train_setting/GCN.yaml</code>。</p>
+<p><code>defaults</code> 是一个特殊的指令，告诉 Hydra
+在组合配置文件时使用 <code>train_setting/GCN.yaml</code>。</p>
 <p>这时我们运行程序，会发现使用的是为 GCN 写的配置。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py</span><br><span class="line"></span><br><span class="line">train_setting:</span><br><span class="line">    model: GCN</span><br><span class="line">    n_epoches: 3</span><br><span class="line">    lr: 5e-4</span><br><span class="line">    batch_size: 512</span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
 <p>我们也可以指定使用为 SAGE 写的配置。</p>
@@ -385,21 +441,38 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting:</span> <span class="string">GCN</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting/GCN/decay_rate:</span> <span class="number">0.9</span> <span class="comment"># 新增</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting/GCN/n_epoches:</span> <span class="number">4</span> <span class="comment"># 覆盖</span></span><br></pre></td></tr></table></figure>
 <p>结果如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py</span><br><span class="line"></span><br><span class="line">train_setting:</span><br><span class="line">    model: GCN</span><br><span class="line">    n_epoches: 4</span><br><span class="line">    lr: 5e-4</span><br><span class="line">    batch_size: 512</span><br><span class="line">    decay_rate: 0.9</span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
-<p>此外，我们的主配置文件 <code>config.yaml</code> 也可以有自己的配置值。它通过 <code>_self_</code> 关键字添加到默认列表中。</p>
+<p>此外，我们的主配置文件 <code>config.yaml</code>
+也可以有自己的配置值。它通过 <code>_self_</code>
+关键字添加到默认列表中。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting:</span> <span class="string">GCN</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">_self_</span> </span><br><span class="line"><span class="comment"># 此时n_epoches会被修改。但若_self_在train_setting: GCN那一行之前则不会</span></span><br><span class="line"></span><br><span class="line"><span class="attr">train_setting:</span></span><br><span class="line">    <span class="attr">GCN:</span></span><br><span class="line">        <span class="attr">n_epoches:</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
 <p>结果如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py</span><br><span class="line"></span><br><span class="line">train_setting:</span><br><span class="line">    model: GCN</span><br><span class="line">    n_epoches: 4</span><br><span class="line">    lr: 5e-4</span><br><span class="line">    batch_size: 512</span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
-<h4 id="多次运行（multirun）"><a href="#多次运行（multirun）" class="headerlink" title="多次运行（multirun）"></a>多次运行（multirun）</h4><p>我们可以使用命令行标志 <code>--multirun</code> 或 <code>-r</code> 轻松地配置多次运行函数，例如我们可以指定不同的模型配置文件，假设 <code>config.yaml</code> 配置文件的内容是：</p>
+<h4 id="多次运行multirun">多次运行（multirun）</h4>
+<p>我们可以使用命令行标志 <code>--multirun</code> 或 <code>-r</code>
+轻松地配置多次运行函数，例如我们可以指定不同的模型配置文件，假设
+<code>config.yaml</code> 配置文件的内容是：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">train_setting:</span> <span class="string">GCN</span> </span><br><span class="line"><span class="comment"># 注意：这是一个数组，而非字典。在有冲突时，后面的配置会覆盖前面的。</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(open_reasoner) cuiluyi@g156:~/openr$ python my_app.py --multirun train_setting=GCN,SAGE</span><br><span class="line">[2025-01-03 11:39:45,347][HYDRA] Launching 2 jobs locally</span><br><span class="line">[2025-01-03 11:39:45,347][HYDRA]        #0 : train_setting=GCN</span><br><span class="line">train_setting:</span><br><span class="line">  model: GCN</span><br><span class="line">  n_epoches: 3</span><br><span class="line">  lr: 0.0005</span><br><span class="line">  batch_size: 512</span><br><span class="line"></span><br><span class="line">Start training...</span><br><span class="line">[2025-01-03 11:39:45,442][HYDRA]        #1 : train_setting=SAGE</span><br><span class="line">train_setting:</span><br><span class="line">  model: SAGE</span><br><span class="line">  n_epoches: 4</span><br><span class="line">  lr: 0.0001</span><br><span class="line">  batch_size: 1024</span><br></pre></td></tr></table></figure>
-<p>此外，我们也可以在命令行中使用 <code>--multirun</code> 和 <code>+key=val</code> 指定多值参数。注意：Hydra 默认只加载 <code>config.yaml</code> 和 <code>defaults</code> 中明确引入的内容。在多层次配置中，覆盖参数时需要用 <code>key=value</code> 指定准确的层次路径。例如，如果 <code>train_setting/GCN.yaml</code> 中的 <code>lr</code> 位于 <code>train_setting.lr</code> 下，你需要明确覆盖路径。</p>
+<p>此外，我们也可以在命令行中使用 <code>--multirun</code> 和
+<code>+key=val</code> 指定多值参数。注意：Hydra 默认只加载
+<code>config.yaml</code> 和 <code>defaults</code>
+中明确引入的内容。在多层次配置中，覆盖参数时需要用
+<code>key=value</code> 指定准确的层次路径。例如，如果
+<code>train_setting/GCN.yaml</code> 中的 <code>lr</code> 位于
+<code>train_setting.lr</code> 下，你需要明确覆盖路径。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(open_reasoner) cuiluyi@g156:~/openr$ python my_app.py --multirun train_setting.lr=<span class="number">0.01</span>,<span class="number">0.1</span> train_setting.batch_size=<span class="number">16</span>,<span class="number">32</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[2025-01-03 11:44:41,733][HYDRA] Launching 4 jobs locally</span><br><span class="line">[2025-01-03 11:44:41,733][HYDRA]        #0 : train_setting.lr=0.01 train_setting.batch_size=16</span><br><span class="line">train_setting:</span><br><span class="line">  model: GCN</span><br><span class="line">  n_epoches: 3</span><br><span class="line">  lr: 0.01</span><br><span class="line">  batch_size: 16</span><br><span class="line"></span><br><span class="line">Start training...</span><br><span class="line">[2025-01-03 11:44:41,835][HYDRA]        #1 : train_setting.lr=0.01 train_setting.batch_size=32</span><br><span class="line">train_setting:</span><br><span class="line">  model: GCN</span><br><span class="line">  n_epoches: 3</span><br><span class="line">  lr: 0.01</span><br><span class="line">  batch_size: 32</span><br><span class="line"></span><br><span class="line">Start training...</span><br><span class="line">[2025-01-03 11:44:41,924][HYDRA]        #2 : train_setting.lr=0.1 train_setting.batch_size=16</span><br><span class="line">train_setting:</span><br><span class="line">  model: GCN</span><br><span class="line">  n_epoches: 3</span><br><span class="line">  lr: 0.1</span><br><span class="line">  batch_size: 16</span><br><span class="line"></span><br><span class="line">Start training...</span><br><span class="line">[2025-01-03 11:44:42,013][HYDRA]        #3 : train_setting.lr=0.1 train_setting.batch_size=32</span><br><span class="line">train_setting:</span><br><span class="line">  model: GCN</span><br><span class="line">  n_epoches: 3</span><br><span class="line">  lr: 0.1</span><br><span class="line">  batch_size: 32</span><br><span class="line"></span><br><span class="line">Start training...</span><br></pre></td></tr></table></figure>
-<h3 id="Output-Working-directory"><a href="#Output-Working-directory" class="headerlink" title="Output/Working directory"></a>Output/Working directory</h3><p>默认情况下，Hydra会在工作文件夹（即程序所在文件夹）下创建<code>outputs/YYYY-mm-dd/HH-MM-SS</code>目录作为输出文件夹，输出文件夹下的基本结构如下：</p>
+<h3 id="outputworking-directory">Output/Working directory</h3>
+<p>默认情况下，Hydra会在工作文件夹（即程序所在文件夹）下创建<code>outputs/YYYY-mm-dd/HH-MM-SS</code>目录作为输出文件夹，输出文件夹下的基本结构如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├── .hydra</span><br><span class="line">│ ├── config.yaml（用户指定配置）</span><br><span class="line">│ ├── hydra.yaml（Hydra配置）</span><br><span class="line">│ └── overrides.yaml（命令行覆盖的配置）</span><br><span class="line">└── 程序名.log</span><br></pre></td></tr></table></figure>
 <p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501031311137.png" alt="image-20250103131126994" style="zoom: 33%;" /></p>
-<p>关于输出文件夹与工作文件夹的更改见<a target="_blank" rel="noopener" href="https://hydra.cc/docs/tutorials/basic/running_your_app/working_directory/">Output/Working directory</a>和<a target="_blank" rel="noopener" href="https://hydra.cc/docs/configure_hydra/workdir/">Customizing working directory pattern</a></p>
-<h3 id="Logging"><a href="#Logging" class="headerlink" title="Logging"></a>Logging</h3><p>Hydra设置了python的logging，以方便使用。默认情况下Hydra会在控制台和日志文件中记录<code>INFO</code>级别的信息，如：</p>
+<p>关于输出文件夹与工作文件夹的更改见<a
+target="_blank" rel="noopener" href="https://hydra.cc/docs/tutorials/basic/running_your_app/working_directory/">Output/Working
+directory</a>和<a
+target="_blank" rel="noopener" href="https://hydra.cc/docs/configure_hydra/workdir/">Customizing
+working directory pattern</a></p>
+<h3 id="logging">Logging</h3>
+<p>Hydra设置了python的logging，以方便使用。默认情况下Hydra会在控制台和日志文件中记录<code>INFO</code>级别的信息，如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> omegaconf <span class="keyword">import</span> DictConfig</span><br><span class="line"><span class="keyword">import</span> hydra</span><br><span class="line"></span><br><span class="line"><span class="comment"># A logger for this file</span></span><br><span class="line">log = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@hydra.main()</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_app</span>(<span class="params">_cfg: DictConfig</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    log.info(<span class="string">&quot;Info level message&quot;</span>)</span><br><span class="line">    log.debug(<span class="string">&quot;Debug level message&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    my_app()</span><br></pre></td></tr></table></figure>
 <p>控制台和日志文件中都会有</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YYYY-mm-dd HH:MM:SS,653[INFO] - Info level message</span><br></pre></td></tr></table></figure>
@@ -411,8 +484,11 @@
 </ul>
 <p>通过命令行设置<code>hydra/job_logging=disabled</code>取消logging输出</p>
 <p>通过命令行设置<code>hydra/job_logging=none</code>和<code>hydra/hydra_logging=none</code>取消Hydra配置logging</p>
-<p>关于logging的自定义见<a target="_blank" rel="noopener" href="https://hydra.cc/docs/configure_hydra/logging/">Customizing logging</a></p>
-<h3 id="Debugging"><a href="#Debugging" class="headerlink" title="Debugging"></a>Debugging</h3><p>通过设置命令行的<code>--cfg</code>或<code>-c</code>打印配置</p>
+<p>关于logging的自定义见<a
+target="_blank" rel="noopener" href="https://hydra.cc/docs/configure_hydra/logging/">Customizing
+logging</a></p>
+<h3 id="debugging">Debugging</h3>
+<p>通过设置命令行的<code>--cfg</code>或<code>-c</code>打印配置</p>
 <ul>
 <li><code>--cfg job</code>：用户配置</li>
 <li><code>--cfg hydra</code>：Hydra配置</li>
@@ -426,35 +502,57 @@
 <li><code>--info defaults-tree</code>：打印默认树</li>
 <li><code>--info plugins</code>：打印有关已安装的插件的信息</li>
 </ul>
-<h3 id="Tab-completion"><a href="#Tab-completion" class="headerlink" title="Tab completion"></a>Tab completion</h3><p>见<a target="_blank" rel="noopener" href="https://hydra.cc/docs/tutorials/basic/running_your_app/tab_completion/">Tab completion</a></p>
-<h2 id="实践应用"><a href="#实践应用" class="headerlink" title="实践应用"></a>实践应用</h2><h3 id="机器学习项目配置管理"><a href="#机器学习项目配置管理" class="headerlink" title="机器学习项目配置管理"></a>机器学习项目配置管理</h3><p>以下示例展示了如何使用Hydra管理机器学习项目的配置：</p>
+<h3 id="tab-completion">Tab completion</h3>
+<p>见<a
+target="_blank" rel="noopener" href="https://hydra.cc/docs/tutorials/basic/running_your_app/tab_completion/">Tab
+completion</a></p>
+<h2 id="实践应用">实践应用</h2>
+<h3 id="机器学习项目配置管理">机器学习项目配置管理</h3>
+<p>以下示例展示了如何使用Hydra管理机器学习项目的配置：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">dataset:</span> <span class="string">cifar10</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">model:</span> <span class="string">resnet</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">dataset:</span></span><br><span class="line">  <span class="attr">cifar10:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">./data/cifar10</span></span><br><span class="line">    <span class="attr">num_classes:</span> <span class="number">10</span></span><br><span class="line"> </span><br><span class="line">  <span class="attr">mnist:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">./data/mnist</span></span><br><span class="line">    <span class="attr">num_classes:</span> <span class="number">10</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">model:</span></span><br><span class="line">  <span class="attr">resnet:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">resnet50</span></span><br><span class="line">    <span class="attr">num_layers:</span> <span class="number">50</span></span><br><span class="line">    <span class="attr">pretrained:</span> <span class="literal">true</span></span><br><span class="line"> </span><br><span class="line">  <span class="attr">vgg:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">vgg16</span></span><br><span class="line">    <span class="attr">num_layers:</span> <span class="number">16</span></span><br><span class="line">    <span class="attr">pretrained:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># main.py</span></span><br><span class="line"><span class="keyword">import</span> hydra</span><br><span class="line"><span class="keyword">from</span> omegaconf <span class="keyword">import</span> DictConfig</span><br><span class="line"> </span><br><span class="line"><span class="meta">@hydra.main(<span class="params">version_base = <span class="literal">None</span>, config_path=<span class="string">&quot;conf&quot;</span>, config_name=<span class="string">&quot;config&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">cfg: DictConfig</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Dataset: <span class="subst">&#123;cfg.dataset.path&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Model: <span class="subst">&#123;cfg.model.name&#125;</span>&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
 <p>可以通过命令行参数选择不同的配置：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python main.py dataset=mnist model=vgg</span><br></pre></td></tr></table></figure>
-<h3 id="超参数搜索"><a href="#超参数搜索" class="headerlink" title="超参数搜索"></a>超参数搜索</h3><p>使用Hydra进行超参数搜索：</p>
+<h3 id="超参数搜索">超参数搜索</h3>
+<p>使用Hydra进行超参数搜索：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">optimizer:</span> <span class="string">adam</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">optimizer:</span></span><br><span class="line">  <span class="attr">adam:</span></span><br><span class="line">    <span class="attr">learning_rate:</span> <span class="number">0.001</span></span><br><span class="line">  <span class="attr">sgd:</span></span><br><span class="line">    <span class="attr">learning_rate:</span> <span class="number">0.01</span></span><br><span class="line">    <span class="attr">momentum:</span> <span class="number">0.9</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># main.py</span></span><br><span class="line"><span class="keyword">import</span> hydra</span><br><span class="line"><span class="keyword">from</span> omegaconf <span class="keyword">import</span> DictConfig</span><br><span class="line"> </span><br><span class="line"><span class="meta">@hydra.main(<span class="params">version_base = <span class="literal">None</span>, config_path=<span class="string">&quot;conf&quot;</span>, config_name=<span class="string">&quot;config&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">cfg: DictConfig</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Optimizer: <span class="subst">&#123;cfg.optimizer&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Learning rate: <span class="subst">&#123;cfg.optimizer.learning_rate&#125;</span>&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
 <p>运行多次实验：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python main.py -m optimizer=adam,sgd optimizer.sgd.momentum=0.8,0.9</span><br></pre></td></tr></table></figure>
-<h2 id="Submitit-Launcher-插件"><a href="#Submitit-Launcher-插件" class="headerlink" title="Submitit Launcher 插件"></a>Submitit Launcher 插件</h2><p>Submitit 是一个轻量级工具，可以允许用户方便地在 Slurm 集群中提交 Python 函数用于计算。它也支持在 Slurm 和本地执行之间无缝切换。它的 github 主页是 <a href="https://link.zhihu.com/?target=https%3A//github.com/facebookincubator/submitit">facebookincubator/submitit: Python 3.8+ toolbox for submitting jobs to Slurm (github.com)</a>。</p>
-<p>Submitit Launcher 是 Hydra 的一个基于 Submitit 的插件。这里主要参考 Hydra 文档的相关部分 <a href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/plugins/submitit_launcher/">Submitit Launcher plugin | Hydra</a>。</p>
-<h3 id="安装-Submitit-Launcher-插件"><a href="#安装-Submitit-Launcher-插件" class="headerlink" title="安装 Submitit Launcher 插件"></a>安装 Submitit Launcher 插件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::hydra-submitit-launcher</span><br></pre></td></tr></table></figure>
-<h3 id="基本用法-1"><a href="#基本用法-1" class="headerlink" title="基本用法"></a>基本用法</h3><p>我们首先要在配置文件中覆盖 <code>hydra/launcher</code>。</p>
+<h2 id="submitit-launcher-插件">Submitit Launcher 插件</h2>
+<p>Submitit 是一个轻量级工具，可以允许用户方便地在 Slurm 集群中提交
+Python 函数用于计算。它也支持在 Slurm 和本地执行之间无缝切换。它的
+github 主页是 <a
+href="https://link.zhihu.com/?target=https%3A//github.com/facebookincubator/submitit">facebookincubator/submitit:
+Python 3.8+ toolbox for submitting jobs to Slurm (github.com)</a>。</p>
+<p>Submitit Launcher 是 Hydra 的一个基于 Submitit 的插件。这里主要参考
+Hydra 文档的相关部分 <a
+href="https://link.zhihu.com/?target=https%3A//hydra.cc/docs/plugins/submitit_launcher/">Submitit
+Launcher plugin | Hydra</a>。</p>
+<h3 id="安装-submitit-launcher-插件">安装 Submitit Launcher 插件</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install conda-forge::hydra-submitit-launcher</span><br></pre></td></tr></table></figure>
+<h3 id="基本用法-1">基本用法</h3>
+<p>我们首先要在配置文件中覆盖 <code>hydra/launcher</code>。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">override hydra/launcher:</span> <span class="string">submitit_slurm</span></span><br></pre></td></tr></table></figure>
-<p>Submitit 插件实现了 2 个不同的 launcher：在 Slurm 集群上运行的 <code>submitit_slurm</code> 和用于基础本地测试的 <code>submitit_local</code>。</p>
+<p>Submitit 插件实现了 2 个不同的 launcher：在 Slurm 集群上运行的
+<code>submitit_slurm</code> 和用于基础本地测试的
+<code>submitit_local</code>。</p>
 <p><code>submitit_slurm</code> 的参数包括：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># @package hydra.launcher  </span></span><br><span class="line"><span class="attr">submitit_folder:</span> <span class="string">$&#123;hydra.sweep.dir&#125;/.submitit/%j</span>  </span><br><span class="line"><span class="attr">timeout_min:</span> <span class="number">60</span>  </span><br><span class="line"><span class="attr">cpus_per_task:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">gpus_per_node:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">tasks_per_node:</span> <span class="number">1</span>  </span><br><span class="line"><span class="attr">mem_gb:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">nodes:</span> <span class="number">1</span>  </span><br><span class="line"><span class="attr">name:</span> <span class="string">$&#123;hydra.job.name&#125;</span>  </span><br><span class="line"><span class="attr">_target_:</span> <span class="string">hydra_plugins.hydra_submitit_launcher.submitit_launcher.SlurmLauncher</span>  </span><br><span class="line"><span class="attr">partition:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">qos:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">comment:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">constraint:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">exclude:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">gres:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">cpus_per_gpu:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">gpus_per_task:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">mem_per_gpu:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">mem_per_cpu:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">account:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">signal_delay_s:</span> <span class="number">120</span>  </span><br><span class="line"><span class="attr">max_num_timeout:</span> <span class="number">0</span>  </span><br><span class="line"><span class="attr">additional_parameters:</span> &#123;&#125;  </span><br><span class="line"><span class="attr">array_parallelism:</span> <span class="number">256</span>  </span><br><span class="line"><span class="attr">setup:</span> <span class="literal">null</span>  </span><br><span class="line"><span class="attr">srun_args:</span> <span class="literal">null</span></span><br></pre></td></tr></table></figure>
 <p>具体的设置请参考你的远程集群的官方文档。</p>
 <p><code>submitit_local</code> 的参数包括：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># @package hydra.launcher  </span></span><br><span class="line"><span class="attr">_target_:</span> <span class="string">hydra_plugins.hydra_submitit_launcher.submitit_launcher.LocalLauncher</span>  </span><br><span class="line"><span class="attr">submitit_folder:</span> <span class="string">$&#123;hydra.sweep.dir&#125;/.submitit/%j</span>  </span><br><span class="line"><span class="attr">timeout_min:</span> <span class="number">60</span>  </span><br><span class="line"><span class="attr">cpus_per_task:</span> <span class="number">1</span>  </span><br><span class="line"><span class="attr">gpus_per_node:</span> <span class="number">0</span>  </span><br><span class="line"><span class="attr">tasks_per_node:</span> <span class="number">1</span>  </span><br><span class="line"><span class="attr">mem_gb:</span> <span class="number">4</span>  </span><br><span class="line"><span class="attr">nodes:</span> <span class="number">1</span>  </span><br><span class="line"><span class="attr">name:</span> <span class="string">$&#123;hydra.job.name&#125;</span></span><br></pre></td></tr></table></figure>
-<p>我们可以在配置文件中进行自定义设置，类似 <code>sbatch</code> 所需的 bash 文件。</p>
+<p>我们可以在配置文件中进行自定义设置，类似 <code>sbatch</code> 所需的
+bash 文件。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.yaml</span></span><br><span class="line"><span class="attr">defaults:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">override hydra/launcher:</span> <span class="string">submitit_slurm</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">_self_</span></span><br><span class="line"></span><br><span class="line"><span class="attr">hydra:</span></span><br><span class="line">    <span class="attr">launcher:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&#x27;gnn&#x27;</span></span><br><span class="line">        <span class="attr">timeout_min:</span> <span class="number">4320</span></span><br><span class="line">        <span class="attr">cpus_per_task:</span> <span class="number">4</span></span><br><span class="line">        <span class="attr">gres:</span> <span class="string">&#x27;gpu:1&#x27;</span></span><br><span class="line">        <span class="attr">tasks_per_node:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">mem_per_cpu:</span> <span class="number">20000</span></span><br><span class="line">        <span class="attr">partition:</span> <span class="string">&#x27;spgpu&#x27;</span></span><br><span class="line">        <span class="attr">account:</span> <span class="string">&#x27;some_account&#x27;</span></span><br><span class="line">        <span class="attr">array_parallelism:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
 <p>这时我们就能非常方便地把程序提交到 Slurm 远程集群上去运行了。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python my_app.py model=GCN,SAGE --multirun</span><br></pre></td></tr></table></figure>
 <p><strong>注意：这里的 <code>--multirun</code> 是必须的。</strong></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://wangaaayu.github.io/blog/posts/f5d8529f/">Python程序配置框架——Hydra（基于OmegaConf） - WangAaayu</a></li>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://wangaaayu.github.io/blog/posts/f5d8529f/">Python程序配置框架——Hydra（基于OmegaConf）
+- WangAaayu</a></li>
 </ul>
 
     
@@ -595,11 +693,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90enum%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          【enum模块】
+          【heapq模块】
         
       </div>
     </a>
@@ -633,7 +731,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E3%80%90hydra-core%E5%BA%93%E3%80%91"><span class="toc-number">1.</span> <span class="toc-text">【hydra-core库】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hydra-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">Hydra 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YAML"><span class="toc-number">1.2.</span> <span class="toc-text">YAML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#YAML-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">YAML 语法规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E5%AD%97"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">数字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E5%80%BC"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">布尔值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E8%A1%A8-%E6%95%B0%E7%BB%84"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">列表&#x2F;数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E5%85%B8"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">字典</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E5%80%BC"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">空值</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python-%E6%93%8D%E4%BD%9C-YAML"><span class="toc-number">1.2.3.</span> <span class="toc-text">python 操作 YAML</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python-%E8%AF%BB%E5%8F%96-yaml-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">python 读取 yaml 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python-%E5%B0%86%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5-yaml-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">python 将数据写入 yaml 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">基本用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Hydra"><span class="toc-number">1.3.1.</span> <span class="toc-text">安装 Hydra</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.2.</span> <span class="toc-text">基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">创建配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">加载配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A6%86%E7%9B%96"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">命令行覆盖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">动态配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.3.</span> <span class="toc-text">高级功能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%BB%84"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">配置组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%AC%A1%E8%BF%90%E8%A1%8C%EF%BC%88multirun%EF%BC%89"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">多次运行（multirun）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Output-Working-directory"><span class="toc-number">1.3.4.</span> <span class="toc-text">Output&#x2F;Working directory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Logging"><span class="toc-number">1.3.5.</span> <span class="toc-text">Logging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Debugging"><span class="toc-number">1.3.6.</span> <span class="toc-text">Debugging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tab-completion"><span class="toc-number">1.3.7.</span> <span class="toc-text">Tab completion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">实践应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">机器学习项目配置管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%85%E5%8F%82%E6%95%B0%E6%90%9C%E7%B4%A2"><span class="toc-number">1.4.2.</span> <span class="toc-text">超参数搜索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Submitit-Launcher-%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">Submitit Launcher 插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Submitit-Launcher-%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">安装 Submitit Launcher 插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">基本用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">1.6.</span> <span class="toc-text">Reference</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#hydra-core%E5%BA%93"><span class="toc-number">1.</span> <span class="toc-text">【hydra-core库】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hydra-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">Hydra 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#yaml"><span class="toc-number">1.2.</span> <span class="toc-text">YAML</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#yaml-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">YAML 语法规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E5%AD%97"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">数字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E5%80%BC"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">布尔值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E6%95%B0%E7%BB%84"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">列表&#x2F;数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E5%85%B8"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">字典</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E5%80%BC"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">空值</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python-%E6%93%8D%E4%BD%9C-yaml"><span class="toc-number">1.2.3.</span> <span class="toc-text">python 操作 YAML</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python-%E8%AF%BB%E5%8F%96-yaml-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">python 读取 yaml 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python-%E5%B0%86%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5-yaml-%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">python 将数据写入 yaml 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">基本用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-hydra"><span class="toc-number">1.3.1.</span> <span class="toc-text">安装 Hydra</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.2.</span> <span class="toc-text">基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">创建配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">加载配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A6%86%E7%9B%96"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">命令行覆盖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">动态配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.3.</span> <span class="toc-text">高级功能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%BB%84"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">配置组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%AC%A1%E8%BF%90%E8%A1%8Cmultirun"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">多次运行（multirun）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#outputworking-directory"><span class="toc-number">1.3.4.</span> <span class="toc-text">Output&#x2F;Working directory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#logging"><span class="toc-number">1.3.5.</span> <span class="toc-text">Logging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debugging"><span class="toc-number">1.3.6.</span> <span class="toc-text">Debugging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tab-completion"><span class="toc-number">1.3.7.</span> <span class="toc-text">Tab completion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">实践应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">机器学习项目配置管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%85%E5%8F%82%E6%95%B0%E6%90%9C%E7%B4%A2"><span class="toc-number">1.4.2.</span> <span class="toc-text">超参数搜索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#submitit-launcher-%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">Submitit Launcher 插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-submitit-launcher-%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">安装 Submitit Launcher 插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">基本用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#reference"><span class="toc-number">1.6.</span> <span class="toc-text">Reference</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -816,11 +914,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -836,27 +934,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -864,31 +942,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -896,11 +962,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -908,23 +994,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -937,6 +1023,22 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -964,11 +1066,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -976,7 +1074,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

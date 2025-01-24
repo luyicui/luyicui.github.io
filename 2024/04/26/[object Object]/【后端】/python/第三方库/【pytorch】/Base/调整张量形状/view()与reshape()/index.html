@@ -10,24 +10,18 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="view()与reshape()总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。 PyTorch 中 tensor">
+  <meta name="description" content="view()与reshape() 总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。 PyTorch 中">
 <meta property="og:type" content="article">
 <meta property="og:title" content="view()与reshape()">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/26/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="view()与reshape()总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。 PyTorch 中 tensor">
+<meta property="og:description" content="view()与reshape() 总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。 PyTorch 中">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356517.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/d84dd6f13fd445bda0daa57865e61516.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/6092f0fd87d8e9e4e933085008fc2950.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/e0abee320d75ebad1d97fbba20d15936.png">
 <meta property="article:published_time" content="2024-04-26T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-01T05:17:28.006Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="pytorch">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -257,7 +251,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">14分</span>
+      <span class="post-count">15分</span>
     </span>
   </span>
 </div>
@@ -268,56 +262,104 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="view-与reshape"><a href="#view-与reshape" class="headerlink" title="view()与reshape()"></a>view()与reshape()</h1><p>总之，两者都是用来重塑 tensor 的 shape 的。view 只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape 同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view 能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
-<h2 id="PyTorch-中-tensor-的存储方式"><a href="#PyTorch-中-tensor-的存储方式" class="headerlink" title="PyTorch 中 tensor 的存储方式"></a>PyTorch 中 tensor 的存储方式</h2><blockquote>
-<p>  想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch 张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区 （Storage）以及 tensor 的步长 Stride</p>
+    <h1 id="view与reshape">view()与reshape()</h1>
+<p>总之，两者都是用来重塑 tensor 的 shape 的。view
+只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
+同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
+能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
+<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
+<blockquote>
+<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
+张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
+（Storage）以及 tensor 的步长 Stride</p>
 </blockquote>
-<h3 id="PyTorch-张量存储的底层原理"><a href="#PyTorch-张量存储的底层原理" class="headerlink" title="PyTorch 张量存储的底层原理"></a>PyTorch 张量存储的底层原理</h3><p>tensor 数据采用头信息区（Tensor）和存储区 （Storage）分开存储的形式，如图 1 所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个 tensor，tensor 名为 A，A 的形状 size、步长 stride、数据的索引等信息都存储在头信息区，而 A 所存储的真实数据则存储在存储区。另外，如果我们对 A 进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A 的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B 的头信息区对数据的索引方式 </font>。如果听说过浅拷贝和深拷贝的话，很容易明白 <strong>这种方式其实就是 <font color='green'> 浅拷贝 </font></strong></p>
+<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
+<p>tensor 数据采用头信息区（Tensor）和存储区
+（Storage）分开存储的形式，如图 1
+所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
+tensor，tensor 名为 A，A 的形状 size、步长
+stride、数据的索引等信息都存储在头信息区，而 A
+所存储的真实数据则存储在存储区。另外，如果我们对 A
+进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
+的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
+的头信息区对数据的索引方式
+</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
+<strong>这种方式其实就是 <font color='green'> 浅拷贝
+</font></strong></p>
 <div style="text-align: center">
-    <img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png">
-    <br>
-    图 1 Torch 中 Tensor 的存储结构
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
+&lt;br&gt;
+图 1 Torch 中 Tensor 的存储结构</code></pre>
 </div>
-
-
-
 <span id="more"></span>
 <p>举个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">5</span>)  <span class="comment"># 初始化张量 a 为 [0, 1, 2, 3, 4]</span></span><br><span class="line">b = a [<span class="number">2</span>:]            <span class="comment"># 截取张量 a 的部分值并赋值给 b，b 其实只是改变了 a 对数据的索引方式</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;a:&#x27;</span>, a)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;b:&#x27;</span>, b)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of a:&#x27;</span>, a.storage ().data_ptr ())  <span class="comment"># 打印 a 的存储区地址</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of b:&#x27;</span>, b.storage ().data_ptr ())  <span class="comment"># 打印 b 的存储区地址，可以发现两者是共用存储区</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;==================================================================&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">b [<span class="number">1</span>] = <span class="number">0</span>    <span class="comment"># 修改 b 中索引为 1，即 a 中索引为 3 的数据为 0</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;a:&#x27;</span>, a)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;b:&#x27;</span>, b)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of a:&#x27;</span>, a.storage ().data_ptr ())  <span class="comment"># 打印 a 的存储区地址，可以发现 a 的相应位置的值也跟着改变，说明两者是共用存储区</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of b:&#x27;</span>, b.storage ().data_ptr ())  <span class="comment"># 打印 b 的存储区地址</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a: tensor ([0, 1, 2, 3, 4])</span><br><span class="line">b: tensor ([2, 3, 4])</span><br><span class="line">ptr of storage of a: 2862826251264</span><br><span class="line">ptr of storage of b: 2862826251264</span><br><span class="line">==================================================================</span><br><span class="line">a: tensor ([0, 1, 2, 0, 4])</span><br><span class="line">b: tensor ([2, 0, 4])</span><br><span class="line">ptr of storage of a: 2862826251264</span><br><span class="line">ptr of storage of b: 2862826251264</span><br></pre></td></tr></table></figure>
-<h3 id="PyTorch-张量的步长（stride）属性"><a href="#PyTorch-张量的步长（stride）属性" class="headerlink" title="PyTorch 张量的步长（stride）属性"></a>PyTorch 张量的步长（stride）属性</h3><p>torch 的 tensor 也是有步长属性的，说起 stride 属性是不是很耳熟？是的，卷积神经网络中卷积核对特征图的卷积操作也是有 stride 属性的，但这两个 stride 可完全不是一个意思哦。<strong>tensor 的步长可以理解为从索引中的一个维度跨到下一个维度中间的跨度 </strong>。为方便理解，就直接用图 1 说明了，您细细品</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356517.png" alt=""></p>
+<h3 id="pytorch-张量的步长stride属性">PyTorch
+张量的步长（stride）属性</h3>
+<p>torch 的 tensor 也是有步长属性的，说起 stride
+属性是不是很耳熟？是的，卷积神经网络中卷积核对特征图的卷积操作也是有
+stride 属性的，但这两个 stride 可完全不是一个意思哦。<strong>tensor
+的步长可以理解为从索引中的一个维度跨到下一个维度中间的跨度
+</strong>。为方便理解，就直接用图 1 说明了，您细细品</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356517.png" /></p>
 <p>图 2 对张量的 stride 属性的理解</p>
 <p>举个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">6</span>).reshape (<span class="number">2</span>, <span class="number">3</span>)  <span class="comment"># 初始化张量 a</span></span><br><span class="line">b = torch.arange (<span class="number">6</span>).view (<span class="number">3</span>, <span class="number">2</span>)     <span class="comment"># 初始化张量 b</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;a:&#x27;</span>, a)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;stride of a:&#x27;</span>, a.stride ())  <span class="comment"># 打印 a 的 stride</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;b:&#x27;</span>, b)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;stride of b:&#x27;</span>, b.stride ())  <span class="comment"># 打印 b 的 stride</span></span><br><span class="line"> </span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;   运行结果   &#x27;&#x27;&#x27;</span></span><br><span class="line">a: tensor ([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">           [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]])</span><br><span class="line">stride of a: (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line"> </span><br><span class="line">b: tensor ([[<span class="number">0</span>, <span class="number">1</span>],</span><br><span class="line">           [<span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">           [<span class="number">4</span>, <span class="number">5</span>]])</span><br><span class="line">stride of b: (<span class="number">2</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="对-“视图-view-”-字眼的理解"><a href="#对-“视图-view-”-字眼的理解" class="headerlink" title="对 “视图 (view)” 字眼的理解"></a>对 “视图 (view)” 字眼的理解</h2><h3 id="视图与副本"><a href="#视图与副本" class="headerlink" title="视图与副本"></a>视图与副本</h3><ul>
-<li><p>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置，这样避免了重新创建张量的高内存开销。由上面介绍的 PyTorch 的张量存储方式可以理解为：对张量的大部分操作就是视图操作！</p>
-</li>
-<li><p>与之对应的概念就是副本。副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</p>
-</li>
+<h2 id="对-视图-view-字眼的理解">对 “视图 (view)” 字眼的理解</h2>
+<h3 id="视图与副本">视图与副本</h3>
+<ul>
+<li><p>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置，这样避免了重新创建张量的高内存开销。由上面介绍的
+PyTorch
+的张量存储方式可以理解为：对张量的大部分操作就是视图操作！</p></li>
+<li><p>与之对应的概念就是副本。副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</p></li>
 </ul>
 <blockquote>
-<p>  有关视图与副本，在 NumPy 中也有着重要的应用。可参考 <a target="_blank" rel="noopener" href="https://www.runoob.com/numpy/numpy-copies-and-views.html" title="这里">这里</a>。</p>
+<p>有关视图与副本，在 NumPy 中也有着重要的应用。可参考 <a
+target="_blank" rel="noopener" href="https://www.runoob.com/numpy/numpy-copies-and-views.html"
+title="这里">这里</a>。</p>
 </blockquote>
-<hr>
-<h3 id="view-用法示例及其参数详解"><a href="#view-用法示例及其参数详解" class="headerlink" title="view() 用法示例及其参数详解"></a>view() 用法示例及其参数详解</h3><p>首先，view() 是对 PyTorch 中的 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Tensor&amp;spm=1001.2101.3001.7020">Tensor</a> 操作的，若非 Tensor 类型，可使用 <code>data = torch.tensor(data)</code> 来进行转换。</p>
-<p>(1) 作用：该函数返回一个有、<em>\</em>相同数据、<em>\</em>但不同大小的 Tensor。通俗一点，就是、<em>\</em>改变矩阵维度、<em>\</em>，相当于 Numpy 中的 resize() 或者 Tensorflow 中的 reshape() 。</p>
-<p>(2) 参数：<code>view(*args )</code></p>
+<hr />
+<h3 id="view-用法示例及其参数详解">view() 用法示例及其参数详解</h3>
+<p>首先，view() 是对 PyTorch 中的 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Tensor&amp;spm=1001.2101.3001.7020">Tensor</a>
+操作的，若非 Tensor 类型，可使用 <code>data = torch.tensor(data)</code>
+来进行转换。</p>
+<ol type="1">
+<li><p>作用：该函数返回一个有、<em>_相同数据、</em>_但不同大小的
+Tensor。通俗一点，就是、<em>_改变矩阵维度、</em>_，相当于 Numpy 中的
+resize() 或者 Tensorflow 中的 reshape() 。</p></li>
+<li><p>参数：<code>view(*args )</code></p></li>
+</ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = torch.randn(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(x.size())</span><br><span class="line">y = x.view(<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(y.size())</span><br><span class="line">z = x.view(-<span class="number">1</span>, <span class="number">8</span>)  <span class="comment"># -1 表示该维度取决于其它维度大小，即（4*4）/ 8</span></span><br><span class="line"><span class="built_in">print</span>(z.size())</span><br><span class="line">m = x.view(<span class="number">2</span>, <span class="number">2</span>, <span class="number">4</span>) <span class="comment"># 也可以变为更多维度</span></span><br><span class="line"><span class="built_in">print</span>(m.size())</span><br></pre></td></tr></table></figure>
 <p>其输出结果依次为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([<span class="number">4</span>, <span class="number">4</span>])</span><br><span class="line">torch.Size([<span class="number">16</span>])</span><br><span class="line">torch.Size([<span class="number">2</span>, <span class="number">8</span>])</span><br><span class="line">torch.Size([<span class="number">2</span>, <span class="number">2</span>, <span class="number">4</span>])</span><br></pre></td></tr></table></figure>
-<p>(3) <code>view(-1)</code></p>
-<p>若我们需要转换维度为一维，有一种简单的方式，即参数为 -1 。我们具体举个例子：</p>
+<ol start="3" type="1">
+<li><code>view(-1)</code></li>
+</ol>
+<p>若我们需要转换维度为一维，有一种简单的方式，即参数为 -1
+。我们具体举个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]) <span class="comment"># 定义一个 2*3 的 Tensor</span></span><br><span class="line">a = a.view(-<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(a)</span><br></pre></td></tr></table></figure>
 <p>结果如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensor([<span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>, <span class="number">4.</span>, <span class="number">5.</span>, <span class="number">6.</span>])</span><br></pre></td></tr></table></figure>
 <p>从结果可以看出，其一行一行拼接在一起。</p>
-<h2 id="view-和-reshape-的比较"><a href="#view-和-reshape-的比较" class="headerlink" title="view() 和 reshape() 的比较"></a>view() 和 reshape() 的比较</h2><h3 id="对-torch-Tensor-view-的理解"><a href="#对-torch-Tensor-view-的理解" class="headerlink" title="对 torch.Tensor.view() 的理解"></a>对 torch.Tensor.view() 的理解</h3><p><strong>定义：</strong></p>
+<h2 id="view-和-reshape-的比较">view() 和 reshape() 的比较</h2>
+<h3 id="对-torch.tensor.view-的理解">对 torch.Tensor.view() 的理解</h3>
+<p><strong>定义：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">view (*shape) → Tensor</span><br></pre></td></tr></table></figure>
-<p><strong>作用：</strong> 类似于 reshape，将 tensor 转换为指定的 shape，原始的 data 不改变。返回的 tensor 与原始的 tensor 共享存储区。返回的 tensor 的 size 和 stride 必须与原始的 tensor 兼容。每个新的 tensor 的维度必须是原始维度的子空间，或满足以下连续条件：</p>
-<script type="math/tex; mode=display">
-stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <strong>contiguous()</strong> 方法将原始 tensor 转换为满足连续条件的 tensor，然后就可以使用 view 方法进行 shape 变换了。或者直接使用 reshape 方法进行维度变换，但这种方法变换后的 tensor 就不是与原始 tensor 共享内存了，而是被重新开辟了一个空间。</p>
-<p><strong>如何理解 <font color='red'> tensor 是否满足连续条件 </font> 呐？下面通过一系列例子来慢慢理解下：</strong></p>
+<p><strong>作用：</strong> 类似于 reshape，将 tensor 转换为指定的
+shape，原始的 data 不改变。返回的 tensor 与原始的 tensor
+共享存储区。返回的 tensor 的 size 和 stride 必须与原始的 tensor
+兼容。每个新的 tensor 的维度必须是原始维度的子空间，或满足以下连续条件：
+<span class="math display">\[
+stride [i] = stride [i+1]\times size [i+1]
+\]</span> 否则需要先使用 <strong>contiguous()</strong> 方法将原始 tensor
+转换为满足连续条件的 tensor，然后就可以使用 view 方法进行 shape
+变换了。或者直接使用 reshape 方法进行维度变换，但这种方法变换后的 tensor
+就不是与原始 tensor 共享内存了，而是被重新开辟了一个空间。</p>
+<p><strong>如何理解 <font color='red'> tensor 是否满足连续条件 </font>
+呐？下面通过一系列例子来慢慢理解下：</strong></p>
 <p>首先，我们初始化一个张量 a ，并查看其 stride、storage 等属性：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">9</span>).reshape (<span class="number">3</span>, <span class="number">3</span>)  <span class="comment"># 初始化张量 a</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;struct of a:\n&#x27;</span>, a)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;size   of a:&#x27;</span>, a.size ())    <span class="comment"># 查看 a 的 shape</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;stride of a:&#x27;</span>, a.stride ())  <span class="comment"># 查看 a 的 stride</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct of a:</span><br><span class="line">tensor ([[0, 1, 2],</span><br><span class="line">        [3, 4, 5],</span><br><span class="line">        [6, 7, 8]])</span><br><span class="line">size   of a: torch.Size ([3, 3])</span><br><span class="line">stride of a: (3, 1)   # 注：满足连续性条件</span><br></pre></td></tr></table></figure>
@@ -325,43 +367,98 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
 <p>我们再看进一步处理 —— 对 a 进行转置后的结果：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">9</span>).reshape (<span class="number">3</span>, <span class="number">3</span>)     <span class="comment"># 初始化张量 a</span></span><br><span class="line">b = a.permute (<span class="number">1</span>, <span class="number">0</span>)  <span class="comment"># 对 a 进行转置</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;struct of b:\n&#x27;</span>, b)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;size   of b:&#x27;</span>, b.size ())    <span class="comment"># 查看 b 的 shape</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;stride of b:&#x27;</span>, b.stride ())  <span class="comment"># 查看 b 的 stride</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct of b:</span><br><span class="line">tensor ([[0, 3, 6],</span><br><span class="line">        [1, 4, 7],</span><br><span class="line">        [2, 5, 8]])</span><br><span class="line">size   of b: torch.Size ([3, 3])</span><br><span class="line">stride of b: (1, 3)   # 注：此时不满足连续性条件</span><br></pre></td></tr></table></figure>
-<p>将 a 转置后再看最后的输出结果，带入到式 1 中，是不是发现等式不成立了？所以此时就不满足 tensor 连续的条件了。这是为什么那？我们接着往下看：</p>
+<p>将 a 转置后再看最后的输出结果，带入到式 1
+中，是不是发现等式不成立了？所以此时就不满足 tensor
+连续的条件了。这是为什么那？我们接着往下看：</p>
 <p>首先，输出 a 和 b 的存储区来看一下有没有什么不同：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">9</span>).reshape (<span class="number">3</span>, <span class="number">3</span>)             <span class="comment"># 初始化张量 a</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of a: &#x27;</span>, a.storage ().data_ptr ())  <span class="comment"># 查看 a 的 storage 区的地址</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;storage of a: \n&#x27;</span>, a.storage ())        <span class="comment"># 查看 a 的 storage 区的数据存放形式</span></span><br><span class="line">b = a.permute (<span class="number">1</span>, <span class="number">0</span>)                           <span class="comment"># 转置</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of storage of b: &#x27;</span>, b.storage ().data_ptr ())  <span class="comment"># 查看 b 的 storage 区的地址</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;storage of b: \n&#x27;</span>, b.storage ())        <span class="comment"># 查看 b 的 storage 区的数据存放形式</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ptr of storage of a:  2767173747136</span><br><span class="line">storage of a: </span><br><span class="line">  0</span><br><span class="line"> 1</span><br><span class="line"> 2</span><br><span class="line"> 3</span><br><span class="line"> 4</span><br><span class="line"> 5</span><br><span class="line"> 6</span><br><span class="line"> 7</span><br><span class="line"> 8</span><br><span class="line">[torch.LongStorage of size 9]</span><br><span class="line">ptr of storage of b:  2767173747136</span><br><span class="line">storage of b:</span><br><span class="line">  0</span><br><span class="line"> 1</span><br><span class="line"> 2</span><br><span class="line"> 3</span><br><span class="line"> 4</span><br><span class="line"> 5</span><br><span class="line"> 6</span><br><span class="line"> 7</span><br><span class="line"> 8</span><br><span class="line">[torch.LongStorage of size 9]</span><br></pre></td></tr></table></figure>
-<p>由结果可以看出，张量 a、b 仍然共用存储区，并且存储区数据存放的顺序没有变化，这也充分说明了 b 与 a 共用存储区，b 只是改变了数据的索引方式。那么为什么 b 就不符合连续性条件了呐 (T-T)？其实原因很简单，我们结合图 3 来解释下：</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/d84dd6f13fd445bda0daa57865e61516.png" alt=""></p>
+<p>由结果可以看出，张量 a、b
+仍然共用存储区，并且存储区数据存放的顺序没有变化，这也充分说明了 b 与 a
+共用存储区，b 只是改变了数据的索引方式。那么为什么 b
+就不符合连续性条件了呐 (T-T)？其实原因很简单，我们结合图 3
+来解释下：</p>
+<p><img
+src="https://i-blog.csdnimg.cn/blog_migrate/d84dd6f13fd445bda0daa57865e61516.png" /></p>
 <p>图 3 对张量连续性条件的理解</p>
-<p>转置后的 tensor 只是对 storage 区数据索引方式的重映射，但原始的存放方式并没有变化。因此，这时再看 tensor b 的 stride，从 b 第一行的元素 1 到第二行的元素 2，显然在索引方式上已经不是原来 + 1 了，而是变成了新的 + 3 了，你在仔细琢磨琢磨是不是这样的。所以这时候就不能用 view 来对 b 进行 shape 的改变了，不然就报错咯，不信你看下面；</p>
+<p>转置后的 tensor 只是对 storage
+区数据索引方式的重映射，但原始的存放方式并没有变化。因此，这时再看
+tensor b 的 stride，从 b 第一行的元素 1 到第二行的元素
+2，显然在索引方式上已经不是原来 + 1 了，而是变成了新的 + 3
+了，你在仔细琢磨琢磨是不是这样的。所以这时候就不能用 view 来对 b 进行
+shape 的改变了，不然就报错咯，不信你看下面；</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">9</span>).reshape (<span class="number">3</span>, <span class="number">3</span>)             <span class="comment"># 初始化张量 a</span></span><br><span class="line"><span class="built_in">print</span> (a.view (<span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;============================================&#x27;</span>)</span><br><span class="line">b = a.permute (<span class="number">1</span>, <span class="number">0</span>)  <span class="comment"># 转置</span></span><br><span class="line"><span class="built_in">print</span> (b.view (<span class="number">9</span>))</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tensor ([0, 1, 2, 3, 4, 5, 6, 7, 8])</span><br><span class="line">============================================</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;此处打码&quot;, line 23, in &lt;module&gt;</span><br><span class="line">    print (b.view (9))</span><br><span class="line">RuntimeError: view size is not compatible with input tensor&#x27;s size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape (...) instead.</span><br></pre></td></tr></table></figure>
-<p>但是嘛，上有政策下有对策，这种情况下，直接用 view 不行，那我就先用 <strong>contiguous()</strong> 方法将原始 tensor 转换为满足连续条件的 tensor，在使用 view 进行 shape 变换，<font color='red'> 值得注意的是，这样的原理是 <strong>contiguous()</strong> 方法开辟了一个新的存储区给 b，并改变了 b 原始存储区数据的存放顺序！</font> 同样的例子：</p>
+<p>但是嘛，上有政策下有对策，这种情况下，直接用 view 不行，那我就先用
+<strong>contiguous()</strong> 方法将原始 tensor 转换为满足连续条件的
+tensor，在使用 view 进行 shape 变换，<font color='red'>
+值得注意的是，这样的原理是 <strong>contiguous()</strong>
+方法开辟了一个新的存储区给 b，并改变了 b
+原始存储区数据的存放顺序！</font> 同样的例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">a = torch.arange (<span class="number">9</span>).reshape (<span class="number">3</span>, <span class="number">3</span>)      <span class="comment"># 初始化张量 a</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;storage of a:\n&#x27;</span>, a.storage ())  <span class="comment"># 查看 a 的 stride</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;+++++++++++++++++++++++++++++++++++++++++++++++++&#x27;</span>)</span><br><span class="line">b = a.permute (<span class="number">1</span>, <span class="number">0</span>).contiguous()       <span class="comment"># 转置，并转换为符合连续性条件的 tensor</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;size    of b:&#x27;</span>, b.size ())       <span class="comment"># 查看 b 的 shape</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;stride  of b:&#x27;</span>, b.stride ())     <span class="comment"># 查看 b 的 stride</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;viewd      b:\n&#x27;</span>, b.view (<span class="number">9</span>))    <span class="comment"># 对 b 进行 view 操作，并打印结果</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;+++++++++++++++++++++++++++++++++++++++++++++++++&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;storage of a:\n&#x27;</span>, a.storage ())  <span class="comment"># 查看 a 的存储空间</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;storage of b:\n&#x27;</span>, b.storage ())  <span class="comment"># 查看 b 的存储空间</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;+++++++++++++++++++++++++++++++++++++++++++++++++&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of a:\n&#x27;</span>, a.storage ().data_ptr ())  <span class="comment"># 查看 a 的存储空间地址</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;ptr of b:\n&#x27;</span>, b.storage ().data_ptr ())  <span class="comment"># 查看 b 的存储空间地址</span></span><br><span class="line"> </span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;   运行结果   &#x27;&#x27;&#x27;</span></span><br><span class="line">storage of a:</span><br><span class="line">  <span class="number">0</span></span><br><span class="line"> <span class="number">1</span></span><br><span class="line"> <span class="number">2</span></span><br><span class="line"> <span class="number">3</span></span><br><span class="line"> <span class="number">4</span></span><br><span class="line"> <span class="number">5</span></span><br><span class="line"> <span class="number">6</span></span><br><span class="line"> <span class="number">7</span></span><br><span class="line"> <span class="number">8</span></span><br><span class="line">[torch.LongStorage of size <span class="number">9</span>]</span><br><span class="line">+++++++++++++++++++++++++++++++++++++++++++++++++</span><br><span class="line">size    of b: torch.Size ([<span class="number">3</span>, <span class="number">3</span>])</span><br><span class="line">stride  of b: (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">viewd      b:</span><br><span class="line"> tensor ([<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>])</span><br><span class="line">+++++++++++++++++++++++++++++++++++++++++++++++++</span><br><span class="line">storage of a:</span><br><span class="line"> <span class="number">0</span></span><br><span class="line"> <span class="number">1</span></span><br><span class="line"> <span class="number">2</span></span><br><span class="line"> <span class="number">3</span></span><br><span class="line"> <span class="number">4</span></span><br><span class="line"> <span class="number">5</span></span><br><span class="line"> <span class="number">6</span></span><br><span class="line"> <span class="number">7</span></span><br><span class="line"> <span class="number">8</span></span><br><span class="line">[torch.LongStorage of size <span class="number">9</span>]</span><br><span class="line">storage of b:</span><br><span class="line"> <span class="number">0</span></span><br><span class="line"> <span class="number">3</span></span><br><span class="line"> <span class="number">6</span></span><br><span class="line"> <span class="number">1</span></span><br><span class="line"> <span class="number">4</span></span><br><span class="line"> <span class="number">7</span></span><br><span class="line"> <span class="number">2</span></span><br><span class="line"> <span class="number">5</span></span><br><span class="line"> <span class="number">8</span></span><br><span class="line">[torch.LongStorage of size <span class="number">9</span>]</span><br><span class="line">+++++++++++++++++++++++++++++++++++++++++++++++++</span><br><span class="line">ptr of a:</span><br><span class="line"> <span class="number">1842671472000</span></span><br><span class="line">ptr of b:</span><br><span class="line"> <span class="number">1842671472128</span></span><br></pre></td></tr></table></figure>
-<p>由上述结果可以看出，张量 a 与 b 已经是两个存在于不同存储区的张量了。也印证了 <font color='red'> <strong>contiguous()</strong> 方法开辟了一个新的存储区给 b，并改变了 b 原始存储区数据的存放顺序 </font>。<strong>对应文章开头提到的浅拷贝，这种开辟一个新的内存区的方式其实就是深拷贝。</strong></p>
-<h3 id="对-torch-reshape-的理解"><a href="#对-torch-reshape-的理解" class="headerlink" title="对 torch.reshape() 的理解"></a>对 torch.reshape() 的理解</h3><p><strong>定义：</strong></p>
+<p>由上述结果可以看出，张量 a 与 b
+已经是两个存在于不同存储区的张量了。也印证了 <font color='red'>
+<strong>contiguous()</strong> 方法开辟了一个新的存储区给 b，并改变了 b
+原始存储区数据的存放顺序
+</font>。<strong>对应文章开头提到的浅拷贝，这种开辟一个新的内存区的方式其实就是深拷贝。</strong></p>
+<h3 id="对-torch.reshape-的理解">对 torch.reshape() 的理解</h3>
+<p><strong>定义：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch.reshape (<span class="built_in">input</span>, shape) → Tensor</span><br></pre></td></tr></table></figure>
-<p><strong>作用：</strong> 与 view 方法类似，将输入 tensor 转换为新的 shape 格式。</p>
-<p>但是 reshape 方法更强大，可以认为 <strong>a.reshape = a.view() + a.contiguous().view()</strong>。</p>
-<p>即：在满足 tensor 连续性条件时，<strong>a.reshape</strong> 返回的结果与 <strong>a.view()</strong> 相同，否则返回的结果与 <strong>a.</strong> <strong>contiguous().view()</strong> 相同。</p>
+<p><strong>作用：</strong> 与 view 方法类似，将输入 tensor 转换为新的
+shape 格式。</p>
+<p>但是 reshape 方法更强大，可以认为 <strong>a.reshape = a.view() +
+a.contiguous().view()</strong>。</p>
+<p>即：在满足 tensor 连续性条件时，<strong>a.reshape</strong>
+返回的结果与 <strong>a.view()</strong> 相同，否则返回的结果与
+<strong>a.</strong> <strong>contiguous().view()</strong> 相同。</p>
 <p>不信你就看人家官方的解释嘛，您在细细品：</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/6092f0fd87d8e9e4e933085008fc2950.png" alt=""></p>
+<p><img
+src="https://i-blog.csdnimg.cn/blog_migrate/6092f0fd87d8e9e4e933085008fc2950.png" /></p>
 <blockquote>
 <p>关于两者区别，还可以参考这个链接：</p>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch" title="What&#39;s the difference between reshape and view in pytorch? - Stack Overflow">What’s the difference between reshape and view in pytorch? - Stack Overflow</a></p>
-<p><strong>2021.03.30 更新：最近又发现了 pytorch 官网对 view 及 reshape 原理的阐述，说的很清晰明了，大家可以参考下：</strong></p>
-<p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/tensor_view.html" title="Tensor Views — PyTorch 1.9.0 documentation">Tensor Views — PyTorch 1.9.0 documentation</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch"
+title="What&#39;s the difference between reshape and view in pytorch? - Stack Overflow">What's
+the difference between reshape and view in pytorch? - Stack
+Overflow</a></p>
+<p><strong>2021.03.30 更新：最近又发现了 pytorch 官网对 view 及 reshape
+原理的阐述，说的很清晰明了，大家可以参考下：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/tensor_view.html"
+title="Tensor Views — PyTorch 1.9.0 documentation">Tensor Views —
+PyTorch 1.9.0 documentation</a></p>
 <p>放一张该网站上的截图：</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e0abee320d75ebad1d97fbba20d15936.png" alt=""></p>
+<p><img
+src="https://i-blog.csdnimg.cn/blog_migrate/e0abee320d75ebad1d97fbba20d15936.png" /></p>
 </blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>torch 的 view() 与 reshape() 方法都可以用来重塑 tensor 的 shape，区别就是使用的条件不一样。view() 方法只适用于满足连续性条件的 tensor，并且该操作不会开辟新的内存空间，只是产生了对原存储空间的一个新别称和引用，返回值是视图。而 reshape() 方法的返回值既可以是视图，也可以是副本，当满足连续性条件时返回 view，否则返回副本 [此时等价于先调用 contiguous() 方法再使用 view() ]。因此当不确能否使用 view 时，可以使用 reshape。如果只是想简单地重塑一个 tensor 的 shape，那么就是用 reshape，但是如果需要考虑内存的开销而且要确保重塑后的 tensor 与之前的 tensor 共享存储空间，那就使用 view()。</p>
+<h2 id="总结">总结</h2>
+<p>torch 的 view() 与 reshape() 方法都可以用来重塑 tensor 的
+shape，区别就是使用的条件不一样。view() 方法只适用于满足连续性条件的
+tensor，并且该操作不会开辟新的内存空间，只是产生了对原存储空间的一个新别称和引用，返回值是视图。而
+reshape() 方法的返回值既可以是视图，也可以是副本，当满足连续性条件时返回
+view，否则返回副本 [此时等价于先调用 contiguous() 方法再使用 view()
+]。因此当不确能否使用 view 时，可以使用
+reshape。如果只是想简单地重塑一个 tensor 的 shape，那么就是用
+reshape，但是如果需要考虑内存的开销而且要确保重塑后的 tensor 与之前的
+tensor 共享存储空间，那就使用 view()。</p>
 <blockquote>
 <p>2020.10.23</p>
-<p><strong>以上是我个人看了官网的的解释并实验得到的结论，所以有没有 dalao 知道为啥没把 view 废除那？是不是还有我不知道的地方</strong></p>
+<p><strong>以上是我个人看了官网的的解释并实验得到的结论，所以有没有
+dalao 知道为啥没把 view 废除那？是不是还有我不知道的地方</strong></p>
 <p>2020.11.14</p>
-<p><strong>为什么没把 view 废除那？最近偶然看到了些资料，又想起了这个问题，觉得有以下原因：</strong></p>
-<p><strong>1、在 PyTorch 不同版本的更新过程中，view 先于 reshape 方法出现，后来出现了鲁棒性更好的 reshape 方法，但 view 方法并没因此废除。其实不止 PyTorch，其他一些框架或语言比如 OpenCV 也有类似的操作。</strong></p>
-<p><strong>2、view 的存在可以显示地表示对这个 tensor 的操作只能是视图操作而非拷贝操作。这对于代码的可读性以及后续可能的 bug 的查找比较友好。</strong></p>
-<font color='red'> **总之，我们没必要纠结为啥 a 能干的 b 也能干，b 还能做 a 不能干的，a 存在还有啥意义的问题。就相当于马云能日赚 1 个亿而我不能，那我存在的意义是啥。存在不就是意义吗？存在即合理，最重要的是我们使用不同的方法可以不同程度上提升效率，何乐而不为？** </font>
+<p><strong>为什么没把 view
+废除那？最近偶然看到了些资料，又想起了这个问题，觉得有以下原因：</strong></p>
+<p><strong>1、在 PyTorch 不同版本的更新过程中，view 先于 reshape
+方法出现，后来出现了鲁棒性更好的 reshape 方法，但 view
+方法并没因此废除。其实不止 PyTorch，其他一些框架或语言比如 OpenCV
+也有类似的操作。</strong></p>
+<p><strong>2、view 的存在可以显示地表示对这个 tensor
+的操作只能是视图操作而非拷贝操作。这对于代码的可读性以及后续可能的 bug
+的查找比较友好。</strong></p>
+<p><font color='red'> <strong>总之，我们没必要纠结为啥 a 能干的 b
+也能干，b 还能做 a 不能干的，a 存在还有啥意义的问题。就相当于马云能日赚
+1
+个亿而我不能，那我存在的意义是啥。存在不就是意义吗？存在即合理，最重要的是我们使用不同的方法可以不同程度上提升效率，何乐而不为？</strong>
+</font></p>
 </blockquote>
 
     
@@ -540,7 +637,8 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#view-%E4%B8%8Ereshape"><span class="toc-number">1.</span> <span class="toc-text">view()与reshape()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PyTorch-%E4%B8%AD-tensor-%E7%9A%84%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">PyTorch 中 tensor 的存储方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PyTorch-%E5%BC%A0%E9%87%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">PyTorch 张量存储的底层原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PyTorch-%E5%BC%A0%E9%87%8F%E7%9A%84%E6%AD%A5%E9%95%BF%EF%BC%88stride%EF%BC%89%E5%B1%9E%E6%80%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">PyTorch 张量的步长（stride）属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9-%E2%80%9C%E8%A7%86%E5%9B%BE-view-%E2%80%9D-%E5%AD%97%E7%9C%BC%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.2.</span> <span class="toc-text">对 “视图 (view)” 字眼的理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E4%B8%8E%E5%89%AF%E6%9C%AC"><span class="toc-number">1.2.1.</span> <span class="toc-text">视图与副本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#view-%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B%E5%8F%8A%E5%85%B6%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.2.2.</span> <span class="toc-text">view() 用法示例及其参数详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#view-%E5%92%8C-reshape-%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">1.3.</span> <span class="toc-text">view() 和 reshape() 的比较</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9-torch-Tensor-view-%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text">对 torch.Tensor.view() 的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9-torch-reshape-%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">对 torch.reshape() 的理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#view%E4%B8%8Ereshape"><span class="toc-number">1.</span> <span class="toc-text">view()与reshape()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#pytorch-%E4%B8%AD-tensor-%E7%9A%84%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">PyTorch 中 tensor 的存储方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pytorch-%E5%BC%A0%E9%87%8F%E5%AD%98%E5%82%A8%E7%9A%84%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">PyTorch 张量存储的底层原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pytorch-%E5%BC%A0%E9%87%8F%E7%9A%84%E6%AD%A5%E9%95%BFstride%E5%B1%9E%E6%80%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">PyTorch
+张量的步长（stride）属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9-%E8%A7%86%E5%9B%BE-view-%E5%AD%97%E7%9C%BC%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.2.</span> <span class="toc-text">对 “视图 (view)” 字眼的理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E4%B8%8E%E5%89%AF%E6%9C%AC"><span class="toc-number">1.2.1.</span> <span class="toc-text">视图与副本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#view-%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B%E5%8F%8A%E5%85%B6%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.2.2.</span> <span class="toc-text">view() 用法示例及其参数详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#view-%E5%92%8C-reshape-%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">1.3.</span> <span class="toc-text">view() 和 reshape() 的比较</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9-torch.tensor.view-%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text">对 torch.Tensor.view() 的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9-torch.reshape-%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">对 torch.reshape() 的理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -723,11 +821,11 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -743,27 +841,7 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -771,31 +849,19 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -803,11 +869,31 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -815,23 +901,23 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -844,6 +930,22 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -871,11 +973,7 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,7 +981,7 @@ stride [i] = stride [i+1]\times size [i+1]</script><p>否则需要先使用 <str
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

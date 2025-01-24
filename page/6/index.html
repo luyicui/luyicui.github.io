@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/global与nonlocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/Python中下划线的5种含义" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" target="_blank">global与nonlocal</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python%E4%B8%AD%E4%B8%8B%E5%88%92%E7%BA%BF%E7%9A%845%E7%A7%8D%E5%90%AB%E4%B9%89/" target="_blank">Python 中下划线的 5 种含义</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python%E4%B8%AD%E4%B8%8B%E5%88%92%E7%BA%BF%E7%9A%845%E7%A7%8D%E5%90%AB%E4%B9%89/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -242,73 +242,166 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="global与nonlocal"><a href="#global与nonlocal" class="headerlink" title="global与nonlocal"></a>global与nonlocal</h1><p>学习过程中，我们会遇到两个有趣的关键字，一个是 <code>global</code>，一个是 <code>nonlocal</code>。</p>
-<p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p>
-<p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p>
-<p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p>
-<h2 id="Python的定义域"><a href="#Python的定义域" class="headerlink" title="Python的定义域"></a>Python的定义域</h2><p>先试看一个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()	<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
-<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量 <code>b</code> 的值 <code>1</code>。</p>
-<p>来看第二个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
-<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量 <code>b</code> 的赋值。那它的结果是什么呢？</p>
-<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对 <code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
-<p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p>
-<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量 <code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
-<p>这是因为 Python 在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python 遵循以下规则：</p>
-<ol>
-<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python 会将该变量视为局部变量。<ul>
-<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code> 函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的 <code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code> 时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了 <code>UnboundLocalError</code> 错误）。</li>
-</ul>
-</li>
-<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。<ul>
-<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code> 进行赋值操作，所以 Python 会认为 <code>b</code> 是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量 <code>b</code> 的值。</li>
-</ul>
-</li>
-</ol>
-<p>总结一下：</p>
+    <h1 id="python-中下划线的-5-种含义">Python 中下划线的 5 种含义</h1>
+<p>本文介绍了 Python
+中单下划线和双下划线（"dunder"）的各种含义和命名约定，名称修饰（name
+mangling）的工作原理，以及它如何影响你自己的 Python 类。</p>
+<p>单下划线和双下划线在 Python
+变量和方法名称中都各有其含义。有一些含义仅仅是依照约定，被视作是对程序员的提示
+- 而有一些含义是由 Python 解释器严格执行的。</p>
+<p>如果你想知道“Python
+变量和方法名称中单下划线和双下划线的含义是什么？”，我会尽我所能在这里为你解答。</p>
+<p>在本文中，我将讨论以下五种下划线模式和命名约定，以及它们如何影响
+Python 程序的行为：</p>
 <ul>
-<li>如果在函数内对变量进行赋值，Python 会认为这个变量是局部的，并会在函数内部查找它。</li>
-<li>如果函数内没有赋值操作，Python 会尝试访问外部作用域（如全局作用域）的变量。</li>
+<li>单前导下划线：_var</li>
+<li>单末尾下划线：var_</li>
+<li>双前导下划线：__var</li>
+<li>双前导和末尾下划线：__var__</li>
+<li>单下划线：_</li>
 </ul>
-<p>因此，在第二个例子中，虽然你想访问的是全局变量 <code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将 <code>b</code> 视为局部变量并抛出了错误。</p>
-<h2 id="global的作用"><a href="#global的作用" class="headerlink" title="global的作用"></a>global的作用</h2><p>那如何在函数中使用全局变量呢？用 <code>global</code> 标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量 <code>b</code> 而言的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
-<p>全局的问题解决了，再来看另外一个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure>
-<p>因为函数 <code>a()</code> 中，对 <code>count</code> 变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行 <code>count + 1</code> 操作时，却没有找到 <code>count</code>，所以报错了。</p>
-<p>那怎么处理呢？</p>
-<h2 id="nonlocal的作用"><a href="#nonlocal的作用" class="headerlink" title="nonlocal的作用"></a>nonlocal的作用</h2><p>我猜你会用 <code>global</code> 标记一下，但是注意啊。<code>global</code> 标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code> 函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>运行结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure>
-<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉 <code>a()</code> 函数，<code>count</code> 不在本地定义，但也不在全局变量里。在 Python 中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用 <code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而 <code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
+<p>在文章结尾处，你可以找到一个简短的“速查表”，总结了五种不同的下划线命名约定及其含义，以及一个简短的视频教程，可让你亲身体验它们的行为。</p>
+<p>让我们马上开始！</p>
+<h2 id="单前导下划线-_var">单前导下划线 _var</h2>
+<blockquote>
+<p><font color='red'><strong>不严格的</strong></font>私有属性和私有方法</p>
+</blockquote>
+<p>当涉及到变量和方法名称时，单个下划线前缀有一个约定俗成的含义。
+它是对程序员的一个提示 - 意味着 Python
+社区一致认为它应该是什么意思，但程序的行为不受影响。</p>
+<p>下划线前缀的含义是告知其他程序员：以单个下划线开头的变量或方法仅供内部使用。
+该约定在 PEP 8 中有定义。</p>
+<p>这不是 Python 强制规定的。 Python 不像 Java
+那样在“私有”和“公共”变量之间有很强的区别。
+这就像有人提出了一个小小的下划线警告标志，说：</p>
+<blockquote>
+<p>“嘿，这不是真的要成为类的公共接口的一部分。不去管它就好。“</p>
+</blockquote>
+<p>看看下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">       self.foo = <span class="number">11</span></span><br><span class="line">       self._bar = <span class="number">23</span></span><br></pre></td></tr></table></figure>
+<p>如果你实例化此类，并尝试访问在、__init__构造函数中定义的 foo 和、_bar
+属性，会发生什么情况？ 让我们来看看：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = Test()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t.foo</span><br><span class="line"><span class="number">11</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t._bar</span><br><span class="line"><span class="number">23</span></span><br></pre></td></tr></table></figure>
+<p>你会看到、_bar
+中的单个下划线并没有阻止我们“进入”类并访问该变量的值。</p>
+<p>这是因为 Python 中的单个下划线前缀仅仅是一个约定 -
+至少相对于变量和方法名而言。</p>
+<p>但是，前导下划线的确会影响从模块中导入名称的方式。</p>
+<p>假设你在一个名为 my_module 的模块中有以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This is my_module.py:</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">external_func</span>():</span><br><span class="line">   <span class="keyword">return</span> <span class="number">23</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_internal_func</span>():</span><br><span class="line">   <span class="keyword">return</span> <span class="number">42</span></span><br></pre></td></tr></table></figure>
+<p>现在，如果使用通配符从模块中导入所有名称，则 Python
+不会导入带有前导下划线的名称（除非模块定义了覆盖此行为的、__all__列表）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> my_module <span class="keyword">import</span> *</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>external_func()</span><br><span class="line"><span class="number">23</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_internal_func()</span><br><span class="line">NameError: <span class="string">&quot;name &#x27;_internal_func&#x27; is not defined&quot;</span></span><br></pre></td></tr></table></figure>
+<p>顺便说一下，应该避免通配符导入，因为它们使名称空间中存在哪些名称不清楚。
+为了清楚起见，坚持常规导入更好。</p>
+<p>与通配符导入不同，常规导入不受前导单个下划线命名约定的影响：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> my_module</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>my_module.external_func()</span><br><span class="line"><span class="number">23</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>my_module._internal_func()</span><br><span class="line"><span class="number">42</span></span><br></pre></td></tr></table></figure>
+<p>我知道这一点可能有点令人困惑。 如果你遵循 PEP 8
+推荐，避免通配符导入，那么你真正需要记住的只有这个：</p>
+<blockquote>
+<p>单个下划线是一个 Python 命名约定，表示这个名称是供内部使用的。
+它通常不由 Python 解释器强制执行，仅仅作为一种对程序员的提示。</p>
+</blockquote>
+<h2 id="单末尾下划线-var_">单末尾下划线 var_</h2>
+<p>有时候，一个变量的最合适的名称已经被一个关键字所占用。 因此，像 class
+或 def 这样的名称不能用作 Python 中的变量名称。
+在这种情况下，你可以附加一个下划线来解决命名冲突：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">make_object</span>(<span class="params">name, <span class="keyword">class</span></span>):</span><br><span class="line">SyntaxError: <span class="string">&quot;invalid syntax&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">make_object</span>(<span class="params">name, class_</span>):</span><br><span class="line"><span class="meta">... </span>   <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>总之，单个末尾下划线（后缀）是一个约定，用来避免与 Python
+关键字产生命名冲突。 PEP 8 解释了这个约定。</p>
+<h2 id="双前导下划线-__var">双前导下划线 __var</h2>
+<blockquote>
+<p><font color='blue'><strong>严格的</strong></font>私有属性和私有方法</p>
+</blockquote>
+<p>到目前为止，我们所涉及的所有命名模式的含义，来自于已达成共识的约定。
+而对于以双下划线开头的 Python
+类的属性（包括变量和方法），情况就有点不同了。</p>
+<p>双下划线前缀会导致 Python
+解释器重写属性名称，以避免子类中的命名冲突。</p>
+<p>这也叫做<strong>名称修饰（name
+mangling）</strong>——解释器更改变量的名称，以便在类被扩展的时候不容易产生冲突。</p>
+<p>我知道这听起来很抽象。
+因此，我组合了一个小小的代码示例来予以说明：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">       self.foo = <span class="number">11</span></span><br><span class="line">       self._bar = <span class="number">23</span></span><br><span class="line">       self.__baz = <span class="number">23</span></span><br></pre></td></tr></table></figure>
+<p>让我们用内置的 dir() 函数来看看这个对象的属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = Test()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">dir</span>(t)</span><br><span class="line">[<span class="string">&#x27;_Test__baz&#x27;</span>, <span class="string">&#x27;__class__&#x27;</span>, <span class="string">&#x27;__delattr__&#x27;</span>, <span class="string">&#x27;__dict__&#x27;</span>, <span class="string">&#x27;__dir__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__doc__&#x27;</span>, <span class="string">&#x27;__eq__&#x27;</span>, <span class="string">&#x27;__format__&#x27;</span>, <span class="string">&#x27;__ge__&#x27;</span>, <span class="string">&#x27;__getattribute__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__gt__&#x27;</span>, <span class="string">&#x27;__hash__&#x27;</span>, <span class="string">&#x27;__init__&#x27;</span>, <span class="string">&#x27;__le__&#x27;</span>, <span class="string">&#x27;__lt__&#x27;</span>, <span class="string">&#x27;__module__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__ne__&#x27;</span>, <span class="string">&#x27;__new__&#x27;</span>, <span class="string">&#x27;__reduce__&#x27;</span>, <span class="string">&#x27;__reduce_ex__&#x27;</span>, <span class="string">&#x27;__repr__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__setattr__&#x27;</span>, <span class="string">&#x27;__sizeof__&#x27;</span>, <span class="string">&#x27;__str__&#x27;</span>, <span class="string">&#x27;__subclasshook__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__weakref__&#x27;</span>, <span class="string">&#x27;_bar&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>以上是这个对象属性的列表。
+让我们来看看这个列表，并寻找我们的原始变量名称 foo、_bar
+和__baz，我保证你会注意到一些有趣的变化。</p>
 <ul>
-<li><p><code>nonlocal</code> 告诉 Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p>
-</li>
-<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code> 的变量，而不是重新定义新的局部变量</p>
-</li>
+<li>self.foo 变量在属性列表中显示为未修改的 foo。</li>
+<li>self._bar 的行为方式相同，它以、_bar 的形式显示在类上。
+就像我之前说过的，在这种情况下，前导下划线仅仅是一个约定。
+给程序员一个提示而已。</li>
+<li>然而，对于 self.__baz 而言，情况看起来有点不同。
+当你在该列表中搜索、__baz 时，你会看不到有这个名字的变量。</li>
 </ul>
-<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>学习 Python 时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回 <code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code> 函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的 <code>count</code> 变量。</p>
-<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code> 已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
-<p>像函数 <code>a()</code> 中 <code>count</code> 这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
-<p>用 <code>nonlocal</code> 标记后呢，Python 就会保留自由变量的绑定（或者说定义环境）。</p>
-<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是 <code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
-<p>因为 <code>a()</code> 延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li><p><code>global</code> 和 <code>nonlocal</code> 的功能都是<strong>改变变量作用域</strong>。</p>
-</li>
-<li><p><code>global</code> 标记全局变量，<code>nonlocal</code> 标记非全局、非本地的<strong>自由变量</strong>。</p>
-</li>
-<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p>
-</li>
-</ul>
+<p>__baz 出什么情况了？</p>
+<p>如果你仔细观察，你会看到此对象上有一个名为、_Test__baz 的属性。
+这就是 Python 解释器所做的名称修饰。
+它这样做是为了防止变量在子类中被重写。</p>
+<p>让我们创建另一个扩展 Test
+类的类，并尝试重写构造函数中添加的现有属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ExtendedTest</span>(<span class="title class_ inherited__">Test</span>):</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="built_in">super</span>().__init__()</span><br><span class="line">       self.foo = <span class="string">&#x27;overridden&#x27;</span></span><br><span class="line">       self._bar = <span class="string">&#x27;overridden&#x27;</span></span><br><span class="line">       self.__baz = <span class="string">&#x27;overridden&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>现在，你认为 foo，_bar 和、__baz 的值会出现在这个 ExtendedTest
+类的实例上吗？ 我们来看一看：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2 = ExtendedTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2.foo</span><br><span class="line"><span class="string">&#x27;overridden&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2._bar</span><br><span class="line"><span class="string">&#x27;overridden&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2.__baz</span><br><span class="line">AttributeError: <span class="string">&quot;&#x27;ExtendedTest&#x27; object has no attribute &#x27;__baz&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>等一下，当我们尝试查看 t2 .__ baz 的值时，为什么我们会得到
+AttributeError？ 名称修饰被再次触发了！
+事实证明，这个对象甚至没有、__baz 属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">dir</span>(t2)</span><br><span class="line">[<span class="string">&#x27;_ExtendedTest__baz&#x27;</span>, <span class="string">&#x27;_Test__baz&#x27;</span>, <span class="string">&#x27;__class__&#x27;</span>, <span class="string">&#x27;__delattr__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__dict__&#x27;</span>, <span class="string">&#x27;__dir__&#x27;</span>, <span class="string">&#x27;__doc__&#x27;</span>, <span class="string">&#x27;__eq__&#x27;</span>, <span class="string">&#x27;__format__&#x27;</span>, <span class="string">&#x27;__ge__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__getattribute__&#x27;</span>, <span class="string">&#x27;__gt__&#x27;</span>, <span class="string">&#x27;__hash__&#x27;</span>, <span class="string">&#x27;__init__&#x27;</span>, <span class="string">&#x27;__le__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__lt__&#x27;</span>, <span class="string">&#x27;__module__&#x27;</span>, <span class="string">&#x27;__ne__&#x27;</span>, <span class="string">&#x27;__new__&#x27;</span>, <span class="string">&#x27;__reduce__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__reduce_ex__&#x27;</span>, <span class="string">&#x27;__repr__&#x27;</span>, <span class="string">&#x27;__setattr__&#x27;</span>, <span class="string">&#x27;__sizeof__&#x27;</span>, <span class="string">&#x27;__str__&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;__subclasshook__&#x27;</span>, <span class="string">&#x27;__weakref__&#x27;</span>, <span class="string">&#x27;_bar&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>, <span class="string">&#x27;get_vars&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>正如你可以看到、__baz 变成、_ExtendedTest__baz 以防止意外修改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2._ExtendedTest__baz</span><br><span class="line"><span class="string">&#x27;overridden&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>但原来的、_Test__baz 还在：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2._Test__baz</span><br><span class="line"><span class="number">23</span></span><br></pre></td></tr></table></figure>
+<p>双下划线名称修饰对程序员是完全透明的。 下面的例子证实了这一点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ManglingTest</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">       self.__mangled = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">get_mangled</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="keyword">return</span> self.__mangled</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ManglingTest().get_mangled()</span><br><span class="line"><span class="string">&#x27;hello&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ManglingTest().__mangled</span><br><span class="line">AttributeError: <span class="string">&quot;&#x27;ManglingTest&#x27; object has no attribute &#x27;__mangled&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>名称修饰是否也适用于方法名称？
+是的，也适用。名称修饰会影响在一个类的上下文中，以两个下划线字符（"dunders"）开头的<strong>所有</strong>名称：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MangledMethod</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__method</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="keyword">return</span> <span class="number">42</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">call_it</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="keyword">return</span> self.__method()</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>MangledMethod().__method()</span><br><span class="line">AttributeError: <span class="string">&quot;&#x27;MangledMethod&#x27; object has no attribute &#x27;__method&#x27;&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>MangledMethod().call_it()</span><br><span class="line"><span class="number">42</span></span><br></pre></td></tr></table></figure>
+<p>这是另一个也许令人惊讶的运用名称修饰的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">_MangledGlobal__mangled = <span class="number">23</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MangledGlobal</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="keyword">return</span> __mangled</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>MangledGlobal().test()</span><br><span class="line"><span class="number">23</span></span><br></pre></td></tr></table></figure>
+<p>在这个例子中，我声明了一个名为、<em>MangledGlobal__mangled
+的全局变量。然后我在名为 MangledGlobal
+的类的上下文中访问变量。由于名称修饰，我能够在类的 test()
+方法内，以、</em>_mangled 来引用、_MangledGlobal__mangled 全局变量。</p>
+<p>Python 解释器自动将名称、__mangled
+扩展为、_MangledGlobal__mangled，因为它以两个下划线字符开头。这表明名称修饰不是专门与类属性关联的。它适用于在类上下文中使用的两个下划线字符开头的任何名称。</p>
+<h2 id="双前导和双末尾下划线-_var_">双前导和双末尾下划线 _var_</h2>
+<p>也许令人惊讶的是，如果一个名字同时以双下划线开始和结束，则不会应用名称修饰。
+由双下划线前缀和后缀包围的变量不会被 Python 解释器修改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PrefixPostfixTest</span>:</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">       self.__bam__ = <span class="number">42</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>PrefixPostfixTest().__bam__</span><br><span class="line"><span class="number">42</span></span><br></pre></td></tr></table></figure>
+<p>但是，Python 保留了有双前导和双末尾下划线的名称，用于特殊用途。
+这样的例子有：__init__对象构造函数、__call__
+使得一个对象可以被调用等</p>
+<p>这些 dunder 方法通常被称为神奇方法，但 Python
+社区中的许多人（包括我自己）都不喜欢这种方法。最好避免在自己的程序中使用以双下划线（“dunders”）开头和结尾的名称，以避免与将来
+Python 语言的变化产生冲突。</p>
+<h2 id="单下划线-_">单下划线 _</h2>
+<p>按照习惯，有时候单个独立下划线是用作一个名字，来表示某个变量是临时的或无关紧要的。</p>
+<p>例如，在下面的循环中，我们不需要访问正在运行的索引，我们可以使用“_”来表示它只是一个临时值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line"><span class="meta">... </span>   <span class="built_in">print</span>(<span class="string">&#x27;Hello, World.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>你也可以在拆分 (unpacking)
+表达式中将单个下划线用作“不关心的”变量，以忽略特定的值。
+同样，这个含义只是“依照约定”，并不会在 Python 解释器中触发特殊的行为。
+单个下划线仅仅是一个有效的变量名称，会有这个用途而已。</p>
+<p>在下面的代码示例中，我将汽车元组拆分为单独的变量，但我只对颜色和里程值感兴趣。
+但是，为了使拆分表达式成功运行，我需要将包含在元组中的所有值分配给变量。
+在这种情况下，“_”作为占位符变量可以派上用场：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>car = (<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;auto&#x27;</span>, <span class="number">12</span>, <span class="number">3812.4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>color, _, _, mileage = car</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>color</span><br><span class="line"><span class="string">&#x27;red&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>mileage</span><br><span class="line"><span class="number">3812.4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_</span><br><span class="line"><span class="number">12</span></span><br></pre></td></tr></table></figure>
+<p>除了用作临时变量之外，“_”是大多数 Python REPL
+中的一个特殊变量，它表示由解释器评估的最近一个表达式的结果。</p>
+<p>这样就很方便了，比如你可以在一个解释器会话中访问先前计算的结果，或者，你是在动态构建多个对象并与它们交互，无需事先给这些对象分配名字：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">20</span> + <span class="number">3</span></span><br><span class="line"><span class="number">23</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_</span><br><span class="line"><span class="number">23</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(_)</span><br><span class="line"><span class="number">23</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">list</span>()</span><br><span class="line">[]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_.append(<span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_.append(<span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_.append(<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>_</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="总结">总结</h2>
+<p>以下是一个简短的小结，即“速查表”，罗列了我在本文中谈到的五种 Python
+下划线模式的含义：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412291022458.webp" /></p>
+<h2 id="英文原文">英文原文</h2>
+<p><a
+target="_blank" rel="noopener" href="https://dbader.org/blog/meaning-of-underscores-in-python">The
+Meaning of Underscores in Python – dbader.org</a></p>
 
     
 
@@ -335,7 +428,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Python%E4%B8%AD%E4%B8%8B%E5%88%92%E7%BA%BF%E7%9A%845%E7%A7%8D%E5%90%AB%E4%B9%89/">展开全文 >></a>
     </p>
     
 
@@ -394,18 +487,22 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="python-执行顺序"><a href="#python-执行顺序" class="headerlink" title="python 执行顺序"></a>python 执行顺序</h1><p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
-<h2 id="代码执行顺序"><a href="#代码执行顺序" class="headerlink" title="代码执行顺序"></a>代码执行顺序</h2><p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
+    <h1 id="python-执行顺序">python 执行顺序</h1>
+<p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
+<h2 id="代码执行顺序">代码执行顺序</h2>
+<p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
 <blockquote>
 <p>案例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span>=<span class="string">&#x27;我爱中华人民共和国&#x27;</span>	  <span class="comment">#第一行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>)				<span class="comment">#第二行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 输出: 我爱中华人民共和国</span></span><br></pre></td></tr></table></figure>
 <p>执行顺序：先执行第一行，第一行是赋值语句，从右到左执行；执行完毕后，执行第二行。</p>
 </blockquote>
-<p><strong>2. 函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
+<p><strong>2.
+函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
 <blockquote>
 <p>案例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu1</span>():                       <span class="comment">#第一行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱中华人民共和国！&#x27;</span>)       <span class="comment">#第二行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;函数的执行顺序！&#x27;</span>)              <span class="comment">#第三行</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu2</span>():                       <span class="comment">#第四行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱写代码！&#x27;</span>)              <span class="comment">#第五行</span></span><br><span class="line">hanshu2()                            <span class="comment">#第六行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;好好工作，好好学习！&#x27;</span>)           <span class="comment">#第七行</span></span><br><span class="line">hanshu1()                            <span class="comment">#第八行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#---输出：---</span></span><br><span class="line"><span class="comment"># 函数的执行顺序！</span></span><br><span class="line"><span class="comment"># 我爱写代码！</span></span><br><span class="line"><span class="comment"># 好好工作，好好学习！</span></span><br><span class="line"><span class="comment"># 我爱中华人民共和国！</span></span><br></pre></td></tr></table></figure>
-<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 → 执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
+<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 →
+执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
 </blockquote>
     
     <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
@@ -494,21 +591,34 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="python项目中的绝对路径与相对路径"><a href="#python项目中的绝对路径与相对路径" class="headerlink" title="python项目中的绝对路径与相对路径"></a>python项目中的绝对路径与相对路径</h1><p>当前工作目录（<strong>cwd</strong>，Current Working Directory）是在程序启动时由操作系统或运行环境设置的，具体由 <strong>运行程序的上下文</strong> 决定。以下是对设置时机和机制的详细解释：</p>
-<p>在 Python 项目中，路径的管理是一个常见问题，理解 <strong>相对路径</strong> 和 <strong>绝对路径</strong> 的区别非常重要。它们主要用于访问文件、资源或目录。</p>
-<h2 id="绝对路径"><a href="#绝对路径" class="headerlink" title="绝对路径"></a>绝对路径</h2><ul>
-<li><strong>绝对路径</strong> 指从<strong>根目录</strong>开始的完整路径。</li>
+    <h1
+id="python项目中的绝对路径与相对路径">python项目中的绝对路径与相对路径</h1>
+<p>当前工作目录（<strong>cwd</strong>，Current Working
+Directory）是在程序启动时由操作系统或运行环境设置的，具体由
+<strong>运行程序的上下文</strong>
+决定。以下是对设置时机和机制的详细解释：</p>
+<p>在 Python 项目中，路径的管理是一个常见问题，理解
+<strong>相对路径</strong> 和 <strong>绝对路径</strong>
+的区别非常重要。它们主要用于访问文件、资源或目录。</p>
+<h2 id="绝对路径">绝对路径</h2>
+<ul>
+<li><strong>绝对路径</strong>
+指从<strong>根目录</strong>开始的完整路径。</li>
 <li>绝对路径与当前程序的运行位置无关，始终指向同一个文件或目录。</li>
 </ul>
-<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名 <code>C:\</code>（Windows）开头。</li>
+<h3 id="特点">特点</h3>
+<ul>
+<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名
+<code>C:\</code>（Windows）开头。</li>
 <li><strong>跨环境不够灵活</strong>，因为不同系统的根路径可能不同。</li>
 </ul>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
+<h3 id="示例">示例</h3>
+<ul>
 <li><strong>Windows</strong>：<code>C:\Users\Project\file.txt</code></li>
 <li><strong>Linux/Mac</strong>：<code>/home/user/Project/file.txt</code></li>
 </ul>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
+<h3 id="示例-1">示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
     
     <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/#more">more >></a>
     
@@ -596,7 +706,10 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="全局变量-amp-局部变量"><a href="#全局变量-amp-局部变量" class="headerlink" title="全局变量&amp;局部变量"></a>全局变量&amp;局部变量</h1><h2 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h2><p><strong>局部变量</strong> 就是在函数内部定义的变量，作用范围是这个函数内部，即只能在这个函数中使用，在函数的外部是不能使用的。因为其作用范围只是在自己的函数内部，所以不同的函数可以定义相同名字的局部变量。</p>
+    <h1 id="全局变量局部变量">全局变量&amp;局部变量</h1>
+<h2 id="局部变量">局部变量</h2>
+<p><strong>局部变量</strong>
+就是在函数内部定义的变量，作用范围是这个函数内部，即只能在这个函数中使用，在函数的外部是不能使用的。因为其作用范围只是在自己的函数内部，所以不同的函数可以定义相同名字的局部变量。</p>
 <p>局部变量的作用，为了临时保存数据需要在函数中定义变量来进行存储：</p>
 <ul>
 <li>当函数调用时，局部变量被创建</li>
@@ -604,7 +717,8 @@
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(): </span><br><span class="line">    <span class="comment"># 定义局部变量 </span></span><br><span class="line">    sal = <span class="number">15000</span> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;薪资:&quot;</span>, sal) </span><br><span class="line">show() </span><br></pre></td></tr></table></figure>
 <p>薪资: 15000</p>
-<h2 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h2><p>如果一个变量，既能在一个函数中使用，也能在其他的函数中使用，这样的变量就是全局变量。</p>
+<h2 id="全局变量">全局变量</h2>
+<p>如果一个变量，既能在一个函数中使用，也能在其他的函数中使用，这样的变量就是全局变量。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义全局变量 </span></span><br><span class="line">money = <span class="number">1200</span> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test1</span>(): </span><br><span class="line">    <span class="built_in">print</span>(money) <span class="comment"># 虽然没有定义变量 money 但是可是使用全局变量 money</span></span><br><span class="line"></span><br><span class="line">test1()</span><br></pre></td></tr></table></figure>
 <p>1200</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test1</span>():</span><br><span class="line">    <span class="built_in">print</span>(money) <span class="comment"># 虽然没有定义变量 money 但是可是使用全局变量 money</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 定义全局变量</span></span><br><span class="line">    money = <span class="number">1200</span></span><br><span class="line">    test1()</span><br></pre></td></tr></table></figure>
@@ -695,54 +809,72 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h1><h2 id="assert"><a href="#assert" class="headerlink" title="assert"></a>assert</h2><h3 id="assert-关键字简介"><a href="#assert-关键字简介" class="headerlink" title="assert 关键字简介"></a><strong><code>assert</code> 关键字简介</strong></h3><p>在 Python 中，<code>assert</code> 是一个用于<strong>调试和验证</strong>代码的关键字，可以快速检查程序中的某些条件是否为真。如果条件为假，程序会抛出一个 <code>AssertionError</code> 异常，并且可以附加错误消息以帮助定位问题</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a><strong>语法</strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> condition, message</span><br></pre></td></tr></table></figure>
+    <h1 id="关键字">关键字</h1>
+<h2 id="assert">assert</h2>
+<h3 id="assert-关键字简介"><strong><code>assert</code>
+关键字简介</strong></h3>
+<p>在 Python 中，<code>assert</code>
+是一个用于<strong>调试和验证</strong>代码的关键字，可以快速检查程序中的某些条件是否为真。如果条件为假，程序会抛出一个
+<code>AssertionError</code> 异常，并且可以附加错误消息以帮助定位问题</p>
+<h3 id="语法"><strong>语法</strong></h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> condition, message</span><br></pre></td></tr></table></figure>
 <ul>
-<li><strong><code>condition</code></strong>: 一个返回布尔值的表达式。如果为 <code>True</code>，程序继续执行；如果为 <code>False</code>，抛出 <code>AssertionError</code> 异常</li>
-<li><strong><code>message</code></strong>: （可选）断言失败时显示的错误信息，用于描述错误原因</li>
+<li><strong><code>condition</code></strong>:
+一个返回布尔值的表达式。如果为 <code>True</code>，程序继续执行；如果为
+<code>False</code>，抛出 <code>AssertionError</code> 异常</li>
+<li><strong><code>message</code></strong>:
+（可选）断言失败时显示的错误信息，用于描述错误原因</li>
 </ul>
-<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a><strong>基本用法</strong></h3><ol>
+<h3 id="基本用法"><strong>基本用法</strong></h3>
+<ol type="1">
 <li><p><strong>简单断言</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">5</span>  <span class="comment"># 条件为真，程序继续执行</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>  <span class="comment"># 条件为假，抛出 AssertionError</span></span><br><span class="line"><span class="comment"># 输出：AssertionError</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">5</span>  <span class="comment"># 条件为真，程序继续执行</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>  <span class="comment"># 条件为假，抛出 AssertionError</span></span><br><span class="line"><span class="comment"># 输出：AssertionError</span></span><br></pre></td></tr></table></figure></li>
 <li><p><strong>带错误消息</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>, <span class="string">&quot;x should be less than 5&quot;</span></span><br><span class="line"><span class="comment"># 输出：AssertionError: x should be less than 5</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>, <span class="string">&quot;x should be less than 5&quot;</span></span><br><span class="line"><span class="comment"># 输出：AssertionError: x should be less than 5</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<hr>
-<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ol>
-<li><p><strong>调试代码</strong> 在开发阶段使用 <code>assert</code> 检查某些关键条件是否满足。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">assert</span> b != <span class="number">0</span>, <span class="string">&quot;Denominator must not be zero&quot;</span></span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 输出：5.0</span></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">0</span>))  <span class="comment"># 抛出 AssertionError: Denominator must not be zero</span></span><br></pre></td></tr></table></figure>
-</li>
+<hr />
+<h3 id="应用场景"><strong>应用场景</strong></h3>
+<ol type="1">
+<li><p><strong>调试代码</strong> 在开发阶段使用 <code>assert</code>
+检查某些关键条件是否满足。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">assert</span> b != <span class="number">0</span>, <span class="string">&quot;Denominator must not be zero&quot;</span></span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 输出：5.0</span></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">0</span>))  <span class="comment"># 抛出 AssertionError: Denominator must not be zero</span></span><br></pre></td></tr></table></figure></li>
 <li><p><strong>验证输入</strong> 确保函数或程序的输入符合预期。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">process_list</span>(<span class="params">lst</span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(lst, <span class="built_in">list</span>), <span class="string">&quot;Input must be a list&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [x * <span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> lst]</span><br><span class="line"></span><br><span class="line">process_list([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 正常工作</span></span><br><span class="line">process_list(<span class="string">&quot;123&quot;</span>)      <span class="comment"># 抛出 AssertionError: Input must be a list</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>检查程序状态</strong> 验证程序在某些关键阶段的状态是否正确。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">state = <span class="string">&quot;initialized&quot;</span></span><br><span class="line"><span class="keyword">assert</span> state == <span class="string">&quot;initialized&quot;</span>, <span class="string">&quot;State must be &#x27;initialized&#x27; before proceeding&quot;</span></span><br></pre></td></tr></table></figure>
-</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">process_list</span>(<span class="params">lst</span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(lst, <span class="built_in">list</span>), <span class="string">&quot;Input must be a list&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [x * <span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> lst]</span><br><span class="line"></span><br><span class="line">process_list([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 正常工作</span></span><br><span class="line">process_list(<span class="string">&quot;123&quot;</span>)      <span class="comment"># 抛出 AssertionError: Input must be a list</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>检查程序状态</strong>
+验证程序在某些关键阶段的状态是否正确。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">state = <span class="string">&quot;initialized&quot;</span></span><br><span class="line"><span class="keyword">assert</span> state == <span class="string">&quot;initialized&quot;</span>, <span class="string">&quot;State must be &#x27;initialized&#x27; before proceeding&quot;</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<h3 id="禁用断言"><a href="#禁用断言" class="headerlink" title="禁用断言"></a>禁用断言</h3><p>在生产环境中，Python 允许通过运行程序时使用优化模式 (<code>-O</code> 参数) 来禁用断言。禁用后，<code>assert</code> 语句会被完全忽略，适合性能敏感的场景。</p>
+<h3 id="禁用断言">禁用断言</h3>
+<p>在生产环境中，Python 允许通过运行程序时使用优化模式 (<code>-O</code>
+参数) 来禁用断言。禁用后，<code>assert</code>
+语句会被完全忽略，适合性能敏感的场景。</p>
 <p><strong>示例</strong>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -O your_script.py</span><br></pre></td></tr></table></figure>
 <p>禁用后，即使 <code>assert</code> 条件为假，程序也不会抛出异常。</p>
-<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ol>
+<h3 id="注意">注意</h3>
+<ol type="1">
 <li><p><strong><code>assert</code> 不是替代异常处理的工具</strong>：</p>
 <ul>
 <li>它主要用于调试，而不是作为通用错误处理机制</li>
-<li>对于必须在生产环境中检查的条件，应使用明确的异常（如 <code>ValueError</code> 或自定义异常）</li>
-</ul>
-</li>
-<li><p><strong><code>assert</code> 的副作用</strong>：如果依赖 <code>assert</code> 进行关键的逻辑检查，一旦禁用断言，程序可能会出现意想不到的行为</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">0</span>, <span class="string">&quot;x must be positive&quot;</span></span><br><span class="line">y = <span class="number">1</span> / x  <span class="comment"># 如果禁用了断言，x 可能为 0，导致 ZeroDivisionError</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>只在开发阶段使用</strong>：建议仅将 <code>assert</code> 用于开发和测试阶段，而不是生产代码中的核心逻辑验证。</p>
-</li>
+<li>对于必须在生产环境中检查的条件，应使用明确的异常（如
+<code>ValueError</code> 或自定义异常）</li>
+</ul></li>
+<li><p><strong><code>assert</code> 的副作用</strong>：如果依赖
+<code>assert</code>
+进行关键的逻辑检查，一旦禁用断言，程序可能会出现意想不到的行为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">0</span>, <span class="string">&quot;x must be positive&quot;</span></span><br><span class="line">y = <span class="number">1</span> / x  <span class="comment"># 如果禁用了断言，x 可能为 0，导致 ZeroDivisionError</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>只在开发阶段使用</strong>：建议仅将 <code>assert</code>
+用于开发和测试阶段，而不是生产代码中的核心逻辑验证。</p></li>
 </ol>
-<hr>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul>
-<li><code>assert</code> 是一个方便的调试工具，用于验证程序中的关键条件。</li>
-<li>如果条件不满足，会抛出 <code>AssertionError</code>，并可以提供错误消息。</li>
-<li>在生产环境中可以禁用断言，因此不要依赖 <code>assert</code> 来替代异常处理。</li>
+<hr />
+<h3 id="总结"><strong>总结</strong></h3>
+<ul>
+<li><code>assert</code>
+是一个方便的调试工具，用于验证程序中的关键条件。</li>
+<li>如果条件不满足，会抛出
+<code>AssertionError</code>，并可以提供错误消息。</li>
+<li>在生产环境中可以禁用断言，因此不要依赖 <code>assert</code>
+来替代异常处理。</li>
 <li>使用得当可以提高代码的健壮性和可读性，但应谨慎使用，避免对程序功能产生副作用。</li>
 </ul>
     
@@ -832,29 +964,42 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="特殊注释"><a href="#特殊注释" class="headerlink" title="特殊注释"></a>特殊注释</h1><p>在编写代码的时候我们可以利用一些公认的特殊注释方式快速简介表达自己的目地</p>
-<h2 id="TODO-lt-说明-gt"><a href="#TODO-lt-说明-gt" class="headerlink" title="TODO: &lt;说明&gt;"></a>TODO: &lt;说明&gt;</h2><p>通常写在一些函数的上方或者内部，当然，实际上你可想写哪儿就写哪儿。它表示该注释标识处，有一些代码功能还未实现，未来会实现，<code>&lt;说明&gt;</code> 中应该简单描述下该功能。</p>
-<h2 id="FIXME-lt-说明-gt"><a href="#FIXME-lt-说明-gt" class="headerlink" title="FIXME: &lt;说明&gt;"></a>FIXME: &lt;说明&gt;</h2><p>该注释表示该注释标记处的代码有问题或者是错误的，有可能无法正常工作，需要修复，<code>&lt;说明&gt;</code> 中应该简单描述下如何修复该问题。</p>
-<h2 id="XXX-lt-说明-gt"><a href="#XXX-lt-说明-gt" class="headerlink" title="XXX: &lt;说明&gt;"></a>XXX: &lt;说明&gt;</h2><p>该注释表示该注释标记处的代码功能虽然实现了，但是实现的方式可能并不那么的好，可以进行一些改进优化，<code>&lt;说明&gt;</code> 中应该简单描述下改进优化的策略。</p>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="Golang-中"><a href="#Golang-中" class="headerlink" title="Golang 中"></a>Golang 中</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">// <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">// <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
+    <h1 id="特殊注释">特殊注释</h1>
+<p>在编写代码的时候我们可以利用一些公认的特殊注释方式快速简介表达自己的目地</p>
+<h2 id="todo">TODO: <说明></h2>
+<p>通常写在一些函数的上方或者内部，当然，实际上你可想写哪儿就写哪儿。它表示该注释标识处，有一些代码功能还未实现，未来会实现，<code>&lt;说明&gt;</code>
+中应该简单描述下该功能。</p>
+<h2 id="fixme">FIXME: <说明></h2>
+<p>该注释表示该注释标记处的代码有问题或者是错误的，有可能无法正常工作，需要修复，<code>&lt;说明&gt;</code>
+中应该简单描述下如何修复该问题。</p>
+<h2 id="xxx">XXX: <说明></h2>
+<p>该注释表示该注释标记处的代码功能虽然实现了，但是实现的方式可能并不那么的好，可以进行一些改进优化，<code>&lt;说明&gt;</code>
+中应该简单描述下改进优化的策略。</p>
+<h2 id="示例">示例</h2>
+<h3 id="golang-中">Golang 中</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">// <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">// <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
 <p>或者</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	<span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">	<span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">	<span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-<h3 id="Python-中"><a href="#Python-中" class="headerlink" title="Python 中"></a>Python 中</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment"># <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment"># <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
+<h3 id="python-中">Python 中</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment"># <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment"># <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
 <p>或者</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>或者</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>  Python中的符号 ‘ 和 “ 都表示字符串</p>
+<p>Python中的符号 ' 和 " 都表示字符串</p>
 </blockquote>
-<h2 id="特殊注释在VSCode中的使用方式"><a href="#特殊注释在VSCode中的使用方式" class="headerlink" title="特殊注释在VSCode中的使用方式"></a>特殊注释在VSCode中的使用方式</h2><ol>
+<h2 id="特殊注释在vscode中的使用方式">特殊注释在VSCode中的使用方式</h2>
+<ol type="1">
 <li>在商店中搜索 TODO Highlight，点击下载，下载之后的界面如下：</li>
 </ol>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058005.png" alt=""></p>
-<ol>
-<li>在插件中下载一另一个 Todo Tree </li>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058005.png" /></p>
+<ol start="2" type="1">
+<li>在插件中下载一另一个 Todo Tree</li>
 </ol>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" alt=""></p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" /></p>
 <p>这两个插件全都下载完成之后，将vscode关闭，重新打开后，我们编辑器会出现一个小树：</p>
 <p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058872.png" alt="image-20250110104744573" style="zoom: 50%;" /></p>
 
@@ -913,6 +1058,135 @@
 
 
   
+    <article id="post-【后端】/python/直接赋值、浅拷贝和深度拷贝" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" target="_blank">直接赋值、浅拷贝和深度拷贝</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="直接赋值浅拷贝和深度拷贝">直接赋值、浅拷贝和深度拷贝</h1>
+<ul>
+<li><strong>直接赋值：</strong>其实就是对象的<strong>引用（别名）</strong></li>
+<li><strong>浅拷贝(copy)：</strong>拷贝<strong>父对象</strong>，不会拷贝对象的内部的子对象</li>
+<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy
+方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
+</ul>
+<h2 id="字典实例">字典实例</h2>
+<p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b
+是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b
+完全拷贝了父对象及其子对象，两者是完全独立的。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="列表实例">列表实例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
+<p>以上实例执行输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;b = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;c = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]])</span><br><span class="line">(<span class="string">&#x27;d = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]])</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/逻辑运算符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -942,45 +1216,71 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h1><h2 id="“真值”（Truthy）与“假值”（Falsy）的概念"><a href="#“真值”（Truthy）与“假值”（Falsy）的概念" class="headerlink" title="“真值”（Truthy）与“假值”（Falsy）的概念"></a>“真值”（Truthy）与“假值”（Falsy）的概念</h2><p>在 Python 中，以下值被视为 <strong>假值</strong>：</p>
+    <h1 id="逻辑运算符">逻辑运算符</h1>
+<h2
+id="真值truthy与假值falsy的概念">“真值”（Truthy）与“假值”（Falsy）的概念</h2>
+<p>在 Python 中，以下值被视为 <strong>假值</strong>：</p>
 <ul>
 <li><code>None</code></li>
 <li><code>0</code>（整型和浮点型的零）</li>
-<li>空对象：<code>&#39;&#39;</code>（空字符串）、<code>[]</code>（空列表）、<code>&#123;&#125;</code>（空字典）等</li>
+<li>空对象：<code>''</code>（空字符串）、<code>[]</code>（空列表）、<code>&#123;&#125;</code>（空字典）等</li>
 <li>布尔值 <code>False</code></li>
 </ul>
 <p>其他值都视为 <strong>真值</strong>。</p>
-<p>在 Python 中，逻辑运算符 <strong><code>and</code></strong>、<strong><code>or</code></strong> 和 <strong><code>not</code></strong> 用于布尔逻辑运算，帮助我们组合条件表达式。</p>
-<hr>
-<h2 id="and-运算符"><a href="#and-运算符" class="headerlink" title="and 运算符"></a><code>and</code> 运算符</h2><h3 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h3><ul>
-<li><strong><code>and</code></strong> 表示<strong>逻辑与</strong>：只有当 <strong>所有条件都为真</strong> 时，结果才为 <strong>True</strong>。</li>
+<p>在 Python 中，逻辑运算符
+<strong><code>and</code></strong>、<strong><code>or</code></strong> 和
+<strong><code>not</code></strong>
+用于布尔逻辑运算，帮助我们组合条件表达式。</p>
+<hr />
+<h2 id="and-运算符"><code>and</code> 运算符</h2>
+<h3 id="规则">规则</h3>
+<ul>
+<li><strong><code>and</code></strong>
+表示<strong>逻辑与</strong>：只有当 <strong>所有条件都为真</strong>
+时，结果才为 <strong>True</strong>。</li>
 <li>短路特性：从左到右依次判断，当遇到<strong>第一个假值</strong>时，直接返回该值，不再继续判断后续表达式。</li>
 </ul>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全部为真，返回最后一个值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 遇到假值，返回第一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="literal">None</span> <span class="keyword">and</span> <span class="string">&quot;Hello&quot;</span>)  <span class="comment"># 输出: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">True</span></span><br><span class="line">b = <span class="literal">False</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">and</span> b)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
+<h3 id="示例">示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全部为真，返回最后一个值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 遇到假值，返回第一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="literal">None</span> <span class="keyword">and</span> <span class="string">&quot;Hello&quot;</span>)  <span class="comment"># 输出: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">True</span></span><br><span class="line">b = <span class="literal">False</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">and</span> b)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
 <p><strong>总结</strong>：</p>
 <ul>
-<li>如果所有值都为 <strong>真</strong>，返回<strong>最后一个真值</strong>。</li>
+<li>如果所有值都为
+<strong>真</strong>，返回<strong>最后一个真值</strong>。</li>
 <li>遇到第一个 <strong>假值</strong> 时，返回该假值。</li>
 </ul>
-<hr>
-<h2 id="or-运算符"><a href="#or-运算符" class="headerlink" title="or 运算符"></a><code>or</code> 运算符</h2><h3 id="规则-1"><a href="#规则-1" class="headerlink" title="规则"></a>规则</h3><ul>
-<li><strong><code>or</code></strong> 表示<strong>逻辑或</strong>：只要有一个条件为真，结果就为 <strong>True</strong>。</li>
+<hr />
+<h2 id="or-运算符"><code>or</code> 运算符</h2>
+<h3 id="规则-1">规则</h3>
+<ul>
+<li><strong><code>or</code></strong>
+表示<strong>逻辑或</strong>：只要有一个条件为真，结果就为
+<strong>True</strong>。</li>
 <li>短路特性：从左到右依次判断，当遇到<strong>第一个真值</strong>时，直接返回该值，不再继续判断后续表达式。</li>
 </ul>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 遇到真值，返回第一个真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有都为假，返回最后一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="literal">False</span>)  <span class="comment"># 输出: False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">False</span></span><br><span class="line">b = <span class="literal">True</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">or</span> b)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line">x = <span class="literal">None</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;default_value&quot;</span></span><br><span class="line"></span><br><span class="line">x = <span class="string">&quot;custom_value&quot;</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;custom_value&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="示例-1">示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 遇到真值，返回第一个真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有都为假，返回最后一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="literal">False</span>)  <span class="comment"># 输出: False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">False</span></span><br><span class="line">b = <span class="literal">True</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">or</span> b)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line">x = <span class="literal">None</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;default_value&quot;</span></span><br><span class="line"></span><br><span class="line">x = <span class="string">&quot;custom_value&quot;</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;custom_value&quot;</span></span><br></pre></td></tr></table></figure>
 <p><strong>总结</strong>：</p>
 <ul>
-<li>如果所有值都为 <strong>假</strong>，返回<strong>最后一个假值</strong>。</li>
+<li>如果所有值都为
+<strong>假</strong>，返回<strong>最后一个假值</strong>。</li>
 <li>遇到第一个 <strong>真值</strong> 时，返回该真值。</li>
 </ul>
-<hr>
-<h2 id="not-运算符"><a href="#not-运算符" class="headerlink" title="not 运算符"></a><code>not</code> 运算符</h2><h3 id="规则-2"><a href="#规则-2" class="headerlink" title="规则"></a>规则</h3><ul>
-<li><strong><code>not</code></strong> 表示<strong>逻辑非</strong>：对一个表达式取反。</li>
-<li>如果表达式为 <strong>True</strong>，<code>not</code> 返回 <strong>False</strong>；反之亦然。</li>
+<hr />
+<h2 id="not-运算符"><code>not</code> 运算符</h2>
+<h3 id="规则-2">规则</h3>
+<ul>
+<li><strong><code>not</code></strong>
+表示<strong>逻辑非</strong>：对一个表达式取反。</li>
+<li>如果表达式为 <strong>True</strong>，<code>not</code> 返回
+<strong>False</strong>；反之亦然。</li>
 </ul>
-<h3 id="示例-2"><a href="#示例-2" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 布尔运算</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">True</span>)   <span class="comment"># 输出: False</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">False</span>)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对非布尔值取反</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">0</span>)      <span class="comment"># 输出: True，因为 0 是假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">1</span>)      <span class="comment"># 输出: False，因为 1 是真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">None</span>)   <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="结合示例：and、or-和-not-组合"><a href="#结合示例：and、or-和-not-组合" class="headerlink" title="结合示例：and、or 和 not 组合"></a>结合示例：<code>and</code>、<code>or</code> 和 <code>not</code> 组合</h2><p>当多个逻辑运算符组合在一起时：</p>
+<h3 id="示例-2">示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 布尔运算</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">True</span>)   <span class="comment"># 输出: False</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">False</span>)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对非布尔值取反</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">0</span>)      <span class="comment"># 输出: True，因为 0 是假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">1</span>)      <span class="comment"># 输出: False，因为 1 是真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">None</span>)   <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h2
+id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or</code>
+和 <code>not</code> 组合</h2>
+<p>当多个逻辑运算符组合在一起时：</p>
 <ul>
 <li><code>not</code> 的优先级最高。</li>
 <li>其次是 <code>and</code>。</li>
@@ -988,11 +1288,11 @@
 <li>括号 <code>()</code> 可以用于改变默认的优先级。</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">0</span></span><br><span class="line">y = <span class="number">1</span></span><br><span class="line">z = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 优先级：not &gt; and &gt; or</span></span><br><span class="line">result = <span class="keyword">not</span> x <span class="keyword">or</span> y <span class="keyword">and</span> z</span><br><span class="line"><span class="comment"># 解析步骤：</span></span><br><span class="line"><span class="comment"># 1. not x -&gt; True (因为 x=0 是假值，取反为真)</span></span><br><span class="line"><span class="comment"># 2. y and z -&gt; 1 and 2 -&gt; 2 (y 和 z 都为真，返回最后一个真值)</span></span><br><span class="line"><span class="comment"># 3. not x or (y and z) -&gt; True or 2 -&gt; True</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用括号改变优先级</span></span><br><span class="line">result = <span class="keyword">not</span> (x <span class="keyword">or</span> y) <span class="keyword">and</span> z</span><br><span class="line"><span class="comment"># 解析步骤：</span></span><br><span class="line"><span class="comment"># 1. x or y -&gt; 0 or 1 -&gt; 1</span></span><br><span class="line"><span class="comment"># 2. not (x or y) -&gt; not 1 -&gt; False</span></span><br><span class="line"><span class="comment"># 3. False and z -&gt; False</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><div class="table-container">
+<hr />
+<h2 id="总结">总结</h2>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>运算符</th>
 <th>作用</th>
 <th>示例</th>
@@ -1000,37 +1300,37 @@
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><code>and</code></td>
 <td>逻辑与</td>
 <td><code>1 and 2</code></td>
 <td><code>2</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td></td>
 <td></td>
 <td><code>0 and 2</code></td>
 <td><code>0</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>or</code></td>
 <td>逻辑或</td>
 <td><code>0 or 1</code></td>
 <td><code>1</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td></td>
 <td></td>
-<td><code>None or &quot;Hi&quot;</code></td>
-<td><code>&quot;Hi&quot;</code></td>
+<td><code>None or "Hi"</code></td>
+<td><code>"Hi"</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>not</code></td>
 <td>逻辑非（取反）</td>
 <td><code>not True</code></td>
 <td><code>False</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td></td>
 <td></td>
 <td><code>not 0</code></td>
@@ -1038,11 +1338,14 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h3 id="逻辑运算符优先级："><a href="#逻辑运算符优先级：" class="headerlink" title="逻辑运算符优先级："></a>逻辑运算符优先级：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">not` &gt; `and` &gt; `or</span><br></pre></td></tr></table></figure>
-<h3 id="短路求值："><a href="#短路求值：" class="headerlink" title="短路求值："></a>短路求值：</h3><ul>
-<li><strong><code>and</code></strong> 遇到假值立即返回，不再判断后续。</li>
-<li><strong><code>or</code></strong> 遇到真值立即返回，不再判断后续。</li>
+<h3 id="逻辑运算符优先级">逻辑运算符优先级：</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">not` &gt; `and` &gt; `or</span><br></pre></td></tr></table></figure>
+<h3 id="短路求值">短路求值：</h3>
+<ul>
+<li><strong><code>and</code></strong>
+遇到假值立即返回，不再判断后续。</li>
+<li><strong><code>or</code></strong>
+遇到真值立即返回，不再判断后续。</li>
 </ul>
 
     
@@ -1100,7 +1403,7 @@
 
 
   
-    <article id="post-【后端】/python/直接赋值、浅拷贝和深度拷贝" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/Linux/command/python -m 与 python 的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1108,7 +1411,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" target="_blank">直接赋值、浅拷贝和深度拷贝</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">python -m 与 python 的区别</a>
   
     </h1>
   
@@ -1116,7 +1419,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1129,29 +1432,78 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="直接赋值、浅拷贝和深度拷贝"><a href="#直接赋值、浅拷贝和深度拷贝" class="headerlink" title="直接赋值、浅拷贝和深度拷贝"></a>直接赋值、浅拷贝和深度拷贝</h1><ul>
-<li><strong>直接赋值：</strong>其实就是对象的<strong>引用（别名）</strong></li>
-<li><strong>浅拷贝(copy)：</strong>拷贝<strong>父对象</strong>，不会拷贝对象的内部的子对象</li>
-<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy 方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
+    <h1 id="python--m-与-python-的区别">python -m 与 python 的区别</h1>
+<h2 id="module">module</h2>
+<p>先看<code>python --help</code>看下<code>python -m</code>参数的解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-m mod : run library module as a script (terminates option list)</span><br></pre></td></tr></table></figure>
+<p><code>mod</code>是<code>module</code>的缩写，即<code>-m</code>后面跟的是模块
+(<code>module</code>) 名，意思是把模块当成脚本来运行。</p>
+<p><code>terminates option list</code>意味着<code>-m</code>之后的其它选项不起作用，在这点上它跟<code>-c</code>是类似，都是终极选项。</p>
+<p>既然涉及到模块，这里就多提几句。 在 Python
+中，一个<code>.py</code>文件就称之为一个模块（<code>Module</code>）。</p>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/biggbang/article/details/115942467?ops_request_misc=%7B%22request%5Fid%22%3A%220d7eea1321190be2bdd00f9e7160d8c4%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fblog.%22%7D&amp;request_id=0d7eea1321190be2bdd00f9e7160d8c4&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-1-115942467-null-null.nonecase&amp;utm_term=模块&amp;spm=1018.2226.3001.4450">Python
+模块与包详解</a></p>
+</blockquote>
+<p>比如一个顶层包名 <code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面<code>fly.py</code>模块的名字就是<code>bytesfly.fly</code>。</p>
+<blockquote>
+<p>注意： 模块名是不带 <code>.py</code> 后缀的，层级之间以
+<code>.</code> 作为分隔符</p>
+</blockquote>
+<h2 id="python--m-原理解析">python -m 原理解析</h2>
+<p>看了上面<code>python -m</code>几种常见用法，你是否好奇<code>python -m</code>到底做了什么事？</p>
+<p>不卖关子，一句话解释就是：</p>
+<blockquote>
+<p>对于<code>python -m module_name</code>，Python
+会检索<code>sys.path</code>，查找名字为<code>module_name</code>的模块或者包，并将其内容当成主程序入口来执行，换句话说在执行时，该脚本的<code>__name__</code>是<code>__main__</code>。</p>
+</blockquote>
+<p>拿文章开篇的<code>bytesfly.fly</code>模块来说，也就是<code>bytesfly</code>包下的<code>fly.py</code>文件内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----fly----&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;fly_main&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在<code>~</code>项目路径下执行<code>python -m bytesfly.fly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>如果直接执行呢？
+即相同路径下执行<code>python bytesfly/fly.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi/bytesfly&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>总结一下，<code>python -m module_name</code>与<code>python folder/file.py</code>，都会把定位到的
+Python
+脚本当成主程序入口来执行，即在执行时，该脚本的<code>__name__</code>都是<code>__main__</code>，与<code>import</code>导入模块不同。</p>
+<p>但是有注意到上面两种调用方式的不同之处吗？</p>
+<p><code>fly.py</code>程序输出了<code>sys.path</code>，可以看到两种调用方式的<code>Python Path</code>有区别，这种区别有什么影响呢？</p>
+<p>再看一个例子。
+比如一个顶层包名还是<code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>tool.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+<p>其中<code>run.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> bytesfly.b <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(tool.add(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>同样在<code>~</code>项目路径下执行<code>python -m bytesfly.a.run</code>，输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+<p>然后在<code>~</code>项目路径下执行<code>python bytesfly/a/run.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi/bytesfly/a&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;bytesfly/a/run.py&quot;, line 6, in </span><br><span class="line"> from bytesfly.b import tool</span><br><span class="line">ModuleNotFoundError: No module named &#x27;bytesfly&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个地方能 Get
+到这两种调用方式在<code>Python Path</code>上的区别？</p>
+<p>除此之外，<code>python -m module_name</code>与<code>python folder/file.py</code>，在实现上有什么不同呢？</p>
+<ul>
+<li>使用<code>python -m module_name</code>，解释器在不<code>import</code>模块的情况下，在所有模块命名空间中查找，定位到脚本的路径，然后执行。为了实现这个过程，解释器会借助两个模块：<code>pkgutil</code>和<code>runpy</code>，前者用于获取所有的模块列表，后者根据模块名来定位并执行脚本</li>
+<li>直接运行脚本时，相当于给出了脚本的完整路径（不管是绝对路径还是相对路径），解释器根据文件系统的查找机制，定位到该脚本，然后执行</li>
 </ul>
-<h2 id="字典实例"><a href="#字典实例" class="headerlink" title="字典实例"></a>字典实例</h2><p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png" alt="img"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b 是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png" alt="img"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b 完全拷贝了父对象及其子对象，两者是完全独立的。</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png" alt="img"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="列表实例"><a href="#列表实例" class="headerlink" title="列表实例"></a>列表实例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
-<p>以上实例执行输出结果为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;b = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;c = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]])</span><br><span class="line">(<span class="string">&#x27;d = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]])</span><br></pre></td></tr></table></figure>
+<h2 id="python--m-补充说明">python -m 补充说明</h2>
+<p><code>python -m module_name</code>这里的<code>module_name</code>也可以是包名。</p>
+<p>还是用上面的顶层包名<code>bytesfly</code>举例，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>__main__.py</code>内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line"></span><br><span class="line">print(&quot;---bytesfly---&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    print(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>项目路径下执行<code>python -m bytesfly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---bytesfly---</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如果执行<code>python -m bytesfly.a</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">No module named bytesfly.a.__main__; &#x27;bytesfly.a&#x27; is a package and cannot be directly executed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>原来，<code>python -m bytesfly</code>等效于<code>python -m bytesfly.__main__</code>。</p>
+<h2 id="写在最后">写在最后</h2>
+<p>有了<code>python -m module_name</code>选项，在命令行中使用内置模块、标准包与第三方模块更加方便。</p>
+
     
 
     
@@ -1167,17 +1519,28 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
         		</li>
       		
 		</ul>
 	</div>
 
     
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/命令操作//" class="article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
     </p>
     
 
@@ -1207,7 +1570,7 @@
 
 
   
-    <article id="post-【后端】/python/Module/&#39;__init__.py&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/Linux/git/基于VScode的git使用指南" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1215,7 +1578,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" target="_blank">__init__.py</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_blank">基于VScode的git使用指南</a>
   
     </h1>
   
@@ -1223,7 +1586,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1236,57 +1599,34 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="init-py-的奥秘"><a href="#init-py-的奥秘" class="headerlink" title="__init__.py 的奥秘"></a><code>__init__.py</code> 的奥秘</h1><p>最近有一些小伙伴问了我一个经典问题：“<code>__init__.py</code> 到底有什么用？”这个问题在 Python 社区非常常见，尤其对于新手来说，<code>__init__.py</code> 往往显得神秘兮兮。今天，我就站在一位资深程序员的角度，带大家深入了解 <code>__init__.py</code> 的用途和一些需要注意的使用细节，帮助大家避开常见的坑。</p>
-<h2 id="init-py-是什么？"><a href="#init-py-是什么？" class="headerlink" title="__init__.py 是什么？"></a><code>__init__.py</code> 是什么？</h2><p>顾名思义，<code>__init__.py</code> 这个文件名已经暗示了它的作用——初始化。在 Python 中，它主要用于标识一个目录为“包（Package）”。也就是说，如果你在项目中创建了一个文件夹，并希望将其作为一个可以导入的模块包使用，只需在该文件夹下放入 <code>__init__.py</code> 文件。</p>
-<p>假设我们的项目结构如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_project/</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── module1.py</span><br><span class="line">    └── module2.py</span><br></pre></td></tr></table></figure>
-<p>此时，如果你希望在外部使用 <code>my_project</code> 这个包，可以这样导入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> my_project</span><br></pre></td></tr></table></figure>
-<p>有了 <code>__init__.py</code> 的存在，Python 就知道 <code>my_project</code> 是一个包，而不是一个普通的文件夹。因此，<code>__init__.py</code> 文件的基本作用是：告诉 Python，“这里是一个包，你可以在其他地方导入我！”</p>
-<h2 id="init-py-还能做些什么？"><a href="#init-py-还能做些什么？" class="headerlink" title="__init__.py 还能做些什么？"></a><code>__init__.py</code> 还能做些什么？</h2><p>很多初学者可能认为，<code>__init__.py</code> 只是用来标识包的，但实际上，它的作用远不止于此。你可以在 <code>__init__.py</code> 中编写代码，这些代码会在包被导入时自动执行。下面是一些常见的用途：</p>
-<h3 id="模块初始化操作"><a href="#模块初始化操作" class="headerlink" title="模块初始化操作"></a>模块初始化操作</h3><p>假设你有一个工具包，需要加载配置文件或做一些初始化工作。你可以在 <code>__init__.py</code> 中直接进行这些操作，这样当包被导入时，相关的初始化工作也会自动完成。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化配置文件路径</span></span><br><span class="line">config_file = os.path.join(os.path.dirname(__file__), <span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正在初始化配置文件...&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，当你导入 <code>my_project</code> 时，<code>config.yaml</code> 就会被自动加载，你不需要在每个子模块中重复配置路径了。</p>
-<h3 id="控制子模块导入"><a href="#控制子模块导入" class="headerlink" title="控制子模块导入"></a>控制子模块导入</h3><p>通过在 <code>__init__.py</code> 中使用 <code>from .sub_module import some_function</code>，你可以在导入包时自动加载所有常用的子模块或函数，这样就能直接从包的顶级目录访问这些模块的功能。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> func2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样，你可以直接这样使用：</span></span><br><span class="line"><span class="comment"># import my_project</span></span><br><span class="line"><span class="comment"># my_project.func1()</span></span><br></pre></td></tr></table></figure>
-<p>这种做法就像开了一个餐厅，顾客一进门就能看到招牌菜，提升了用户体验，减少了他们的绕路时间。</p>
-<h3 id="包级别变量和函数的初始化"><a href="#包级别变量和函数的初始化" class="headerlink" title="包级别变量和函数的初始化"></a>包级别变量和函数的初始化</h3><p>你还可以在 <code>__init__.py</code> 中设置一些全局变量，或者定义一些包级别的工具函数。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line">package_name = <span class="string">&quot;my_project&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_info</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;欢迎使用 <span class="subst">&#123;package_name&#125;</span> 包！&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，在任何地方，只要你导入了 <code>my_project</code>，就能直接调用 <code>show_info()</code>。</p>
-<h2 id="init-py-的一些坑"><a href="#init-py-的一些坑" class="headerlink" title="__init__.py 的一些坑"></a><code>__init__.py</code> 的一些坑</h2><p>俗话说，“有光的地方就有阴影”。虽然 <code>__init__.py</code> 非常实用，但在使用时也有一些陷阱，特别是 <strong>循环导入（Circular Import）</strong>，这一坑可能会让你怀疑人生。</p>
-<h3 id="什么是循环导入？"><a href="#什么是循环导入？" class="headerlink" title="什么是循环导入？"></a>什么是循环导入？</h3><p>假设你有两个模块：<code>module1.py</code> 和 <code>module2.py</code>，并且在 <code>module1.py</code> 中引用了 <code>module2.py</code>，在 <code>module2.py</code> 中又引用了 <code>module1.py</code>，如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line"><span class="comment"># module2.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> another_function</span><br></pre></td></tr></table></figure>
-<p>这种情况下，Python 会在导入包时形成死循环：<code>module1</code> 导入 <code>module2</code>，<code>module2</code> 又导入 <code>module1</code>，导致两者互相等待对方加载，最终抛出错误或无法正常导入。</p>
-<h3 id="如何解决？"><a href="#如何解决？" class="headerlink" title="如何解决？"></a>如何解决？</h3><p>解决循环导入问题的常见方法有两种：</p>
-<ol>
-<li><p><strong>延迟导入</strong>：将导入语句移到函数内部，而不是文件的顶部。这样，只有在需要时才会导入模块，避免了循环依赖。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line">    <span class="comment"># 使用 some_function</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>重构代码结构</strong>：将相互依赖的部分提取到一个公共模块中，这样 <code>module1</code> 和 <code>module2</code> 就不再直接依赖对方了。</p>
-</li>
+    <h1 id="基于-vscode-的-git-使用指南">基于 VScode 的 git 使用指南</h1>
+<p>git 是最为常用的
+<strong>分布式版本控制系统</strong>，它可以让你在本地和远程仓库之间同步你的代码变化。本教程将介绍基于
+VScode 的 git 的使用，包括以下内容：</p>
+<ol type="1">
+<li><strong>git 安装</strong></li>
+<li><strong>git 本地代码版本控制</strong></li>
+<li><strong>git 远程代码版本控制</strong></li>
+<li><strong>git 其他使用技巧</strong></li>
 </ol>
-<h3 id="init-py-和相对导入的关系"><a href="#init-py-和相对导入的关系" class="headerlink" title="__init__.py 和相对导入的关系"></a><code>__init__.py</code> 和相对导入的关系</h3><p>另外，一个可能让人头疼的问题是相对导入和绝对导入的使用。在 <code>__init__.py</code> 中，你可能会用相对导入语法，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<p>乍看之下，这没有问题，但当你直接运行 <code>module1.py</code> 时，Python 会报错。原因是相对导入要求你必须从包的顶层开始导入，而你直接运行 <code>module1.py</code> 时，Python 并不知道它是从哪个包里来的。</p>
-<p><strong>解决方案</strong>：尽量使用绝对导入，这样无论你是直接运行 <code>module1.py</code>，还是导入整个 <code>my_project</code> 包，都不会有问题。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> my_project.module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<h2 id="其他小技巧"><a href="#其他小技巧" class="headerlink" title="其他小技巧"></a>其他小技巧</h2><p>在使用 <code>__init__.py</code> 时，以下是一些实用的小技巧：</p>
-<ol>
-<li><p><strong>避免复杂逻辑</strong>：不要在 <code>__init__.py</code> 中写太复杂的业务逻辑。它的职责应该是轻量级的初始化和导入，避免让维护变得困难。</p>
-</li>
-<li><p><strong>模块导出控制</strong>：你可以通过 <code>__all__</code> 来控制从包中导出的模块或变量。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__all__ = [<span class="string">&#x27;module1&#x27;</span>, <span class="string">&#x27;module2&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>这样，使用 <code>from my_project import *</code> 时，Python 只会导入 <code>__all__</code> 中指定的内容。</p>
-</li>
-<li><p><strong>合并子模块</strong>：你可以在 <code>__init__.py</code> 中将多个子模块的功能合并到一个命名空间中，使得用户使用起来更加方便。</p>
-</li>
-<li><p><strong>记录导入顺序</strong>：如果你的包中有很多子模块，建议记录导入顺序，避免因为导入顺序导致的奇怪 Bug。</p>
-</li>
-</ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总体来说，<code>__init__.py</code> 是一个非常强大的工具，它可以让包的管理井井有条。然而，如果使用不当，它也可能成为代码中的“绊脚石”。掌握好它的用法，不仅能让你的项目结构更加清晰，还能避免一些常见的坑，提升代码的可维护性。</p>
-<hr>
-<p>通过这样整理，内容不仅更清晰，结构也更加有条理，同时对一些关键点的解释更加详细，能帮助读者更好地理解 <code>__init__.py</code> 的作用和使用技巧。</p>
-
+<p>希望你看完本文，能够熟练利用 VScode + git
+进行代码版本控制，如果有任何问题，欢迎在评论区中提问。可以的话，点赞关注收藏呀，笔芯
+❤~</p>
+<h2 id="git-安装">git 安装</h2>
+<ol type="1">
+<li><p>git 下载</p>
+<p>通过 git 官网下载 git，选择自己的系统下载即可，链接如下 <a
+target="_blank" rel="noopener" href="https://git-scm.com/downloads">Git - Downloads
+(git-scm.com)</a>。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411111426043.png"
+alt="image-20240202132631508" />
+<figcaption aria-hidden="true">image-20240202132631508</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/#more">more >></a>
+    
     
 
     
@@ -1302,225 +1642,28 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
         		</li>
       		
 		</ul>
 	</div>
 
     
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/OOP/self与cls的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">self与cls的区别</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="self与cls的区别"><a href="#self与cls的区别" class="headerlink" title="self与cls的区别"></a>self与cls的区别</h1><p>在 Python 面向对象编程中，<code>self</code> 和 <code>cls</code> 是两个常见的关键字，它们分别用于<strong>实例方法</strong>和<strong>类方法</strong>。本文将详细介绍它们的作用、区别及使用场景，并通过代码示例帮助大家理解如何调用这些方法。</p>
-<hr>
-<h2 id="什么是-self？"><a href="#什么是-self？" class="headerlink" title="什么是 self？"></a>什么是 <code>self</code>？</h2><h3 id="定义与作用"><a href="#定义与作用" class="headerlink" title="定义与作用"></a>定义与作用</h3><ul>
-<li><code>self</code> 是<strong>实例方法</strong>的第一个参数，表示方法所属的<strong>实例对象</strong>。</li>
-<li>在实例方法中，<code>self</code> 用于访问实例变量和其他实例方法。</li>
-</ul>
-<h3 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">bark</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span> is barking!&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 实例方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">rename</span>(<span class="params">self, new_name</span>):</span><br><span class="line">        self.name = new_name  <span class="comment"># 修改实例变量</span></span><br></pre></td></tr></table></figure>
-<h3 id="调用示例"><a href="#调用示例" class="headerlink" title="调用示例"></a>调用示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">dog1 = Dog(<span class="string">&quot;Buddy&quot;</span>)</span><br><span class="line">dog2 = Dog(<span class="string">&quot;Max&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用实例方法</span></span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Buddy is barking!</span></span><br><span class="line">dog2.bark()  <span class="comment"># 输出: Max is barking!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改实例变量</span></span><br><span class="line">dog1.rename(<span class="string">&quot;Charlie&quot;</span>)</span><br><span class="line">dog1.bark()  <span class="comment"># 输出: Charlie is barking!</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
-<li><code>self</code> 是约定俗成的名称，不是 Python 的关键字，可以用其他名称替代，但不建议更改。</li>
-<li>调用实例方法时，<code>self</code> 由 Python 自动传入，无需显式提供。</li>
-</ul>
-<hr>
-<h2 id="什么是-cls？"><a href="#什么是-cls？" class="headerlink" title="什么是 cls？"></a>什么是 <code>cls</code>？</h2><h3 id="定义与作用-1"><a href="#定义与作用-1" class="headerlink" title="定义与作用"></a>定义与作用</h3><ul>
-<li><code>cls</code> 是<strong>类方法</strong>的第一个参数，表示方法所属的<strong>类对象</strong>。</li>
-<li>在<strong>类方法</strong>中，<code>cls</code> 可用于访问和修改<strong>类变量</strong>或调用其他<strong>类方法</strong>。</li>
-<li>类方法通过 <code>@classmethod</code> 装饰器定义。</li>
-</ul>
-<h3 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>:</span><br><span class="line">    species = <span class="string">&quot;Feline&quot;</span>  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">change_species</span>(<span class="params">cls, new_species</span>):</span><br><span class="line">        cls.species = new_species  <span class="comment"># 修改类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create</span>(<span class="params">cls, name</span>):</span><br><span class="line">        <span class="comment"># 使用 cls 动态创建实例</span></span><br><span class="line">        <span class="keyword">return</span> cls(name)</span><br></pre></td></tr></table></figure>
-<h3 id="调用示例-1"><a href="#调用示例-1" class="headerlink" title="调用示例"></a>调用示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改类变量</span></span><br><span class="line">Cat.change_species(<span class="string">&quot;BigCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: BigCat</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">cat1 = Cat.create(<span class="string">&quot;Whiskers&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(cat1.name)  <span class="comment"># 输出: Whiskers</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过实例调用类方法</span></span><br><span class="line">cat1.change_species(<span class="string">&quot;GreenCat&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Cat.species)  <span class="comment"># 输出: GreenCat</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意点-1"><a href="#注意点-1" class="headerlink" title="注意点"></a>注意点</h3><ul>
-<li>类方法可以直接通过<strong>类名</strong>或<strong>实例</strong>调用，例如：<code>Cat.change_species()</code> 或 <code>cat1.change_species()</code>。</li>
-<li>类方法适合实现<strong>工厂方法</strong>或<strong>类级别的操作</strong>。</li>
-</ul>
-<hr>
-<h2 id="self-与-cls-的区别"><a href="#self-与-cls-的区别" class="headerlink" title="self 与 cls 的区别"></a><code>self</code> 与 <code>cls</code> 的区别</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>特点</th>
-<th><code>self</code></th>
-<th><code>cls</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>作用范围</td>
-<td><strong>实例方法</strong>，用于操作实例变量和实例方法</td>
-<td><strong>类方法</strong>，用于操作类变量和类方法</td>
-</tr>
-<tr>
-<td>第一个参数</td>
-<td>代表实例对象</td>
-<td>代表类对象</td>
-</tr>
-<tr>
-<td>访问的变量类型</td>
-<td>实例变量</td>
-<td>类变量</td>
-</tr>
-<tr>
-<td>调用方式</td>
-<td>必须通过实例调用</td>
-<td>可以通过类或实例调用</td>
-</tr>
-<tr>
-<td>使用场景</td>
-<td>与具体对象相关的行为</td>
-<td>与类相关的行为（例如创建实例、更新类变量等）</td>
-</tr>
-</tbody>
-</table>
-</div>
-<hr>
-<h2 id="实例分析：Transformers-库的实际应用"><a href="#实例分析：Transformers-库的实际应用" class="headerlink" title="实例分析：Transformers 库的实际应用"></a>实例分析：Transformers 库的实际应用</h2><h3 id="使用-self-的例子：实例方法操作实例变量"><a href="#使用-self-的例子：实例方法操作实例变量" class="headerlink" title="使用 self 的例子：实例方法操作实例变量"></a>使用 <code>self</code> 的例子：实例方法操作实例变量</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ModelConfig</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name</span>):</span><br><span class="line">        self.model_name = model_name  <span class="comment"># 实例变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">show_config</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Model: <span class="subst">&#123;self.model_name&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">config = ModelConfig(<span class="string">&quot;bert-base-uncased&quot;</span>)</span><br><span class="line">config.show_config()  <span class="comment"># 输出: Model: bert-base-uncased</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li><code>self.model_name</code> 是实例变量，不同实例之间互不影响。</li>
-</ul>
-<hr>
-<h3 id="使用-cls-的例子：类方法动态创建实例"><a href="#使用-cls-的例子：类方法动态创建实例" class="headerlink" title="使用 cls 的例子：类方法动态创建实例"></a>使用 <code>cls</code> 的例子：类方法动态创建实例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AutoConfig</span>:</span><br><span class="line">    CONFIG_MAPPING = &#123;&#125;  <span class="comment"># 类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">cls, model_type, config</span>):</span><br><span class="line">        cls.CONFIG_MAPPING[model_type] = config  <span class="comment"># 更新类变量</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_config</span>(<span class="params">cls, model_type</span>):</span><br><span class="line">        <span class="keyword">if</span> model_type <span class="keyword">in</span> cls.CONFIG_MAPPING:</span><br><span class="line">            <span class="keyword">return</span> cls.CONFIG_MAPPING[model_type]()</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Invalid model type!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>调用：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注册模型配置</span></span><br><span class="line">AutoConfig.register(<span class="string">&quot;bert&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;BERT Config&quot;</span>)</span><br><span class="line">AutoConfig.register(<span class="string">&quot;gpt&quot;</span>, <span class="keyword">lambda</span>: <span class="string">&quot;GPT Config&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据配置动态创建实例</span></span><br><span class="line">config = AutoConfig.from_config(<span class="string">&quot;bert&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(config)  <span class="comment"># 输出: BERT Config</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(config))	<span class="comment"># 输出: &lt;class &#x27;str&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
-<p><strong>分析：</strong></p>
-<ul>
-<li>类变量 <code>CONFIG_MAPPING</code> 用于存储模型配置，可以通过 <code>cls</code> 动态更新。</li>
-<li>类方法适合需要跨实例共享的数据和逻辑操作。</li>
-</ul>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412251732711.png" alt="image-20241225173205571" style="zoom: 50%;" /></p>
-<hr>
-<h2 id="如何选择-self-或-cls？"><a href="#如何选择-self-或-cls？" class="headerlink" title="如何选择 self 或 cls？"></a>如何选择 <code>self</code> 或 <code>cls</code>？</h2><ol>
-<li><p><strong>实例相关逻辑使用 <code>self</code></strong></p>
-<p>如果方法需要访问或操作实例变量，则选择实例方法，并将第一个参数命名为 <code>self</code>。</p>
-</li>
-<li><p><strong>类相关逻辑使用 <code>cls</code></strong></p>
-<p>如果方法需要操作类变量、定义工厂方法或执行跨实例共享的操作，则选择类方法，并将第一个参数命名为 <code>cls</code>。</p>
-</li>
-<li><p><strong>通用逻辑使用 <code>@staticmethod</code></strong></p>
-<p>如果方法既不依赖实例，也不依赖类，仅仅是工具函数，可以使用 <code>@staticmethod</code>。</p>
-</li>
-</ol>
-<hr>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>使用场景</th>
-<th>推荐方法类型</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>操作实例变量或实例方法</td>
-<td>实例方法 (<code>self</code>)</td>
-<td>定义对象行为，例如 <code>rename</code> 方法</td>
-</tr>
-<tr>
-<td>操作类变量或动态创建实例</td>
-<td>类方法 (<code>cls</code>)</td>
-<td>修改类级别的配置或注册模型</td>
-</tr>
-<tr>
-<td>不依赖实例或类，仅做工具操作</td>
-<td>静态方法 (<code>@staticmethod</code>)</td>
-<td>辅助功能，如输入验证或数据格式转换</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>建议：</strong> 在编写 Python 类时，合理选择 <code>self</code> 和 <code>cls</code> 可以使代码结构更清晰、可维护性更高。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        			<a href="/categories/命令操作//" class="article-tag-list-link color5">命令操作</a>
         		</li>
       		
 		</ul>
 	</div>
 
-    
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/self%E4%B8%8Ecls%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">展开全文 >></a>
     </p>
     
 
@@ -1708,11 +1851,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1728,27 +1871,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1756,31 +1879,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1788,11 +1899,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1800,23 +1931,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1829,6 +1960,22 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1856,11 +2003,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1868,7 +2011,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

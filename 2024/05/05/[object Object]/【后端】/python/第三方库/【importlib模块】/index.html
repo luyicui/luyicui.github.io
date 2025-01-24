@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="【importlib模块】在使用 Python 的时候，大部分时候引入包，都是通过import 语句，比如 1import numpy as np 有时候为了更复杂的需求，我们需要用程序化的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到importlib这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的">
+  <meta name="description" content="【importlib模块】 在使用 Python 的时候，大部分时候引入包，都是通过import 语句，比如 1import numpy as np 有时候为了更复杂的需求，我们需要用程序化的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到importlib这个库了。这里先从一个简单例子开始，逐渐深入地">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【importlib模块】">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="【importlib模块】在使用 Python 的时候，大部分时候引入包，都是通过import 语句，比如 1import numpy as np 有时候为了更复杂的需求，我们需要用程序化的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到importlib这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的">
+<meta property="og:description" content="【importlib模块】 在使用 Python 的时候，大部分时候引入包，都是通过import 语句，比如 1import numpy as np 有时候为了更复杂的需求，我们需要用程序化的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到importlib这个库了。这里先从一个简单例子开始，逐渐深入地">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-03T05:08:08.344Z">
@@ -262,51 +262,78 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="【importlib模块】"><a href="#【importlib模块】" class="headerlink" title="【importlib模块】"></a>【importlib模块】</h1><p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code> 语句，比如</p>
+    <h1 id="importlib模块">【importlib模块】</h1>
+<p>在使用 Python 的时候，大部分时候引入包，都是通过<code>import</code>
+语句，比如</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包 (Programmatic Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
-<h2 id="import-module-用法"><a href="#import-module-用法" class="headerlink" title="import_module 用法"></a>import_module 用法</h2><p><code>importlib</code> 是 Python3.1 增加的系统库，其中最常用的函数是其中的<code>import_module</code> ，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
+<p>有时候为了更复杂的需求，我们需要用<strong>程序化</strong>的方式来引入包
+(Programmatic
+Importing)，比如根据输入不同，选择执行两个不同包里面的同名函数，这时候就需要用到<code>importlib</code>这个库了。这里先从一个简单例子开始，逐渐深入地讲一下这个库的用法。</p>
+<h2 id="import_module-用法">import_module 用法</h2>
+<p><code>importlib</code> 是 Python3.1
+增加的系统库，其中最常用的函数是其中的<code>import_module</code>
+，功能是用程序语句的方式替代<code>import</code> 语句，用法如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(name, package=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
 <p><strong>参数含义:</strong></p>
 <ul>
-<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如 <code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或 <code>..module</code>）</li>
-<li><code>package</code>：<ul>
+<li><code>name</code>:要导入的模块名，可以是绝对导入路径（如
+<code>os.path</code>），也可以是相对导入路径（如 <code>.module</code> 或
+<code>..module</code>）</li>
+<li><code>package</code>：
+<ul>
 <li>当前包的上下文，用于处理相对导入</li>
-<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）时，<code>package</code> 才会生效</li>
-</ul>
-</li>
+<li>只有当 <code>name</code> 是相对路径（以 <code>.</code> 或
+<code>..</code> 开头）时，<code>package</code> 才会生效</li>
+</ul></li>
 </ul>
 <p><strong>导入规则：</strong></p>
 <ul>
-<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code> 参数，直接导入</li>
-<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或 <code>..</code> 开头）：<ul>
+<li>如果 <code>name</code> 是绝对路径：忽略 <code>package</code>
+参数，直接导入</li>
+<li>如果 <code>name</code> 是相对路径（以 <code>.</code> 或
+<code>..</code> 开头）：
+<ul>
 <li>基于 <code>package</code> 参数的上下文来计算实际路径</li>
-<li>若未指定 <code>package</code> 或 <code>package</code> 无效，会报错</li>
-</ul>
-</li>
+<li>若未指定 <code>package</code> 或 <code>package</code>
+无效，会报错</li>
+</ul></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import time 效果一样</span></span><br><span class="line">time = importlib.import_module(<span class="string">&#x27;time&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;os.path&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，一级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;.path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相对引入，二级目录，与 import os.path as path 效果一样</span></span><br><span class="line">path = importlib.import_module(<span class="string">&#x27;..path&#x27;</span>, package=<span class="string">&#x27;os.time&#x27;</span>)</span><br><span class="line">path.join(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)  <span class="comment"># results: &#x27;a/b&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者 <code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
+<p>注意最后的例子中，相对引入时需要在前面增加<code>.</code> 或者
+<code>..</code> 来表示相对目录，如果直接下面写会报错：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">importlib.import_module(<span class="string">&#x27;path&#x27;</span>, package=<span class="string">&#x27;os&#x27;</span>)</span><br><span class="line"><span class="comment"># ModuleNotFoundError: No module named &#x27;path&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>如果光看这几个例子的话，貌似跟<code>import</code> 没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
-<p>其实不是的，<strong>个人认为，<code>importlib</code></strong> <strong>的强大之处是将<code>import</code></strong> <strong>语句中写死的字面值改成了<code>import_module</code></strong> <strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import 的包或者模块，大大地增加了灵活性。</strong> 下面会举一个稍微实用一些的例子。</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>假设我们在设计一个深度学习工具库，里面包含了 N 个网络模型（ResNet50、HRNet、MobileNet 等等），每个模型的实现都有一个<code>load_model</code> 的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际 load 哪一个模型。</p>
-<p>虽然采用<code>import</code> 语句+<code>if-else</code> 判断也能完成这个需求，举例实现如下：</p>
+<p>如果光看这几个例子的话，貌似跟<code>import</code>
+没什么区别，而且语句变得更复杂了，有点多此一举的感觉。</p>
+<p>其实不是的，<strong>个人认为，<code>importlib</code></strong>
+<strong>的强大之处是将<code>import</code></strong>
+<strong>语句中写死的字面值改成了<code>import_module</code></strong>
+<strong>函数中的参数，因此可以通过修改参数在外部用变量来控制实际 import
+的包或者模块，大大地增加了灵活性。</strong>
+下面会举一个稍微实用一些的例子。</p>
+<h2 id="实例">实例</h2>
+<p>假设我们在设计一个深度学习工具库，里面包含了 N
+个网络模型（ResNet50、HRNet、MobileNet
+等等），每个模型的实现都有一个<code>load_model</code>
+的函数。由于计算设备的性能不同，需要调用的网络结构也会变化，我们需要根据外部传入的参数来判断实际
+load 哪一个模型。</p>
+<p>虽然采用<code>import</code> 语句+<code>if-else</code>
+判断也能完成这个需求，举例实现如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="keyword">if</span> model_name == <span class="string">&#x27;resnet_50&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> resnet_50.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;hrnet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> hrnet.model <span class="keyword">import</span> load_model</span><br><span class="line">    <span class="keyword">elif</span> model_name == <span class="string">&#x27;moblienet&#x27;</span>:</span><br><span class="line">        <span class="keyword">from</span> mobilenet.model <span class="keyword">import</span> load_model</span><br><span class="line"></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
 <p>这种写法存在下面的两个问题：</p>
-<ol>
-<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p>
-</li>
-<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p>
-</li>
+<ol type="1">
+<li><p>写法很冗余，N 个模型的话需要添加 2N 条语句</p></li>
+<li><p>新增模型时需要修改调用处的代码，添加对应的<code>import</code>语句，不符合模块化的要求。</p></li>
 </ol>
 <p>这时候采用<code>importlib</code> 就能比较简洁地解决这个问题：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">model_name, <span class="built_in">input</span></span>):</span><br><span class="line">    <span class="comment"># 等价于</span></span><br><span class="line">    <span class="comment"># model = importlib.import_module(f&quot;&#123;model_name&#125;.model&quot;)</span></span><br><span class="line">    <span class="comment"># load_model = model.load_model</span></span><br><span class="line">    load_model = importlib.import_module(<span class="string">f&quot;<span class="subst">&#123;model_name&#125;</span>.model&quot;</span>).load_model</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载模型并进行推理</span></span><br><span class="line">    model = load_model()</span><br><span class="line">    output = model(<span class="built_in">input</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
 <p>可以看到在这种场景下<code>importlib</code> 确实能大大简化代码。</p>
-<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code> 针对普通用户场景的函数貌似就只有<code>import_module</code> 这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
+<p>了解这些内容，日常使用这个库就没什么问题了（好像<code>importlib</code>
+针对普通用户场景的函数貌似就只有<code>import_module</code>
+这一个），别的一些进阶的概念由于不太懂，暂时不展开了。</p>
 <p>参考</p>
-<ol>
-<li><a href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
+<ol type="1">
+<li><a
+href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importlib.html">https://docs.python.org/3/library/importlib.html</a></li>
 </ol>
 
     
@@ -457,8 +484,8 @@
     </a>
   
   
-    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">【jsonlines模块】</div>
+    <a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">【logging模块】</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -485,7 +512,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E3%80%90importlib%E6%A8%A1%E5%9D%97%E3%80%91"><span class="toc-number">1.</span> <span class="toc-text">【importlib模块】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#import-module-%E7%94%A8%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">import_module 用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">实例</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#importlib%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">【importlib模块】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#import_module-%E7%94%A8%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">import_module 用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">实例</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -668,11 +695,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -688,27 +715,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -716,31 +723,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -748,11 +743,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -760,23 +775,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -789,6 +804,22 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -816,11 +847,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -828,7 +855,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

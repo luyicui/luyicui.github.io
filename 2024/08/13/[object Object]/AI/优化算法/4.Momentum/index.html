@@ -10,20 +10,18 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="动量法（Momentum）背景知识在 深度学习 的优化过程中，梯度下降法（Gradient Descent, GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在 收敛速度慢、容易陷入局部最小值 以及在 高维空间中震荡较大 的问题。为了解决这些问题，人们提出了动量法（Momentum）。 动量法的概念动量（Momentum）最初是一个物理学概念，表示物体的质量与速度的乘积。它的方向与速度的">
+  <meta name="description" content="动量法（Momentum） 背景知识 在 深度学习 的优化过程中，梯度下降法（Gradient Descent, GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在 收敛速度慢、容易陷入局部最小值 以及在 高维空间中震荡较大 的问题。为了解决这些问题，人们提出了动量法（Momentum）。 动量法的概念 动量（Momentum）最初是一个物理学概念，表示物体的质量与速度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Momentum">
 <meta property="og:url" content="https://luyicui.github.io/2024/08/13/[object%20Object]/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/4.Momentum/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="动量法（Momentum）背景知识在 深度学习 的优化过程中，梯度下降法（Gradient Descent, GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在 收敛速度慢、容易陷入局部最小值 以及在 高维空间中震荡较大 的问题。为了解决这些问题，人们提出了动量法（Momentum）。 动量法的概念动量（Momentum）最初是一个物理学概念，表示物体的质量与速度的乘积。它的方向与速度的">
+<meta property="og:description" content="动量法（Momentum） 背景知识 在 深度学习 的优化过程中，梯度下降法（Gradient Descent, GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在 收敛速度慢、容易陷入局部最小值 以及在 高维空间中震荡较大 的问题。为了解决这些问题，人们提出了动量法（Momentum）。 动量法的概念 动量（Momentum）最初是一个物理学概念，表示物体的质量与速度">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112029254.png">
 <meta property="article:published_time" content="2024-08-12T22:02:27.000Z">
 <meta property="article:modified_time" content="2025-01-18T16:14:45.432Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="优化算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112029254.png">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -244,7 +242,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">902字</span>
+      <span class="post-count">904字</span>
     </span>
   </span>
 
@@ -264,33 +262,71 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="动量法（Momentum）"><a href="#动量法（Momentum）" class="headerlink" title="动量法（Momentum）"></a>动量法（Momentum）</h1><h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><p>在 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0&amp;spm=1001.2101.3001.7020">深度学习</a> 的优化过程中，梯度下降法（Gradient Descent, GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在 <strong>收敛速度慢</strong>、<strong>容易陷入局部最小值</strong> 以及在 <strong>高维空间中震荡较大</strong> 的问题。为了解决这些问题，人们提出了动量法（Momentum）。</p>
-<h2 id="动量法的概念"><a href="#动量法的概念" class="headerlink" title="动量法的概念"></a>动量法的概念</h2><p>动量（Momentum）最初是一个物理学概念，表示物体的质量与速度的乘积。它的方向与速度的方向相同，并遵循动量守恒定律。尽管深度学习中的动量与物理学中的动量并不完全相同，但它们都强调了一个概念：<strong>在运动方向上保持运动的趋势，从而加速收敛</strong>。</p>
-<h2 id="动量法在深度学习中的应用"><a href="#动量法在深度学习中的应用" class="headerlink" title="动量法在深度学习中的应用"></a>动量法在深度学习中的应用</h2><p>在深度学习中，动量法通过记录 <strong>梯度的增量</strong> 并将其与 <strong>当前梯度相加</strong>，来 <strong>平滑梯度下降</strong> 的路径。这意味着在每一步的迭代中，不仅考虑当前的梯度，还考虑之前梯度的累积效果。</p>
-<p>动量法的更新公式如下：  </p>
-<script type="math/tex; mode=display">
-m_t = \beta m_{t-1} + \nabla L(w_t)</script><script type="math/tex; mode=display">
-w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
+    <h1 id="动量法momentum">动量法（Momentum）</h1>
+<h2 id="背景知识">背景知识</h2>
+<p>在 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0&amp;spm=1001.2101.3001.7020">深度学习</a>
+的优化过程中，梯度下降法（Gradient Descent,
+GD）是最基本的方法。然而，基本的梯度下降法在实际应用中存在
+<strong>收敛速度慢</strong>、<strong>容易陷入局部最小值</strong> 以及在
+<strong>高维空间中震荡较大</strong>
+的问题。为了解决这些问题，人们提出了动量法（Momentum）。</p>
+<h2 id="动量法的概念">动量法的概念</h2>
+<p>动量（Momentum）最初是一个物理学概念，表示物体的质量与速度的乘积。它的方向与速度的方向相同，并遵循动量守恒定律。尽管深度学习中的动量与物理学中的动量并不完全相同，但它们都强调了一个概念：<strong>在运动方向上保持运动的趋势，从而加速收敛</strong>。</p>
+<h2 id="动量法在深度学习中的应用">动量法在深度学习中的应用</h2>
+<p>在深度学习中，动量法通过记录 <strong>梯度的增量</strong> 并将其与
+<strong>当前梯度相加</strong>，来 <strong>平滑梯度下降</strong>
+的路径。这意味着在每一步的迭代中，不仅考虑当前的梯度，还考虑之前梯度的累积效果。</p>
+<p>动量法的更新公式如下：</p>
+<p><span class="math display">\[
+m_t = \beta m_{t-1} + \nabla L(w_t)
+\]</span> <span class="math display">\[
+w_{t+1} = w_t - \alpha m_t
+\]</span></p>
+<p>其中：</p>
 <ul>
-<li>$m_t$ 是动量项，记录了之前梯度的累积。  </li>
-<li>$\beta$ 是动量参数，控制 <strong>动量项的衰减</strong>，一般取值为 0.9。  </li>
-<li>$\nabla L(w_t)$ 是当前参数的梯度。</li>
-<li>$\alpha$ 是学习率。</li>
+<li><span class="math inline">\(m_t\)</span>
+是动量项，记录了之前梯度的累积。<br />
+</li>
+<li><span class="math inline">\(\beta\)</span> 是动量参数，控制
+<strong>动量项的衰减</strong>，一般取值为 0.9。<br />
+</li>
+<li><span class="math inline">\(\nabla L(w_t)\)</span>
+是当前参数的梯度。</li>
+<li><span class="math inline">\(\alpha\)</span> 是学习率。</li>
 </ul>
 <span id="more"></span>
-<h2 id="动量法的优点"><a href="#动量法的优点" class="headerlink" title="动量法的优点"></a>动量法的优点</h2><ol>
-<li><strong>加速收敛</strong>：动量法通过积累之前的梯度信息，使得优化过程更为顺畅，避免了曲折路径，提高了收敛速度。  </li>
-<li><strong>跳过局部最小值</strong>：由于动量的累积作用，可以帮助优化算法跳过一些局部最小值，找到更优的解。  </li>
-<li><p><strong>减少振荡</strong>：动量法可以有效减小学习过程中梯度震荡的现象，使得模型的训练更加稳定。</p>
-<h2 id="动量法的缺点"><a href="#动量法的缺点" class="headerlink" title="动量法的缺点"></a>动量法的缺点</h2></li>
-<li><p><strong>计算复杂度增加</strong>：由于需要维护动量项，会导致计算复杂度的增加</p>
-</li>
-<li><strong>参数调节</strong>：动量法引入了新的超参数（动量系数 $\beta$ ），需要在实际应用中进行调节</li>
+<h2 id="动量法的优点">动量法的优点</h2>
+<ol type="1">
+<li><p><strong>加速收敛</strong>：动量法通过积累之前的梯度信息，使得优化过程更为顺畅，避免了曲折路径，提高了收敛速度。<br />
+</p></li>
+<li><p><strong>跳过局部最小值</strong>：由于动量的累积作用，可以帮助优化算法跳过一些局部最小值，找到更优的解。<br />
+</p></li>
+<li><p><strong>减少振荡</strong>：动量法可以有效减小学习过程中梯度震荡的现象，使得模型的训练更加稳定。
+## 动量法的缺点</p></li>
+<li><p><strong>计算复杂度增加</strong>：由于需要维护动量项，会导致计算复杂度的增加</p></li>
+<li><p><strong>参数调节</strong>：动量法引入了新的超参数（动量系数 <span
+class="math inline">\(\beta\)</span>
+），需要在实际应用中进行调节</p></li>
 </ol>
-<h2 id="动量法的改进及变种"><a href="#动量法的改进及变种" class="headerlink" title="动量法的改进及变种"></a>动量法的改进及变种</h2><p>​    在动量法的基础上，还有一些改进和变种，如 Nesterov 加速梯度（Nesterov Accelerated <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Gradient&amp;spm=1001.2101.3001.7020">Gradient</a>, NAG）、RMSprop、Adam 等。这些方法在动量法的基础上进一步优化了收敛速度和稳定性。</p>
-<h2 id="实验代码示例"><a href="#实验代码示例" class="headerlink" title="实验代码示例"></a>实验代码示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据生成</span></span><br><span class="line">torch.manual_seed(<span class="number">42</span>)</span><br><span class="line">X = torch.randn(<span class="number">1000</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">3</span> * X.squeeze() + <span class="number">2</span> + torch.randn(<span class="number">1000</span>) * <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型定义</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearModel, self).__init__()</span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 损失函数</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不同梯度下降方法的比较</span></span><br><span class="line">methods = &#123;</span><br><span class="line">    <span class="string">&#x27;SGD&#x27;</span>: <span class="keyword">lambda</span> params: optim.SGD(params, lr=<span class="number">0.01</span>),</span><br><span class="line">    <span class="string">&#x27;Momentum&#x27;</span>: <span class="keyword">lambda</span> params: optim.SGD(params, lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">losses = &#123;method: [] <span class="keyword">for</span> method <span class="keyword">in</span> methods&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练过程</span></span><br><span class="line">epochs = <span class="number">1000</span></span><br><span class="line"><span class="keyword">for</span> method_name, optimizer_fn <span class="keyword">in</span> methods.items():</span><br><span class="line">    model = LinearModel()</span><br><span class="line">    optimizer = optimizer_fn(model.parameters())</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        outputs = model(X)</span><br><span class="line">        loss = criterion(outputs.squeeze(), y)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        losses[method_name].append(loss.item())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制损失曲线</span></span><br><span class="line"><span class="keyword">for</span> method_name, loss_values <span class="keyword">in</span> losses.items():</span><br><span class="line">    plt.plot(loss_values, label=method_name)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epochs&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Loss&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.title(<span class="string">&#x27;Loss Curve Comparison&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112029254.png" alt="image-20240811202901191"></p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>动量法通过引入动量项，显著提高了 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">梯度下降法</a> 的收敛速度和稳定性。尽管在实际应用中引入了额外的计算开销，但其在许多深度学习任务中的表现优异，已经成为常用的优化方法之一。</p>
+<h2 id="动量法的改进及变种">动量法的改进及变种</h2>
+<p>​ 在动量法的基础上，还有一些改进和变种，如 Nesterov 加速梯度（Nesterov
+Accelerated <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Gradient&amp;spm=1001.2101.3001.7020">Gradient</a>,
+NAG）、RMSprop、Adam
+等。这些方法在动量法的基础上进一步优化了收敛速度和稳定性。</p>
+<h2 id="实验代码示例">实验代码示例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据生成</span></span><br><span class="line">torch.manual_seed(<span class="number">42</span>)</span><br><span class="line">X = torch.randn(<span class="number">1000</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">3</span> * X.squeeze() + <span class="number">2</span> + torch.randn(<span class="number">1000</span>) * <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型定义</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearModel, self).__init__()</span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 损失函数</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不同梯度下降方法的比较</span></span><br><span class="line">methods = &#123;</span><br><span class="line">    <span class="string">&#x27;SGD&#x27;</span>: <span class="keyword">lambda</span> params: optim.SGD(params, lr=<span class="number">0.01</span>),</span><br><span class="line">    <span class="string">&#x27;Momentum&#x27;</span>: <span class="keyword">lambda</span> params: optim.SGD(params, lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">losses = &#123;method: [] <span class="keyword">for</span> method <span class="keyword">in</span> methods&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练过程</span></span><br><span class="line">epochs = <span class="number">1000</span></span><br><span class="line"><span class="keyword">for</span> method_name, optimizer_fn <span class="keyword">in</span> methods.items():</span><br><span class="line">    model = LinearModel()</span><br><span class="line">    optimizer = optimizer_fn(model.parameters())</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        outputs = model(X)</span><br><span class="line">        loss = criterion(outputs.squeeze(), y)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        losses[method_name].append(loss.item())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制损失曲线</span></span><br><span class="line"><span class="keyword">for</span> method_name, loss_values <span class="keyword">in</span> losses.items():</span><br><span class="line">    plt.plot(loss_values, label=method_name)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epochs&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Loss&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.title(<span class="string">&#x27;Loss Curve Comparison&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408112029254.png"
+alt="image-20240811202901191" />
+<figcaption aria-hidden="true">image-20240811202901191</figcaption>
+</figure>
+<h2 id="结论">结论</h2>
+<p>动量法通过引入动量项，显著提高了 <a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95&amp;spm=1001.2101.3001.7020">梯度下降法</a>
+的收敛速度和稳定性。尽管在实际应用中引入了额外的计算开销，但其在许多深度学习任务中的表现优异，已经成为常用的优化方法之一。</p>
 
     
 
@@ -479,7 +515,7 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%EF%BC%88Momentum%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">动量法（Momentum）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">背景知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.</span> <span class="toc-text">动量法的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E5%9C%A8%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">动量法在深度学习中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">动量法的优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">动量法的缺点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E6%94%B9%E8%BF%9B%E5%8F%8A%E5%8F%98%E7%A7%8D"><span class="toc-number">1.6.</span> <span class="toc-text">动量法的改进及变种</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.7.</span> <span class="toc-text">实验代码示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.8.</span> <span class="toc-text">结论</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95momentum"><span class="toc-number">1.</span> <span class="toc-text">动量法（Momentum）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="toc-number">1.1.</span> <span class="toc-text">背景知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.</span> <span class="toc-text">动量法的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E5%9C%A8%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">动量法在深度学习中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">动量法的优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%B3%95%E7%9A%84%E6%94%B9%E8%BF%9B%E5%8F%8A%E5%8F%98%E7%A7%8D"><span class="toc-number">1.5.</span> <span class="toc-text">动量法的改进及变种</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.6.</span> <span class="toc-text">实验代码示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">1.7.</span> <span class="toc-text">结论</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -662,11 +698,11 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -678,31 +714,11 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -718,6 +734,34 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
@@ -726,27 +770,7 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -754,7 +778,11 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -762,7 +790,11 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -770,15 +802,15 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -786,11 +818,11 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ray</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -798,7 +830,7 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -806,11 +838,19 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -819,10 +859,6 @@ w_{t+1} = w_t - \alpha m_t</script><p>其中：  </p>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

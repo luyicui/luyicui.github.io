@@ -213,231 +213,6 @@
             
 
   
-    <article id="post-【后端】/python/第三方库/【uvicorn模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【uvicorn模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="uvicorn模块">【uvicorn模块】</h1>
-<p>在构建现代Web应用程序时，性能和并发能力是重要的考量因素。传统的WSGI服务器已无法满足异步Web框架的需求，而ASGI（Asynchronous
-Server Gateway
-Interface）成为新一代Web服务器接口的标准。<code>Uvicorn</code>
-是一个快速、轻量级的ASGI服务器，支持异步Web框架（如FastAPI和Starlette）以及HTTP/2和WebSocket。<code>Uvicorn</code>
-基于 <code>uvloop</code> 和 <code>httptools</code>
-构建，具有高性能、易用性和灵活性的特点。</p>
-<h2 id="安装和运行">安装和运行</h2>
-<h3 id="安装">安装</h3>
-<p>可以通过 <code>pip</code> 安装：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install uvicorn</span><br></pre></td></tr></table></figure>
-<p>为了获得最佳性能，可以安装带Cython优化的版本：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install &quot;uvicorn[standard]&quot;</span><br></pre></td></tr></table></figure>
-<p>安装完成后，可以通过以下命令验证安装是否成功：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn --version</span><br></pre></td></tr></table></figure>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Optional</span></span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;Hello&quot;</span>: <span class="string">&quot;World&quot;</span>&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>详细解释：</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app</span>.<span class="keyword">get</span>(<span class="string">&quot;/items/&#123;item_id&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>路径操作装饰器，告诉 FastAPI 在该装饰器下方的 <code>read_item</code>
-函数是负责处理如下请求的：</p>
-<ul>
-<li>请求路径为 <code>/items/&#123;item_id&#125;</code></li>
-<li>使用 get 操作</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>)</span><br></pre></td></tr></table></figure>
-<p><code>read_item</code> 函数有两个参数 <code>item_id</code> 和
-<code>q</code>，且 <code>item_id</code> 是 int 型且必填，<code>q</code>
-是字符串类型且默认值为 None 的可选参数</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p>return 的对象就是返回内容 reponse ，你可以返回一个
-<code>dict</code>、<code>list</code>，像
-<code>str</code>、<code>int</code> 一样的单个值等等。</p>
-<h3 id="启动server两个方式">启动server两个方式</h3>
-<ol type="1">
-<li>命令行启动</li>
-</ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D:\myproject\20210622\test_server&gt;uvicorn example:app --port 8002 --reload</span><br><span class="line">INFO:     Started server process [32504]</span><br><span class="line">INFO:     Waiting for application startup.</span><br><span class="line">INFO:     Application startup complete.</span><br><span class="line">INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>example</code>：example.py 文件（一个 Python "模块"）</li>
-<li><code>app</code>：在 main.py 文件中通过 <code>app = FastAPI()</code>
-创建的对象</li>
-<li><code>--reload</code>：让服务器在更新代码后重新启动。仅在开发时使用该选项</li>
-</ul>
-<ol start="2" type="1">
-<li>代码里面写main函数，在main函数里指定app、主机、端口，直接运行代码启动</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    uvicorn.run(app=<span class="string">&#x27;example:app&#x27;</span>, host=<span class="string">&quot;127.0.0.1&quot;</span>, port=<span class="number">8001</span>, reload=<span class="literal">True</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-<p>运行起来后，因为示例是get请求，可以直接在浏览器看一下效果：</p>
-<p>浏览器输入 http://127.0.0.1:8002/items/100?q=1
-回车，你会看到页面显示的返回内容为:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;item_id&quot;</span>:<span class="number">100</span>,<span class="string">&quot;q&quot;</span>:<span class="string">&quot;1&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>引用官方的总结</p>
-<ul>
-<li>导入 <code>FastAPI</code>。</li>
-<li>创建一个 <code>app</code> 实例。</li>
-<li>编写一个<strong>路径操作装饰器</strong>(如
-<code>@app.get("/")</code>)。</li>
-<li>编写一个<strong>路径操作函数</strong>(如上面的
-<code>def root(): ...</code>)。</li>
-<li>运行开发服务器(如 <code>uvicorn main:app --reload</code>)。</li>
-</ul>
-<h2 id="主要功能">主要功能</h2>
-<ul>
-<li><p><strong>支持ASGI协议</strong>：完全兼容ASGI标准，可以运行异步和同步的Web应用。</p></li>
-<li><p><strong>高性能</strong>：基于 <code>uvloop</code> 和
-<code>httptools</code>，支持高吞吐量和低延迟。</p></li>
-<li><p><strong>支持HTTP/2和WebSocket</strong>：满足现代Web应用的实时通信需求。</p></li>
-<li><p><strong>热重载</strong>：开发模式下支持代码热重载，提升开发效率。</p></li>
-<li><p><strong>灵活的配置</strong>：通过命令行参数或Python代码自定义运行选项。</p></li>
-</ul>
-<p>这些功能使 <code>Uvicorn</code> 成为构建高性能Web应用的理想选择。</p>
-<h2 id="基础用法">基础用法</h2>
-<h3 id="运行简单的asgi应用">运行简单的ASGI应用</h3>
-<p>以下是一个最简单的ASGI应用示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Uvicorn!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
-<p>使用 <code>Uvicorn</code> 运行该应用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn app:app --host 127.0.0.1 --port 8000</span><br></pre></td></tr></table></figure>
-<p>打开浏览器访问 <code>http://127.0.0.1:8000</code>，将显示 “Hello,
-Uvicorn!”。</p>
-<h3 id="集成异步web框架">集成异步Web框架</h3>
-<p><code>Uvicorn</code> 常与异步Web框架（如FastAPI）一起使用。</p>
-<p>以下是一个集成FastAPI的示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;Welcome to Uvicorn with FastAPI!&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>运行该应用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --reload</span><br></pre></td></tr></table></figure>
-<p><code>--reload</code>
-参数启用代码热重载功能，每次修改代码后服务器将自动重启。</p>
-<h3 id="自定义运行参数">自定义运行参数</h3>
-<p><code>Uvicorn</code> 支持通过命令行或Python代码自定义运行参数。</p>
-<p>例如，可以启用HTTP/2支持或设置工作线程数：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --host 0.0.0.0 --port 8080 --http h11 --workers 4</span><br></pre></td></tr></table></figure>
-<p>也可以通过Python脚本运行：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">8080</span>, workers=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="进阶用法">进阶用法</h2>
-<h3 id="日志配置">日志配置</h3>
-<p><code>Uvicorn</code> 提供了灵活的日志配置选项，可以通过
-<code>--log-level</code> 参数设置日志级别：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --log-level debug</span><br></pre></td></tr></table></figure>
-<p>如果需要自定义日志格式，可以在Python脚本中配置：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    logging.basicConfig(level=logging.INFO, <span class="built_in">format</span>=<span class="string">&quot;%(asctime)s - %(message)s&quot;</span>)</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, log_level=<span class="string">&quot;info&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="启用ssl支持">启用SSL支持</h3>
-<p><code>Uvicorn</code> 支持HTTPS，通过指定SSL证书和私钥即可启用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --ssl-keyfile key.pem --ssl-certfile cert.pem</span><br></pre></td></tr></table></figure>
-<p>这在需要保护敏感数据的场景中非常有用。</p>
-<h3 id="使用自定义中间件">使用自定义中间件</h3>
-<p><code>Uvicorn</code> 支持自定义中间件来扩展ASGI应用的功能。</p>
-<p>例如，可以创建一个简单的日志中间件：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LogMiddleware</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, app</span>):</span><br><span class="line">        self.app = app</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, scope, receive, send</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;New request: <span class="subst">&#123;scope[<span class="string">&#x27;path&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">await</span> self.app(scope, receive, send)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Middleware!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br><span class="line"> </span><br><span class="line">app = LogMiddleware(app)</span><br></pre></td></tr></table></figure>
-<p>运行上述代码后，服务器将记录每个请求的路径。</p>
-<h3 id="多进程模式">多进程模式</h3>
-<p>在高并发场景下，可以通过 <code>--workers</code>
-参数启用多进程模式，以提升性能：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --workers 4</span><br></pre></td></tr></table></figure>
-<p>每个进程将独立处理请求，有助于充分利用多核CPU。</p>
-<h2 id="实际应用">实际应用</h2>
-<h3 id="构建实时聊天应用">构建实时聊天应用</h3>
-<p>以下是一个简单的WebSocket聊天应用：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, WebSocket</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.websocket(<span class="params"><span class="string">&quot;/chat&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">chat</span>(<span class="params">websocket: WebSocket</span>):</span><br><span class="line">    <span class="keyword">await</span> websocket.accept()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = <span class="keyword">await</span> websocket.receive_text()</span><br><span class="line">        <span class="keyword">await</span> websocket.send_text(<span class="string">f&quot;Message received: <span class="subst">&#123;data&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>运行该应用并使用WebSocket客户端测试，即可实现实时消息交互。</p>
-<h3 id="开发高性能api服务">开发高性能API服务</h3>
-<p>通过 <code>Uvicorn</code> 和 FastAPI，可以快速构建一个高性能的RESTful
-API：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="built_in">str</span> = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p>运行后可以通过 <code>curl</code> 或其他工具测试：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://127.0.0.1:8000/items/42?q=test&quot;</span><br></pre></td></tr></table></figure>
-<p>返回结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;item_id&quot;</span>: <span class="number">42</span>,</span><br><span class="line">  <span class="string">&quot;q&quot;</span>: <span class="string">&quot;test&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="部署机器学习模型">部署机器学习模型</h3>
-<p><code>Uvicorn</code> 常用于部署机器学习模型。</p>
-<p>以下示例展示了如何将一个预训练的模型暴露为API：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">import</span> joblib</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line">model = joblib.load(<span class="string">&quot;model.pkl&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/predict&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">features: <span class="built_in">dict</span></span>):</span><br><span class="line">    prediction = model.predict([<span class="built_in">list</span>(features.values())])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;prediction&quot;</span>: prediction[<span class="number">0</span>]&#125;</span><br></pre></td></tr></table></figure>
-<p>通过 <code>Uvicorn</code>
-运行该服务，即可将机器学习模型集成到应用中。</p>
-<h2 id="总结">总结</h2>
-<p>Uvicorn
-是一个高性能的ASGI服务器，专为支持现代异步Web框架而设计，如FastAPI和Starlette。它基于
-uvloop 和
-httptools，具有快速响应、高并发处理能力以及对HTTP/2和WebSocket的原生支持。作为轻量级服务器，Uvicorn
-提供了灵活的配置选项，包括多进程模式、SSL支持和自定义日志配置等，同时支持代码热重载，大大提高了开发效率。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/第三方库/【日期时间模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -769,7 +544,7 @@ alt="image-20240202132631508" />
 
 
   
-    <article id="post-【后端】/python/OOP/Exceptions/1.Exceptions" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-命令操作/Linux/command/python -m 与 python 的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -777,7 +552,7 @@ alt="image-20240202132631508" />
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" target="_blank">Exceptions</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_blank">python -m 与 python 的区别</a>
   
     </h1>
   
@@ -785,7 +560,7 @@ alt="image-20240202132631508" />
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -798,147 +573,77 @@ alt="image-20240202132631508" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="exceptions">Exceptions</h1>
-<p><strong>Summary</strong>: in this tutorial, you’ll learn about the
-Python exceptions and how to handle them gracefully in programs.</p>
-<h2 id="introduction-to-python-exceptions">Introduction to Python
-exceptions</h2>
-<p>In Python, exceptions are objects of the exception <a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-class/">classes</a>.
-All exception classes are the subclasses of the
-<code>BaseException</code> class. 在 Python
-中，异常是异常类的对象。所有异常类都是 <code>BaseException</code>
-类的子类。</p>
-<p>However, almost all built-in exception classes inherit from the
-<code>Exception</code> class, which is the subclass of the
-<code>BaseException</code> class: 然而，几乎所有内置异常类都继承自
-<code>Exception</code> 类，它是 <code>BaseException</code>
-类的子类：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505399.png"
-alt="image-20250112150523242" />
-<figcaption aria-hidden="true">image-20250112150523242</figcaption>
-</figure>
-<p>This page shows a complete <a
-target="_blank" rel="noopener" href="https://docs.python.org/3/library/exceptions.html#exception-hierarchy">class
-hierarchy for built-in exceptions in Python</a>.</p>
-<p>The following example defines a list of three elements and attempts
-to access the fourth one:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<p>The invalid index caused the <code>IndexError</code> exception as
-expected:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexError: list index out of range</span><br></pre></td></tr></table></figure>
-<p>When an exception occurs, Python stops the program unless you handle
-it. To handle an exception, you use the <code>try...except</code>
-statement. For example:</p>
-<p>当发生异常时，Python
-会停止程序运行，除非你处理了它。要处理异常，可以使用
-<code>try...except</code> 语句。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> IndexError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In this example, we use the <code>try...except</code> statement to
-handle the <code>IndexError</code> exception. As you can see from the
-output, the program continues to run after the <code>try...except</code>
-statement. 在这个例子中，我们使用 <code>try...except</code> 语句来处理
-<code>IndexError</code> 异常。从输出可以看到，程序在
-<code>try...except</code> 语句之后继续运行。</p>
-<p>The <code>IndexError</code> class inherits from the
-<code>LookupError</code> class which inherits from the
-<code>Exception</code> class:</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505825.png" alt="image-20250112150546744" style="zoom: 20%;" /></p>
-<p>And you can catch either <code>LookupError</code> or
-<code>Exception</code> class when an <code>IndexError</code> exception
-occurs. For example:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> LookupError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In this example, the exception is still <code>IndexError</code> even
-though we catch the <code>LookupError</code> exception. Therefore, when
-you handle an exception, the exception handler will catch the exception
-type you specify and any of its subclasses. 在这个例子中，即使我们捕获了
-<code>LookupError</code> 异常，异常仍然是 <code>IndexError</code>
-。因此，当您处理异常时，异常处理程序将捕获您指定的异常类型及其任何子类。</p>
-<p>The program runs the same if you use the <code>Exception</code> class
-instead of the <code>LookupError</code> class:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In practice, you should catch the exceptions as specific as possible
-so that you know how to deal with each exception in a specific way.
-实践中，你应该尽可能具体地捕获异常，以便知道如何以特定方式处理每个异常。</p>
-<h2 id="python-exception-handling-example">Python exception handling
-example</h2>
-<p>The following example defines a <code>division</code> function that
-returns the result of a is divided by b:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = division(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<p>In this example, if b is zero, the <code>ZeroDivisionError</code>
-exception will occur. To handle the <code>ZeroDivisionError</code>
-exception, you use the <code>try...except</code> statement as
-follows:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>In this example, the function returns a dictionary that has three
-elements:</p>
+    <h1 id="python--m-与-python-的区别">python -m 与 python 的区别</h1>
+<h2 id="module">module</h2>
+<p>先看<code>python --help</code>看下<code>python -m</code>参数的解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-m mod : run library module as a script (terminates option list)</span><br></pre></td></tr></table></figure>
+<p><code>mod</code>是<code>module</code>的缩写，即<code>-m</code>后面跟的是模块
+(<code>module</code>) 名，意思是把模块当成脚本来运行。</p>
+<p><code>terminates option list</code>意味着<code>-m</code>之后的其它选项不起作用，在这点上它跟<code>-c</code>是类似，都是终极选项。</p>
+<p>既然涉及到模块，这里就多提几句。 在 Python
+中，一个<code>.py</code>文件就称之为一个模块（<code>Module</code>）。</p>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/biggbang/article/details/115942467?ops_request_misc=%7B%22request%5Fid%22%3A%220d7eea1321190be2bdd00f9e7160d8c4%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fblog.%22%7D&amp;request_id=0d7eea1321190be2bdd00f9e7160d8c4&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-1-115942467-null-null.nonecase&amp;utm_term=模块&amp;spm=1018.2226.3001.4450">Python
+模块与包详解</a></p>
+</blockquote>
+<p>比如一个顶层包名 <code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面<code>fly.py</code>模块的名字就是<code>bytesfly.fly</code>。</p>
+<blockquote>
+<p>注意： 模块名是不带 <code>.py</code> 后缀的，层级之间以
+<code>.</code> 作为分隔符</p>
+</blockquote>
+<h2 id="python--m-原理解析">python -m 原理解析</h2>
+<p>看了上面<code>python -m</code>几种常见用法，你是否好奇<code>python -m</code>到底做了什么事？</p>
+<p>不卖关子，一句话解释就是：</p>
+<blockquote>
+<p>对于<code>python -m module_name</code>，Python
+会检索<code>sys.path</code>，查找名字为<code>module_name</code>的模块或者包，并将其内容当成主程序入口来执行，换句话说在执行时，该脚本的<code>__name__</code>是<code>__main__</code>。</p>
+</blockquote>
+<p>拿文章开篇的<code>bytesfly.fly</code>模块来说，也就是<code>bytesfly</code>包下的<code>fly.py</code>文件内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----fly----&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;fly_main&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在<code>~</code>项目路径下执行<code>python -m bytesfly.fly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>如果直接执行呢？
+即相同路径下执行<code>python bytesfly/fly.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">----fly----</span><br><span class="line">fly_main</span><br><span class="line">[&#x27;/data/cuiluyi/bytesfly&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br></pre></td></tr></table></figure>
+<p>总结一下，<code>python -m module_name</code>与<code>python folder/file.py</code>，都会把定位到的
+Python
+脚本当成主程序入口来执行，即在执行时，该脚本的<code>__name__</code>都是<code>__main__</code>，与<code>import</code>导入模块不同。</p>
+<p>但是有注意到上面两种调用方式的不同之处吗？</p>
+<p><code>fly.py</code>程序输出了<code>sys.path</code>，可以看到两种调用方式的<code>Python Path</code>有区别，这种区别有什么影响呢？</p>
+<p>再看一个例子。
+比如一个顶层包名还是<code>bytesfly</code>，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>tool.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+<p>其中<code>run.py</code>内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sys.path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> bytesfly.b <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(tool.add(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>同样在<code>~</code>项目路径下执行<code>python -m bytesfly.a.run</code>，输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+<p>然后在<code>~</code>项目路径下执行<code>python bytesfly/a/run.py</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[&#x27;/data/cuiluyi/bytesfly/a&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;bytesfly/a/run.py&quot;, line 6, in </span><br><span class="line"> from bytesfly.b import tool</span><br><span class="line">ModuleNotFoundError: No module named &#x27;bytesfly&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个地方能 Get
+到这两种调用方式在<code>Python Path</code>上的区别？</p>
+<p>除此之外，<code>python -m module_name</code>与<code>python folder/file.py</code>，在实现上有什么不同呢？</p>
 <ul>
-<li><code>success</code> is a boolean value that indicates whethere the
-operation is successful or not.</li>
-<li><code>message</code> indicates the error or success message.</li>
-<li><code>result</code> stores the result of a / b or <code>None</code>
-if b is zero.</li>
+<li>使用<code>python -m module_name</code>，解释器在不<code>import</code>模块的情况下，在所有模块命名空间中查找，定位到脚本的路径，然后执行。为了实现这个过程，解释器会借助两个模块：<code>pkgutil</code>和<code>runpy</code>，前者用于获取所有的模块列表，后者根据模块名来定位并执行脚本</li>
+<li>直接运行脚本时，相当于给出了脚本的完整路径（不管是绝对路径还是相对路径），解释器根据文件系统的查找机制，定位到该脚本，然后执行</li>
 </ul>
-<p>The following shows the output if the <code>ZeroDivisionError</code>
-occurs:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<p>Now, if you don’t catch the <code>ZeroDivisionError</code> exception
-but the more general exception like <code>Exception</code> class:
-现在，如果你没有捕获 <code>ZeroDivisionError</code>
-异常，而是捕获了更通用的 <code>Exception</code> 类异常：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>The program works as before because the <code>try...except</code>
-also catches the exception type that is the subclass of the
-<code>Exception</code> class. 程序仍然有效，因为
-<code>try...except</code> 也捕获了 <code>Exception</code>
-类的子类异常类型。</p>
-<p>However, if you pass two strings instead of two numbers to the
-<code>division()</code> function, you’ll get the same message as if the
-<code>ZeroDivisionError</code> exception occurred: 但是，如果你向
-<code>division()</code> 函数传递两个字符串而不是两个数字，你将得到与发生
-<code>ZeroDivisionError</code> 异常时相同的提示信息：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<p>In this example, the exception is not <code>ZeroDivisionError</code>
-but the <code>TypeError</code>. However, the code still handles it like
-the <code>ZeroDivisionError</code> exception. 在这个例子中，异常不是
-<code>ZeroDivisionError</code> 而是 <code>TypeError</code>
-。但是，代码仍然像处理 <code>ZeroDivisionError</code>
-异常一样处理它。</p>
-<p>Therefore, you should always handle the exceptions from the most
-specific to the least specific. For example:
-因此，你应该始终按照从最具体到最不具体的顺序处理异常。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> TypeError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;Both a &amp; b must be numbers&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>In this example, we catch the <code>TypeError</code>,
-<code>ZeroDivisionError</code>, and <code>Exception</code> in the order
-that they appear in the <code>try...except</code> statement.
-在这个例子中，我们按照它们在 <code>try...except</code>
-语句中出现的顺序捕获 <code>TypeError</code> 、
-<code>ZeroDivisionError</code> 和 <code>Exception</code> 。</p>
-<p>If the code that handles different exceptions are the same, you can
-group all exceptions into one as follows:
-如果处理不同异常的代码相同，可以将所有异常分组如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> (TypeError, ZeroDivisionError, Exception) <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;division by zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="summary">Summary</h2>
-<ul>
-<li>Python exceptions are objects of classes, which are the subclasses
-of the BaseException class.</li>
-<li>Do handle the exception from the most specific to lest
-specific.</li>
-</ul>
+<h2 id="python--m-补充说明">python -m 补充说明</h2>
+<p><code>python -m module_name</code>这里的<code>module_name</code>也可以是包名。</p>
+<p>还是用上面的顶层包名<code>bytesfly</code>举例，按照如下目录存放：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bytesfly</span><br><span class="line">├─ __init__.py</span><br><span class="line">├─ __main__.py</span><br><span class="line">└─ fly.py</span><br><span class="line">└─ a</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ run.py</span><br><span class="line">└─ b</span><br><span class="line">   ├─ __init__.py</span><br><span class="line">   └─ tool.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>__main__.py</code>内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line"></span><br><span class="line">print(&quot;---bytesfly---&quot;)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    print(sys.path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>项目路径下执行<code>python -m bytesfly</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---bytesfly---</span><br><span class="line">[&#x27;/data/cuiluyi&#x27;, &#x27;/data/cuiluyi/anaconda3/envs/test/lib/python38.zip&#x27;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如果执行<code>python -m bytesfly.a</code>，输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">No module named bytesfly.a.__main__; &#x27;bytesfly.a&#x27; is a package and cannot be directly executed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>原来，<code>python -m bytesfly</code>等效于<code>python -m bytesfly.__main__</code>。</p>
+<h2 id="写在最后">写在最后</h2>
+<p>有了<code>python -m module_name</code>选项，在命令行中使用内置模块、标准包与第三方模块更加方便。</p>
 
     
 
@@ -955,17 +660,28 @@ specific.</li>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
         		</li>
       		
 		</ul>
 	</div>
 
     
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/命令操作//" class="article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/python%20-m%20%E4%B8%8E%20python%20%E7%9A%84%E5%8C%BA%E5%88%AB/">展开全文 >></a>
     </p>
     
 
@@ -1292,7 +1008,7 @@ clause.</li>
 
 
   
-    <article id="post-【后端】/python/OOP/Exceptions/3.Raise Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/OOP/Exceptions/1.Exceptions" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1300,7 +1016,7 @@ clause.</li>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" target="_blank">Raise Exception</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" target="_blank">Exceptions</a>
   
     </h1>
   
@@ -1308,7 +1024,7 @@ clause.</li>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1321,96 +1037,146 @@ clause.</li>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="raise-exception">Raise Exception</h1>
-<p><strong>Summary</strong>: in this tutorial, you’ll learn how to raise
-exceptions by using the Python <code>raise</code> statement.</p>
-<h2 id="introduction-to-the-python-raise-statement">Introduction to the
-Python raise statement</h2>
-<p>To raise an <a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>,
-you use the <code>raise</code> statement: 要引发异常，可以使用
-<code>raise</code> 语句：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> ExceptionType()</span><br></pre></td></tr></table></figure>
-<p>The <code>ExceptionType()</code> must be subclass of the
-<code>BaseException</code> class. Typically, it is a subclass of the
-<code>Exception</code> class. Note that the <code>ExceptionType</code>
-doesn’t need to be directly inherited from the <code>Exception</code>
-class. It can indirectly inherit from a class that is a subclass of the
-Exception class. <code>ExceptionType()</code> 必须是
-<code>BaseException</code> 类的子类。通常，它也是 <code>Exception</code>
-类的子类。 请注意， <code>ExceptionType</code> 不需要直接继承自
-<code>Exception</code> 类。它可以间接继承自 Exception 类的子类。</p>
-<p>The <code>BaseException</code> class has the <code>__init__</code>
-method that accepts an <code>*args</code> argument. It means that you
-can pass any number of arguments to the exception object when raising an
-exception. <code>BaseException</code> 类具有 <code>__init__</code>
-方法，该方法接受 <code>*args</code>
-参数。这意味着在引发异常时，您可以向异常对象传递任意数量的参数。</p>
-<p>The following example uses the <code>raise</code> statement to raise
-a <code>ValueError</code> exception. It passes three arguments to the
-<code>ValueError</code> <code>__init__</code> method: 下面的例子使用
-<code>raise</code> 语句引发 <code>ValueError</code> 异常。它向
-<code>ValueError</code> <code>__init__</code> 方法传递三个参数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;The value error exception&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex.args)</span><br></pre></td></tr></table></figure>
+    <h1 id="exceptions">Exceptions</h1>
+<p><strong>Summary</strong>: in this tutorial, you’ll learn about the
+Python exceptions and how to handle them gracefully in programs.</p>
+<h2 id="introduction-to-python-exceptions">Introduction to Python
+exceptions</h2>
+<p>In Python, exceptions are objects of the exception <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-class/">classes</a>.
+All exception classes are the subclasses of the
+<code>BaseException</code> class. 在 Python
+中，异常是异常类的对象。所有异常类都是 <code>BaseException</code>
+类的子类。</p>
+<p>However, almost all built-in exception classes inherit from the
+<code>Exception</code> class, which is the subclass of the
+<code>BaseException</code> class: 然而，几乎所有内置异常类都继承自
+<code>Exception</code> 类，它是 <code>BaseException</code>
+类的子类：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505399.png"
+alt="image-20250112150523242" />
+<figcaption aria-hidden="true">image-20250112150523242</figcaption>
+</figure>
+<p>This page shows a complete <a
+target="_blank" rel="noopener" href="https://docs.python.org/3/library/exceptions.html#exception-hierarchy">class
+hierarchy for built-in exceptions in Python</a>.</p>
+<p>The following example defines a list of three elements and attempts
+to access the fourth one:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<p>The invalid index caused the <code>IndexError</code> exception as
+expected:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexError: list index out of range</span><br></pre></td></tr></table></figure>
+<p>When an exception occurs, Python stops the program unless you handle
+it. To handle an exception, you use the <code>try...except</code>
+statement. For example:</p>
+<p>当发生异常时，Python
+会停止程序运行，除非你处理了它。要处理异常，可以使用
+<code>try...except</code> 语句。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> IndexError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#x27;The value error exception&#x27;, &#x27;x&#x27;, &#x27;y&#x27;)</span><br></pre></td></tr></table></figure>
-<h2 id="reraise-the-current-exception">Reraise the current
-exception</h2>
-<p>Sometimes, you want to log an exception and raise the same exception
-again. In this case, you can use the <code>raise</code> statement
-without specifying the exception object.
-有时，您想记录异常并再次引发相同的异常。在这种情况下，您可以使用
-<code>raise</code> 语句而不指定异常对象。</p>
-<p>For example, the following defines a <code>division()</code> function
-that returns the division of two numbers:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Logging exception:&#x27;</span>, <span class="built_in">str</span>(ex))</span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
-<p>If you pass zero to the second argument of the
-<code>division()</code> function, the <code>ZeroDivisionError</code>
-exception will occur. However, instead of handling the exception, you
-can log the exception and raise it again. 如果将零作为
-<code>division()</code> 函数的第二个参数传递，则会发生
-<code>ZeroDivisionError</code>
-异常。但是，您可以记录异常并再次引发它，而不是处理该异常。</p>
-<p>Note that you don’t need to specify the exception object in the
-<code>raise</code> statement. In this case, Python knows that the
-<code>raise</code> statement will raise the current exception that has
-been caught by the <code>except</code> clause. 注意，你不需要在
-<code>raise</code> 语句中指定异常对象。在这种情况下，Python 知道
-<code>raise</code> 语句将引发由 <code>except</code>
-子句捕获的当前异常。</p>
-<p>The following code causes a <code>ZeroDivisionError</code>
-exception:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>And you’ll see both the logging message and the exception in the
-output:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Logging exception: division by zero</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/pythontutorial/app.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<h2 id="raise-another-exception-during-handling-an-exception">Raise
-another exception during handling an exception</h2>
-<p>When handling an exception, you may want to raise another exception.
-For example:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>In the <code>division()</code> function, we raise a
-<code>ValueError</code>exception if the <code>ZeroDivisionError</code>
-occurs.</p>
-<p>If you run the following code, you’ll get the detail of the stack
-trace: 运行以下代码，你将得到详细的堆栈跟踪信息：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
+<p>In this example, we use the <code>try...except</code> statement to
+handle the <code>IndexError</code> exception. As you can see from the
+output, the program continues to run after the <code>try...except</code>
+statement. 在这个例子中，我们使用 <code>try...except</code> 语句来处理
+<code>IndexError</code> 异常。从输出可以看到，程序在
+<code>try...except</code> 语句之后继续运行。</p>
+<p>The <code>IndexError</code> class inherits from the
+<code>LookupError</code> class which inherits from the
+<code>Exception</code> class:</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505825.png" alt="image-20250112150546744" style="zoom: 20%;" /></p>
+<p>And you can catch either <code>LookupError</code> or
+<code>Exception</code> class when an <code>IndexError</code> exception
+occurs. For example:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> LookupError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>Output:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
-<p>First, the <code>ZeroDivisionError</code> exception occurs: 首先，
-<code>ZeroDivisionError</code> 异常发生：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<p>Second, during handling the <code>ZeroDivisionError</code> exception,
-the <code>ValueError</code> exception occurs: 其次，在处理
-<code>ZeroDivisionError</code> 异常时，发生 <code>ValueError</code>
-异常：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
+<p>In this example, the exception is still <code>IndexError</code> even
+though we catch the <code>LookupError</code> exception. Therefore, when
+you handle an exception, the exception handler will catch the exception
+type you specify and any of its subclasses. 在这个例子中，即使我们捕获了
+<code>LookupError</code> 异常，异常仍然是 <code>IndexError</code>
+。因此，当您处理异常时，异常处理程序将捕获您指定的异常类型及其任何子类。</p>
+<p>The program runs the same if you use the <code>Exception</code> class
+instead of the <code>LookupError</code> class:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
+<p>In practice, you should catch the exceptions as specific as possible
+so that you know how to deal with each exception in a specific way.
+实践中，你应该尽可能具体地捕获异常，以便知道如何以特定方式处理每个异常。</p>
+<h2 id="python-exception-handling-example">Python exception handling
+example</h2>
+<p>The following example defines a <code>division</code> function that
+returns the result of a is divided by b:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = division(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
+<p>In this example, if b is zero, the <code>ZeroDivisionError</code>
+exception will occur. To handle the <code>ZeroDivisionError</code>
+exception, you use the <code>try...except</code> statement as
+follows:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>In this example, the function returns a dictionary that has three
+elements:</p>
+<ul>
+<li><code>success</code> is a boolean value that indicates whethere the
+operation is successful or not.</li>
+<li><code>message</code> indicates the error or success message.</li>
+<li><code>result</code> stores the result of a / b or <code>None</code>
+if b is zero.</li>
+</ul>
+<p>The following shows the output if the <code>ZeroDivisionError</code>
+occurs:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
+<p>Now, if you don’t catch the <code>ZeroDivisionError</code> exception
+but the more general exception like <code>Exception</code> class:
+现在，如果你没有捕获 <code>ZeroDivisionError</code>
+异常，而是捕获了更通用的 <code>Exception</code> 类异常：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>The program works as before because the <code>try...except</code>
+also catches the exception type that is the subclass of the
+<code>Exception</code> class. 程序仍然有效，因为
+<code>try...except</code> 也捕获了 <code>Exception</code>
+类的子类异常类型。</p>
+<p>However, if you pass two strings instead of two numbers to the
+<code>division()</code> function, you’ll get the same message as if the
+<code>ZeroDivisionError</code> exception occurred: 但是，如果你向
+<code>division()</code> 函数传递两个字符串而不是两个数字，你将得到与发生
+<code>ZeroDivisionError</code> 异常时相同的提示信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
+<p>In this example, the exception is not <code>ZeroDivisionError</code>
+but the <code>TypeError</code>. However, the code still handles it like
+the <code>ZeroDivisionError</code> exception. 在这个例子中，异常不是
+<code>ZeroDivisionError</code> 而是 <code>TypeError</code>
+。但是，代码仍然像处理 <code>ZeroDivisionError</code>
+异常一样处理它。</p>
+<p>Therefore, you should always handle the exceptions from the most
+specific to the least specific. For example:
+因此，你应该始终按照从最具体到最不具体的顺序处理异常。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> TypeError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;Both a &amp; b must be numbers&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>In this example, we catch the <code>TypeError</code>,
+<code>ZeroDivisionError</code>, and <code>Exception</code> in the order
+that they appear in the <code>try...except</code> statement.
+在这个例子中，我们按照它们在 <code>try...except</code>
+语句中出现的顺序捕获 <code>TypeError</code> 、
+<code>ZeroDivisionError</code> 和 <code>Exception</code> 。</p>
+<p>If the code that handles different exceptions are the same, you can
+group all exceptions into one as follows:
+如果处理不同异常的代码相同，可以将所有异常分组如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> (TypeError, ZeroDivisionError, Exception) <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;division by zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="summary">Summary</h2>
 <ul>
-<li>Use the Python <code>raise</code> statement to raise an
-exception.</li>
-<li>When handling exception, you can raise the same or another
-exception. 处理异常时，您可以引发相同或不同的异常。</li>
+<li>Python exceptions are objects of classes, which are the subclasses
+of the BaseException class.</li>
+<li>Do handle the exception from the most specific to lest
+specific.</li>
 </ul>
 
     
@@ -1438,7 +1204,7 @@ exception. 处理异常时，您可以引发相同或不同的异常。</li>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/">展开全文 >></a>
     </p>
     
 
@@ -1646,214 +1412,6 @@ cause of the exception. 使用 <code>raise exception from None</code>
 
 
   
-    <article id="post-【后端】/python/OOP/设计模式/工厂模式（Factory Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%EF%BC%88Factory%20Pattern%EF%BC%89/" target="_blank">工厂模式（Factory Pattern）</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%EF%BC%88Factory%20Pattern%EF%BC%89/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># 工厂模式（Factory Pattern）</p>
-<p>工厂模式（Factory
-Pattern）是一种创建型设计模式，旨在定义一个用于创建对象的接口，但由子类决定实例化哪个类。工厂模式可以帮助我们将对象的创建与其使用分离，增强代码的可扩展性和维护性。</p>
-<h2 id="分类">分类</h2>
-<ol type="1">
-<li><strong>简单工厂模式</strong>（Simple Factory Pattern）</li>
-<li><strong>工厂方法模式</strong>（Factory Method Pattern）</li>
-<li><strong>抽象工厂模式</strong>（Abstract Factory Pattern）</li>
-</ol>
-<p>这里先介绍
-<strong>简单工厂模式</strong>和<strong>工厂方法模式</strong></p>
-<h2 id="简单工厂模式">简单工厂模式</h2>
-<p><strong>简单工厂模式</strong>是一种创建型设计模式，它通过一个单一的工厂类来创建不同类型的对象。这个工厂类通常具有一个静态方法，根据输入的参数决定创建哪种对象。</p>
-<h3 id="结构">结构</h3>
-<ul>
-<li><strong>工厂类</strong>：包含用于创建对象的静态方法。</li>
-<li><strong>产品接口或抽象类</strong>：定义了创建对象的基本接口。</li>
-<li><strong>具体产品类</strong>：实现产品接口。</li>
-</ul>
-<h3 id="实现方式">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>:</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">animal_type</span>):</span><br><span class="line">        <span class="keyword">if</span> animal_type == <span class="string">&#x27;dog&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Dog()</span><br><span class="line">        <span class="keyword">elif</span> animal_type == <span class="string">&#x27;cat&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Cat()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Unknown animal type&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">animal = AnimalFactory.create_animal(<span class="string">&#x27;dog&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(animal.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点">优点</h3>
-<ul>
-<li><strong>简单易用</strong>：只需调用工厂方法即可创建对象，无需关心具体的实现。</li>
-<li><strong>集中管理对象创建</strong>：所有对象的创建逻辑都集中在一个地方，方便修改。</li>
-</ul>
-<h3 id="缺点">缺点</h3>
-<ul>
-<li><strong>不符合开闭原则</strong>：如果需要增加新类型，需要修改工厂类的代码，可能会引入错误。</li>
-<li><strong>职责过重</strong>：工厂类随着产品类型的增加变得复杂，难以维护。</li>
-</ul>
-<h3 id="适用场景">适用场景</h3>
-<ul>
-<li>需要创建少量的类，且不频繁更改。</li>
-<li>客户端需要与具体类解耦。</li>
-</ul>
-<hr />
-<h2 id="工厂方法模式">工厂方法模式</h2>
-<p><strong>工厂方法模式</strong>是简单工厂模式的进一步抽象。它定义了一个创建对象的接口，但由子类决定<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AE%9E%E4%BE%8B%E5%8C%96&amp;spm=1001.2101.3001.7020">实例化</a>的类是哪一个。每个具体子类都有自己的工厂方法来创建对象。</p>
-<h3 id="结构-1">结构</h3>
-<ul>
-<li><strong>抽象产品</strong>：定义了产品的接口。</li>
-<li><strong>具体产品</strong>：实现产品接口的具体类。</li>
-<li><strong>抽象工厂</strong>：声明了一个返回产品对象的工厂方法。</li>
-<li><strong>具体工厂</strong>：实现了工厂方法，返回具体产品实例。</li>
-</ul>
-<h3 id="实现方式-1">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DogFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Dog()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CatFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Cat()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">dog_factory = DogFactory()</span><br><span class="line">dog = dog_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(dog.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line">cat_factory = CatFactory()</span><br><span class="line">cat = cat_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(cat.speak())  <span class="comment"># 输出 &quot;Meow!&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点-1">优点</h3>
-<ul>
-<li><strong>符合开闭原则</strong>：可以通过添加新的具体工厂类来扩展代码，而无需修改现有工厂类。</li>
-<li><strong>更灵活</strong>：每个具体工厂类负责创建特定类型的产品，使得扩展更加容易。</li>
-</ul>
-<h3 id="缺点-1">缺点</h3>
-<ul>
-<li><strong>类的数量增加</strong>：每增加一个产品类型都需要创建新的具体工厂类。</li>
-<li><strong>增加了复杂性</strong>：比简单工厂模式更复杂，需要更多的类和接口。</li>
-</ul>
-<h3 id="适用场景-1">适用场景</h3>
-<ul>
-<li>需要将对象的创建与使用解耦，同时需要经常扩展产品类。</li>
-<li>当系统中存在多种产品类型，并且需要根据不同的条件来创建不同的产品实例时。</li>
-</ul>
-<h2 id="抽象工厂模式">抽象工厂模式</h2>
-<p><strong>抽象工厂模式</strong>也是一种创建型设计模式，它提供一个接口，用于创建一系列相关或相互依赖的对象，而无需指定它们的具体类。它特别适合在需要创建多个相关对象且这些对象在逻辑上属于一个“产品族”时使用。</p>
-<h3 id="结构-2">结构</h3>
-<ul>
-<li><strong>抽象产品</strong>：定义了产品家族中每个产品的接口。</li>
-<li><strong>具体产品</strong>：实现抽象产品接口的具体类。</li>
-<li><strong>抽象工厂</strong>：声明了创建一系列相关产品的方法。</li>
-<li><strong>具体工厂</strong>：实现抽象工厂接口，提供具体产品的实例。</li>
-</ul>
-<h3 id="实现方式-2">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Chair</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sofa</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Modern Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Victorian Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Modern Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FurnitureFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianSofa()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernSofa()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">factory = VictorianFurnitureFactory()</span><br><span class="line">chair = factory.create_chair()</span><br><span class="line">sofa = factory.create_sofa()</span><br><span class="line"><span class="built_in">print</span>(chair.sit_on())  <span class="comment"># 输出 &quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(sofa.lie_on())   <span class="comment"># 输出 &quot;Lying on a Victorian Sofa.&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点-2">优点</h3>
-<ul>
-<li><strong>一致性</strong>：确保同一产品族的对象之间可以协作。</li>
-<li><strong>解耦</strong>：客户端代码与具体类解耦，使得代码更灵活和易于维护。</li>
-<li><strong>符合开闭原则</strong>：添加新的产品族时，只需添加新的具体工厂类即可，无需修改已有代码。</li>
-</ul>
-<h3 id="缺点-2">缺点</h3>
-<ul>
-<li><strong>复杂性增加</strong>：需要为每个产品族定义新的具体工厂，类的数量会显著增加。</li>
-<li><strong>扩展困难</strong>：增加新的产品接口（如添加<code>Table</code>）需要修改所有的工厂接口及其实现。</li>
-</ul>
-<h3 id="适用场景-2">适用场景</h3>
-<ul>
-<li>系统需要创建一系列相关的产品对象，而这些对象在逻辑上属于一个产品族。</li>
-<li>系统希望提供产品族的多个变体，但保证客户端只使用同一变体的对象。</li>
-</ul>
-<hr />
-<h2 id="抽象工厂模式-vs.-简单工厂模式-vs.-工厂方法模式">抽象工厂模式 vs.
-简单工厂模式 vs. 工厂方法模式</h2>
-<ol type="1">
-<li><p><strong>简单工厂模式</strong>：</p>
-<ul>
-<li><strong>创建对象方式</strong>：通过一个工厂类的静态方法根据输入创建对象。</li>
-<li><strong>优点</strong>：实现简单，易于使用。</li>
-<li><strong>缺点</strong>：不符合开闭原则，扩展性差。</li>
-<li><strong>适用场景</strong>：适合创建少量、简单对象的场景。</li>
-</ul></li>
-<li><p><strong>工厂方法模式</strong>：</p>
-<ul>
-<li><strong>创建对象方式</strong>：通过子类实现的工厂方法创建具体对象。</li>
-<li><strong>优点</strong>：符合开闭原则，每新增产品只需扩展具体工厂类。</li>
-<li><strong>缺点</strong>：增加了实现复杂度和类的数量。</li>
-<li><strong>适用场景</strong>：适合创建多种对象，且需要易于扩展的场景。</li>
-</ul></li>
-<li><p><strong>抽象工厂模式</strong>：</p>
-<ul>
-<li><strong>创建对象方式</strong>：通过具体工厂创建一系列相关或相互依赖的对象。</li>
-<li><strong>优点</strong>：能够保证同一产品族对象的协作一致性，符合开闭原则。</li>
-<li><strong>缺点</strong>：实现复杂，扩展产品结构较困难。</li>
-<li><strong>适用场景</strong>：适合需要创建一系列相关对象的场景，确保产品之间的一致性。</li>
-</ul></li>
-</ol>
-<h2 id="总结对比">总结对比</h2>
-<ul>
-<li><strong>简单工厂模式</strong>更适合简单和小规模的对象创建需求，缺乏扩展性。</li>
-<li><strong>工厂方法模式</strong>提供了更高的灵活性，允许创建不同类型的对象，但实现上增加了类的复杂度。</li>
-<li><strong>抽象工厂模式</strong>适合复杂系统中需要创建多个相关产品族的场景，保障产品族内对象的一致性，尽管它在实现上最为复杂。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%EF%BC%88Factory%20Pattern%EF%BC%89/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/OOP/Exceptions/Exception Tutorial" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1932,6 +1490,413 @@ exception class.</li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/OOP/Exceptions/3.Raise Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" target="_blank">Raise Exception</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="raise-exception">Raise Exception</h1>
+<p><strong>Summary</strong>: in this tutorial, you’ll learn how to raise
+exceptions by using the Python <code>raise</code> statement.</p>
+<h2 id="introduction-to-the-python-raise-statement">Introduction to the
+Python raise statement</h2>
+<p>To raise an <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>,
+you use the <code>raise</code> statement: 要引发异常，可以使用
+<code>raise</code> 语句：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> ExceptionType()</span><br></pre></td></tr></table></figure>
+<p>The <code>ExceptionType()</code> must be subclass of the
+<code>BaseException</code> class. Typically, it is a subclass of the
+<code>Exception</code> class. Note that the <code>ExceptionType</code>
+doesn’t need to be directly inherited from the <code>Exception</code>
+class. It can indirectly inherit from a class that is a subclass of the
+Exception class. <code>ExceptionType()</code> 必须是
+<code>BaseException</code> 类的子类。通常，它也是 <code>Exception</code>
+类的子类。 请注意， <code>ExceptionType</code> 不需要直接继承自
+<code>Exception</code> 类。它可以间接继承自 Exception 类的子类。</p>
+<p>The <code>BaseException</code> class has the <code>__init__</code>
+method that accepts an <code>*args</code> argument. It means that you
+can pass any number of arguments to the exception object when raising an
+exception. <code>BaseException</code> 类具有 <code>__init__</code>
+方法，该方法接受 <code>*args</code>
+参数。这意味着在引发异常时，您可以向异常对象传递任意数量的参数。</p>
+<p>The following example uses the <code>raise</code> statement to raise
+a <code>ValueError</code> exception. It passes three arguments to the
+<code>ValueError</code> <code>__init__</code> method: 下面的例子使用
+<code>raise</code> 语句引发 <code>ValueError</code> 异常。它向
+<code>ValueError</code> <code>__init__</code> 方法传递三个参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;The value error exception&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex.args)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#x27;The value error exception&#x27;, &#x27;x&#x27;, &#x27;y&#x27;)</span><br></pre></td></tr></table></figure>
+<h2 id="reraise-the-current-exception">Reraise the current
+exception</h2>
+<p>Sometimes, you want to log an exception and raise the same exception
+again. In this case, you can use the <code>raise</code> statement
+without specifying the exception object.
+有时，您想记录异常并再次引发相同的异常。在这种情况下，您可以使用
+<code>raise</code> 语句而不指定异常对象。</p>
+<p>For example, the following defines a <code>division()</code> function
+that returns the division of two numbers:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Logging exception:&#x27;</span>, <span class="built_in">str</span>(ex))</span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+<p>If you pass zero to the second argument of the
+<code>division()</code> function, the <code>ZeroDivisionError</code>
+exception will occur. However, instead of handling the exception, you
+can log the exception and raise it again. 如果将零作为
+<code>division()</code> 函数的第二个参数传递，则会发生
+<code>ZeroDivisionError</code>
+异常。但是，您可以记录异常并再次引发它，而不是处理该异常。</p>
+<p>Note that you don’t need to specify the exception object in the
+<code>raise</code> statement. In this case, Python knows that the
+<code>raise</code> statement will raise the current exception that has
+been caught by the <code>except</code> clause. 注意，你不需要在
+<code>raise</code> 语句中指定异常对象。在这种情况下，Python 知道
+<code>raise</code> 语句将引发由 <code>except</code>
+子句捕获的当前异常。</p>
+<p>The following code causes a <code>ZeroDivisionError</code>
+exception:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>And you’ll see both the logging message and the exception in the
+output:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Logging exception: division by zero</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/pythontutorial/app.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
+<h2 id="raise-another-exception-during-handling-an-exception">Raise
+another exception during handling an exception</h2>
+<p>When handling an exception, you may want to raise another exception.
+For example:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>In the <code>division()</code> function, we raise a
+<code>ValueError</code>exception if the <code>ZeroDivisionError</code>
+occurs.</p>
+<p>If you run the following code, you’ll get the detail of the stack
+trace: 运行以下代码，你将得到详细的堆栈跟踪信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
+<p>First, the <code>ZeroDivisionError</code> exception occurs: 首先，
+<code>ZeroDivisionError</code> 异常发生：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
+<p>Second, during handling the <code>ZeroDivisionError</code> exception,
+the <code>ValueError</code> exception occurs: 其次，在处理
+<code>ZeroDivisionError</code> 异常时，发生 <code>ValueError</code>
+异常：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
+<h2 id="summary">Summary</h2>
+<ul>
+<li>Use the Python <code>raise</code> statement to raise an
+exception.</li>
+<li>When handling exception, you can raise the same or another
+exception. 处理异常时，您可以引发相同或不同的异常。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/OOP/Exceptions/5.Custom Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/5.Custom%20Exception/" target="_blank">Custom Exception</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/5.Custom%20Exception/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="custom-exception">Custom Exception</h1>
+<p><strong>Summary</strong>: in this tutorial, you’ll learn how to
+define Python custom exception classes.</p>
+<h2 id="introduction-to-the-python-custom-exception">Introduction to the
+Python custom exception</h2>
+<p>To create a custom <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>
+class, you <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-class/">define a
+class</a> that <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-inheritance/">inherits</a>
+from the built-in <code>Exception</code> class or one of its subclasses
+such as <code>ValueError</code> class:
+要创建一个自定义异常类，你可以定义一个继承自内置 <code>Exception</code>
+类或其子类（例如 <code>ValueError</code> 类）的类：</p>
+<figure>
+<img
+src="https://www.pythontutorial.net/wp-content/uploads/2021/11/python-custom-exception.svg"
+alt="Python Custom Exception" />
+<figcaption aria-hidden="true">Python Custom Exception</figcaption>
+</figure>
+<p>The following example defines a <code>CustomException</code> class
+that inherits from the <code>Exception</code> class:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">class CustomException(Exception):</span><br><span class="line">    &quot;&quot;&quot; my custom exception class &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+<p>Note that the <code>CustomException</code> class has a docstring that
+behaves like a statement. Therefore, you don’t need to add the
+<code>pass</code> statement to make the syntax valid. 注意，
+<code>CustomException</code>
+类有一个像语句一样工作的文档字符串。因此，不需要添加 <code>pass</code>
+语句来使语法有效。</p>
+<p>To raise the CustomException, you use the <code>raise</code>
+statement. For example, the following uses the <code>raise</code>
+statement to raise the <code>CustomException</code>: 要引发
+CustomException，可以使用 <code>raise</code> 语句。例如，以下代码使用
+<code>raise</code> 语句引发 <code>CustomException</code> ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CustomException</span>(<span class="title class_ inherited__">Exception</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot; my custom exception class &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> CustomException(<span class="string">&#x27;This is my custom exception&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> CustomException <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This is my custom exception</span><br></pre></td></tr></table></figure>
+<p>Like standard exception classes, custom exceptions are also classes.
+Hence, you can add functionality to the custom exception classes like:
+与标准异常类一样，自定义异常也是类。因此，您可以向自定义异常类添加功能，例如：</p>
+<ul>
+<li>Adding attributes and <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-properties/">properties</a>.</li>
+<li>Adding <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-methods/">methods</a>
+e.g., log the exception, format the output, etc.
+添加方法，例如记录异常、格式化输出等。</li>
+<li>Overriding the <code>__str__</code> and <code>__repr__</code>
+methods 重写 <code>__str__</code> 和 <code>__repr__</code> 方法</li>
+<li>And doing anything else that you can do with regular classes.
+以及你可以对普通类执行的任何其他操作。</li>
+</ul>
+<p>In practice, you’ll want to keep the custom exceptions organized by
+creating a custom exception hierarchy. The custom exception hierarchy
+allows you to catch exceptions at multiple levels, like the standard
+exception classes.
+在实践中，你应该通过创建一个自定义异常层次结构来组织自定义异常。自定义异常层次结构允许你在多个级别捕获异常，就像标准异常类一样。</p>
+<h2 id="python-custom-exception-example">Python custom exception
+example</h2>
+<p>Suppose you need to develop a program that converts a temperature
+from Fahrenheit to Celsius.
+假设你需要开发一个程序，将华氏温度转换为摄氏温度。</p>
+<p>The minimum and maximum values of a temperature in Fahrenheit are 32
+and 212. If users enter a value that is not in this range, you want to
+raise a custom exception e.g., <code>FahrenheitError</code>.
+华氏温度的最小值和最大值分别为 32 和
+212。如果用户输入的值不在此范围内，则需要引发自定义异常，例如
+<code>FahrenheitError</code> 。</p>
+<h3 id="define-the-fahrenheiterror-custom-exception-class">Define the
+FahrenheitError custom exception class</h3>
+<p>The following defines the <code>FahrenheitError</code> exception
+class:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FahrenheitError</span>(<span class="title class_ inherited__">Exception</span>):</span><br><span class="line">    min_f = <span class="number">32</span></span><br><span class="line">    max_f = <span class="number">212</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, f, *args</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__(args)</span><br><span class="line">        self.f = f</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&#x27;The <span class="subst">&#123;self.f&#125;</span> is not in a valid range <span class="subst">&#123;self.min_f, self.max_f&#125;</span>&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>How it works.</p>
+<ul>
+<li>First, define the FahrenheitError class that inherits from the
+<code>Exception</code> class.</li>
+<li>Second, add two class attributes <code>min_f</code> and
+<code>max_f</code> that represent the minimum and maximum Fahrenheit
+values.</li>
+<li>Third, define the <code>__init__</code> method that accepts a
+Fahrenheit value (<code>f</code>) and a number of position arguments
+(<code>*args</code>). In the <code>__init__</code> method, call the
+<code>__init__</code> method of the base class. Also, assign the
+<code>f</code> argument to the <code>f</code> instance attribute.
+第三，定义 <code>__init__</code> 方法，该方法接受一个华氏值（
+<code>f</code> ）和多个位置参数（ <code>*args</code> ）。在
+<code>__init__</code> 方法中，调用基类的 <code>__init__</code>
+方法。同时，将 <code>f</code> 参数赋值给 <code>f</code> 实例属性。</li>
+<li>Finally, override the <code>__str__</code> method to return a custom
+string representation of the class instance. 最后，重写
+<code>__str__</code> 方法以返回类的实例的自定义字符串表示。</li>
+</ul>
+<h3 id="define-the-fahrenheit_to_celsius-function">Define the
+fahrenheit_to_celsius function</h3>
+<p>The following defines the <code>fahrenheit_to_celsius</code> function
+that accepts a temperature in Fahrenheit and returns a temperature in
+Celcius: 以下定义了 <code>fahrenheit_to_celsius</code>
+函数，该函数接受华氏温度作为输入，并返回摄氏温度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fahrenheit_to_celsius</span>(<span class="params">f: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="keyword">if</span> f &lt; FahrenheitError.min_f <span class="keyword">or</span> f &gt; FahrenheitError.max_f:</span><br><span class="line">        <span class="keyword">raise</span> FahrenheitError(f)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (f - <span class="number">32</span>) * <span class="number">5</span> / <span class="number">9</span></span><br></pre></td></tr></table></figure>
+<p>The <code>fahrenheit_to_celsius</code> function raises the
+<code>FahrenheitError</code> excpetion if the input temperature is not
+in the valid range. Otherwise, it converts the temperature from
+Fahrenheit to Celcius. 如果输入温度不在有效范围内，
+<code>fahrenheit_to_celsius</code> 函数会引发
+<code>FahrenheitError</code>
+异常。否则，它会将温度从华氏度转换为摄氏度。</p>
+<h3 id="create-the-main-program">Create the main program</h3>
+<p>The following main program uses the
+<code>fahrenheit_to_celsius</code> function and the
+<code>FahrenheitError</code> custom exception class:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    f = <span class="built_in">input</span>(<span class="string">&#x27;Enter a temperature in Fahrenheit:&#x27;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        f = <span class="built_in">float</span>(f)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(ex)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            c = fahrenheit_to_celsius(<span class="built_in">float</span>(f))</span><br><span class="line">        <span class="keyword">except</span> FahrenheitError <span class="keyword">as</span> ex:</span><br><span class="line">            <span class="built_in">print</span>(ex)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;f&#125;</span> Fahrenheit = <span class="subst">&#123;c:<span class="number">.4</span>f&#125;</span> Celsius&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>How it works.</p>
+<p>First, prompt users for a temperature in Fahrenheit.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f = <span class="built_in">input</span>(<span class="string">&#x27;Enter a temperature in Fahrenheit:&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>Second, convert the input value into a <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-float/">float</a>.
+If the <code>float()</code> cannot convert the input value, the program
+will raise a <code>ValueError</code> exception. In this case, it
+displays the error message from the <code>ValueError</code> exception:
+其次，将输入值转换为浮点数。如果 <code>float()</code>
+无法转换输入值，程序将引发 <code>ValueError</code>
+异常。在这种情况下，它会显示来自 <code>ValueError</code>
+异常的错误消息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    f = <span class="built_in">float</span>(f)</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex)</span><br></pre></td></tr></table></figure>
+<p>Third, convert the temperature to Celsius by calling the
+<code>fahrenheit_to_celsius</code> function and print the error message
+if the input value is not a valid <code>Fahrenheit</code> value:
+第三，通过调用 <code>fahrenheit_to_celsius</code>
+函数将温度转换为摄氏度，如果输入值不是有效的 <code>Fahrenheit</code>
+值，则打印错误消息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    c = fahrenheit_to_celsius(<span class="built_in">float</span>(f))</span><br><span class="line"><span class="keyword">except</span> FahrenheitError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;f&#125;</span> Fahrenheit = <span class="subst">&#123;c:<span class="number">.4</span>f&#125;</span> Celsius&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="put-it-all-together">Put it all together</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FahrenheitError</span>(<span class="title class_ inherited__">Exception</span>):</span><br><span class="line">    min_f = <span class="number">32</span></span><br><span class="line">    max_f = <span class="number">212</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, f, *args</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__(args)</span><br><span class="line">        self.f = f</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&#x27;The <span class="subst">&#123;self.f&#125;</span> is not in a valid range <span class="subst">&#123;self.min_f, self.max_f&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fahrenheit_to_celsius</span>(<span class="params">f: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="keyword">if</span> f &lt; FahrenheitError.min_f <span class="keyword">or</span> f &gt; FahrenheitError.max_f:</span><br><span class="line">        <span class="keyword">raise</span> FahrenheitError(f)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (f - <span class="number">32</span>) * <span class="number">5</span> / <span class="number">9</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    f = <span class="built_in">input</span>(<span class="string">&#x27;Enter a temperature in Fahrenheit:&#x27;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        f = <span class="built_in">float</span>(f)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(ex)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            c = fahrenheit_to_celsius(<span class="built_in">float</span>(f))</span><br><span class="line">        <span class="keyword">except</span> FahrenheitError <span class="keyword">as</span> ex:</span><br><span class="line">            <span class="built_in">print</span>(ex)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;f&#125;</span> Fahrenheit = <span class="subst">&#123;c:<span class="number">.4</span>f&#125;</span> Celsius&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="test-examples">test examples</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Enter a temperature in Fahrenheit:1</span><br><span class="line">The 1.0 is not in a valid range (32, 212)</span><br><span class="line"></span><br><span class="line">Enter a temperature in Fahrenheit:lkjh</span><br><span class="line">could not convert string to float: &#x27;lkjh&#x27;</span><br><span class="line"></span><br><span class="line">Enter a temperature in Fahrenheit:55</span><br><span class="line">55.0 Fahrenheit = 12.7778 Celsius</span><br></pre></td></tr></table></figure>
+<h2 id="summary">Summary</h2>
+<ul>
+<li>Subclass the <code>Exception</code> class or one of its subclasses
+to define a custom exception class. 继承 <code>Exception</code>
+类或其子类来定义自定义异常类。</li>
+<li>Create a exception class hierarchy to make the exception classes
+more organized and catch exceptions at multiple levels.
+创建一个异常类层次结构，使异常类更有条理，并在多个级别捕获异常。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/5.Custom%20Exception/">展开全文 >></a>
     </p>
     
 
@@ -2119,11 +2084,11 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2139,11 +2104,11 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2159,7 +2124,7 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2167,7 +2132,7 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2183,19 +2148,7 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2203,11 +2156,7 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2215,11 +2164,35 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2235,18 +2208,6 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
@@ -2255,15 +2216,7 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2271,11 +2224,23 @@ exception class.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

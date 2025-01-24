@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/Tensor计算/torch.softmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/permute()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" target="_blank">torch.softmax()</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" target="_blank">permute()</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -242,28 +242,31 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="torch.softmax">torch.softmax()</h1>
-<h2 id="softmax-函数">Softmax 函数</h2>
-<p>首先说一下 Softmax 函数，公式如下：</p>
-<p><span class="math display">\[
-Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}
-\]</span></p>
-<p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">1</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.134</span></span><br><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">2</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.365</span></span><br></pre></td></tr></table></figure>
-<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365,
-0.365]。</p>
-<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft
-形式。</p>
+    <h1 id="permute">permute()</h1>
+<p><strong>交换维度 <code>permute</code></strong> 与
+<code>transpose</code>
+函数每次只能交换两个维度不同，<code>permute</code>
+可以直接设置新的维度排列方式，参数 <code>dims</code>
+是一个元组，表示新的维度顺序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">         [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = x.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">4</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">2</span>, <span class="number">5</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">3</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg"
-alt="36a034ac7464ecd31f8e582b254271c" />
-<figcaption
-aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png"
+alt="image-20250101132035181" />
+<figcaption aria-hidden="true">image-20250101132035181</figcaption>
 </figure>
-    
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/#more">more >></a>
-    
+<p><code>(2, 0, 1)</code> 的含义：</p>
+<ul>
+<li>将原来的 <strong>第 2 维</strong> 移到第 0 个位置。</li>
+<li>将原来的 <strong>第 0 维</strong> 移到第 1 个位置。</li>
+<li>将原来的 <strong>第 1 维</strong> 移到第 2 个位置。</li>
+</ul>
+<p>对应的形状变为：</p>
+<ul>
+<li>原来 <code>x.size()</code> 为 <code>(2, 3, 5)</code>。</li>
+<li>调整后变为 <code>(5, 2, 3)</code>。</li>
+</ul>
+
     
 
     
@@ -289,7 +292,7 @@ aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E8%AE%A1%E7%AE%97/torch.softmax()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/">展开全文 >></a>
     </p>
     
 
@@ -647,6 +650,100 @@ alt="在这里插入图片描述" />
 
 
   
+    <article id="post-【后端】/python/单星号✳与双星号✳✳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" target="_blank">单星号（*）与双星号（**）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="单星号与双星号">单星号（*）与双星号（**）</h1>
+<h2 id="作为运算符">作为运算符</h2>
+<p><code>*</code> 表示乘法运算、<code>**</code> 表示乘方运算</p>
+<p>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># * ** 作为运算符</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n------运算符测试------&#x27;</span>)</span><br><span class="line">a = <span class="number">3</span>*<span class="number">2</span>  <span class="comment">#乘法</span></span><br><span class="line">b = <span class="number">3</span>**<span class="number">2</span> <span class="comment">#乘方</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a = &quot;</span>, a)  <span class="comment">#输出 6</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;b = &quot;</span>, b)  <span class="comment">#输出 9</span></span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------运算符测试------</span><br><span class="line">a =  6</span><br><span class="line">b =  9</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/【内置函数】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -949,100 +1046,6 @@ class="math inline">\(1\)</span>，表示步长</li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/单星号✳与双星号✳✳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" target="_blank">单星号（*）与双星号（**）</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" class="archive-article-date">
-        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="单星号与双星号">单星号（*）与双星号（**）</h1>
-<h2 id="作为运算符">作为运算符</h2>
-<p><code>*</code> 表示乘法运算、<code>**</code> 表示乘方运算</p>
-<p>代码示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># * ** 作为运算符</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n------运算符测试------&#x27;</span>)</span><br><span class="line">a = <span class="number">3</span>*<span class="number">2</span>  <span class="comment">#乘法</span></span><br><span class="line">b = <span class="number">3</span>**<span class="number">2</span> <span class="comment">#乘方</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a = &quot;</span>, a)  <span class="comment">#输出 6</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;b = &quot;</span>, b)  <span class="comment">#输出 9</span></span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------运算符测试------</span><br><span class="line">a =  6</span><br><span class="line">b =  9</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/">展开全文 >></a>
     </p>
     
 
@@ -1798,11 +1801,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1818,11 +1821,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1838,7 +1841,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1846,7 +1849,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1862,19 +1865,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1882,11 +1873,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1894,11 +1881,35 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1914,18 +1925,6 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
@@ -1934,15 +1933,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1950,11 +1941,23 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -242,118 +242,72 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="global与nonlocal">global与nonlocal</h1>
-<p>学习过程中，我们会遇到两个有趣的关键字，一个是
-<code>global</code>，一个是 <code>nonlocal</code>。</p>
+    <h1 id="global与nonlocal"><a href="#global与nonlocal" class="headerlink" title="global与nonlocal"></a>global与nonlocal</h1><p>学习过程中，我们会遇到两个有趣的关键字，一个是 <code>global</code>，一个是 <code>nonlocal</code>。</p>
 <p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p>
 <p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p>
 <p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p>
-<h2 id="python的定义域">Python的定义域</h2>
-<p>先试看一个例子：</p>
+<h2 id="Python的定义域"><a href="#Python的定义域" class="headerlink" title="Python的定义域"></a>Python的定义域</h2><p>先试看一个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()	<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
-<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量
-<code>b</code> 的值 <code>1</code>。</p>
+<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量 <code>b</code> 的值 <code>1</code>。</p>
 <p>来看第二个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
-<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量
-<code>b</code> 的赋值。那它的结果是什么呢？</p>
-<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对
-<code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
+<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量 <code>b</code> 的赋值。那它的结果是什么呢？</p>
+<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对 <code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
 <p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p>
-<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量
-<code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
-<p>这是因为 Python
-在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python
-遵循以下规则：</p>
-<ol type="1">
-<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python
-会将该变量视为局部变量。
-<ul>
-<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code>
-函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的
-<code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code>
-时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了
-<code>UnboundLocalError</code> 错误）。</li>
-</ul></li>
-<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。
-<ul>
-<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code>
-进行赋值操作，所以 Python 会认为 <code>b</code>
-是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量
-<code>b</code> 的值。</li>
-</ul></li>
+<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量 <code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
+<p>这是因为 Python 在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python 遵循以下规则：</p>
+<ol>
+<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python 会将该变量视为局部变量。<ul>
+<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code> 函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的 <code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code> 时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了 <code>UnboundLocalError</code> 错误）。</li>
+</ul>
+</li>
+<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。<ul>
+<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code> 进行赋值操作，所以 Python 会认为 <code>b</code> 是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量 <code>b</code> 的值。</li>
+</ul>
+</li>
 </ol>
 <p>总结一下：</p>
 <ul>
-<li>如果在函数内对变量进行赋值，Python
-会认为这个变量是局部的，并会在函数内部查找它。</li>
-<li>如果函数内没有赋值操作，Python
-会尝试访问外部作用域（如全局作用域）的变量。</li>
+<li>如果在函数内对变量进行赋值，Python 会认为这个变量是局部的，并会在函数内部查找它。</li>
+<li>如果函数内没有赋值操作，Python 会尝试访问外部作用域（如全局作用域）的变量。</li>
 </ul>
-<p>因此，在第二个例子中，虽然你想访问的是全局变量
-<code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将
-<code>b</code> 视为局部变量并抛出了错误。</p>
-<h2 id="global的作用">global的作用</h2>
-<p>那如何在函数中使用全局变量呢？用 <code>global</code>
-标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量
-<code>b</code> 而言的：</p>
+<p>因此，在第二个例子中，虽然你想访问的是全局变量 <code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将 <code>b</code> 视为局部变量并抛出了错误。</p>
+<h2 id="global的作用"><a href="#global的作用" class="headerlink" title="global的作用"></a>global的作用</h2><p>那如何在函数中使用全局变量呢？用 <code>global</code> 标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量 <code>b</code> 而言的：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
 <p>全局的问题解决了，再来看另外一个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
 <p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure>
-<p>因为函数 <code>a()</code> 中，对 <code>count</code>
-变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行
-<code>count + 1</code> 操作时，却没有找到
-<code>count</code>，所以报错了。</p>
+<p>因为函数 <code>a()</code> 中，对 <code>count</code> 变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行 <code>count + 1</code> 操作时，却没有找到 <code>count</code>，所以报错了。</p>
 <p>那怎么处理呢？</p>
-<h2 id="nonlocal的作用">nonlocal的作用</h2>
-<p>我猜你会用 <code>global</code>
-标记一下，但是注意啊。<code>global</code>
-标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code>
-函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
+<h2 id="nonlocal的作用"><a href="#nonlocal的作用" class="headerlink" title="nonlocal的作用"></a>nonlocal的作用</h2><p>我猜你会用 <code>global</code> 标记一下，但是注意啊。<code>global</code> 标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code> 函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
 <p>运行结果</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure>
-<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉
-<code>a()</code> 函数，<code>count</code>
-不在本地定义，但也不在全局变量里。在 Python
-中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用
-<code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而
-<code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
+<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉 <code>a()</code> 函数，<code>count</code> 不在本地定义，但也不在全局变量里。在 Python 中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用 <code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而 <code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li><p><code>nonlocal</code> 告诉
-Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p></li>
-<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code>
-的变量，而不是重新定义新的局部变量</p></li>
+<li><p><code>nonlocal</code> 告诉 Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p>
+</li>
+<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code> 的变量，而不是重新定义新的局部变量</p>
+</li>
 </ul>
-<h2 id="闭包">闭包</h2>
-<p>学习 Python
-时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>学习 Python 时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回
-<code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code>
-函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的
-<code>count</code> 变量。</p>
-<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code>
-已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
-<p>像函数 <code>a()</code> 中 <code>count</code>
-这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
-<p>用 <code>nonlocal</code> 标记后呢，Python
-就会保留自由变量的绑定（或者说定义环境）。</p>
-<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是
-<code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
-<p>因为 <code>a()</code>
-延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
-<h2 id="总结">总结</h2>
-<ul>
-<li><p><code>global</code> 和 <code>nonlocal</code>
-的功能都是<strong>改变变量作用域</strong>。</p></li>
-<li><p><code>global</code> 标记全局变量，<code>nonlocal</code>
-标记非全局、非本地的<strong>自由变量</strong>。</p></li>
-<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p></li>
+<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回 <code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code> 函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的 <code>count</code> 变量。</p>
+<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code> 已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
+<p>像函数 <code>a()</code> 中 <code>count</code> 这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
+<p>用 <code>nonlocal</code> 标记后呢，Python 就会保留自由变量的绑定（或者说定义环境）。</p>
+<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是 <code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
+<p>因为 <code>a()</code> 延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><p><code>global</code> 和 <code>nonlocal</code> 的功能都是<strong>改变变量作用域</strong>。</p>
+</li>
+<li><p><code>global</code> 标记全局变量，<code>nonlocal</code> 标记非全局、非本地的<strong>自由变量</strong>。</p>
+</li>
+<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p>
+</li>
 </ul>
 
     
@@ -382,6 +336,108 @@ Python，这个变量不是当前函数中的局部变量，而是直接外层�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/python项目中的相对路径与绝对路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" target="_blank">python项目中的绝对路径与相对路径</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="python项目中的绝对路径与相对路径"><a href="#python项目中的绝对路径与相对路径" class="headerlink" title="python项目中的绝对路径与相对路径"></a>python项目中的绝对路径与相对路径</h1><p>当前工作目录（<strong>cwd</strong>，Current Working Directory）是在程序启动时由操作系统或运行环境设置的，具体由 <strong>运行程序的上下文</strong> 决定。以下是对设置时机和机制的详细解释：</p>
+<p>在 Python 项目中，路径的管理是一个常见问题，理解 <strong>相对路径</strong> 和 <strong>绝对路径</strong> 的区别非常重要。它们主要用于访问文件、资源或目录。</p>
+<h2 id="绝对路径"><a href="#绝对路径" class="headerlink" title="绝对路径"></a>绝对路径</h2><ul>
+<li><strong>绝对路径</strong> 指从<strong>根目录</strong>开始的完整路径。</li>
+<li>绝对路径与当前程序的运行位置无关，始终指向同一个文件或目录。</li>
+</ul>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名 <code>C:\</code>（Windows）开头。</li>
+<li><strong>跨环境不够灵活</strong>，因为不同系统的根路径可能不同。</li>
+</ul>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
+<li><strong>Windows</strong>：<code>C:\Users\Project\file.txt</code></li>
+<li><strong>Linux/Mac</strong>：<code>/home/user/Project/file.txt</code></li>
+</ul>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/">展开全文 >></a>
     </p>
     
 
@@ -440,22 +496,18 @@ Python，这个变量不是当前函数中的局部变量，而是直接外层�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="python-执行顺序">python 执行顺序</h1>
-<p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
-<h2 id="代码执行顺序">代码执行顺序</h2>
-<p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
+    <h1 id="python-执行顺序"><a href="#python-执行顺序" class="headerlink" title="python 执行顺序"></a>python 执行顺序</h1><p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
+<h2 id="代码执行顺序"><a href="#代码执行顺序" class="headerlink" title="代码执行顺序"></a>代码执行顺序</h2><p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
 <blockquote>
 <p>案例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span>=<span class="string">&#x27;我爱中华人民共和国&#x27;</span>	  <span class="comment">#第一行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>)				<span class="comment">#第二行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 输出: 我爱中华人民共和国</span></span><br></pre></td></tr></table></figure>
 <p>执行顺序：先执行第一行，第一行是赋值语句，从右到左执行；执行完毕后，执行第二行。</p>
 </blockquote>
-<p><strong>2.
-函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
+<p><strong>2. 函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
 <blockquote>
 <p>案例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu1</span>():                       <span class="comment">#第一行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱中华人民共和国！&#x27;</span>)       <span class="comment">#第二行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;函数的执行顺序！&#x27;</span>)              <span class="comment">#第三行</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu2</span>():                       <span class="comment">#第四行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱写代码！&#x27;</span>)              <span class="comment">#第五行</span></span><br><span class="line">hanshu2()                            <span class="comment">#第六行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;好好工作，好好学习！&#x27;</span>)           <span class="comment">#第七行</span></span><br><span class="line">hanshu1()                            <span class="comment">#第八行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#---输出：---</span></span><br><span class="line"><span class="comment"># 函数的执行顺序！</span></span><br><span class="line"><span class="comment"># 我爱写代码！</span></span><br><span class="line"><span class="comment"># 好好工作，好好学习！</span></span><br><span class="line"><span class="comment"># 我爱中华人民共和国！</span></span><br></pre></td></tr></table></figure>
-<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 →
-执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
+<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 → 执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
 </blockquote>
     
     <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
@@ -515,276 +567,6 @@ Python，这个变量不是当前函数中的局部变量，而是直接外层�
 
 
   
-    <article id="post-【后端】/python/python项目中的相对路径与绝对路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" target="_blank">python项目中的绝对路径与相对路径</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1
-id="python项目中的绝对路径与相对路径">python项目中的绝对路径与相对路径</h1>
-<p>当前工作目录（<strong>cwd</strong>，Current Working
-Directory）是在程序启动时由操作系统或运行环境设置的，具体由
-<strong>运行程序的上下文</strong>
-决定。以下是对设置时机和机制的详细解释：</p>
-<p>在 Python 项目中，路径的管理是一个常见问题，理解
-<strong>相对路径</strong> 和 <strong>绝对路径</strong>
-的区别非常重要。它们主要用于访问文件、资源或目录。</p>
-<h2 id="绝对路径">绝对路径</h2>
-<ul>
-<li><strong>绝对路径</strong>
-指从<strong>根目录</strong>开始的完整路径。</li>
-<li>绝对路径与当前程序的运行位置无关，始终指向同一个文件或目录。</li>
-</ul>
-<h3 id="特点">特点</h3>
-<ul>
-<li>以根目录 <code>/</code>（Linux/Mac）或磁盘名
-<code>C:\</code>（Windows）开头。</li>
-<li><strong>跨环境不够灵活</strong>，因为不同系统的根路径可能不同。</li>
-</ul>
-<h3 id="示例">示例</h3>
-<ul>
-<li><strong>Windows</strong>：<code>C:\Users\Project\file.txt</code></li>
-<li><strong>Linux/Mac</strong>：<code>/home/user/Project/file.txt</code></li>
-</ul>
-<h3 id="示例-1">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开绝对路径的文件</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;/home/user/Project/data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="built_in">print</span>(f.read())</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E4%B8%8E%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/关键字" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/" target="_blank">关键字</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="关键字">关键字</h1>
-<h2 id="assert">assert</h2>
-<h3 id="assert-关键字简介"><strong><code>assert</code>
-关键字简介</strong></h3>
-<p>在 Python 中，<code>assert</code>
-是一个用于<strong>调试和验证</strong>代码的关键字，可以快速检查程序中的某些条件是否为真。如果条件为假，程序会抛出一个
-<code>AssertionError</code> 异常，并且可以附加错误消息以帮助定位问题</p>
-<h3 id="语法"><strong>语法</strong></h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> condition, message</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong><code>condition</code></strong>:
-一个返回布尔值的表达式。如果为 <code>True</code>，程序继续执行；如果为
-<code>False</code>，抛出 <code>AssertionError</code> 异常</li>
-<li><strong><code>message</code></strong>:
-（可选）断言失败时显示的错误信息，用于描述错误原因</li>
-</ul>
-<h3 id="基本用法"><strong>基本用法</strong></h3>
-<ol type="1">
-<li><p><strong>简单断言</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">5</span>  <span class="comment"># 条件为真，程序继续执行</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>  <span class="comment"># 条件为假，抛出 AssertionError</span></span><br><span class="line"><span class="comment"># 输出：AssertionError</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>带错误消息</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>, <span class="string">&quot;x should be less than 5&quot;</span></span><br><span class="line"><span class="comment"># 输出：AssertionError: x should be less than 5</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr />
-<h3 id="应用场景"><strong>应用场景</strong></h3>
-<ol type="1">
-<li><p><strong>调试代码</strong> 在开发阶段使用 <code>assert</code>
-检查某些关键条件是否满足。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">assert</span> b != <span class="number">0</span>, <span class="string">&quot;Denominator must not be zero&quot;</span></span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 输出：5.0</span></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">0</span>))  <span class="comment"># 抛出 AssertionError: Denominator must not be zero</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>验证输入</strong> 确保函数或程序的输入符合预期。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">process_list</span>(<span class="params">lst</span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(lst, <span class="built_in">list</span>), <span class="string">&quot;Input must be a list&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [x * <span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> lst]</span><br><span class="line"></span><br><span class="line">process_list([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 正常工作</span></span><br><span class="line">process_list(<span class="string">&quot;123&quot;</span>)      <span class="comment"># 抛出 AssertionError: Input must be a list</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>检查程序状态</strong>
-验证程序在某些关键阶段的状态是否正确。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">state = <span class="string">&quot;initialized&quot;</span></span><br><span class="line"><span class="keyword">assert</span> state == <span class="string">&quot;initialized&quot;</span>, <span class="string">&quot;State must be &#x27;initialized&#x27; before proceeding&quot;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="禁用断言">禁用断言</h3>
-<p>在生产环境中，Python 允许通过运行程序时使用优化模式 (<code>-O</code>
-参数) 来禁用断言。禁用后，<code>assert</code>
-语句会被完全忽略，适合性能敏感的场景。</p>
-<p><strong>示例</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -O your_script.py</span><br></pre></td></tr></table></figure>
-<p>禁用后，即使 <code>assert</code> 条件为假，程序也不会抛出异常。</p>
-<h3 id="注意">注意</h3>
-<ol type="1">
-<li><p><strong><code>assert</code> 不是替代异常处理的工具</strong>：</p>
-<ul>
-<li>它主要用于调试，而不是作为通用错误处理机制</li>
-<li>对于必须在生产环境中检查的条件，应使用明确的异常（如
-<code>ValueError</code> 或自定义异常）</li>
-</ul></li>
-<li><p><strong><code>assert</code> 的副作用</strong>：如果依赖
-<code>assert</code>
-进行关键的逻辑检查，一旦禁用断言，程序可能会出现意想不到的行为</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">0</span>, <span class="string">&quot;x must be positive&quot;</span></span><br><span class="line">y = <span class="number">1</span> / x  <span class="comment"># 如果禁用了断言，x 可能为 0，导致 ZeroDivisionError</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>只在开发阶段使用</strong>：建议仅将 <code>assert</code>
-用于开发和测试阶段，而不是生产代码中的核心逻辑验证。</p></li>
-</ol>
-<hr />
-<h3 id="总结"><strong>总结</strong></h3>
-<ul>
-<li><code>assert</code>
-是一个方便的调试工具，用于验证程序中的关键条件。</li>
-<li>如果条件不满足，会抛出
-<code>AssertionError</code>，并可以提供错误消息。</li>
-<li>在生产环境中可以禁用断言，因此不要依赖 <code>assert</code>
-来替代异常处理。</li>
-<li>使用得当可以提高代码的健壮性和可读性，但应谨慎使用，避免对程序功能产生副作用。</li>
-</ul>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/全局变量&amp;局部变量" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -814,10 +596,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="全局变量局部变量">全局变量&amp;局部变量</h1>
-<h2 id="局部变量">局部变量</h2>
-<p><strong>局部变量</strong>
-就是在函数内部定义的变量，作用范围是这个函数内部，即只能在这个函数中使用，在函数的外部是不能使用的。因为其作用范围只是在自己的函数内部，所以不同的函数可以定义相同名字的局部变量。</p>
+    <h1 id="全局变量-amp-局部变量"><a href="#全局变量-amp-局部变量" class="headerlink" title="全局变量&amp;局部变量"></a>全局变量&amp;局部变量</h1><h2 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h2><p><strong>局部变量</strong> 就是在函数内部定义的变量，作用范围是这个函数内部，即只能在这个函数中使用，在函数的外部是不能使用的。因为其作用范围只是在自己的函数内部，所以不同的函数可以定义相同名字的局部变量。</p>
 <p>局部变量的作用，为了临时保存数据需要在函数中定义变量来进行存储：</p>
 <ul>
 <li>当函数调用时，局部变量被创建</li>
@@ -825,8 +604,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(): </span><br><span class="line">    <span class="comment"># 定义局部变量 </span></span><br><span class="line">    sal = <span class="number">15000</span> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;薪资:&quot;</span>, sal) </span><br><span class="line">show() </span><br></pre></td></tr></table></figure>
 <p>薪资: 15000</p>
-<h2 id="全局变量">全局变量</h2>
-<p>如果一个变量，既能在一个函数中使用，也能在其他的函数中使用，这样的变量就是全局变量。</p>
+<h2 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h2><p>如果一个变量，既能在一个函数中使用，也能在其他的函数中使用，这样的变量就是全局变量。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义全局变量 </span></span><br><span class="line">money = <span class="number">1200</span> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test1</span>(): </span><br><span class="line">    <span class="built_in">print</span>(money) <span class="comment"># 虽然没有定义变量 money 但是可是使用全局变量 money</span></span><br><span class="line"></span><br><span class="line">test1()</span><br></pre></td></tr></table></figure>
 <p>1200</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test1</span>():</span><br><span class="line">    <span class="built_in">print</span>(money) <span class="comment"># 虽然没有定义变量 money 但是可是使用全局变量 money</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 定义全局变量</span></span><br><span class="line">    money = <span class="number">1200</span></span><br><span class="line">    test1()</span><br></pre></td></tr></table></figure>
@@ -888,7 +666,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
 
 
   
-    <article id="post-【后端】/python/特殊注释" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/关键字" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -896,7 +674,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/" target="_blank">特殊注释</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/" target="_blank">关键字</a>
   
     </h1>
   
@@ -904,7 +682,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -917,45 +695,59 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="特殊注释">特殊注释</h1>
-<p>在编写代码的时候我们可以利用一些公认的特殊注释方式快速简介表达自己的目地</p>
-<h2 id="todo">TODO: <说明></h2>
-<p>通常写在一些函数的上方或者内部，当然，实际上你可想写哪儿就写哪儿。它表示该注释标识处，有一些代码功能还未实现，未来会实现，<code>&lt;说明&gt;</code>
-中应该简单描述下该功能。</p>
-<h2 id="fixme">FIXME: <说明></h2>
-<p>该注释表示该注释标记处的代码有问题或者是错误的，有可能无法正常工作，需要修复，<code>&lt;说明&gt;</code>
-中应该简单描述下如何修复该问题。</p>
-<h2 id="xxx">XXX: <说明></h2>
-<p>该注释表示该注释标记处的代码功能虽然实现了，但是实现的方式可能并不那么的好，可以进行一些改进优化，<code>&lt;说明&gt;</code>
-中应该简单描述下改进优化的策略。</p>
-<h2 id="示例">示例</h2>
-<h3 id="golang-中">Golang 中</h3>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">// <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">// <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	<span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">	<span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">	<span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-<h3 id="python-中">Python 中</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment"># <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment"># <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Python中的符号 ' 和 " 都表示字符串</p>
-</blockquote>
-<h2 id="特殊注释在vscode中的使用方式">特殊注释在VSCode中的使用方式</h2>
-<ol type="1">
-<li>在商店中搜索 TODO Highlight，点击下载，下载之后的界面如下：</li>
+    <h1 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h1><h2 id="assert"><a href="#assert" class="headerlink" title="assert"></a>assert</h2><h3 id="assert-关键字简介"><a href="#assert-关键字简介" class="headerlink" title="assert 关键字简介"></a><strong><code>assert</code> 关键字简介</strong></h3><p>在 Python 中，<code>assert</code> 是一个用于<strong>调试和验证</strong>代码的关键字，可以快速检查程序中的某些条件是否为真。如果条件为假，程序会抛出一个 <code>AssertionError</code> 异常，并且可以附加错误消息以帮助定位问题</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a><strong>语法</strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> condition, message</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong><code>condition</code></strong>: 一个返回布尔值的表达式。如果为 <code>True</code>，程序继续执行；如果为 <code>False</code>，抛出 <code>AssertionError</code> 异常</li>
+<li><strong><code>message</code></strong>: （可选）断言失败时显示的错误信息，用于描述错误原因</li>
+</ul>
+<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a><strong>基本用法</strong></h3><ol>
+<li><p><strong>简单断言</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">5</span>  <span class="comment"># 条件为真，程序继续执行</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>  <span class="comment"># 条件为假，抛出 AssertionError</span></span><br><span class="line"><span class="comment"># 输出：AssertionError</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>带错误消息</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">10</span></span><br><span class="line"><span class="keyword">assert</span> x &lt; <span class="number">5</span>, <span class="string">&quot;x should be less than 5&quot;</span></span><br><span class="line"><span class="comment"># 输出：AssertionError: x should be less than 5</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058005.png" /></p>
-<ol start="2" type="1">
-<li>在插件中下载一另一个 Todo Tree</li>
+<hr>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ol>
+<li><p><strong>调试代码</strong> 在开发阶段使用 <code>assert</code> 检查某些关键条件是否满足。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">assert</span> b != <span class="number">0</span>, <span class="string">&quot;Denominator must not be zero&quot;</span></span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 输出：5.0</span></span><br><span class="line"><span class="built_in">print</span>(divide(<span class="number">10</span>, <span class="number">0</span>))  <span class="comment"># 抛出 AssertionError: Denominator must not be zero</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>验证输入</strong> 确保函数或程序的输入符合预期。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">process_list</span>(<span class="params">lst</span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(lst, <span class="built_in">list</span>), <span class="string">&quot;Input must be a list&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [x * <span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> lst]</span><br><span class="line"></span><br><span class="line">process_list([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 正常工作</span></span><br><span class="line">process_list(<span class="string">&quot;123&quot;</span>)      <span class="comment"># 抛出 AssertionError: Input must be a list</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>检查程序状态</strong> 验证程序在某些关键阶段的状态是否正确。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">state = <span class="string">&quot;initialized&quot;</span></span><br><span class="line"><span class="keyword">assert</span> state == <span class="string">&quot;initialized&quot;</span>, <span class="string">&quot;State must be &#x27;initialized&#x27; before proceeding&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" /></p>
-<p>这两个插件全都下载完成之后，将vscode关闭，重新打开后，我们编辑器会出现一个小树：</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058872.png" alt="image-20250110104744573" style="zoom: 50%;" /></p>
-
+<h3 id="禁用断言"><a href="#禁用断言" class="headerlink" title="禁用断言"></a>禁用断言</h3><p>在生产环境中，Python 允许通过运行程序时使用优化模式 (<code>-O</code> 参数) 来禁用断言。禁用后，<code>assert</code> 语句会被完全忽略，适合性能敏感的场景。</p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -O your_script.py</span><br></pre></td></tr></table></figure>
+<p>禁用后，即使 <code>assert</code> 条件为假，程序也不会抛出异常。</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ol>
+<li><p><strong><code>assert</code> 不是替代异常处理的工具</strong>：</p>
+<ul>
+<li>它主要用于调试，而不是作为通用错误处理机制</li>
+<li>对于必须在生产环境中检查的条件，应使用明确的异常（如 <code>ValueError</code> 或自定义异常）</li>
+</ul>
+</li>
+<li><p><strong><code>assert</code> 的副作用</strong>：如果依赖 <code>assert</code> 进行关键的逻辑检查，一旦禁用断言，程序可能会出现意想不到的行为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> x &gt; <span class="number">0</span>, <span class="string">&quot;x must be positive&quot;</span></span><br><span class="line">y = <span class="number">1</span> / x  <span class="comment"># 如果禁用了断言，x 可能为 0，导致 ZeroDivisionError</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>只在开发阶段使用</strong>：建议仅将 <code>assert</code> 用于开发和测试阶段，而不是生产代码中的核心逻辑验证。</p>
+</li>
+</ol>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul>
+<li><code>assert</code> 是一个方便的调试工具，用于验证程序中的关键条件。</li>
+<li>如果条件不满足，会抛出 <code>AssertionError</code>，并可以提供错误消息。</li>
+<li>在生产环境中可以禁用断言，因此不要依赖 <code>assert</code> 来替代异常处理。</li>
+<li>使用得当可以提高代码的健壮性和可读性，但应谨慎使用，避免对程序功能产生副作用。</li>
+</ul>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/#more">more >></a>
+    
     
 
     
@@ -981,7 +773,7 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" /></p
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
     </p>
     
 
@@ -1040,51 +832,29 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" /></p
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="直接赋值浅拷贝和深度拷贝">直接赋值、浅拷贝和深度拷贝</h1>
-<ul>
+    <h1 id="直接赋值、浅拷贝和深度拷贝"><a href="#直接赋值、浅拷贝和深度拷贝" class="headerlink" title="直接赋值、浅拷贝和深度拷贝"></a>直接赋值、浅拷贝和深度拷贝</h1><ul>
 <li><strong>直接赋值：</strong>其实就是对象的<strong>引用（别名）</strong></li>
 <li><strong>浅拷贝(copy)：</strong>拷贝<strong>父对象</strong>，不会拷贝对象的内部的子对象</li>
-<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy
-方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
+<li><strong>深拷贝(deepcopy)：</strong> copy 模块的 deepcopy 方法（<code>copy.deepcopy()</code>），<strong>完全拷贝了父对象及其子对象</strong></li>
 </ul>
-<h2 id="字典实例">字典实例</h2>
-<p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<h2 id="字典实例"><a href="#字典实例" class="headerlink" title="字典实例"></a>字典实例</h2><p><strong>1、b = a:</strong> 赋值引用，a 和 b 都指向同一个对象。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934182.png" alt="img"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
 <p>以上实例执行输出结果为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b
-是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><strong>2、b = a.copy():</strong> 浅拷贝，a 和 b 是一个独立的对象，但他们的子对象还是指向统一对象（是引用）。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934149.png" alt="img"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
 <p>以上实例执行输出结果为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b
-完全拷贝了父对象及其子对象，两者是完全独立的。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><strong>3、b = copy.deepcopy(a):</strong> 深度拷贝，a 和 b 完全拷贝了父对象及其子对象，两者是完全独立的。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501171934166.png" alt="img"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;          <span class="comment">#原始对象</span></span><br><span class="line"></span><br><span class="line">b = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"></span><br><span class="line">a[<span class="number">2</span>] = <span class="string">&#x27;demo&#x27;</span>               <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">1</span>].append(<span class="number">4</span>)              <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br></pre></td></tr></table></figure>
 <p>以上实例执行输出结果为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>: <span class="string">&#x27;demo&#x27;</span>&#125;</span><br><span class="line">b =  &#123;<span class="number">1</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="列表实例">列表实例</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
+<h2 id="列表实例"><a href="#列表实例" class="headerlink" title="列表实例"></a>列表实例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]] <span class="comment">#原始对象</span></span><br><span class="line"> </span><br><span class="line">b = a                       <span class="comment">#赋值，传对象的引用</span></span><br><span class="line">c = copy.copy(a)            <span class="comment">#对象拷贝，浅拷贝</span></span><br><span class="line">d = copy.deepcopy(a)        <span class="comment">#对象拷贝，深拷贝</span></span><br><span class="line"> </span><br><span class="line">a.append(<span class="number">5</span>)                 <span class="comment">#修改对象a</span></span><br><span class="line">a[<span class="number">4</span>].append(<span class="string">&#x27;c&#x27;</span>)            <span class="comment">#修改对象a中的[&#x27;a&#x27;, &#x27;b&#x27;]数组对象</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;a = &#x27;</span>, a )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;b = &#x27;</span>, b )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;c = &#x27;</span>, c )</span><br><span class="line"><span class="built_in">print</span>( <span class="string">&#x27;d = &#x27;</span>, d )</span><br></pre></td></tr></table></figure>
 <p>以上实例执行输出结果为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;b = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>], <span class="number">5</span>])</span><br><span class="line">(<span class="string">&#x27;c = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]])</span><br><span class="line">(<span class="string">&#x27;d = &#x27;</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]])</span><br></pre></td></tr></table></figure>
-
     
 
     
@@ -1169,71 +939,45 @@ alt="img" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="逻辑运算符">逻辑运算符</h1>
-<h2
-id="真值truthy与假值falsy的概念">“真值”（Truthy）与“假值”（Falsy）的概念</h2>
-<p>在 Python 中，以下值被视为 <strong>假值</strong>：</p>
+    <h1 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h1><h2 id="“真值”（Truthy）与“假值”（Falsy）的概念"><a href="#“真值”（Truthy）与“假值”（Falsy）的概念" class="headerlink" title="“真值”（Truthy）与“假值”（Falsy）的概念"></a>“真值”（Truthy）与“假值”（Falsy）的概念</h2><p>在 Python 中，以下值被视为 <strong>假值</strong>：</p>
 <ul>
 <li><code>None</code></li>
 <li><code>0</code>（整型和浮点型的零）</li>
-<li>空对象：<code>''</code>（空字符串）、<code>[]</code>（空列表）、<code>&#123;&#125;</code>（空字典）等</li>
+<li>空对象：<code>&#39;&#39;</code>（空字符串）、<code>[]</code>（空列表）、<code>&#123;&#125;</code>（空字典）等</li>
 <li>布尔值 <code>False</code></li>
 </ul>
 <p>其他值都视为 <strong>真值</strong>。</p>
-<p>在 Python 中，逻辑运算符
-<strong><code>and</code></strong>、<strong><code>or</code></strong> 和
-<strong><code>not</code></strong>
-用于布尔逻辑运算，帮助我们组合条件表达式。</p>
-<hr />
-<h2 id="and-运算符"><code>and</code> 运算符</h2>
-<h3 id="规则">规则</h3>
-<ul>
-<li><strong><code>and</code></strong>
-表示<strong>逻辑与</strong>：只有当 <strong>所有条件都为真</strong>
-时，结果才为 <strong>True</strong>。</li>
+<p>在 Python 中，逻辑运算符 <strong><code>and</code></strong>、<strong><code>or</code></strong> 和 <strong><code>not</code></strong> 用于布尔逻辑运算，帮助我们组合条件表达式。</p>
+<hr>
+<h2 id="and-运算符"><a href="#and-运算符" class="headerlink" title="and 运算符"></a><code>and</code> 运算符</h2><h3 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h3><ul>
+<li><strong><code>and</code></strong> 表示<strong>逻辑与</strong>：只有当 <strong>所有条件都为真</strong> 时，结果才为 <strong>True</strong>。</li>
 <li>短路特性：从左到右依次判断，当遇到<strong>第一个假值</strong>时，直接返回该值，不再继续判断后续表达式。</li>
 </ul>
-<h3 id="示例">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全部为真，返回最后一个值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 遇到假值，返回第一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="literal">None</span> <span class="keyword">and</span> <span class="string">&quot;Hello&quot;</span>)  <span class="comment"># 输出: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">True</span></span><br><span class="line">b = <span class="literal">False</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">and</span> b)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全部为真，返回最后一个值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 遇到假值，返回第一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">and</span> <span class="number">2</span>)  <span class="comment"># 输出: 0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="literal">None</span> <span class="keyword">and</span> <span class="string">&quot;Hello&quot;</span>)  <span class="comment"># 输出: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">True</span></span><br><span class="line">b = <span class="literal">False</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">and</span> b)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
 <p><strong>总结</strong>：</p>
 <ul>
-<li>如果所有值都为
-<strong>真</strong>，返回<strong>最后一个真值</strong>。</li>
+<li>如果所有值都为 <strong>真</strong>，返回<strong>最后一个真值</strong>。</li>
 <li>遇到第一个 <strong>假值</strong> 时，返回该假值。</li>
 </ul>
-<hr />
-<h2 id="or-运算符"><code>or</code> 运算符</h2>
-<h3 id="规则-1">规则</h3>
-<ul>
-<li><strong><code>or</code></strong>
-表示<strong>逻辑或</strong>：只要有一个条件为真，结果就为
-<strong>True</strong>。</li>
+<hr>
+<h2 id="or-运算符"><a href="#or-运算符" class="headerlink" title="or 运算符"></a><code>or</code> 运算符</h2><h3 id="规则-1"><a href="#规则-1" class="headerlink" title="规则"></a>规则</h3><ul>
+<li><strong><code>or</code></strong> 表示<strong>逻辑或</strong>：只要有一个条件为真，结果就为 <strong>True</strong>。</li>
 <li>短路特性：从左到右依次判断，当遇到<strong>第一个真值</strong>时，直接返回该值，不再继续判断后续表达式。</li>
 </ul>
-<h3 id="示例-1">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 遇到真值，返回第一个真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有都为假，返回最后一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="literal">False</span>)  <span class="comment"># 输出: False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">False</span></span><br><span class="line">b = <span class="literal">True</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">or</span> b)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line">x = <span class="literal">None</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;default_value&quot;</span></span><br><span class="line"></span><br><span class="line">x = <span class="string">&quot;custom_value&quot;</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;custom_value&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 遇到真值，返回第一个真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="number">2</span>)  <span class="comment"># 输出: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 所有都为假，返回最后一个假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">0</span> <span class="keyword">or</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="literal">False</span>)  <span class="comment"># 输出: False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 布尔运算示例</span></span><br><span class="line">a = <span class="literal">False</span></span><br><span class="line">b = <span class="literal">True</span></span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">or</span> b)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line">x = <span class="literal">None</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;default_value&quot;</span></span><br><span class="line"></span><br><span class="line">x = <span class="string">&quot;custom_value&quot;</span></span><br><span class="line">y = <span class="string">&quot;default_value&quot;</span></span><br><span class="line">ckpt = x <span class="keyword">or</span> y</span><br><span class="line"><span class="built_in">print</span>(ckpt)  <span class="comment"># 输出: &quot;custom_value&quot;</span></span><br></pre></td></tr></table></figure>
 <p><strong>总结</strong>：</p>
 <ul>
-<li>如果所有值都为
-<strong>假</strong>，返回<strong>最后一个假值</strong>。</li>
+<li>如果所有值都为 <strong>假</strong>，返回<strong>最后一个假值</strong>。</li>
 <li>遇到第一个 <strong>真值</strong> 时，返回该真值。</li>
 </ul>
-<hr />
-<h2 id="not-运算符"><code>not</code> 运算符</h2>
-<h3 id="规则-2">规则</h3>
-<ul>
-<li><strong><code>not</code></strong>
-表示<strong>逻辑非</strong>：对一个表达式取反。</li>
-<li>如果表达式为 <strong>True</strong>，<code>not</code> 返回
-<strong>False</strong>；反之亦然。</li>
+<hr>
+<h2 id="not-运算符"><a href="#not-运算符" class="headerlink" title="not 运算符"></a><code>not</code> 运算符</h2><h3 id="规则-2"><a href="#规则-2" class="headerlink" title="规则"></a>规则</h3><ul>
+<li><strong><code>not</code></strong> 表示<strong>逻辑非</strong>：对一个表达式取反。</li>
+<li>如果表达式为 <strong>True</strong>，<code>not</code> 返回 <strong>False</strong>；反之亦然。</li>
 </ul>
-<h3 id="示例-2">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 布尔运算</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">True</span>)   <span class="comment"># 输出: False</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">False</span>)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对非布尔值取反</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">0</span>)      <span class="comment"># 输出: True，因为 0 是假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">1</span>)      <span class="comment"># 输出: False，因为 1 是真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">None</span>)   <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h2
-id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or</code>
-和 <code>not</code> 组合</h2>
-<p>当多个逻辑运算符组合在一起时：</p>
+<h3 id="示例-2"><a href="#示例-2" class="headerlink" title="示例"></a>示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 布尔运算</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">True</span>)   <span class="comment"># 输出: False</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">False</span>)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对非布尔值取反</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">0</span>)      <span class="comment"># 输出: True，因为 0 是假值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="number">1</span>)      <span class="comment"># 输出: False，因为 1 是真值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">None</span>)   <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="结合示例：and、or-和-not-组合"><a href="#结合示例：and、or-和-not-组合" class="headerlink" title="结合示例：and、or 和 not 组合"></a>结合示例：<code>and</code>、<code>or</code> 和 <code>not</code> 组合</h2><p>当多个逻辑运算符组合在一起时：</p>
 <ul>
 <li><code>not</code> 的优先级最高。</li>
 <li>其次是 <code>and</code>。</li>
@@ -1241,11 +985,11 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 <li>括号 <code>()</code> 可以用于改变默认的优先级。</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">0</span></span><br><span class="line">y = <span class="number">1</span></span><br><span class="line">z = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 优先级：not &gt; and &gt; or</span></span><br><span class="line">result = <span class="keyword">not</span> x <span class="keyword">or</span> y <span class="keyword">and</span> z</span><br><span class="line"><span class="comment"># 解析步骤：</span></span><br><span class="line"><span class="comment"># 1. not x -&gt; True (因为 x=0 是假值，取反为真)</span></span><br><span class="line"><span class="comment"># 2. y and z -&gt; 1 and 2 -&gt; 2 (y 和 z 都为真，返回最后一个真值)</span></span><br><span class="line"><span class="comment"># 3. not x or (y and z) -&gt; True or 2 -&gt; True</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: True</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用括号改变优先级</span></span><br><span class="line">result = <span class="keyword">not</span> (x <span class="keyword">or</span> y) <span class="keyword">and</span> z</span><br><span class="line"><span class="comment"># 解析步骤：</span></span><br><span class="line"><span class="comment"># 1. x or y -&gt; 0 or 1 -&gt; 1</span></span><br><span class="line"><span class="comment"># 2. not (x or y) -&gt; not 1 -&gt; False</span></span><br><span class="line"><span class="comment"># 3. False and z -&gt; False</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: False</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="总结">总结</h2>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><div class="table-container">
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>运算符</th>
 <th>作用</th>
 <th>示例</th>
@@ -1253,37 +997,37 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>and</code></td>
 <td>逻辑与</td>
 <td><code>1 and 2</code></td>
 <td><code>2</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td></td>
 <td></td>
 <td><code>0 and 2</code></td>
 <td><code>0</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>or</code></td>
 <td>逻辑或</td>
 <td><code>0 or 1</code></td>
 <td><code>1</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td></td>
 <td></td>
-<td><code>None or "Hi"</code></td>
-<td><code>"Hi"</code></td>
+<td><code>None or &quot;Hi&quot;</code></td>
+<td><code>&quot;Hi&quot;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>not</code></td>
 <td>逻辑非（取反）</td>
 <td><code>not True</code></td>
 <td><code>False</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td></td>
 <td></td>
 <td><code>not 0</code></td>
@@ -1291,14 +1035,11 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 </tr>
 </tbody>
 </table>
-<h3 id="逻辑运算符优先级">逻辑运算符优先级：</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">not` &gt; `and` &gt; `or</span><br></pre></td></tr></table></figure>
-<h3 id="短路求值">短路求值：</h3>
-<ul>
-<li><strong><code>and</code></strong>
-遇到假值立即返回，不再判断后续。</li>
-<li><strong><code>or</code></strong>
-遇到真值立即返回，不再判断后续。</li>
+</div>
+<h3 id="逻辑运算符优先级："><a href="#逻辑运算符优先级：" class="headerlink" title="逻辑运算符优先级："></a>逻辑运算符优先级：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">not` &gt; `and` &gt; `or</span><br></pre></td></tr></table></figure>
+<h3 id="短路求值："><a href="#短路求值：" class="headerlink" title="短路求值："></a>短路求值：</h3><ul>
+<li><strong><code>and</code></strong> 遇到假值立即返回，不再判断后续。</li>
+<li><strong><code>or</code></strong> 遇到真值立即返回，不再判断后续。</li>
 </ul>
 
     
@@ -1356,7 +1097,7 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 
 
   
-    <article id="post-【后端】/python/Module/相对导入常见问题和解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/特殊注释" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1364,7 +1105,7 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" target="_blank">python相对导入常见问题和解决方案</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/" target="_blank">特殊注释</a>
   
     </h1>
   
@@ -1372,7 +1113,7 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1385,161 +1126,31 @@ id="结合示例andor-和-not-组合">结合示例：<code>and</code>、<code>or
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1
-id="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</h1>
-<p>根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是"relative
-import"。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: attempted relative <span class="keyword">import</span> beyond top-level package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在顶级包之外进行相对导入</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative <span class="keyword">import</span> <span class="keyword">with</span> no known parent package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：尝试相对导入，但没有已知的父包</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Attempted relative <span class="keyword">import</span> <span class="keyword">in</span> non-package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在非包中进行相对导入</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SystemError: Parent module <span class="string">&#x27;&#x27;</span> <span class="keyword">not</span> loaded, cannot perform relative <span class="keyword">import</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：父模块&#x27;xxx&#x27;未加载，不能执行相对导入。</span></span><br></pre></td></tr></table></figure>
-<p>既然关于相对导入的报错提示，说明我们在代码中一定用到了相对导入的语法。下面先简单介绍一下相对导入的概念，随后详细介绍相对导入可能的问题和原理，最后给出上面提到的每个报错的解决方案。</p>
-<h2 id="绝对导入">绝对导入</h2>
-<p>既然要介绍相对导入，那必然绕不开绝对导入。绝对导入的格式为 import A.B
-或 from A import B</p>
-<p>下面是绝对导入的一些🌰：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fibo    <span class="comment"># 隐式相对导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fibo1, fibo2    <span class="comment"># 绝对路径导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> fibo <span class="keyword">as</span> fib    <span class="comment"># 重命名</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fib <span class="keyword">as</span> fibonacci</span><br></pre></td></tr></table></figure>
-<h2 id="相对导入">相对导入</h2>
-<p>相对导入格式为 from .A import B 或 from ..X import
-Y， <strong>.</strong> 代表当前包， <strong>..</strong> 代表上层包， <strong>...</strong> 代表上上层包，依次类推。</p>
-<p>相对导入的一些案例如下所示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> echo    <span class="comment"># 表示从当前文件所在package导入echo这个module</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> .. <span class="keyword">import</span> formats    <span class="comment"># 表示从当前文件所在package的上层package导入formats这个子package或者moudle</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> ..filters <span class="keyword">import</span> equalizer <span class="comment"># 表示从当前文件所在package的上层package导入的filters这个子package或者子module中导入equalizer</span></span><br></pre></td></tr></table></figure>
-<p>相对导入基于当前模块的名称。由于主模块的名称始终为<code>"__main__"</code>，因此用作
-<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Python%20%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F&amp;spm=1001.2101.3001.7020">Python
-应用程序</a>主模块的模块必须始终使用绝对导入。<strong>主模块所在文件夹不会被视作package，因此除了主模块外，与主模块处在同个文件夹的模块（也就是同级的模块）也必须使用绝对导入。</strong></p>
+    <h1 id="特殊注释"><a href="#特殊注释" class="headerlink" title="特殊注释"></a>特殊注释</h1><p>在编写代码的时候我们可以利用一些公认的特殊注释方式快速简介表达自己的目地</p>
+<h2 id="TODO-lt-说明-gt"><a href="#TODO-lt-说明-gt" class="headerlink" title="TODO: &lt;说明&gt;"></a>TODO: &lt;说明&gt;</h2><p>通常写在一些函数的上方或者内部，当然，实际上你可想写哪儿就写哪儿。它表示该注释标识处，有一些代码功能还未实现，未来会实现，<code>&lt;说明&gt;</code> 中应该简单描述下该功能。</p>
+<h2 id="FIXME-lt-说明-gt"><a href="#FIXME-lt-说明-gt" class="headerlink" title="FIXME: &lt;说明&gt;"></a>FIXME: &lt;说明&gt;</h2><p>该注释表示该注释标记处的代码有问题或者是错误的，有可能无法正常工作，需要修复，<code>&lt;说明&gt;</code> 中应该简单描述下如何修复该问题。</p>
+<h2 id="XXX-lt-说明-gt"><a href="#XXX-lt-说明-gt" class="headerlink" title="XXX: &lt;说明&gt;"></a>XXX: &lt;说明&gt;</h2><p>该注释表示该注释标记处的代码功能虽然实现了，但是实现的方式可能并不那么的好，可以进行一些改进优化，<code>&lt;说明&gt;</code> 中应该简单描述下改进优化的策略。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="Golang-中"><a href="#Golang-中" class="headerlink" title="Golang 中"></a>Golang 中</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">// <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">// <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	<span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment">	<span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment">	<span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<h3 id="Python-中"><a href="#Python-中" class="headerlink" title="Python 中"></a>Python 中</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">TODO:</span> 将实现的功能</span></span><br><span class="line"><span class="comment"># <span class="doctag">FIXME:</span> 如何修复该部分代码问题</span></span><br><span class="line"><span class="comment"># <span class="doctag">XXX:</span> 如何改进优化该部分代码</span></span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	TODO: 将实现的功能</span></span><br><span class="line"><span class="string">	FIXME: 如何修复该部分代码问题</span></span><br><span class="line"><span class="string">	XXX: 如何改进优化该部分代码</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p><strong>还有个更专业的说法：</strong> 相对导入使用模块的名称属性来决定模块在包层次结构中的位置，如果模块的名称不包含任何包信息（例如：模块名称为'<strong>main</strong>'），那么相对导入则被解析为最顶层的位置，不管这个时候这个模块实际上位于文件系统中的什么位置。</p>
+<p>  Python中的符号 ‘ 和 “ 都表示字符串</p>
 </blockquote>
-<p>乍一看是不是觉得云里雾里，感觉每个字都认识，但就是不知道是什么意思，没关系，看完本文就理解了。加油💪🏻。</p>
-<h2 id="包package">包package</h2>
-<p>文件夹被python解释器视作package需要满足两个条件：</p>
-<p>1、文件夹中必须有__init__.py文件，该文件可以为空，但必须存在该文件。</p>
-<p>2、不能作为顶层模块来执行该文件夹中的py文件（即不能作为主函数的入口）。顶层模块即是我们通常说的"<strong>main</strong>"方法所在的模块及其同级模块，其中"<strong>main</strong>"也常被称为主模块，即主模块所在文件夹不会被视作package。主模块的同级package被python解释器视为顶级包（也就是top-level
-package）。</p>
-<blockquote>
-<p>如果想要导入顶层包更上层的包或者模块，需要将包路径添加到sys.path中</p>
-</blockquote>
-<p>第一点很容易理解，下面详细介绍一下第二点。</p>
-<h2 id="脚本-模块script-vs-module"><strong>脚本 &amp; 模块？（script vs
-module）</strong></h2>
-<p>python有两种加载文件的方法：一种是作为顶层的脚本，另一种是当做模块。如果你直接执行这个程序，那么这个文件就被当做是顶层脚本来执行了，在命令行里面输入
-python myfile.py 就是这个情况。如果你输入python -m
-myfile.py或者在其他的文件当中使用import来导入这个文件的时候，它就被当做模块来导入。在同一时间里，只有一个主模块，主模块常被称为顶层脚本，顶层脚本可以这样解释：它是一个能够让你的程序从这里开始的python文件。</p>
-<h3 id="将模块作为脚本执行">将模块作为脚本执行</h3>
-<p>test_script.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment"># test_script.py</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>():    </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun1&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun2</span>():   </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun2&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line"> </span><br><span class="line">    fun1()</span><br><span class="line"> </span><br><span class="line">    fun2()</span><br></pre></td></tr></table></figure>
-<p>脚本中的__main__="<strong>name</strong>"下的代码仅在模块作为“主”文件执行时才运行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">python test_script.py</span></span><br><span class="line"> </span><br><span class="line">I&#x27;m fun1</span><br><span class="line">I&#x27;m fun2</span><br></pre></td></tr></table></figure>
-<p>如果module是作为导入的模块，则不会执行该模块的__main__代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> fibo</span><br><span class="line"> </span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
-<p>这通常用于为模块提供方便的用户界面，或用于测试目的（将模块作为脚本执行测试套件运行）。</p>
-<h2 id="模块的名称">模块的名称</h2>
-<p>当一个文件被加载进来，它就有一个名称（这个名称存储在__name__属性当中）。如果这个文件被当做一个主模块来执行，那么它的名字就是__main__。如果它被当做一个模块加载，那么它的名称就是文件名称，加上它所在的包名，以及所有的顶层的包名，这些名称中间是用点号隔开的。</p>
-<p>比如下面的例子</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package/</span><br><span class="line">|-- __init__.py</span><br><span class="line">|-- subpackage1/</span><br><span class="line">|   |-- __init__.py</span><br><span class="line">|   |-- moduleX.py</span><br><span class="line">|-- moduleA.py</span><br></pre></td></tr></table></figure>
-<p>比如你导入moduleX（from package.subpackag1 import
-moduleX），它的名称就package.subpackage1.mouleX。如果你导入moduleA的时候（from
-package import moduleA），它的名称就是package.moudleA。</p>
-<p>（注：这里是使用<strong>包导入</strong>,即把package以及里面的所有文件看做一个包，导入的时候使用from
-xxx import yyy的形式来进行，我们调用第三方包的时候就是这种情况），</p>
-<p>但是，当你直接从命令行里面运行moduleX的时候，他的名称则被替换为__main__。如果你直接从命令行运行moduleA，它的名称也是__main__。当一个模块被当做一个顶层脚本来执行的时候，它原来的名称则会被__main__取代。</p>
-<h3 id="结论">结论</h3>
-<p>当一个模块的名称中没有包，也就是只有文件名的时候，说明这个模块是一个顶层模块。顶层模块中不能使用相对导入。相对导入使用模块的名称属性来决定模块在包层次结构中的位置，相对导入能向上相对多少级，完全取决于模块名称中有多少层。</p>
-<p>当你运行交互式的解释器的时候，交互式进程的名称永远是__main__，因此你不能在交互式进程当中使用相对导入。相对导入只能在模块文件当中使用。</p>
-<p><strong>参考：</strong> <a
-target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html"
-title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted
-relative import in non-package”错误</a></p>
-<h2 id="解决方案">解决方案：</h2>
-<h3
-id="importerror-attempted-relative-import-with-no-known-parent-package">1、ImportError:
-attempted <strong>relative import</strong> with no known parent
-package</h3>
-<p><strong>导致这个问题的原因：</strong> 主模块或者同级模块用到了相对导入，且引用了主模块所在包。因为主模块所在包不会被python解释器视为package，在python解释器看来主模块所在的包就是一个未知的父包，所以如果不小心以相对导入的方式引用到了，就会报<code>with no known parent package</code>这个错误。</p>
-<p>案例一</p>
-<p>主模块的同级模块在使用相对导入时引入了主模块所在包的案例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # from . import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
-<p>运行main.py，运行结果如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    import brother1</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/brother1.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from . import brother2</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
-<p>案例二</p>
-<p>主模块在使用相对导入时引入了主模块所在包的案例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # from . import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
-<p>运行main.py，运行结果如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from . import brother1</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
-<p>方案一：</p>
-<p>解决方案也很简单，将相对导入给成绝对导入即可，上面这个案例只需要把<code>from .</code>去掉即可。比如第一个案例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
-<p>运行main.py</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">brother2</span><br><span class="line"> </span><br><span class="line">brother1</span><br><span class="line"> </span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
-<p>方案二</p>
-<p>案例2只能使用改为绝对导入这种方式，但是案例一还有一种解决方式是把main.py文件移动到TestModule文件夹外面，使之与TestModule文件夹平级，这样TestModule即会被解析器视为一个package，在其他模块中使用相对导入的方式引用到了也不会报错。</p>
-<h3
-id="valueerror-attempted-relative-import-beyond-top-level-package">ValueError:
-attempted <strong>relative import</strong> beyond top-level package</h3>
-<p><strong>导致这个问题的原因：</strong> 主模块所在同级包的子模块在使用相对导入时引用了主模块所在包。因为主模块所在包不会被python解释器视为package，主模块的同级package被视为顶级包（也就是top-level
-package），所以主模块所在包其实是在python解释器解析到的顶层包之外的，如果不小心以相对导入的方式引用到了，就会报<code>beyond top-level package</code>这个错误。</p>
-<p>一个案例：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── main.py # from Tom import tom; print(__name__)</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── Tom</span><br><span class="line">    │   ├── __init__.py # print(__name__)</span><br><span class="line">    │   ├── tom.py # from . import tom_brother; from ..Kate import kate; print(__name__)</span><br><span class="line">    │   └── tom_brother.py # print(__name__) </span><br><span class="line">    └── Kate      </span><br><span class="line">         ├── __init__.py # print(__name__)</span><br><span class="line">         └── kate.py # print(__name__)</span><br></pre></td></tr></table></figure>
-<p>python main.py</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Tom   # 这个是Tom包的__init__.py的模块名，可以看出包里的__init__.py的模块名就是包名</span><br><span class="line"> </span><br><span class="line">Tom.tom_brother</span><br><span class="line"> </span><br><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from Tom import tom</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/Tom/tom.py&quot;, line 2, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from ..Kate import kate</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
-<p>这个问题同样有两个解决方案</p>
-<p>方案一：</p>
-<p>把main.py移动到TestModule文件夹外面，使之与TestModule平级，这样TestModule即会被解析器视为一个package，在其他模块中使用相对导入的方式引用到了也不会报错。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">src/</span><br><span class="line"> </span><br><span class="line">├── main.py # from TestModule.Tom import tom; print(__name__)</span><br><span class="line"> </span><br><span class="line">└── TestModule/</span><br><span class="line"> </span><br><span class="line">        ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">        ├── Tom</span><br><span class="line"> </span><br><span class="line">        │   ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">        │   ├── tom.py # from . import tom_brother; from ..Kate import kate; print(__name__)</span><br><span class="line"> </span><br><span class="line">        │   └── tom_brother.py # print(__name__) </span><br><span class="line"> </span><br><span class="line">        └── Kate      </span><br><span class="line"> </span><br><span class="line">             ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">             └── kate.py # print(__name__)</span><br></pre></td></tr></table></figure>
-<p>运行main.py</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule</span><br><span class="line"> </span><br><span class="line">TestModule.Tom</span><br><span class="line"> </span><br><span class="line">TestModule.Tom.tom_brother</span><br><span class="line">TestModule.Kate</span><br><span class="line">TestModule.Kate.kate</span><br><span class="line">TestModule.Tom.tom</span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
-<p>方案二：</p>
-<p>tom.py中将TestModule包加入到sys.path变量中，并使用绝对导入的方式导入Kate包，修改后的tom.py内容如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> tom_brother</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> os, sys</span><br><span class="line"> </span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>) <span class="comment"># 等价于 sys.path.append(os.path.dirname(os.path.dirname(__file__)))</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> Kate <span class="keyword">import</span> kate <span class="comment"># 改成绝对导入的方式导入Kate</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>(__name__)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Tom</span><br><span class="line"> </span><br><span class="line">Tom.tom_brother</span><br><span class="line">Kate</span><br><span class="line">Kate.kate</span><br><span class="line">Tom.tom</span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
-<p><strong>关于为什么已经把TestModule加入了包查找路径还需要使用绝对导入来导入Kate的的解释：</strong></p>
-<p>从上面的运行结果可以看出，tom_brother.py的模块名还是Tom.tom_brother，模块名并没有因为把TestModule加入了包查找路径就发生改变，而相对导入是根据模块名来确定的，如果模块名中没有TestModule，那还是不能使用相对导入的方式来导入Kate，所以必须使用绝对导入的方式来导入Kate包</p>
-<h3 id="valueerror-attempted-relative-import-in-non-package">ValueError:
-Attempted relative import in non-package</h3>
-<h3
-id="systemerror-parent-module-not-loaded-cannot-perform-relative-import">SystemError:
-Parent module ' ' not loaded, cannot perform <strong>relative
-import</strong></h3>
-<p>3和4这两个报错的原因是一样的，都是把使用了相对导入的module当做主模块而直接运行了，即直接运行的脚本中包含了相对导入。但是我按这种方式操作了一下，发现无论怎么操作，报错提示始终是上面的第一个报错，即<code>ImportError: attempted relative import with no known parent package</code>。</p>
-<p>后来发现是python 版本的问题，</p>
-<p>python2在直接运行的脚本中使用相对导入时会报<code>ValueError: Attempted relative import in non-package</code>这个错误，</p>
-<p>python3.x（没测3.x具体是哪个版本）到python3.5报错<code>SystemError: Parent module '' not loaded, cannot perform relative import</code> ；</p>
-<p>python3.6及以上的报错提示是<code>ImportError: attempted relative import with no known parent package</code>。</p>
-<p><strong>解决方案是：</strong></p>
-<p>去除主模块（脚本）中的相对导入，改为绝对导入。</p>
-<blockquote>
-<p>这个问题的复现花我了好大一番功夫，找了好多博客，都说是主模块中用到了相对导入，但是我这么做就是不报这个错，而是报第一个错<code>ImportError: attempted relative import with no known parent package</code>，最后还是在一些博客中找到了蛛丝马迹，并且用docker快速拉取对应区间python版本镜像验证，得出结论，平时多学点东西还是很有用处的，比如docker，看似平时用不上，关键时刻还是真帮了大忙，否则重新在电脑上安装一个python版本，估计又得费老大功夫了。</p>
-</blockquote>
-<h2 id="相对导入对于包的优势"><strong>相对导入对于包的优势</strong></h2>
-<p>既然会引发这么多问题，那是不是我们以后就完全不用相对导入了呢。当然不！</p>
-<p>相对导入相较于绝对导入还是有一些优势的</p>
-<ol type="1">
-<li>书写相较于绝对导入简单</li>
-<li>相对导入可以避免硬编码带来的包维护问题，例如我们改了某一层包的名称，那么其它模块对于其子包的所有绝对导入就不能用了，但是采用相对导入语句的模块，就会避免这个问题。</li>
+<h2 id="特殊注释在VSCode中的使用方式"><a href="#特殊注释在VSCode中的使用方式" class="headerlink" title="特殊注释在VSCode中的使用方式"></a>特殊注释在VSCode中的使用方式</h2><ol>
+<li>在商店中搜索 TODO Highlight，点击下载，下载之后的界面如下：</li>
 </ol>
-<p><strong>参考：</strong> <a
-target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html"
-title="Python 包内的导入问题（绝对导入和相对导入）">Python
-包内的导入问题（绝对导入和相对导入）</a></p>
-<h2 id="顺便一提">顺便一提</h2>
-<p>包查找路径是<code>sys.path</code>变量中。<code>sys.path</code>初始状态一般由三部分组成：python正在执行的脚本的目录，PYTHONPATH路径，包的默认安装路径。</p>
-<p>自从python2.6，模块的名称不在决定使用__name__属性，而是使用__packege__属性。这就是为什么我避免使用__name__这么明确的名称来代表一个模块的名称。自从python2.6，一个模块的名称是由__package__+'.'+__name__来确定的，如果__packege__是None的话，那么这个名称就是__name__了</p>
-<h2 id="参考"><strong>参考：</strong></h2>
-<p><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/modules.html#packages"
-title="6.模块">6.模块</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ArsenalfanInECNU/p/5346751.html"
-title="Python包的相对导入时出现错误的解决方法">Python包的相对导入时出现错误的解决方法</a>、</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html"
-title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted
-relative import in non-package”错误</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html"
-title="Python 包内的导入问题（绝对导入和相对导入）">Python
-包内的导入问题（绝对导入和相对导入）</a></p>
-<p><strong>源文：</strong><a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4-5pmTb4VlAo0m94ssrpnw"
-title="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</a></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058005.png" alt=""></p>
+<ol>
+<li>在插件中下载一另一个 Todo Tree </li>
+</ol>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058015.png" alt=""></p>
+<p>这两个插件全都下载完成之后，将vscode关闭，重新打开后，我们编辑器会出现一个小树：</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501101058872.png" alt="image-20250110104744573" style="zoom: 50%;" /></p>
 
     
 
@@ -1566,7 +1177,7 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%89%B9%E6%AE%8A%E6%B3%A8%E9%87%8A/">展开全文 >></a>
     </p>
     
 
@@ -1625,108 +1236,56 @@ title="python相对导入常见问题和解决方案">python相对导入常见�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="init__.py-的奥秘"><code>__init__.py</code> 的奥秘</h1>
-<p>最近有一些小伙伴问了我一个经典问题：“<code>__init__.py</code>
-到底有什么用？”这个问题在 Python
-社区非常常见，尤其对于新手来说，<code>__init__.py</code>
-往往显得神秘兮兮。今天，我就站在一位资深程序员的角度，带大家深入了解
-<code>__init__.py</code>
-的用途和一些需要注意的使用细节，帮助大家避开常见的坑。</p>
-<h2 id="init__.py-是什么"><code>__init__.py</code> 是什么？</h2>
-<p>顾名思义，<code>__init__.py</code>
-这个文件名已经暗示了它的作用——初始化。在 Python
-中，它主要用于标识一个目录为“包（Package）”。也就是说，如果你在项目中创建了一个文件夹，并希望将其作为一个可以导入的模块包使用，只需在该文件夹下放入
-<code>__init__.py</code> 文件。</p>
+    <h1 id="init-py-的奥秘"><a href="#init-py-的奥秘" class="headerlink" title="__init__.py 的奥秘"></a><code>__init__.py</code> 的奥秘</h1><p>最近有一些小伙伴问了我一个经典问题：“<code>__init__.py</code> 到底有什么用？”这个问题在 Python 社区非常常见，尤其对于新手来说，<code>__init__.py</code> 往往显得神秘兮兮。今天，我就站在一位资深程序员的角度，带大家深入了解 <code>__init__.py</code> 的用途和一些需要注意的使用细节，帮助大家避开常见的坑。</p>
+<h2 id="init-py-是什么？"><a href="#init-py-是什么？" class="headerlink" title="__init__.py 是什么？"></a><code>__init__.py</code> 是什么？</h2><p>顾名思义，<code>__init__.py</code> 这个文件名已经暗示了它的作用——初始化。在 Python 中，它主要用于标识一个目录为“包（Package）”。也就是说，如果你在项目中创建了一个文件夹，并希望将其作为一个可以导入的模块包使用，只需在该文件夹下放入 <code>__init__.py</code> 文件。</p>
 <p>假设我们的项目结构如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_project/</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── module1.py</span><br><span class="line">    └── module2.py</span><br></pre></td></tr></table></figure>
-<p>此时，如果你希望在外部使用 <code>my_project</code>
-这个包，可以这样导入：</p>
+<p>此时，如果你希望在外部使用 <code>my_project</code> 这个包，可以这样导入：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> my_project</span><br></pre></td></tr></table></figure>
-<p>有了 <code>__init__.py</code> 的存在，Python 就知道
-<code>my_project</code>
-是一个包，而不是一个普通的文件夹。因此，<code>__init__.py</code>
-文件的基本作用是：告诉
-Python，“这里是一个包，你可以在其他地方导入我！”</p>
-<h2 id="init__.py-还能做些什么"><code>__init__.py</code>
-还能做些什么？</h2>
-<p>很多初学者可能认为，<code>__init__.py</code>
-只是用来标识包的，但实际上，它的作用远不止于此。你可以在
-<code>__init__.py</code>
-中编写代码，这些代码会在包被导入时自动执行。下面是一些常见的用途：</p>
-<h3 id="模块初始化操作">模块初始化操作</h3>
-<p>假设你有一个工具包，需要加载配置文件或做一些初始化工作。你可以在
-<code>__init__.py</code>
-中直接进行这些操作，这样当包被导入时，相关的初始化工作也会自动完成。</p>
+<p>有了 <code>__init__.py</code> 的存在，Python 就知道 <code>my_project</code> 是一个包，而不是一个普通的文件夹。因此，<code>__init__.py</code> 文件的基本作用是：告诉 Python，“这里是一个包，你可以在其他地方导入我！”</p>
+<h2 id="init-py-还能做些什么？"><a href="#init-py-还能做些什么？" class="headerlink" title="__init__.py 还能做些什么？"></a><code>__init__.py</code> 还能做些什么？</h2><p>很多初学者可能认为，<code>__init__.py</code> 只是用来标识包的，但实际上，它的作用远不止于此。你可以在 <code>__init__.py</code> 中编写代码，这些代码会在包被导入时自动执行。下面是一些常见的用途：</p>
+<h3 id="模块初始化操作"><a href="#模块初始化操作" class="headerlink" title="模块初始化操作"></a>模块初始化操作</h3><p>假设你有一个工具包，需要加载配置文件或做一些初始化工作。你可以在 <code>__init__.py</code> 中直接进行这些操作，这样当包被导入时，相关的初始化工作也会自动完成。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化配置文件路径</span></span><br><span class="line">config_file = os.path.join(os.path.dirname(__file__), <span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正在初始化配置文件...&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，当你导入 <code>my_project</code> 时，<code>config.yaml</code>
-就会被自动加载，你不需要在每个子模块中重复配置路径了。</p>
-<h3 id="控制子模块导入">控制子模块导入</h3>
-<p>通过在 <code>__init__.py</code> 中使用
-<code>from .sub_module import some_function</code>，你可以在导入包时自动加载所有常用的子模块或函数，这样就能直接从包的顶级目录访问这些模块的功能。</p>
+<p>这样，当你导入 <code>my_project</code> 时，<code>config.yaml</code> 就会被自动加载，你不需要在每个子模块中重复配置路径了。</p>
+<h3 id="控制子模块导入"><a href="#控制子模块导入" class="headerlink" title="控制子模块导入"></a>控制子模块导入</h3><p>通过在 <code>__init__.py</code> 中使用 <code>from .sub_module import some_function</code>，你可以在导入包时自动加载所有常用的子模块或函数，这样就能直接从包的顶级目录访问这些模块的功能。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> func2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样，你可以直接这样使用：</span></span><br><span class="line"><span class="comment"># import my_project</span></span><br><span class="line"><span class="comment"># my_project.func1()</span></span><br></pre></td></tr></table></figure>
 <p>这种做法就像开了一个餐厅，顾客一进门就能看到招牌菜，提升了用户体验，减少了他们的绕路时间。</p>
-<h3 id="包级别变量和函数的初始化">包级别变量和函数的初始化</h3>
-<p>你还可以在 <code>__init__.py</code>
-中设置一些全局变量，或者定义一些包级别的工具函数。</p>
+<h3 id="包级别变量和函数的初始化"><a href="#包级别变量和函数的初始化" class="headerlink" title="包级别变量和函数的初始化"></a>包级别变量和函数的初始化</h3><p>你还可以在 <code>__init__.py</code> 中设置一些全局变量，或者定义一些包级别的工具函数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my_project/__init__.py</span></span><br><span class="line">package_name = <span class="string">&quot;my_project&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_info</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;欢迎使用 <span class="subst">&#123;package_name&#125;</span> 包！&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样，在任何地方，只要你导入了 <code>my_project</code>，就能直接调用
-<code>show_info()</code>。</p>
-<h2 id="init__.py-的一些坑"><code>__init__.py</code> 的一些坑</h2>
-<p>俗话说，“有光的地方就有阴影”。虽然 <code>__init__.py</code>
-非常实用，但在使用时也有一些陷阱，特别是 <strong>循环导入（Circular
-Import）</strong>，这一坑可能会让你怀疑人生。</p>
-<h3 id="什么是循环导入">什么是循环导入？</h3>
-<p>假设你有两个模块：<code>module1.py</code> 和
-<code>module2.py</code>，并且在 <code>module1.py</code> 中引用了
-<code>module2.py</code>，在 <code>module2.py</code> 中又引用了
-<code>module1.py</code>，如：</p>
+<p>这样，在任何地方，只要你导入了 <code>my_project</code>，就能直接调用 <code>show_info()</code>。</p>
+<h2 id="init-py-的一些坑"><a href="#init-py-的一些坑" class="headerlink" title="__init__.py 的一些坑"></a><code>__init__.py</code> 的一些坑</h2><p>俗话说，“有光的地方就有阴影”。虽然 <code>__init__.py</code> 非常实用，但在使用时也有一些陷阱，特别是 <strong>循环导入（Circular Import）</strong>，这一坑可能会让你怀疑人生。</p>
+<h3 id="什么是循环导入？"><a href="#什么是循环导入？" class="headerlink" title="什么是循环导入？"></a>什么是循环导入？</h3><p>假设你有两个模块：<code>module1.py</code> 和 <code>module2.py</code>，并且在 <code>module1.py</code> 中引用了 <code>module2.py</code>，在 <code>module2.py</code> 中又引用了 <code>module1.py</code>，如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line"><span class="comment"># module2.py</span></span><br><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> another_function</span><br></pre></td></tr></table></figure>
-<p>这种情况下，Python 会在导入包时形成死循环：<code>module1</code> 导入
-<code>module2</code>，<code>module2</code> 又导入
-<code>module1</code>，导致两者互相等待对方加载，最终抛出错误或无法正常导入。</p>
-<h3 id="如何解决">如何解决？</h3>
-<p>解决循环导入问题的常见方法有两种：</p>
-<ol type="1">
+<p>这种情况下，Python 会在导入包时形成死循环：<code>module1</code> 导入 <code>module2</code>，<code>module2</code> 又导入 <code>module1</code>，导致两者互相等待对方加载，最终抛出错误或无法正常导入。</p>
+<h3 id="如何解决？"><a href="#如何解决？" class="headerlink" title="如何解决？"></a>如何解决？</h3><p>解决循环导入问题的常见方法有两种：</p>
+<ol>
 <li><p><strong>延迟导入</strong>：将导入语句移到函数内部，而不是文件的顶部。这样，只有在需要时才会导入模块，避免了循环依赖。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line">    <span class="comment"># 使用 some_function</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>重构代码结构</strong>：将相互依赖的部分提取到一个公共模块中，这样
-<code>module1</code> 和 <code>module2</code>
-就不再直接依赖对方了。</p></li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># module1.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="keyword">from</span> .module2 <span class="keyword">import</span> some_function</span><br><span class="line">    <span class="comment"># 使用 some_function</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>重构代码结构</strong>：将相互依赖的部分提取到一个公共模块中，这样 <code>module1</code> 和 <code>module2</code> 就不再直接依赖对方了。</p>
+</li>
 </ol>
-<h3 id="init__.py-和相对导入的关系"><code>__init__.py</code>
-和相对导入的关系</h3>
-<p>另外，一个可能让人头疼的问题是相对导入和绝对导入的使用。在
-<code>__init__.py</code> 中，你可能会用相对导入语法，例如：</p>
+<h3 id="init-py-和相对导入的关系"><a href="#init-py-和相对导入的关系" class="headerlink" title="__init__.py 和相对导入的关系"></a><code>__init__.py</code> 和相对导入的关系</h3><p>另外，一个可能让人头疼的问题是相对导入和绝对导入的使用。在 <code>__init__.py</code> 中，你可能会用相对导入语法，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<p>乍看之下，这没有问题，但当你直接运行 <code>module1.py</code>
-时，Python
-会报错。原因是相对导入要求你必须从包的顶层开始导入，而你直接运行
-<code>module1.py</code> 时，Python 并不知道它是从哪个包里来的。</p>
-<p><strong>解决方案</strong>：尽量使用绝对导入，这样无论你是直接运行
-<code>module1.py</code>，还是导入整个 <code>my_project</code>
-包，都不会有问题。</p>
+<p>乍看之下，这没有问题，但当你直接运行 <code>module1.py</code> 时，Python 会报错。原因是相对导入要求你必须从包的顶层开始导入，而你直接运行 <code>module1.py</code> 时，Python 并不知道它是从哪个包里来的。</p>
+<p><strong>解决方案</strong>：尽量使用绝对导入，这样无论你是直接运行 <code>module1.py</code>，还是导入整个 <code>my_project</code> 包，都不会有问题。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> my_project.module1 <span class="keyword">import</span> func1</span><br></pre></td></tr></table></figure>
-<h2 id="其他小技巧">其他小技巧</h2>
-<p>在使用 <code>__init__.py</code> 时，以下是一些实用的小技巧：</p>
-<ol type="1">
-<li><p><strong>避免复杂逻辑</strong>：不要在 <code>__init__.py</code>
-中写太复杂的业务逻辑。它的职责应该是轻量级的初始化和导入，避免让维护变得困难。</p></li>
-<li><p><strong>模块导出控制</strong>：你可以通过 <code>__all__</code>
-来控制从包中导出的模块或变量。例如：</p>
+<h2 id="其他小技巧"><a href="#其他小技巧" class="headerlink" title="其他小技巧"></a>其他小技巧</h2><p>在使用 <code>__init__.py</code> 时，以下是一些实用的小技巧：</p>
+<ol>
+<li><p><strong>避免复杂逻辑</strong>：不要在 <code>__init__.py</code> 中写太复杂的业务逻辑。它的职责应该是轻量级的初始化和导入，避免让维护变得困难。</p>
+</li>
+<li><p><strong>模块导出控制</strong>：你可以通过 <code>__all__</code> 来控制从包中导出的模块或变量。例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__all__ = [<span class="string">&#x27;module1&#x27;</span>, <span class="string">&#x27;module2&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>这样，使用 <code>from my_project import *</code> 时，Python 只会导入
-<code>__all__</code> 中指定的内容。</p></li>
-<li><p><strong>合并子模块</strong>：你可以在 <code>__init__.py</code>
-中将多个子模块的功能合并到一个命名空间中，使得用户使用起来更加方便。</p></li>
-<li><p><strong>记录导入顺序</strong>：如果你的包中有很多子模块，建议记录导入顺序，避免因为导入顺序导致的奇怪
-Bug。</p></li>
+<p>这样，使用 <code>from my_project import *</code> 时，Python 只会导入 <code>__all__</code> 中指定的内容。</p>
+</li>
+<li><p><strong>合并子模块</strong>：你可以在 <code>__init__.py</code> 中将多个子模块的功能合并到一个命名空间中，使得用户使用起来更加方便。</p>
+</li>
+<li><p><strong>记录导入顺序</strong>：如果你的包中有很多子模块，建议记录导入顺序，避免因为导入顺序导致的奇怪 Bug。</p>
+</li>
 </ol>
-<h2 id="总结">总结</h2>
-<p>总体来说，<code>__init__.py</code>
-是一个非常强大的工具，它可以让包的管理井井有条。然而，如果使用不当，它也可能成为代码中的“绊脚石”。掌握好它的用法，不仅能让你的项目结构更加清晰，还能避免一些常见的坑，提升代码的可维护性。</p>
-<hr />
-<p>通过这样整理，内容不仅更清晰，结构也更加有条理，同时对一些关键点的解释更加详细，能帮助读者更好地理解
-<code>__init__.py</code> 的作用和使用技巧。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总体来说，<code>__init__.py</code> 是一个非常强大的工具，它可以让包的管理井井有条。然而，如果使用不当，它也可能成为代码中的“绊脚石”。掌握好它的用法，不仅能让你的项目结构更加清晰，还能避免一些常见的坑，提升代码的可维护性。</p>
+<hr>
+<p>通过这样整理，内容不仅更清晰，结构也更加有条理，同时对一些关键点的解释更加详细，能帮助读者更好地理解 <code>__init__.py</code> 的作用和使用技巧。</p>
 
     
 
@@ -1754,6 +1313,192 @@ Bug。</p></li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/'__init__.py'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/Module/相对导入常见问题和解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" target="_blank">python相对导入常见问题和解决方案</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="python相对导入常见问题和解决方案"><a href="#python相对导入常见问题和解决方案" class="headerlink" title="python相对导入常见问题和解决方案"></a>python相对导入常见问题和解决方案</h1><p>根据编程经验的不同，我们在运行程序时可能经常或者偶尔碰到下面这些问题，仔细观察后会发现这些问题无一例外都出现了一个相同的短语，很容易就可以发现，这个短语就是”relative import”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: attempted relative <span class="keyword">import</span> beyond top-level package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在顶级包之外进行相对导入</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ImportError: attempted relative <span class="keyword">import</span> <span class="keyword">with</span> no known parent package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：尝试相对导入，但没有已知的父包</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Attempted relative <span class="keyword">import</span> <span class="keyword">in</span> non-package</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：试图在非包中进行相对导入</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SystemError: Parent module <span class="string">&#x27;&#x27;</span> <span class="keyword">not</span> loaded, cannot perform relative <span class="keyword">import</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 翻译：父模块&#x27;xxx&#x27;未加载，不能执行相对导入。</span></span><br></pre></td></tr></table></figure>
+<p>既然关于相对导入的报错提示，说明我们在代码中一定用到了相对导入的语法。下面先简单介绍一下相对导入的概念，随后详细介绍相对导入可能的问题和原理，最后给出上面提到的每个报错的解决方案。</p>
+<h2 id="绝对导入"><a href="#绝对导入" class="headerlink" title="绝对导入"></a>绝对导入</h2><p>既然要介绍相对导入，那必然绕不开绝对导入。绝对导入的格式为 import A.B 或 from A import B</p>
+<p>下面是绝对导入的一些🌰：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fibo    <span class="comment"># 隐式相对导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fibo1, fibo2    <span class="comment"># 绝对路径导入</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> fibo <span class="keyword">as</span> fib    <span class="comment"># 重命名</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> fibo <span class="keyword">import</span> fib <span class="keyword">as</span> fibonacci</span><br></pre></td></tr></table></figure>
+<h2 id="相对导入"><a href="#相对导入" class="headerlink" title="相对导入"></a>相对导入</h2><p>相对导入格式为 from .A import B 或 from ..X import Y， <strong>.</strong> 代表当前包， <strong>..</strong> 代表上层包， <strong>…</strong> 代表上上层包，依次类推。</p>
+<p>相对导入的一些案例如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> echo    <span class="comment"># 表示从当前文件所在package导入echo这个module</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> .. <span class="keyword">import</span> formats    <span class="comment"># 表示从当前文件所在package的上层package导入formats这个子package或者moudle</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> ..filters <span class="keyword">import</span> equalizer <span class="comment"># 表示从当前文件所在package的上层package导入的filters这个子package或者子module中导入equalizer</span></span><br></pre></td></tr></table></figure>
+<p>相对导入基于当前模块的名称。由于主模块的名称始终为<code>&quot;__main__&quot;</code>，因此用作 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=Python%20%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F&amp;spm=1001.2101.3001.7020">Python 应用程序</a>主模块的模块必须始终使用绝对导入。<strong>主模块所在文件夹不会被视作package，因此除了主模块外，与主模块处在同个文件夹的模块（也就是同级的模块）也必须使用绝对导入。</strong></p>
+<blockquote>
+<p><strong>还有个更专业的说法：</strong> 相对导入使用模块的名称属性来决定模块在包层次结构中的位置，如果模块的名称不包含任何包信息（例如：模块名称为’<strong>main</strong>‘），那么相对导入则被解析为最顶层的位置，不管这个时候这个模块实际上位于文件系统中的什么位置。</p>
+</blockquote>
+<p>乍一看是不是觉得云里雾里，感觉每个字都认识，但就是不知道是什么意思，没关系，看完本文就理解了。加油💪🏻。</p>
+<h2 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h2><p>文件夹被python解释器视作package需要满足两个条件：</p>
+<p>1、文件夹中必须有__init__.py文件，该文件可以为空，但必须存在该文件。</p>
+<p>2、不能作为顶层模块来执行该文件夹中的py文件（即不能作为主函数的入口）。顶层模块即是我们通常说的”<strong>main</strong>“方法所在的模块及其同级模块，其中”<strong>main</strong>“也常被称为主模块，即主模块所在文件夹不会被视作package。主模块的同级package被python解释器视为顶级包（也就是top-level package）。</p>
+<blockquote>
+<p>如果想要导入顶层包更上层的包或者模块，需要将包路径添加到sys.path中</p>
+</blockquote>
+<p>第一点很容易理解，下面详细介绍一下第二点。</p>
+<h2 id="脚本-amp-模块？（script-vs-module）"><a href="#脚本-amp-模块？（script-vs-module）" class="headerlink" title="脚本 &amp; 模块？（script vs module）"></a><strong>脚本 &amp; 模块？（script vs module）</strong></h2><p>python有两种加载文件的方法：一种是作为顶层的脚本，另一种是当做模块。如果你直接执行这个程序，那么这个文件就被当做是顶层脚本来执行了，在命令行里面输入 python myfile.py 就是这个情况。如果你输入python -m myfile.py或者在其他的文件当中使用import来导入这个文件的时候，它就被当做模块来导入。在同一时间里，只有一个主模块，主模块常被称为顶层脚本，顶层脚本可以这样解释：它是一个能够让你的程序从这里开始的python文件。</p>
+<h3 id="将模块作为脚本执行"><a href="#将模块作为脚本执行" class="headerlink" title="将模块作为脚本执行"></a>将模块作为脚本执行</h3><p>test_script.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment"># test_script.py</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>():    </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun1&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun2</span>():   </span><br><span class="line"> </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;I&#x27;m fun2&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line"> </span><br><span class="line">    fun1()</span><br><span class="line"> </span><br><span class="line">    fun2()</span><br></pre></td></tr></table></figure>
+<p>脚本中的__main__=”<strong>name</strong>“下的代码仅在模块作为“主”文件执行时才运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">python test_script.py</span></span><br><span class="line"> </span><br><span class="line">I&#x27;m fun1</span><br><span class="line">I&#x27;m fun2</span><br></pre></td></tr></table></figure>
+<p>如果module是作为导入的模块，则不会执行该模块的__main__代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> fibo</span><br><span class="line"> </span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>这通常用于为模块提供方便的用户界面，或用于测试目的（将模块作为脚本执行测试套件运行）。</p>
+<h2 id="模块的名称"><a href="#模块的名称" class="headerlink" title="模块的名称"></a>模块的名称</h2><p>当一个文件被加载进来，它就有一个名称（这个名称存储在__name__属性当中）。如果这个文件被当做一个主模块来执行，那么它的名字就是__main__。如果它被当做一个模块加载，那么它的名称就是文件名称，加上它所在的包名，以及所有的顶层的包名，这些名称中间是用点号隔开的。</p>
+<p>比如下面的例子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package/</span><br><span class="line">|-- __init__.py</span><br><span class="line">|-- subpackage1/</span><br><span class="line">|   |-- __init__.py</span><br><span class="line">|   |-- moduleX.py</span><br><span class="line">|-- moduleA.py</span><br></pre></td></tr></table></figure>
+<p>比如你导入moduleX（from package.subpackag1 import moduleX），它的名称就package.subpackage1.mouleX。如果你导入moduleA的时候（from package import moduleA），它的名称就是package.moudleA。</p>
+<p>（注：这里是使用<strong>包导入</strong>,即把package以及里面的所有文件看做一个包，导入的时候使用from xxx import yyy的形式来进行，我们调用第三方包的时候就是这种情况），</p>
+<p>但是，当你直接从命令行里面运行moduleX的时候，他的名称则被替换为__main__。如果你直接从命令行运行moduleA，它的名称也是__main__。当一个模块被当做一个顶层脚本来执行的时候，它原来的名称则会被__main__取代。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>当一个模块的名称中没有包，也就是只有文件名的时候，说明这个模块是一个顶层模块。顶层模块中不能使用相对导入。相对导入使用模块的名称属性来决定模块在包层次结构中的位置，相对导入能向上相对多少级，完全取决于模块名称中有多少层。</p>
+<p>当你运行交互式的解释器的时候，交互式进程的名称永远是__main__，因此你不能在交互式进程当中使用相对导入。相对导入只能在模块文件当中使用。</p>
+<p><strong>参考：</strong> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html" title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted relative import in non-package”错误</a></p>
+<h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><h3 id="1、ImportError-attempted-relative-import-with-no-known-parent-package"><a href="#1、ImportError-attempted-relative-import-with-no-known-parent-package" class="headerlink" title="1、ImportError: attempted relative import with no known parent package"></a>1、ImportError: attempted <strong>relative import</strong> with no known parent package</h3><p><strong>导致这个问题的原因：</strong> 主模块或者同级模块用到了相对导入，且引用了主模块所在包。因为主模块所在包不会被python解释器视为package，在python解释器看来主模块所在的包就是一个未知的父包，所以如果不小心以相对导入的方式引用到了，就会报<code>with no known parent package</code>这个错误。</p>
+<p>案例一</p>
+<p>主模块的同级模块在使用相对导入时引入了主模块所在包的案例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # from . import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
+<p>运行main.py，运行结果如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    import brother1</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/brother1.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from . import brother2</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
+<p>案例二</p>
+<p>主模块在使用相对导入时引入了主模块所在包的案例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # from . import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
+<p>运行main.py，运行结果如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from . import brother1</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
+<p>方案一：</p>
+<p>解决方案也很简单，将相对导入给成绝对导入即可，上面这个案例只需要把<code>from .</code>去掉即可。比如第一个案例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── __init__.py    # 这个文件其实未起作用</span><br><span class="line"> </span><br><span class="line">    ├── main.py    # import brother1; print(__name__)</span><br><span class="line"> </span><br><span class="line">    ├── brother1.py # import brother2; print(__name__)</span><br><span class="line"> </span><br><span class="line">    └── brother2.py # print(__name__)</span><br></pre></td></tr></table></figure>
+<p>运行main.py</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">brother2</span><br><span class="line"> </span><br><span class="line">brother1</span><br><span class="line"> </span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
+<p>方案二</p>
+<p>案例2只能使用改为绝对导入这种方式，但是案例一还有一种解决方式是把main.py文件移动到TestModule文件夹外面，使之与TestModule文件夹平级，这样TestModule即会被解析器视为一个package，在其他模块中使用相对导入的方式引用到了也不会报错。</p>
+<h3 id="ValueError-attempted-relative-import-beyond-top-level-package"><a href="#ValueError-attempted-relative-import-beyond-top-level-package" class="headerlink" title="ValueError: attempted relative import beyond top-level package"></a>ValueError: attempted <strong>relative import</strong> beyond top-level package</h3><p><strong>导致这个问题的原因：</strong> 主模块所在同级包的子模块在使用相对导入时引用了主模块所在包。因为主模块所在包不会被python解释器视为package，主模块的同级package被视为顶级包（也就是top-level package），所以主模块所在包其实是在python解释器解析到的顶层包之外的，如果不小心以相对导入的方式引用到了，就会报<code>beyond top-level package</code>这个错误。</p>
+<p>一个案例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">TestModule/</span><br><span class="line"> </span><br><span class="line">    ├── main.py # from Tom import tom; print(__name__)</span><br><span class="line">    ├── __init__.py</span><br><span class="line">    ├── Tom</span><br><span class="line">    │   ├── __init__.py # print(__name__)</span><br><span class="line">    │   ├── tom.py # from . import tom_brother; from ..Kate import kate; print(__name__)</span><br><span class="line">    │   └── tom_brother.py # print(__name__) </span><br><span class="line">    └── Kate      </span><br><span class="line">         ├── __init__.py # print(__name__)</span><br><span class="line">         └── kate.py # print(__name__)</span><br></pre></td></tr></table></figure>
+<p>python main.py</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Tom   # 这个是Tom包的__init__.py的模块名，可以看出包里的__init__.py的模块名就是包名</span><br><span class="line"> </span><br><span class="line">Tom.tom_brother</span><br><span class="line"> </span><br><span class="line">Traceback (most recent call last):</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/main.py&quot;, line 1, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from Tom import tom</span><br><span class="line"> </span><br><span class="line">  File &quot;/TestModule/Tom/tom.py&quot;, line 2, in &lt;module&gt;</span><br><span class="line"> </span><br><span class="line">    from ..Kate import kate</span><br><span class="line"> </span><br><span class="line">ImportError: attempted relative import beyond top-level package</span><br></pre></td></tr></table></figure>
+<p>这个问题同样有两个解决方案</p>
+<p>方案一：</p>
+<p>把main.py移动到TestModule文件夹外面，使之与TestModule平级，这样TestModule即会被解析器视为一个package，在其他模块中使用相对导入的方式引用到了也不会报错。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">src/</span><br><span class="line"> </span><br><span class="line">├── main.py # from TestModule.Tom import tom; print(__name__)</span><br><span class="line"> </span><br><span class="line">└── TestModule/</span><br><span class="line"> </span><br><span class="line">        ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">        ├── Tom</span><br><span class="line"> </span><br><span class="line">        │   ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">        │   ├── tom.py # from . import tom_brother; from ..Kate import kate; print(__name__)</span><br><span class="line"> </span><br><span class="line">        │   └── tom_brother.py # print(__name__) </span><br><span class="line"> </span><br><span class="line">        └── Kate      </span><br><span class="line"> </span><br><span class="line">             ├── __init__.py # print(__name__)</span><br><span class="line"> </span><br><span class="line">             └── kate.py # print(__name__)</span><br></pre></td></tr></table></figure>
+<p>运行main.py</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestModule</span><br><span class="line"> </span><br><span class="line">TestModule.Tom</span><br><span class="line"> </span><br><span class="line">TestModule.Tom.tom_brother</span><br><span class="line">TestModule.Kate</span><br><span class="line">TestModule.Kate.kate</span><br><span class="line">TestModule.Tom.tom</span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
+<p>方案二：</p>
+<p>tom.py中将TestModule包加入到sys.path变量中，并使用绝对导入的方式导入Kate包，修改后的tom.py内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> tom_brother</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> os, sys</span><br><span class="line"> </span><br><span class="line">sys.path.append(<span class="string">&quot;..&quot;</span>) <span class="comment"># 等价于 sys.path.append(os.path.dirname(os.path.dirname(__file__)))</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> Kate <span class="keyword">import</span> kate <span class="comment"># 改成绝对导入的方式导入Kate</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span>(__name__)</span><br></pre></td></tr></table></figure>
+<p>运行结果如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Tom</span><br><span class="line"> </span><br><span class="line">Tom.tom_brother</span><br><span class="line">Kate</span><br><span class="line">Kate.kate</span><br><span class="line">Tom.tom</span><br><span class="line">__main__</span><br></pre></td></tr></table></figure>
+<p><strong>关于为什么已经把TestModule加入了包查找路径还需要使用绝对导入来导入Kate的的解释：</strong></p>
+<p>从上面的运行结果可以看出，tom_brother.py的模块名还是Tom.tom_brother，模块名并没有因为把TestModule加入了包查找路径就发生改变，而相对导入是根据模块名来确定的，如果模块名中没有TestModule，那还是不能使用相对导入的方式来导入Kate，所以必须使用绝对导入的方式来导入Kate包</p>
+<h3 id="ValueError-Attempted-relative-import-in-non-package"><a href="#ValueError-Attempted-relative-import-in-non-package" class="headerlink" title="ValueError: Attempted relative import in non-package"></a>ValueError: Attempted relative import in non-package</h3><h3 id="SystemError-Parent-module-‘-‘-not-loaded-cannot-perform-relative-import"><a href="#SystemError-Parent-module-‘-‘-not-loaded-cannot-perform-relative-import" class="headerlink" title="SystemError: Parent module ‘ ‘ not loaded, cannot perform relative import"></a>SystemError: Parent module ‘ ‘ not loaded, cannot perform <strong>relative import</strong></h3><p>3和4这两个报错的原因是一样的，都是把使用了相对导入的module当做主模块而直接运行了，即直接运行的脚本中包含了相对导入。但是我按这种方式操作了一下，发现无论怎么操作，报错提示始终是上面的第一个报错，即<code>ImportError: attempted relative import with no known parent package</code>。</p>
+<p>后来发现是python 版本的问题，</p>
+<p>python2在直接运行的脚本中使用相对导入时会报<code>ValueError: Attempted relative import in non-package</code>这个错误，</p>
+<p>python3.x（没测3.x具体是哪个版本）到python3.5报错<code>SystemError: Parent module &#39;&#39; not loaded, cannot perform relative import</code> ；</p>
+<p>python3.6及以上的报错提示是<code>ImportError: attempted relative import with no known parent package</code>。</p>
+<p><strong>解决方案是：</strong></p>
+<p>去除主模块（脚本）中的相对导入，改为绝对导入。</p>
+<blockquote>
+<p>这个问题的复现花我了好大一番功夫，找了好多博客，都说是主模块中用到了相对导入，但是我这么做就是不报这个错，而是报第一个错<code>ImportError: attempted relative import with no known parent package</code>，最后还是在一些博客中找到了蛛丝马迹，并且用docker快速拉取对应区间python版本镜像验证，得出结论，平时多学点东西还是很有用处的，比如docker，看似平时用不上，关键时刻还是真帮了大忙，否则重新在电脑上安装一个python版本，估计又得费老大功夫了。</p>
+</blockquote>
+<h2 id="相对导入对于包的优势"><a href="#相对导入对于包的优势" class="headerlink" title="相对导入对于包的优势"></a><strong>相对导入对于包的优势</strong></h2><p>既然会引发这么多问题，那是不是我们以后就完全不用相对导入了呢。当然不！</p>
+<p>相对导入相较于绝对导入还是有一些优势的</p>
+<ol>
+<li>书写相较于绝对导入简单</li>
+<li>相对导入可以避免硬编码带来的包维护问题，例如我们改了某一层包的名称，那么其它模块对于其子包的所有绝对导入就不能用了，但是采用相对导入语句的模块，就会避免这个问题。</li>
+</ol>
+<p><strong>参考：</strong> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html" title="Python 包内的导入问题（绝对导入和相对导入）">Python 包内的导入问题（绝对导入和相对导入）</a></p>
+<h2 id="顺便一提"><a href="#顺便一提" class="headerlink" title="顺便一提"></a>顺便一提</h2><p>包查找路径是<code>sys.path</code>变量中。<code>sys.path</code>初始状态一般由三部分组成：python正在执行的脚本的目录，PYTHONPATH路径，包的默认安装路径。</p>
+<p>自从python2.6，模块的名称不在决定使用__name__属性，而是使用__packege__属性。这就是为什么我避免使用__name__这么明确的名称来代表一个模块的名称。自从python2.6，一个模块的名称是由__package__+’.’+__name__来确定的，如果__packege__是None的话，那么这个名称就是__name__了</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a><strong>参考：</strong></h2><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/modules.html#packages" title="6.模块">6.模块</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ArsenalfanInECNU/p/5346751.html" title="Python包的相对导入时出现错误的解决方法">Python包的相对导入时出现错误的解决方法</a>、</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jiaxin359/p/7580375.html" title="python相对包导入报“Attempted relative import in non-package”错误">python相对包导入报“Attempted relative import in non-package”错误</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaowengang/p/8543840.html" title="Python 包内的导入问题（绝对导入和相对导入）">Python 包内的导入问题（绝对导入和相对导入）</a></p>
+<p><strong>源文：</strong><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4-5pmTb4VlAo0m94ssrpnw" title="python相对导入常见问题和解决方案">python相对导入常见问题和解决方案</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Module/%E7%9B%B8%E5%AF%B9%E5%AF%BC%E5%85%A5%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
     </p>
     
 
@@ -1949,15 +1694,11 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1965,27 +1706,7 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1993,7 +1714,15 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2001,7 +1730,11 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2009,7 +1742,19 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2017,15 +1762,19 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2037,7 +1786,7 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2053,10 +1802,6 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
@@ -2069,19 +1814,19 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2093,7 +1838,7 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2101,7 +1846,7 @@ Bug。</p></li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

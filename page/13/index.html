@@ -213,151 +213,6 @@
             
 
   
-    <article id="post-【后端】/python/OOP/设计模式/单例模式（Singleton Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" target="_blank">单例模式（Singleton Pattern）</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="单例模式singleton-pattern">单例模式（Singleton Pattern）</h1>
-<p>单例模式（Singleton
-Pattern）是一种创建型设计模式，它确保一个类只有一个实例，并提供全局访问点。单例模式适用于需要确保全局唯一实例的场景，例如配置管理、日志记录器、数据库连接等。</p>
-<h2 id="单例模式的特点">单例模式的特点</h2>
-<ul>
-<li><strong>全局唯一性</strong>：在整个应用程序的生命周期内，单例类只能有一个实例。</li>
-<li><strong>全局访问</strong>：提供了一个全局访问点，任何地方都可以获取到该实例。</li>
-<li><strong>延迟实例化</strong>：单例模式可以延迟实例化，即实例在第一次使用时才创建。</li>
-</ul>
-<h2 id="实现单例模式的方法">实现单例模式的方法</h2>
-<p>在Python中，可以通过多种方式实现单例模式。以下是几种常见的方法：</p>
-<h3 id="方法一使用类的静态实例">方法一：使用类的静态实例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    _instance = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls._instance:</span><br><span class="line">            cls._instance = <span class="built_in">super</span>(Singleton, cls).__new__(cls, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = Singleton()</span><br><span class="line">obj2 = Singleton()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<p>解释：</p>
-<ul>
-<li>类变量 <code>_instance</code> 用于保存类的唯一实例。</li>
-<li><code>__new__</code>
-方法在实例创建时调用，确保实例只会被创建一次。</li>
-</ul>
-<h3 id="方法二使用装饰器">方法二：使用装饰器</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleton</span>(<span class="params">cls</span>):</span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_instance</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">            instances[cls] = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> get_instance</span><br><span class="line"></span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = MyClass()</span><br><span class="line">obj2 = MyClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>装饰器 <code>singleton</code>
-用字典存储类的实例，如果实例不存在，就创建一个新的实例。</li>
-</ul>
-<h3 id="方法三使用模块">方法三：使用模块</h3>
-<p>Python模块本身就是单例的。可以直接在模块中定义全局变量来实现单例模式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># singleton_module.py</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = <span class="number">42</span></span><br><span class="line"></span><br><span class="line">singleton_instance = Singleton()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>模块在首次导入时会被初始化并保持单例状态。</li>
-</ul>
-<p>使用元类（metaclass）来实现单例模式是Python中特有且更高级的方式。元类是控制类创建行为的“类的类”，通过自定义元类，我们可以控制类的实例化过程来实现单例模式。</p>
-<h3 id="方法四使用元类实现单例模式">方法四：使用元类实现单例模式</h3>
-<p>使用元类实现单例模式的核心思想是在<code>__call__</code>方法中拦截类的实例化过程，从而确保类只有一个实例。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">            <span class="comment"># 创建一个新的实例，并将其存入_instances字典中</span></span><br><span class="line">            cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用元类实现单例模式的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>SingletonMeta</code>继承自<code>type</code>，因此是一个元类。</li>
-<li><code>__call__</code>方法在类实例化时被调用。通过重写此方法，我们可以控制类实例的创建过程。</li>
-<li><code>_instances</code>是一个类变量，用于保存每个类的唯一实例。如果类实例不存在，则调用<code>super().__call__()</code>来创建一个新实例并存储在<code>_instances</code>中；如果已存在，直接返回存储的实例。</li>
-</ul>
-<p><strong>元类实现的优点</strong></p>
-<ul>
-<li><strong>灵活性</strong>：可以将元类应用于多个不同的类，从而减少重复代码。</li>
-<li><strong>可扩展性</strong>：方便地在单例逻辑中添加额外功能，如线程安全控制。</li>
-</ul>
-<h2 id="线程安全性改进">线程安全性改进</h2>
-<p>在多线程环境中，需要确保单例模式是线程安全的。可以使用线程锁来实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line">    _lock = threading.Lock()  <span class="comment"># 锁对象用于同步</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">with</span> cls._lock:  <span class="comment"># 确保线程安全</span></span><br><span class="line">            <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">                cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<h2 id="应用场景">应用场景</h2>
-<ul>
-<li><strong>日志系统</strong>：日志记录器在整个应用程序中应当只有一个实例来防止资源竞争。</li>
-<li><strong>配置管理</strong>：使用单例模式来加载和管理配置文件以确保一致性。</li>
-<li><strong>资源共享</strong>：在涉及共享资源如数据库连接池时，单例模式可以有效管理连接实例。</li>
-</ul>
-<h2 id="注意事项">注意事项</h2>
-<ul>
-<li>单例模式的实现要保证线程安全，特别是在多线程应用中。</li>
-<li><strong>过度使用单例模式会导致代码耦合度高</strong>，因此应谨慎使用，确保符合设计需求。</li>
-</ul>
-<p>单例模式虽然简单，但其全局状态可能带来潜在的问题，例如难以进行单元测试或状态管理不清晰。在使用时要权衡利弊。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/OOP/设计模式/工厂模式（Factory Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -387,125 +242,102 @@ Pattern）是一种创建型设计模式，它确保一个类只有一个实例�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p># 工厂模式（Factory Pattern）</p>
-<p>工厂模式（Factory
-Pattern）是一种创建型设计模式，旨在定义一个用于创建对象的接口，但由子类决定实例化哪个类。工厂模式可以帮助我们将对象的创建与其使用分离，增强代码的可扩展性和维护性。</p>
-<h2 id="分类">分类</h2>
-<ol type="1">
+    <h1 id="工厂模式（Factory-Pattern）"><a href="#工厂模式（Factory-Pattern）" class="headerlink" title="工厂模式（Factory Pattern）"></a>工厂模式（Factory Pattern）</h1><p>工厂模式（Factory Pattern）是一种创建型设计模式，旨在定义一个用于创建对象的接口，但由子类决定实例化哪个类。工厂模式可以帮助我们将对象的创建与其使用分离，增强代码的可扩展性和维护性。</p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><ol>
 <li><strong>简单工厂模式</strong>（Simple Factory Pattern）</li>
 <li><strong>工厂方法模式</strong>（Factory Method Pattern）</li>
 <li><strong>抽象工厂模式</strong>（Abstract Factory Pattern）</li>
 </ol>
-<p>这里先介绍
-<strong>简单工厂模式</strong>和<strong>工厂方法模式</strong></p>
-<h2 id="简单工厂模式">简单工厂模式</h2>
-<p><strong>简单工厂模式</strong>是一种创建型设计模式，它通过一个单一的工厂类来创建不同类型的对象。这个工厂类通常具有一个静态方法，根据输入的参数决定创建哪种对象。</p>
-<h3 id="结构">结构</h3>
-<ul>
+<p>这里先介绍 <strong>简单工厂模式</strong>和<strong>工厂方法模式</strong></p>
+<h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><p><strong>简单工厂模式</strong>是一种创建型设计模式，它通过一个单一的工厂类来创建不同类型的对象。这个工厂类通常具有一个静态方法，根据输入的参数决定创建哪种对象。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><ul>
 <li><strong>工厂类</strong>：包含用于创建对象的静态方法。</li>
 <li><strong>产品接口或抽象类</strong>：定义了创建对象的基本接口。</li>
 <li><strong>具体产品类</strong>：实现产品接口。</li>
 </ul>
-<h3 id="实现方式">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>:</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">animal_type</span>):</span><br><span class="line">        <span class="keyword">if</span> animal_type == <span class="string">&#x27;dog&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Dog()</span><br><span class="line">        <span class="keyword">elif</span> animal_type == <span class="string">&#x27;cat&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Cat()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Unknown animal type&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">animal = AnimalFactory.create_animal(<span class="string">&#x27;dog&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(animal.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点">优点</h3>
-<ul>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>:</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">animal_type</span>):</span><br><span class="line">        <span class="keyword">if</span> animal_type == <span class="string">&#x27;dog&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Dog()</span><br><span class="line">        <span class="keyword">elif</span> animal_type == <span class="string">&#x27;cat&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> Cat()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Unknown animal type&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">animal = AnimalFactory.create_animal(<span class="string">&#x27;dog&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(animal.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
 <li><strong>简单易用</strong>：只需调用工厂方法即可创建对象，无需关心具体的实现。</li>
 <li><strong>集中管理对象创建</strong>：所有对象的创建逻辑都集中在一个地方，方便修改。</li>
 </ul>
-<h3 id="缺点">缺点</h3>
-<ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
 <li><strong>不符合开闭原则</strong>：如果需要增加新类型，需要修改工厂类的代码，可能会引入错误。</li>
 <li><strong>职责过重</strong>：工厂类随着产品类型的增加变得复杂，难以维护。</li>
 </ul>
-<h3 id="适用场景">适用场景</h3>
-<ul>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
 <li>需要创建少量的类，且不频繁更改。</li>
 <li>客户端需要与具体类解耦。</li>
 </ul>
-<hr />
-<h2 id="工厂方法模式">工厂方法模式</h2>
-<p><strong>工厂方法模式</strong>是简单工厂模式的进一步抽象。它定义了一个创建对象的接口，但由子类决定<a
-target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AE%9E%E4%BE%8B%E5%8C%96&amp;spm=1001.2101.3001.7020">实例化</a>的类是哪一个。每个具体子类都有自己的工厂方法来创建对象。</p>
-<h3 id="结构-1">结构</h3>
-<ul>
+<hr>
+<h2 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h2><p><strong>工厂方法模式</strong>是简单工厂模式的进一步抽象。它定义了一个创建对象的接口，但由子类决定<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AE%9E%E4%BE%8B%E5%8C%96&amp;spm=1001.2101.3001.7020">实例化</a>的类是哪一个。每个具体子类都有自己的工厂方法来创建对象。</p>
+<h3 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h3><ul>
 <li><strong>抽象产品</strong>：定义了产品的接口。</li>
 <li><strong>具体产品</strong>：实现产品接口的具体类。</li>
 <li><strong>抽象工厂</strong>：声明了一个返回产品对象的工厂方法。</li>
 <li><strong>具体工厂</strong>：实现了工厂方法，返回具体产品实例。</li>
 </ul>
-<h3 id="实现方式-1">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DogFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Dog()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CatFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Cat()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">dog_factory = DogFactory()</span><br><span class="line">dog = dog_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(dog.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line">cat_factory = CatFactory()</span><br><span class="line">cat = cat_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(cat.speak())  <span class="comment"># 输出 &quot;Meow!&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点-1">优点</h3>
-<ul>
+<h3 id="实现方式-1"><a href="#实现方式-1" class="headerlink" title="实现方式"></a>实现方式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Cat</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">speak</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AnimalFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DogFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Dog()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CatFactory</span>(<span class="title class_ inherited__">AnimalFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_animal</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Cat()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">dog_factory = DogFactory()</span><br><span class="line">dog = dog_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(dog.speak())  <span class="comment"># 输出 &quot;Woof!&quot;</span></span><br><span class="line"></span><br><span class="line">cat_factory = CatFactory()</span><br><span class="line">cat = cat_factory.create_animal()</span><br><span class="line"><span class="built_in">print</span>(cat.speak())  <span class="comment"># 输出 &quot;Meow!&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
 <li><strong>符合开闭原则</strong>：可以通过添加新的具体工厂类来扩展代码，而无需修改现有工厂类。</li>
 <li><strong>更灵活</strong>：每个具体工厂类负责创建特定类型的产品，使得扩展更加容易。</li>
 </ul>
-<h3 id="缺点-1">缺点</h3>
-<ul>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><ul>
 <li><strong>类的数量增加</strong>：每增加一个产品类型都需要创建新的具体工厂类。</li>
 <li><strong>增加了复杂性</strong>：比简单工厂模式更复杂，需要更多的类和接口。</li>
 </ul>
-<h3 id="适用场景-1">适用场景</h3>
-<ul>
+<h3 id="适用场景-1"><a href="#适用场景-1" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
 <li>需要将对象的创建与使用解耦，同时需要经常扩展产品类。</li>
 <li>当系统中存在多种产品类型，并且需要根据不同的条件来创建不同的产品实例时。</li>
 </ul>
-<h2 id="抽象工厂模式">抽象工厂模式</h2>
-<p><strong>抽象工厂模式</strong>也是一种创建型设计模式，它提供一个接口，用于创建一系列相关或相互依赖的对象，而无需指定它们的具体类。它特别适合在需要创建多个相关对象且这些对象在逻辑上属于一个“产品族”时使用。</p>
-<h3 id="结构-2">结构</h3>
-<ul>
+<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p><strong>抽象工厂模式</strong>也是一种创建型设计模式，它提供一个接口，用于创建一系列相关或相互依赖的对象，而无需指定它们的具体类。它特别适合在需要创建多个相关对象且这些对象在逻辑上属于一个“产品族”时使用。</p>
+<h3 id="结构-2"><a href="#结构-2" class="headerlink" title="结构"></a>结构</h3><ul>
 <li><strong>抽象产品</strong>：定义了产品家族中每个产品的接口。</li>
 <li><strong>具体产品</strong>：实现抽象产品接口的具体类。</li>
 <li><strong>抽象工厂</strong>：声明了创建一系列相关产品的方法。</li>
 <li><strong>具体工厂</strong>：实现抽象工厂接口，提供具体产品的实例。</li>
 </ul>
-<h3 id="实现方式-2">实现方式</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Chair</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sofa</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Modern Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Victorian Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Modern Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FurnitureFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianSofa()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernSofa()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">factory = VictorianFurnitureFactory()</span><br><span class="line">chair = factory.create_chair()</span><br><span class="line">sofa = factory.create_sofa()</span><br><span class="line"><span class="built_in">print</span>(chair.sit_on())  <span class="comment"># 输出 &quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(sofa.lie_on())   <span class="comment"># 输出 &quot;Lying on a Victorian Sofa.&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="优点-2">优点</h3>
-<ul>
+<h3 id="实现方式-2"><a href="#实现方式-2" class="headerlink" title="实现方式"></a>实现方式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Chair</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sofa</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体产品类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernChair</span>(<span class="title class_ inherited__">Chair</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sit_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sitting on a Modern Chair.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Victorian Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernSofa</span>(<span class="title class_ inherited__">Sofa</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lie_on</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Lying on a Modern Sofa.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 抽象工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FurnitureFactory</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VictorianFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> VictorianSofa()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ModernFurnitureFactory</span>(<span class="title class_ inherited__">FurnitureFactory</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_chair</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernChair()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_sofa</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> ModernSofa()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">factory = VictorianFurnitureFactory()</span><br><span class="line">chair = factory.create_chair()</span><br><span class="line">sofa = factory.create_sofa()</span><br><span class="line"><span class="built_in">print</span>(chair.sit_on())  <span class="comment"># 输出 &quot;Sitting on a Victorian Chair.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(sofa.lie_on())   <span class="comment"># 输出 &quot;Lying on a Victorian Sofa.&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h3><ul>
 <li><strong>一致性</strong>：确保同一产品族的对象之间可以协作。</li>
 <li><strong>解耦</strong>：客户端代码与具体类解耦，使得代码更灵活和易于维护。</li>
 <li><strong>符合开闭原则</strong>：添加新的产品族时，只需添加新的具体工厂类即可，无需修改已有代码。</li>
 </ul>
-<h3 id="缺点-2">缺点</h3>
-<ul>
+<h3 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h3><ul>
 <li><strong>复杂性增加</strong>：需要为每个产品族定义新的具体工厂，类的数量会显著增加。</li>
 <li><strong>扩展困难</strong>：增加新的产品接口（如添加<code>Table</code>）需要修改所有的工厂接口及其实现。</li>
 </ul>
-<h3 id="适用场景-2">适用场景</h3>
-<ul>
+<h3 id="适用场景-2"><a href="#适用场景-2" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
 <li>系统需要创建一系列相关的产品对象，而这些对象在逻辑上属于一个产品族。</li>
 <li>系统希望提供产品族的多个变体，但保证客户端只使用同一变体的对象。</li>
 </ul>
-<hr />
-<h2 id="抽象工厂模式-vs.-简单工厂模式-vs.-工厂方法模式">抽象工厂模式 vs.
-简单工厂模式 vs. 工厂方法模式</h2>
-<ol type="1">
+<hr>
+<h2 id="抽象工厂模式-vs-简单工厂模式-vs-工厂方法模式"><a href="#抽象工厂模式-vs-简单工厂模式-vs-工厂方法模式" class="headerlink" title="抽象工厂模式 vs. 简单工厂模式 vs. 工厂方法模式"></a>抽象工厂模式 vs. 简单工厂模式 vs. 工厂方法模式</h2><ol>
 <li><p><strong>简单工厂模式</strong>：</p>
 <ul>
 <li><strong>创建对象方式</strong>：通过一个工厂类的静态方法根据输入创建对象。</li>
 <li><strong>优点</strong>：实现简单，易于使用。</li>
 <li><strong>缺点</strong>：不符合开闭原则，扩展性差。</li>
 <li><strong>适用场景</strong>：适合创建少量、简单对象的场景。</li>
-</ul></li>
+</ul>
+</li>
 <li><p><strong>工厂方法模式</strong>：</p>
 <ul>
 <li><strong>创建对象方式</strong>：通过子类实现的工厂方法创建具体对象。</li>
 <li><strong>优点</strong>：符合开闭原则，每新增产品只需扩展具体工厂类。</li>
 <li><strong>缺点</strong>：增加了实现复杂度和类的数量。</li>
 <li><strong>适用场景</strong>：适合创建多种对象，且需要易于扩展的场景。</li>
-</ul></li>
+</ul>
+</li>
 <li><p><strong>抽象工厂模式</strong>：</p>
 <ul>
 <li><strong>创建对象方式</strong>：通过具体工厂创建一系列相关或相互依赖的对象。</li>
 <li><strong>优点</strong>：能够保证同一产品族对象的协作一致性，符合开闭原则。</li>
 <li><strong>缺点</strong>：实现复杂，扩展产品结构较困难。</li>
 <li><strong>适用场景</strong>：适合需要创建一系列相关对象的场景，确保产品之间的一致性。</li>
-</ul></li>
+</ul>
+</li>
 </ol>
-<h2 id="总结对比">总结对比</h2>
-<ul>
+<h2 id="总结对比"><a href="#总结对比" class="headerlink" title="总结对比"></a>总结对比</h2><ul>
 <li><strong>简单工厂模式</strong>更适合简单和小规模的对象创建需求，缺乏扩展性。</li>
 <li><strong>工厂方法模式</strong>提供了更高的灵活性，允许创建不同类型的对象，但实现上增加了类的复杂度。</li>
 <li><strong>抽象工厂模式</strong>适合复杂系统中需要创建多个相关产品族的场景，保障产品族内对象的一致性，尽管它在实现上最为复杂。</li>
@@ -595,123 +427,61 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AE%9E%E
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="ray-tutorial">Ray Tutorial</h1>
-<p>Ray
-是一个高效、易用的分布式计算框架，适用于分布式机器学习、数据处理和高性能计算等场景。本教程将重点介绍
-Ray
-的核心内容，并结合实战编程案例进行详细讲解，帮助你全面掌握其使用方法和最佳实践。</p>
-<h2 id="ray-的安装与基础概念">Ray 的安装与基础概念</h2>
-<h3 id="安装-ray">安装 Ray</h3>
-<p>首先，通过 pip 安装 Ray：</p>
+    <h1 id="Ray-Tutorial"><a href="#Ray-Tutorial" class="headerlink" title="Ray Tutorial"></a>Ray Tutorial</h1><p>Ray 是一个高效、易用的分布式计算框架，适用于分布式机器学习、数据处理和高性能计算等场景。本教程将重点介绍 Ray 的核心内容，并结合实战编程案例进行详细讲解，帮助你全面掌握其使用方法和最佳实践。</p>
+<h2 id="Ray-的安装与基础概念"><a href="#Ray-的安装与基础概念" class="headerlink" title="Ray 的安装与基础概念"></a>Ray 的安装与基础概念</h2><h3 id="安装-Ray"><a href="#安装-Ray" class="headerlink" title="安装 Ray"></a>安装 Ray</h3><p>首先，通过 pip 安装 Ray：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install ray</span><br></pre></td></tr></table></figure>
 <p>安装完成后，可以通过运行以下命令验证安装：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&quot;import ray; ray.init()&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="核心概念">核心概念</h3>
-<h4 id="tasks">Tasks</h4>
-<p><strong>Task</strong>: Task 是 Ray
-中的基本执行单元，通过将函数声明为远程函数（remote
-function），可以并行地在多个节点上执行。这使得简单的函数调用能够轻松扩展为分布式计算。</p>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><h4 id="Tasks"><a href="#Tasks" class="headerlink" title="Tasks"></a>Tasks</h4><p><strong>Task</strong>: Task 是 Ray 中的基本执行单元，通过将函数声明为远程函数（remote function），可以并行地在多个节点上执行。这使得简单的函数调用能够轻松扩展为分布式计算。</p>
 <p>示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line">task = add.remote(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">result = ray.get(task)  <span class="comment"># 输出 3</span></span><br></pre></td></tr></table></figure>
-<p>更多信息请参考 <a
-target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/tasks.html">Tasks
-用户指南</a>。</p>
-<h4 id="actors">Actors</h4>
-<p>Actors 将 Ray 的 API 从函数（tasks）扩展到类。Actor
-本质上是一个有状态的工作者（或服务）。当实例化一个新的 Actor
-时，会创建一个新的工作节点。Actor
-的方法会调度到该特定工作节点上，并可以访问和修改该节点的内部状态。与
-Tasks 类似，Actors 也支持 CPU、GPU 和自定义资源需求。</p>
+<p>更多信息请参考 <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/tasks.html">Tasks 用户指南</a>。</p>
+<h4 id="Actors"><a href="#Actors" class="headerlink" title="Actors"></a>Actors</h4><p>Actors 将 Ray 的 API 从函数（tasks）扩展到类。Actor 本质上是一个有状态的工作者（或服务）。当实例化一个新的 Actor 时，会创建一个新的工作节点。Actor 的方法会调度到该特定工作节点上，并可以访问和修改该节点的内部状态。与 Tasks 类似，Actors 也支持 CPU、GPU 和自定义资源需求。</p>
 <p>示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.count = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">increment</span>(<span class="params">self</span>):</span><br><span class="line">        self.count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> self.count</span><br><span class="line"></span><br><span class="line">counter = Counter.remote()</span><br><span class="line">ray.get(counter.increment.remote())  <span class="comment"># 输出 1</span></span><br><span class="line">ray.get(counter.increment.remote())  <span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
-<p>更多信息请参考 <a
-target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/actors.html">Actors
-用户指南</a>。</p>
-<h4 id="objects">Objects</h4>
-<p>在 Ray 中，Tasks 和 Actors 会创建和操作对象，这些对象被称为
-"远程对象（remote objects）"，因为它们可以存储在 Ray
-集群的任意位置。我们使用 "对象引用（object refs）"
-来引用它们。远程对象被缓存到 Ray
-的分布式共享内存对象存储中，每个集群节点都有一个对象存储。在集群环境中，一个远程对象可以存在于一个或多个节点上，与持有其引用的实体位置无关。</p>
-<p>更多信息请参考 <a
-target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/objects.html">Objects
-用户指南</a>。</p>
-<h4 id="cluster">Cluster</h4>
-<p>Ray 集群由一个主节点（head node）和多个工作节点（worker
-nodes）组成。主节点负责集群的资源调度和任务分发，而工作节点负责实际执行任务。通过
-<code>ray.init()</code>，可以连接到现有的 Ray
-集群，或者启动本地集群以便开发和测试。</p>
-<h2 id="ray-的基本用法">Ray 的基本用法</h2>
-<h3 id="创建分布式任务">创建分布式任务</h3>
-<p>Ray 提供了简单的接口将普通 Python 函数转换为分布式任务。通过
-<code>@ray.remote</code> 修饰器，我们可以将函数声明为远程函数。</p>
+<p>更多信息请参考 <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/actors.html">Actors 用户指南</a>。</p>
+<h4 id="Objects"><a href="#Objects" class="headerlink" title="Objects"></a>Objects</h4><p>在 Ray 中，Tasks 和 Actors 会创建和操作对象，这些对象被称为 “远程对象（remote objects）”，因为它们可以存储在 Ray 集群的任意位置。我们使用 “对象引用（object refs）” 来引用它们。远程对象被缓存到 Ray 的分布式共享内存对象存储中，每个集群节点都有一个对象存储。在集群环境中，一个远程对象可以存在于一个或多个节点上，与持有其引用的实体位置无关。</p>
+<p>更多信息请参考 <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/objects.html">Objects 用户指南</a>。</p>
+<h4 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h4><p>Ray 集群由一个主节点（head node）和多个工作节点（worker nodes）组成。主节点负责集群的资源调度和任务分发，而工作节点负责实际执行任务。通过 <code>ray.init()</code>，可以连接到现有的 Ray 集群，或者启动本地集群以便开发和测试。</p>
+<h2 id="Ray-的基本用法"><a href="#Ray-的基本用法" class="headerlink" title="Ray 的基本用法"></a>Ray 的基本用法</h2><h3 id="创建分布式任务"><a href="#创建分布式任务" class="headerlink" title="创建分布式任务"></a>创建分布式任务</h3><p>Ray 提供了简单的接口将普通 Python 函数转换为分布式任务。通过 <code>@ray.remote</code> 修饰器，我们可以将函数声明为远程函数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()  <span class="comment"># 初始化 Ray</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用远程函数</span></span><br><span class="line">task = add.remote(<span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line">result = ray.get(task)  <span class="comment"># 获取结果</span></span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出 30</span></span><br><span class="line"></span><br><span class="line">ray.shutdown()	<span class="comment"># 关闭 Ray</span></span><br></pre></td></tr></table></figure>
-<p>在以上代码中，<code>add.remote</code> 是异步执行的。调用
-<code>ray.get</code> 可以阻塞主线程并获取任务返回值。</p>
-<h3 id="actor-模式">Actor 模式</h3>
-<p>当需要管理有状态的任务时，可以使用 Actor
-模式。例如，实现一个简单的计数器：</p>
+<p>在以上代码中，<code>add.remote</code> 是异步执行的。调用 <code>ray.get</code> 可以阻塞主线程并获取任务返回值。</p>
+<h3 id="Actor-模式"><a href="#Actor-模式" class="headerlink" title="Actor 模式"></a>Actor 模式</h3><p>当需要管理有状态的任务时，可以使用 Actor 模式。例如，实现一个简单的计数器：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">increment</span>(<span class="params">self</span>):</span><br><span class="line">        self.count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> self.count</span><br><span class="line"></span><br><span class="line">counter = Counter.remote()</span><br><span class="line"><span class="built_in">print</span>(ray.get(counter.increment.remote()))  <span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(ray.get(counter.increment.remote()))  <span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
 <p>Actor 的实例是有状态的，并且可以被多个任务共享。</p>
-<h2 id="任务并行">任务并行</h2>
-<p>在数据分析或大规模机器学习任务中，可以利用 Ray
-实现高效的数据并行处理。</p>
+<h2 id="任务并行"><a href="#任务并行" class="headerlink" title="任务并行"></a>任务并行</h2><p>在数据分析或大规模机器学习任务中，可以利用 Ray 实现高效的数据并行处理。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">square</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">inputs = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">10</span>))</span><br><span class="line"><span class="comment"># 异步调用</span></span><br><span class="line">tasks = [square.remote(i) <span class="keyword">for</span> i <span class="keyword">in</span> inputs]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 同步获取</span></span><br><span class="line">results: <span class="built_in">list</span>[<span class="built_in">int</span>] = ray.get(tasks)</span><br><span class="line"><span class="built_in">print</span>(results)  <span class="comment"># 输出 [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</span></span><br></pre></td></tr></table></figure>
-<p>异步调用允许任务并行执行，而 <code>ray.get</code>
-会阻塞当前线程直到所有结果返回。</p>
-<p><strong>匹配原则</strong>：<code>ray.get</code>
-返回的结果顺序和任务列表的顺序一致。</p>
-<p><strong>注意事项</strong>：只要 <code>tasks</code>
-是按顺序生成的，<code>ray.get</code>
-返回的结果就会按相同顺序排列，确保处理逻辑的正确性。</p>
-<h2 id="分布式训练示例">分布式训练示例</h2>
-<p><code>ActorPool</code> 是 Ray 提供的一个便捷工具，用于管理一组
-Actor。它允许你对多个 Actor
-并行分配任务，同时自动处理任务的调度和结果的返回。以下示例展示了如何使用
-<code>ActorPool</code> 来管理一组计算 Actor，并并行执行任务。以下是用
-Ray 实现分布式机器学习训练的示例。</p>
+<p>异步调用允许任务并行执行，而 <code>ray.get</code> 会阻塞当前线程直到所有结果返回。</p>
+<p><strong>匹配原则</strong>：<code>ray.get</code> 返回的结果顺序和任务列表的顺序一致。</p>
+<p><strong>注意事项</strong>：只要 <code>tasks</code> 是按顺序生成的，<code>ray.get</code> 返回的结果就会按相同顺序排列，确保处理逻辑的正确性。</p>
+<h2 id="分布式训练示例"><a href="#分布式训练示例" class="headerlink" title="分布式训练示例"></a>分布式训练示例</h2><p><code>ActorPool</code> 是 Ray 提供的一个便捷工具，用于管理一组 Actor。它允许你对多个 Actor 并行分配任务，同时自动处理任务的调度和结果的返回。以下示例展示了如何使用 <code>ActorPool</code> 来管理一组计算 Actor，并并行执行任务。以下是用 Ray 实现分布式机器学习训练的示例。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"><span class="keyword">from</span> ray.util.actor_pool <span class="keyword">import</span> ActorPool</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Worker Actor</span></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Worker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.model = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)  <span class="comment"># 使用 torch.nn.Linear</span></span><br><span class="line">        self.optimizer = optim.SGD(self.model.parameters(), lr=<span class="number">0.01</span>)  <span class="comment"># 使用 torch.optim.SGD</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">self, x, y</span>):</span><br><span class="line">        self.optimizer.zero_grad()</span><br><span class="line">        loss = (self.model(torch.tensor([[x]], dtype=torch.float32)) - y) ** <span class="number">2</span>  <span class="comment"># 确保输入为浮点张量</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        self.optimizer.step()</span><br><span class="line">        <span class="keyword">return</span> loss.item()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 Ray</span></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一组 Actor，并将这些 Actor 添加到 ActorPool 中</span></span><br><span class="line">actor_pool = ActorPool(</span><br><span class="line">    [</span><br><span class="line">        Worker.remote()</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)  <span class="comment"># 创建 4 个 Worker Actor</span></span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据集</span></span><br><span class="line">data = [(i, <span class="number">2</span> * i + <span class="number">1</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]  <span class="comment"># 输入数据 (x, y) 对</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义训练循环</span></span><br><span class="line">num_epochs = <span class="number">20</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    losses = <span class="built_in">list</span>(actor_pool.<span class="built_in">map</span>(<span class="keyword">lambda</span> actor, args: actor.train.remote(*args), data))  <span class="comment"># 异步调用 train 方法</span></span><br><span class="line">    avg_loss = <span class="built_in">sum</span>(losses) / <span class="built_in">len</span>(losses)  <span class="comment"># 计算当前 epoch 的平均损失</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Epoch <span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>, Average Loss: <span class="subst">&#123;avg_loss:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>这个代码展示了如何将训练任务分配到多个 Worker
-上，以实现分布式训练。</p>
-<h2 id="部署与集群">部署与集群</h2>
-<h3 id="启动集群">启动集群</h3>
-<p>Ray 的分布式集群可以通过命令行轻松启动：</p>
+<p>这个代码展示了如何将训练任务分配到多个 Worker 上，以实现分布式训练。</p>
+<h2 id="部署与集群"><a href="#部署与集群" class="headerlink" title="部署与集群"></a>部署与集群</h2><h3 id="启动集群"><a href="#启动集群" class="headerlink" title="启动集群"></a>启动集群</h3><p>Ray 的分布式集群可以通过命令行轻松启动：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ray start --<span class="built_in">head</span>  <span class="comment"># 在主节点启动</span></span><br><span class="line">ray start --address=<span class="string">&#x27;&lt;主节点 IP&gt;:6379&#x27;</span>  <span class="comment"># 在工作节点加入集群</span></span><br></pre></td></tr></table></figure>
-<h3 id="集群管理">集群管理</h3>
-<p>集群状态可以通过 Ray Dashboard 进行监控。启动 Dashboard 的命令：</p>
+<h3 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a>集群管理</h3><p>集群状态可以通过 Ray Dashboard 进行监控。启动 Dashboard 的命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray dashboard</span><br></pre></td></tr></table></figure>
-<h3 id="分布式任务运行">分布式任务运行</h3>
-<p>在分布式集群中运行任务时，只需确保 <code>ray.init()</code>
-指向主节点地址：</p>
+<h3 id="分布式任务运行"><a href="#分布式任务运行" class="headerlink" title="分布式任务运行"></a>分布式任务运行</h3><p>在分布式集群中运行任务时，只需确保 <code>ray.init()</code> 指向主节点地址：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray.init(address=<span class="string">&#x27;auto&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>Ray 会自动调度任务到可用的工作节点上。</p>
-<h2 id="性能优化与最佳实践">性能优化与最佳实践</h2>
-<ol type="1">
+<h2 id="性能优化与最佳实践"><a href="#性能优化与最佳实践" class="headerlink" title="性能优化与最佳实践"></a>性能优化与最佳实践</h2><ol>
 <li><strong>避免频繁小任务</strong>：将小任务合并为大任务，减少调度开销。</li>
-<li><strong>数据序列化优化</strong>：对于大规模数据，使用 Ray 的
-<code>ObjectRef</code> 来减少数据传输开销。</li>
-<li><strong>资源管理</strong>：指定任务和 Actor 的 CPU、GPU
-等资源需求，以充分利用硬件性能。</li>
+<li><strong>数据序列化优化</strong>：对于大规模数据，使用 Ray 的 <code>ObjectRef</code> 来减少数据传输开销。</li>
+<li><strong>资源管理</strong>：指定任务和 Actor 的 CPU、GPU 等资源需求，以充分利用硬件性能。</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote(<span class="params">num_cpus=<span class="number">2</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">heavy_task</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<ol type="1">
-<li><strong>合理利用缓存</strong>：利用 Ray
-的对象存储避免重复计算。</li>
-<li><strong>调试和日志</strong>：通过 Ray
-提供的调试工具，跟踪任务执行状态和性能瓶颈。</li>
+<ol>
+<li><strong>合理利用缓存</strong>：利用 Ray 的对象存储避免重复计算。</li>
+<li><strong>调试和日志</strong>：通过 Ray 提供的调试工具，跟踪任务执行状态和性能瓶颈。</li>
 </ol>
-<h2 id="高级功能与扩展">高级功能与扩展</h2>
-<p>Ray 还支持更多高级功能，例如：</p>
+<h2 id="高级功能与扩展"><a href="#高级功能与扩展" class="headerlink" title="高级功能与扩展"></a>高级功能与扩展</h2><p>Ray 还支持更多高级功能，例如：</p>
 <ul>
 <li><strong>Ray Serve</strong>：用于构建和部署高效的在线服务。</li>
 <li><strong>Ray Tune</strong>：超参数优化工具，支持大规模超参搜索。</li>
 <li><strong>Ray Dataset</strong>：高效处理和分发数据集。</li>
 </ul>
 <p>这些功能可以进一步扩展 Ray 的应用场景。</p>
-<h2 id="总结">总结</h2>
-<p><a
-target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-overview/getting-started.html">Getting
-Started — Ray 2.40.0</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-overview/getting-started.html">Getting Started — Ray 2.40.0</a></p>
 
     
 
@@ -808,14 +578,8 @@ Started — Ray 2.40.0</a></p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="errors">Errors</h1>
-<h2
-id="调试ray设置断点不跳进去怎么办">调试ray，设置断点不跳进去怎么办？</h2>
-<p>最近在使用<code>ray</code>框架，发现设置了断点后，<code>Step Into</code>并不会跳进相应函数。</p>
-<p>网上找了一下，在stackflow中发现了这个回答 <a
-target="_blank" rel="noopener" href="https://stackoverflow.com/questions/71860615/how-to-disable-ray-for-debugging">pycharm
-- How to disable ray for debugging - Stack
-Overflow</a>，试了一下很管用</p>
+    <h1 id="Errors"><a href="#Errors" class="headerlink" title="Errors"></a>Errors</h1><h2 id="调试ray，设置断点不跳进去怎么办？"><a href="#调试ray，设置断点不跳进去怎么办？" class="headerlink" title="调试ray，设置断点不跳进去怎么办？"></a>调试ray，设置断点不跳进去怎么办？</h2><p>最近在使用<code>ray</code>框架，发现设置了断点后，<code>Step Into</code>并不会跳进相应函数。</p>
+<p>网上找了一下，在stackflow中发现了这个回答 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/71860615/how-to-disable-ray-for-debugging">pycharm - How to disable ray for debugging - Stack Overflow</a>，试了一下很管用</p>
 <p>将<code>ray.init()</code>改成<code>ray.init(local_mode=True)</code>就可以设置断点啦！</p>
 
     
@@ -913,33 +677,15 @@ Overflow</a>，试了一下很管用</p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="errors">Errors</h1>
-<h2
-id="gradio无法生成可分享的外部连接could-not-create-share-link.-missing-file或could-not-create-share-link.-please-che">gradio无法生成可分享的外部连接Could
-not create share link. Missing file:或Could not create share link.
-Please che</h2>
-<ul>
-<li>如果是：Could not create share link. Missing
-file，按照给出的提示下载frpc_linux_amd64文件，并且按照他的要求修改名称，移动到提示指定的位置，并进行下面2的操作</li>
+    <h1 id="Errors"><a href="#Errors" class="headerlink" title="Errors"></a>Errors</h1><h2 id="gradio无法生成可分享的外部连接Could-not-create-share-link-Missing-file-或Could-not-create-share-link-Please-che"><a href="#gradio无法生成可分享的外部连接Could-not-create-share-link-Missing-file-或Could-not-create-share-link-Please-che" class="headerlink" title="gradio无法生成可分享的外部连接Could not create share link. Missing file:或Could not create share link. Please che"></a>gradio无法生成可分享的外部连接Could not create share link. Missing file:或Could not create share link. Please che</h2><ul>
+<li>如果是：Could not create share link. Missing file，按照给出的提示下载frpc_linux_amd64文件，并且按照他的要求修改名称，移动到提示指定的位置，并进行下面2的操作</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Running on local URL: http://127.0.0.1:7860</span><br><span class="line"></span><br><span class="line">Could not create share link. Missing file: /data/cuiluyi/anaconda3/envs/llama_factory/lib/python3.8/site-packages/gradio</span><br><span class="line"></span><br><span class="line">Please check your internet connection. This can happen if your antivirus software blocks the download of this file. You can install manually by following these steps: </span><br><span class="line"></span><br><span class="line">1. Download this file: [frpc_windows_amd64.exe](https://cdn-media.huggingface.co/frpc-gradio-0.2/frpc_windows_amd64.exe)</span><br><span class="line">2. Rename the downloaded file to: `frpc_windows_amd64_v0.2`</span><br><span class="line">3. Move the file to this location: `E:\venv\lib\site-packages\gradio`</span><br></pre></td></tr></table></figure>
 <ul>
-<li>如果是：Could not create share link. Please check your internet
-connection or our status page:
-https://status.gradio.app，cd进入frpc_linux_amd64文件的位置（应该在.conda/envs/ChatGLM2/lib/python3.11/site-packages/gradio），输入以下命令给予权限：<code>chmod +x frpc_linux_amd64_v0.2</code></li>
+<li>如果是：Could not create share link. Please check your internet connection or our status page: <a target="_blank" rel="noopener" href="https://status.gradio.app，cd进入frpc_linux_amd64文件的位置（应该在.conda/envs/ChatGLM2/lib/python3.11/site-packages/gradio），输入以下命令给予权限：`chmod">https://status.gradio.app，cd进入frpc_linux_amd64文件的位置（应该在.conda/envs/ChatGLM2/lib/python3.11/site-packages/gradio），输入以下命令给予权限：`chmod</a> +x frpc_linux_amd64_v0.2`</li>
 </ul>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070023561.png"
-alt="image-20250107002312461" />
-<figcaption aria-hidden="true">image-20250107002312461</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070037991.png"
-alt="image-20250107003719924" />
-<figcaption aria-hidden="true">image-20250107003719924</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070023561.png" alt="image-20250107002312461"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070037991.png" alt="image-20250107003719924"></p>
 
     
 
@@ -967,6 +713,138 @@ alt="image-20250107003719924" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/OOP/设计模式/单例模式（Singleton Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" target="_blank">单例模式（Singleton Pattern）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="单例模式（Singleton-Pattern）"><a href="#单例模式（Singleton-Pattern）" class="headerlink" title="单例模式（Singleton Pattern）"></a>单例模式（Singleton Pattern）</h1><p>单例模式（Singleton Pattern）是一种创建型设计模式，它确保一个类只有一个实例，并提供全局访问点。单例模式适用于需要确保全局唯一实例的场景，例如配置管理、日志记录器、数据库连接等。</p>
+<h2 id="单例模式的特点"><a href="#单例模式的特点" class="headerlink" title="单例模式的特点"></a>单例模式的特点</h2><ul>
+<li><strong>全局唯一性</strong>：在整个应用程序的生命周期内，单例类只能有一个实例。</li>
+<li><strong>全局访问</strong>：提供了一个全局访问点，任何地方都可以获取到该实例。</li>
+<li><strong>延迟实例化</strong>：单例模式可以延迟实例化，即实例在第一次使用时才创建。</li>
+</ul>
+<h2 id="实现单例模式的方法"><a href="#实现单例模式的方法" class="headerlink" title="实现单例模式的方法"></a>实现单例模式的方法</h2><p>在Python中，可以通过多种方式实现单例模式。以下是几种常见的方法：</p>
+<h3 id="方法一：使用类的静态实例"><a href="#方法一：使用类的静态实例" class="headerlink" title="方法一：使用类的静态实例"></a>方法一：使用类的静态实例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    _instance = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls._instance:</span><br><span class="line">            cls._instance = <span class="built_in">super</span>(Singleton, cls).__new__(cls, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = Singleton()</span><br><span class="line">obj2 = Singleton()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ul>
+<li>类变量 <code>_instance</code> 用于保存类的唯一实例。</li>
+<li><code>__new__</code> 方法在实例创建时调用，确保实例只会被创建一次。</li>
+</ul>
+<h3 id="方法二：使用装饰器"><a href="#方法二：使用装饰器" class="headerlink" title="方法二：使用装饰器"></a>方法二：使用装饰器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleton</span>(<span class="params">cls</span>):</span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_instance</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">            instances[cls] = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> get_instance</span><br><span class="line"></span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = MyClass()</span><br><span class="line">obj2 = MyClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>装饰器 <code>singleton</code> 用字典存储类的实例，如果实例不存在，就创建一个新的实例。</li>
+</ul>
+<h3 id="方法三：使用模块"><a href="#方法三：使用模块" class="headerlink" title="方法三：使用模块"></a>方法三：使用模块</h3><p>Python模块本身就是单例的。可以直接在模块中定义全局变量来实现单例模式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># singleton_module.py</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = <span class="number">42</span></span><br><span class="line"></span><br><span class="line">singleton_instance = Singleton()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>模块在首次导入时会被初始化并保持单例状态。</li>
+</ul>
+<p>使用元类（metaclass）来实现单例模式是Python中特有且更高级的方式。元类是控制类创建行为的“类的类”，通过自定义元类，我们可以控制类的实例化过程来实现单例模式。</p>
+<h3 id="方法四：使用元类实现单例模式"><a href="#方法四：使用元类实现单例模式" class="headerlink" title="方法四：使用元类实现单例模式"></a>方法四：使用元类实现单例模式</h3><p>使用元类实现单例模式的核心思想是在<code>__call__</code>方法中拦截类的实例化过程，从而确保类只有一个实例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">            <span class="comment"># 创建一个新的实例，并将其存入_instances字典中</span></span><br><span class="line">            cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用元类实现单例模式的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>SingletonMeta</code>继承自<code>type</code>，因此是一个元类。</li>
+<li><code>__call__</code>方法在类实例化时被调用。通过重写此方法，我们可以控制类实例的创建过程。</li>
+<li><code>_instances</code>是一个类变量，用于保存每个类的唯一实例。如果类实例不存在，则调用<code>super().__call__()</code>来创建一个新实例并存储在<code>_instances</code>中；如果已存在，直接返回存储的实例。</li>
+</ul>
+<p><strong>元类实现的优点</strong></p>
+<ul>
+<li><strong>灵活性</strong>：可以将元类应用于多个不同的类，从而减少重复代码。</li>
+<li><strong>可扩展性</strong>：方便地在单例逻辑中添加额外功能，如线程安全控制。</li>
+</ul>
+<h2 id="线程安全性改进"><a href="#线程安全性改进" class="headerlink" title="线程安全性改进"></a>线程安全性改进</h2><p>在多线程环境中，需要确保单例模式是线程安全的。可以使用线程锁来实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line">    _lock = threading.Lock()  <span class="comment"># 锁对象用于同步</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">with</span> cls._lock:  <span class="comment"># 确保线程安全</span></span><br><span class="line">            <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">                cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li><strong>日志系统</strong>：日志记录器在整个应用程序中应当只有一个实例来防止资源竞争。</li>
+<li><strong>配置管理</strong>：使用单例模式来加载和管理配置文件以确保一致性。</li>
+<li><strong>资源共享</strong>：在涉及共享资源如数据库连接池时，单例模式可以有效管理连接实例。</li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>单例模式的实现要保证线程安全，特别是在多线程应用中。</li>
+<li><strong>过度使用单例模式会导致代码耦合度高</strong>，因此应谨慎使用，确保符合设计需求。</li>
+</ul>
+<p>单例模式虽然简单，但其全局状态可能带来潜在的问题，例如难以进行单元测试或状态管理不清晰。在使用时要权衡利弊。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/">展开全文 >></a>
     </p>
     
 
@@ -1025,17 +903,10 @@ alt="image-20250107003719924" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="tutorial">Tutorial</h1>
-<h2 id="安装-vllm">安装 vLLM</h2>
-<p>为了得到更好的推理性能，我们在这边使用 <a
-target="_blank" rel="noopener" href="https://github.com/vllm-project/vllm">vLLM</a>
-作为后端来加速推理。</p>
+    <h1 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h1><h2 id="安装-vLLM"><a href="#安装-vLLM" class="headerlink" title="安装 vLLM"></a>安装 vLLM</h2><p>为了得到更好的推理性能，我们在这边使用 <a target="_blank" rel="noopener" href="https://github.com/vllm-project/vllm">vLLM</a> 作为后端来加速推理。</p>
 <p>通过 <code>pip</code> 安装 vLLM：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install vllm</span><br></pre></td></tr></table></figure>
-<p>vLLM 通过 <strong>PagedAttention</strong><a
-target="_blank" rel="noopener" href="https://rudeigerc.dev/posts/llm-inference-with-fastchat/#user-content-fn-pagedattention">1</a>
-以及<strong>基于 Ray
-的张量并行</strong>来实现了高效的显存管理与并行计算</p>
+<p>vLLM 通过 <strong>PagedAttention</strong><a target="_blank" rel="noopener" href="https://rudeigerc.dev/posts/llm-inference-with-fastchat/#user-content-fn-pagedattention">1</a> 以及<strong>基于 Ray 的张量并行</strong>来实现了高效的显存管理与并行计算</p>
 
     
 
@@ -1121,29 +992,10 @@ target="_blank" rel="noopener" href="https://rudeigerc.dev/posts/llm-inference-w
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="类型注解">【10.类型注解】</h1>
-<h2 id="ide代码提示功能">IDE代码提示功能</h2>
-<h3 id="ide函数名提示">IDE函数名提示</h3>
-<p>创建一个 data 变量，为其赋值 list 列表容器类型对象；在调用 data 的
-<code>clear()</code> 函数时，输入 cl 类型，会自动提示 clear
-方法名称，代码可以自动补全</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412282108741.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>如果在函数中，接收一个 <code>list</code>
-类型的变量，我们心里想的这个变量是 <code>list</code>
-容器类型，但是并没有标注该变量的类型，此时想要调用其 <code>clear</code>
-函数 , 没有任何提示；当然调用也不会报错</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412282108688.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>
+    <h1 id="【10-类型注解】"><a href="#【10-类型注解】" class="headerlink" title="【10.类型注解】"></a>【10.类型注解】</h1><h2 id="IDE代码提示功能"><a href="#IDE代码提示功能" class="headerlink" title="IDE代码提示功能"></a>IDE代码提示功能</h2><h3 id="IDE函数名提示"><a href="#IDE函数名提示" class="headerlink" title="IDE函数名提示"></a>IDE函数名提示</h3><p>创建一个 data 变量，为其赋值 list 列表容器类型对象；在调用 data 的 <code>clear()</code> 函数时，输入 cl 类型，会自动提示 clear 方法名称，代码可以自动补全</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412282108741.png" alt="在这里插入图片描述"></p>
+<p>如果在函数中，接收一个 <code>list</code> 类型的变量，我们心里想的这个变量是 <code>list</code> 容器类型，但是并没有标注该变量的类型，此时想要调用其 <code>clear</code> 函数 , 没有任何提示；当然调用也不会报错</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412282108688.png" alt="在这里插入图片描述"></p>
     
     <a class="article-more-a" href="/2024/05/04/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%9010.%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E3%80%91/#more">more >></a>
     
@@ -1231,59 +1083,17 @@ alt="在这里插入图片描述" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="闭包">【11.闭包】</h1>
-<blockquote>
-<p>视频讲解：<a
-target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qW4y1a7fU?spm_id_from=333.788.videopod.episodes&amp;vd_source=783e918d3ef4b11b94236a4cd8a51f23&amp;p=154">第三阶段-01-闭包_哔哩哔哩_bilibili</a></p>
+    <h1 id="【11-闭包】"><a href="#【11-闭包】" class="headerlink" title="【11.闭包】"></a>【11.闭包】</h1><blockquote>
+<p>  视频讲解：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qW4y1a7fU?spm_id_from=333.788.videopod.episodes&amp;vd_source=783e918d3ef4b11b94236a4cd8a51f23&amp;p=154">第三阶段-01-闭包_哔哩哔哩_bilibili</a></p>
 </blockquote>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858119.png"
-alt="image-20241025185816867" />
-<figcaption aria-hidden="true">image-20241025185816867</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858423.png"
-alt="image-20241025185846014" />
-<figcaption aria-hidden="true">image-20241025185846014</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858492.png"
-alt="image-20241025185859150" />
-<figcaption aria-hidden="true">image-20241025185859150</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251859080.png"
-alt="image-20241025185922772" />
-<figcaption aria-hidden="true">image-20241025185922772</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251859342.png"
-alt="image-20241025185944051" />
-<figcaption aria-hidden="true">image-20241025185944051</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900719.png"
-alt="image-20241025190003331" />
-<figcaption aria-hidden="true">image-20241025190003331</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900212.png"
-alt="image-20241025190017976" />
-<figcaption aria-hidden="true">image-20241025190017976</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900327.png"
-alt="image-20241025190038013" />
-<figcaption aria-hidden="true">image-20241025190038013</figcaption>
-</figure>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858119.png" alt="image-20241025185816867"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858423.png" alt="image-20241025185846014"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251858492.png" alt="image-20241025185859150"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251859080.png" alt="image-20241025185922772"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251859342.png" alt="image-20241025185944051"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900719.png" alt="image-20241025190003331"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900212.png" alt="image-20241025190017976"></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410251900327.png" alt="image-20241025190038013"></p>
 
     
 
@@ -1369,17 +1179,13 @@ alt="image-20241025190038013" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="算法与数据结构入门">【9.算法与数据结构入门】</h1>
-<p>任何程序的本质都是算法 + 数据结构。 ——闫学灿</p>
-<h2 id="枚举">枚举</h2>
-<p>通过枚举的方式求集合的最小值、最大值、元素数量，就是枚举算法。</p>
-<hr />
-<h2 id="递推">递推</h2>
-<p>逐步通过前面的状态推导出后面的状态，就是递推算法。</p>
-<hr />
-<h2 id="递归">递归</h2>
-<p>将原问题逐步变成规模更小的子问题，就是递归算法。</p>
-<hr />
+    <h1 id="【9-算法与数据结构入门】"><a href="#【9-算法与数据结构入门】" class="headerlink" title="【9.算法与数据结构入门】"></a>【9.算法与数据结构入门】</h1><p>任何程序的本质都是算法 + 数据结构。 ——闫学灿</p>
+<h2 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h2><p>通过枚举的方式求集合的最小值、最大值、元素数量，就是枚举算法。</p>
+<hr>
+<h2 id="递推"><a href="#递推" class="headerlink" title="递推"></a>递推</h2><p>逐步通过前面的状态推导出后面的状态，就是递推算法。</p>
+<hr>
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><p>将原问题逐步变成规模更小的子问题，就是递归算法。</p>
+<hr>
     
     <a class="article-more-a" href="/2024/05/04/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E3%80%90tutorial%E3%80%91/%E3%80%909.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%85%A5%E9%97%A8%E3%80%91/#more">more >></a>
     
@@ -1467,88 +1273,40 @@ alt="image-20241025190038013" />
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="装饰器">【装饰器】</h1>
-<p>装饰器（decorators）是 Python
-中的一种高级功能，它允许你动态地修改函数或类的行为。</p>
+    <h1 id="【装饰器】"><a href="#【装饰器】" class="headerlink" title="【装饰器】"></a>【装饰器】</h1><p>装饰器（decorators）是 Python 中的一种高级功能，它允许你动态地修改函数或类的行为。</p>
 <p>装饰器是一种函数，它接受一个函数作为参数，并返回一个新的函数或修改原来的函数。</p>
-<p>装饰器的语法使用 <strong><code>@decorator_name</code></strong>
-来应用在函数或方法上。</p>
-<p>Python 还提供了一些内置的装饰器，比如
-<strong><code>@staticmethod</code></strong> 和
-<strong><code>@classmethod</code></strong>，用于定义静态方法和类方法。</p>
+<p>装饰器的语法使用 <strong><code>@decorator_name</code></strong> 来应用在函数或方法上。</p>
+<p>Python 还提供了一些内置的装饰器，比如 <strong><code>@staticmethod</code></strong> 和 <strong><code>@classmethod</code></strong>，用于定义静态方法和类方法。</p>
 <p><strong>装饰器的应用场景：</strong></p>
 <ul>
-<li><strong>日志记录</strong>:
-装饰器可用于记录函数的调用信息、参数和返回值。</li>
+<li><strong>日志记录</strong>: 装饰器可用于记录函数的调用信息、参数和返回值。</li>
 <li><strong>性能分析</strong>: 可以使用装饰器来测量函数的执行时间。</li>
-<li><strong>权限控制</strong>:
-装饰器可用于限制对某些函数的访问权限。</li>
-<li><strong>缓存</strong>:
-装饰器可用于实现函数结果的缓存，以提高性能。</li>
+<li><strong>权限控制</strong>: 装饰器可用于限制对某些函数的访问权限。</li>
+<li><strong>缓存</strong>: 装饰器可用于实现函数结果的缓存，以提高性能。</li>
 </ul>
-<h2 id="基本语法">基本语法</h2>
-<p>Python
-装饰允许在不修改原有函数代码的基础上，动态地增加或修改函数的功能，装饰器本质上是一个接收函数作为输入并返回一个新的包装过后的函数的对象。</p>
+<h2 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h2><p>Python 装饰允许在不修改原有函数代码的基础上，动态地增加或修改函数的功能，装饰器本质上是一个接收函数作为输入并返回一个新的包装过后的函数的对象。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decorator_function</span>(<span class="params">original_function</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="comment"># 这里是在调用原始函数前添加的新功能</span></span><br><span class="line">        before_call_code()</span><br><span class="line">        </span><br><span class="line">        result = original_function(*args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 这里是在调用原始函数后添加的新功能</span></span><br><span class="line">        after_call_code()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用装饰器</span></span><br><span class="line"><span class="meta">@decorator_function</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">target_function</span>(<span class="params">arg1, arg2</span>):</span><br><span class="line">    <span class="keyword">pass</span>  <span class="comment"># 原始函数的实现</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 之后正常调用即可</span></span><br><span class="line">target_function(...)</span><br></pre></td></tr></table></figure>
-<p><strong>解析：</strong><code>decorator</code>
-是一个装饰器函数，它接受一个函数 <code>func</code>
-作为参数，并返回一个内部函数 <code>wrapper</code>，在
-<code>wrapper</code>
-函数内部，你可以执行一些额外的操作，然后调用原始函数
-<code>func</code>，并返回其结果。</p>
+<p><strong>解析：</strong><code>decorator</code> 是一个装饰器函数，它接受一个函数 <code>func</code> 作为参数，并返回一个内部函数 <code>wrapper</code>，在 <code>wrapper</code> 函数内部，你可以执行一些额外的操作，然后调用原始函数 <code>func</code>，并返回其结果。</p>
 <ul>
-<li><code>decorator_function</code> 是装饰器，它接收一个函数
-<code>original_function</code> 作为参数。</li>
-<li><code>wrapper</code>
-是内部函数，它是实际会被调用的新函数，它包裹了原始函数的调用，并在其前后增加了额外的行为。</li>
-<li>当我们使用 <code>@decorator_function</code> 前缀在
-<code>target_function</code> 定义前，Python会自动将
-<code>target_function</code> 作为参数传递给
-<code>decorator_function</code>，然后将返回的 <code>wrapper</code>
-函数替换掉原来的 <code>target_function</code>。</li>
+<li><code>decorator_function</code> 是装饰器，它接收一个函数 <code>original_function</code> 作为参数。</li>
+<li><code>wrapper</code> 是内部函数，它是实际会被调用的新函数，它包裹了原始函数的调用，并在其前后增加了额外的行为。</li>
+<li>当我们使用 <code>@decorator_function</code> 前缀在 <code>target_function</code> 定义前，Python会自动将 <code>target_function</code> 作为参数传递给 <code>decorator_function</code>，然后将返回的 <code>wrapper</code> 函数替换掉原来的 <code>target_function</code>。</li>
 </ul>
-<h2 id="使用装饰器">使用装饰器</h2>
-<p>装饰器通过 <strong><code>@</code></strong>
-符号应用在函数定义之前，例如：</p>
+<h2 id="使用装饰器"><a href="#使用装饰器" class="headerlink" title="使用装饰器"></a>使用装饰器</h2><p>装饰器通过 <strong><code>@</code></strong> 符号应用在函数定义之前，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@time_logger</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">target_function</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>等同于：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">target_function</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line">target_function = time_logger(target_function)</span><br></pre></td></tr></table></figure>
-<p>这会将 <code>target_function</code> 函数传递给 <code>decorator</code>
-装饰器，并将返回的函数重新赋值给
-<code>target_function</code>。从而，每次调用
-<code>target_function</code>
-时，实际上是调用了经过装饰器处理后的函数。</p>
+<p>这会将 <code>target_function</code> 函数传递给 <code>decorator</code> 装饰器，并将返回的函数重新赋值给 <code>target_function</code>。从而，每次调用 <code>target_function</code> 时，实际上是调用了经过装饰器处理后的函数。</p>
 <p>通过装饰器，开发者可以在保持代码整洁的同时，灵活且高效地扩展程序的功能。</p>
-<h2 id="带参数的装饰器">带参数的装饰器</h2>
-<p>装饰器函数也可以接受参数，例如：</p>
+<h2 id="带参数的装饰器"><a href="#带参数的装饰器" class="headerlink" title="带参数的装饰器"></a>带参数的装饰器</h2><p>装饰器函数也可以接受参数，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">repeat</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">                result = func(*args, **kwargs)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> decorator</span><br><span class="line"></span><br><span class="line"><span class="comment"># repeat(3) 相当于函数调用将参数 n 传入闭包中，然后返回装饰器 decorator，也就等价于 @decorator</span></span><br><span class="line"><span class="meta">@repeat(<span class="params"><span class="number">3</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">greet</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Hello, <span class="subst">&#123;name&#125;</span>!&quot;</span>)</span><br><span class="line"></span><br><span class="line">greet(<span class="string">&quot;Alice&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>以上代码中 <code>repeat</code>
-函数是一个带参数的装饰器，它接受一个整数参数
-<code>n</code>，然后返回一个装饰器函数。该装饰器函数内部定义了
-<code>wrapper</code> 函数，在调用原始函数之前重复执行 <code>n</code>
-次。因此，<code>greet</code> 函数在被 <code>@repeat(3)</code>
-装饰后，会打印三次问候语。</p>
-<h2 id="类装饰器">类装饰器</h2>
-<p>除了函数装饰器，Python 还支持类装饰器。类装饰器是包含
-<code>__call__</code>
-方法的类，它接受一个函数作为参数，并返回一个新的函数。</p>
+<p>以上代码中 <code>repeat</code> 函数是一个带参数的装饰器，它接受一个整数参数 <code>n</code>，然后返回一个装饰器函数。该装饰器函数内部定义了 <code>wrapper</code> 函数，在调用原始函数之前重复执行 <code>n</code> 次。因此，<code>greet</code> 函数在被 <code>@repeat(3)</code> 装饰后，会打印三次问候语。</p>
+<h2 id="类装饰器"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器</h2><p>除了函数装饰器，Python 还支持类装饰器。类装饰器是包含 <code>__call__</code> 方法的类，它接受一个函数作为参数，并返回一个新的函数。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">DecoratorClass</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, func</span>):</span><br><span class="line">        self.func = func</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">        <span class="comment"># 在调用原始函数之前执行的代码</span></span><br><span class="line">        </span><br><span class="line">        result = self.func(*args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 在调用原始函数之后执行的代码</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="meta">@DecoratorClass</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 等价于</span></span><br><span class="line">my_function = DecoratorClass(my_function)</span><br></pre></td></tr></table></figure>
-<p><strong>解析：</strong>这段代码的意思是：将 <code>my_function</code>
-函数传递给 <code>DecoratorClass</code> 的构造函数，创建一个
-<code>DecoratorClass</code> 的实例，并将其替换掉
-<code>my_function</code>。当你调用 <code>my_function()</code>
-时，实际上会调用 <code>DecoratorClass</code> 实例的
-<code>__call__</code> 方法。</p>
+<p><strong>解析：</strong>这段代码的意思是：将 <code>my_function</code> 函数传递给 <code>DecoratorClass</code> 的构造函数，创建一个 <code>DecoratorClass</code> 的实例，并将其替换掉 <code>my_function</code>。当你调用 <code>my_function()</code> 时，实际上会调用 <code>DecoratorClass</code> 实例的 <code>__call__</code> 方法。</p>
 <ul>
-<li><strong><code>__init__</code> 方法</strong>: 这个方法在创建
-<code>DecoratorClass</code> 的实例时被调用。它接受一个参数
-<code>func</code>，这个参数是你要装饰的函数。在这里，<code>self.func</code>
-就是存储了这个函数的引用。</li>
-<li><strong><code>__call__</code> 方法</strong>:
-这个方法使得类的实例可以像函数一样被调用。当你调用
-<code>@DecoratorClass</code> 装饰 <code>my_function</code>
-时，实际上是创建了 <code>DecoratorClass</code> 的一个实例，并将
-<code>my_function</code> 作为参数传递给它。</li>
+<li><strong><code>__init__</code> 方法</strong>: 这个方法在创建 <code>DecoratorClass</code> 的实例时被调用。它接受一个参数 <code>func</code>，这个参数是你要装饰的函数。在这里，<code>self.func</code> 就是存储了这个函数的引用。</li>
+<li><strong><code>__call__</code> 方法</strong>: 这个方法使得类的实例可以像函数一样被调用。当你调用 <code>@DecoratorClass</code> 装饰 <code>my_function</code> 时，实际上是创建了 <code>DecoratorClass</code> 的一个实例，并将 <code>my_function</code> 作为参数传递给它。</li>
 </ul>
 
     
@@ -1772,15 +1530,11 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1788,27 +1542,7 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1816,7 +1550,15 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1824,7 +1566,11 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1832,7 +1578,19 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1840,15 +1598,19 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1860,7 +1622,7 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1876,10 +1638,6 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
@@ -1892,19 +1650,19 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1916,7 +1674,7 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1924,7 +1682,7 @@ alt="image-20241025190038013" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

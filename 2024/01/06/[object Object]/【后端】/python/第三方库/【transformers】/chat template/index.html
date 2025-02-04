@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="chat template介绍LLM 的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型）， 聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等 角色，还包括消息文本。 与Tokenizer类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加聊天模板作为一个功能的原因。 聊天模板是Tokenizer的一部分。用来把问答的">
+  <meta name="description" content="chat template 介绍 LLM 的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型）， 聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等 角色，还包括消息文本。 与Tokenizer类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加聊天模板作为一个功能的原因。 聊天模板是Tokenizer的一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="chat template">
 <meta property="og:url" content="https://luyicui.github.io/2024/01/06/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/chat%20template/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="chat template介绍LLM 的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型）， 聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等 角色，还包括消息文本。 与Tokenizer类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加聊天模板作为一个功能的原因。 聊天模板是Tokenizer的一部分。用来把问答的">
+<meta property="og:description" content="chat template 介绍 LLM 的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型）， 聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等 角色，还包括消息文本。 与Tokenizer类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加聊天模板作为一个功能的原因。 聊天模板是Tokenizer的一">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
 <meta property="article:modified_time" content="2025-01-22T07:44:20.004Z">
@@ -262,14 +262,29 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="chat-template"><a href="#chat-template" class="headerlink" title="chat template"></a>chat template</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>LLM 的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型）， 聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等 <strong>角色</strong>，还包括消息文本。</p>
-<p>与<code>Tokenizer</code>类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加<strong>聊天模板</strong>作为一个功能的原因。 聊天模板是<code>Tokenizer</code>的一部分。用来把问答的对话内容转换为模型的输入<code>prompt</code>。</p>
-<p>让我们通过一个快速的示例来具体说明，使用<code>BlenderBot</code>模型。 BlenderBot有一个非常简单的默认模板，主要是在对话轮之间添加空格：</p>
+    <h1 id="chat-template">chat template</h1>
+<h2 id="介绍">介绍</h2>
+<p>LLM
+的一个常见应用场景是聊天。在聊天上下文中，不再是连续的文本字符串构成的语句（不同于标准的语言模型），
+聊天模型由一条或多条消息组成的对话组成，每条消息都有一个“用户”或“助手”等
+<strong>角色</strong>，还包括消息文本。</p>
+<p>与<code>Tokenizer</code>类似，不同的模型对聊天的输入格式要求也不同。这就是我们添加<strong>聊天模板</strong>作为一个功能的原因。
+聊天模板是<code>Tokenizer</code>的一部分。用来把问答的对话内容转换为模型的输入<code>prompt</code>。</p>
+<p>让我们通过一个快速的示例来具体说明，使用<code>BlenderBot</code>模型。
+BlenderBot有一个非常简单的默认模板，主要是在对话轮之间添加空格：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;facebook/blenderbot-400M-distill&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chat = [</span><br><span class="line"><span class="meta">... </span>   &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Hello, how are you?&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>   &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;I&#x27;m doing great. How can I help you today?&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>   &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;I&#x27;d like to show off how chat templating works!&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer.apply_chat_template(chat, tokenize=<span class="literal">False</span>)</span><br><span class="line"><span class="string">&quot; Hello, how are you?  I&#x27;m doing great. How can I help you today?   I&#x27;d like to show off how chat templating works!&lt;/s&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>注意，整个聊天对话内容被压缩成了一整个字符串。如果我们使用默认设置的<code>tokenize=True</code>，那么该字符串也将被tokenized处理。 不过，为了看到更复杂的模板实际运行，让我们使用<code>mistralai/Mistral-7B-Instruct-v0.1</code>模型。</p>
+<p>注意，整个聊天对话内容被压缩成了一整个字符串。如果我们使用默认设置的<code>tokenize=True</code>，那么该字符串也将被tokenized处理。
+不过，为了看到更复杂的模板实际运行，让我们使用<code>mistralai/Mistral-7B-Instruct-v0.1</code>模型。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;mistralai/Mistral-7B-Instruct-v0.1&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chat = [</span><br><span class="line"><span class="meta">... </span>  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Hello, how are you?&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;I&#x27;m doing great. How can I help you today?&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>  &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;I&#x27;d like to show off how chat templating works!&quot;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer.apply_chat_template(chat, tokenize=<span class="literal">False</span>)</span><br><span class="line"><span class="string">&quot;&lt;s&gt;[INST] Hello, how are you? [/INST]I&#x27;m doing great. How can I help you today?&lt;/s&gt; [INST] I&#x27;d like to show off how chat templating works! [/INST]&quot;</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，这一次tokenizer已经添加了[INST]和[/INST]来表示用户消息的开始和结束。 Mistral-instruct是有使用这些token进行训练的，但BlenderBot没有。</p>
-<h2 id="我如何使用聊天模板？"><a href="#我如何使用聊天模板？" class="headerlink" title="我如何使用聊天模板？"></a>我如何使用聊天模板？</h2><p>正如您在上面的示例中所看到的，聊天模板非常容易使用。只需构建一系列带有<code>role</code>和<code>content</code>键的消息， 然后将其传递给<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>方法。 另外，在将聊天模板用作模型预测的输入时，还建议使用<code>add_generation_prompt=True</code>来添加<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/chat_templating#什么是generation-prompts">generation prompt</a>。</p>
+<p>可以看到，这一次tokenizer已经添加了[INST]和[/INST]来表示用户消息的开始和结束。
+Mistral-instruct是有使用这些token进行训练的，但BlenderBot没有。</p>
+<h2 id="我如何使用聊天模板">我如何使用聊天模板？</h2>
+<p>正如您在上面的示例中所看到的，聊天模板非常容易使用。只需构建一系列带有<code>role</code>和<code>content</code>键的消息，
+然后将其传递给<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>方法。
+另外，在将聊天模板用作模型预测的输入时，还建议使用<code>add_generation_prompt=True</code>来添加<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/chat_templating#什么是generation-prompts">generation
+prompt</a>。</p>
 <p>这是一个准备<code>model.generate()</code>的示例，使用<code>Zephyr</code>模型：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer</span><br><span class="line"></span><br><span class="line">checkpoint = <span class="string">&quot;HuggingFaceH4/zephyr-7b-beta&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(checkpoint)</span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(checkpoint)  <span class="comment"># You may want to use bfloat16 and/or move to GPU here</span></span><br><span class="line"></span><br><span class="line">messages = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>,</span><br><span class="line">        <span class="string">&quot;content&quot;</span>: <span class="string">&quot;You are a friendly chatbot who always responds in the style of a pirate&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;How many helicopters can a human eat in one sitting?&quot;</span>&#125;,</span><br><span class="line"> ]</span><br><span class="line">tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=<span class="literal">True</span>, add_generation_prompt=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(tokenizer.decode(tokenized_chat[<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
 <p>这将生成Zephyr期望的输入格式的字符串。它看起来像这样：</p>
@@ -279,58 +294,121 @@
 <p>输出结果是：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;|system|&gt;</span><br><span class="line">You are a friendly chatbot who always responds in the style of a pirate&lt;/s&gt; </span><br><span class="line">&lt;|user|&gt;</span><br><span class="line">How many helicopters can a human eat in one sitting?&lt;/s&gt; </span><br><span class="line">&lt;|assistant|&gt;</span><br><span class="line">Matey, I&#x27;m afraid I must inform ye that humans cannot eat helicopters. Helicopters are not food, they are flying machines. Food is meant to be eaten, like a hearty plate o&#x27; grog, a savory bowl o&#x27; stew, or a delicious loaf o&#x27; bread. But helicopters, they be for transportin&#x27; and movin&#x27; around, not for eatin&#x27;. So, I&#x27;d say none, me hearties. None at all.</span><br></pre></td></tr></table></figure>
 <p>啊，原来这么容易！</p>
-<h2 id="有自动化的聊天-pipeline-吗？"><a href="#有自动化的聊天-pipeline-吗？" class="headerlink" title="有自动化的聊天 pipeline 吗？"></a>有自动化的聊天 pipeline 吗？</h2><p>有的，<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>。这个<code>pipeline</code>的设计是为了方便使用聊天模型。让我们再试一次 Zephyr 的例子，但这次使用<code>pipeline</code>：</p>
+<h2 id="有自动化的聊天-pipeline-吗">有自动化的聊天 pipeline 吗？</h2>
+<p>有的，<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>。这个<code>pipeline</code>的设计是为了方便使用聊天模型。让我们再试一次
+Zephyr 的例子，但这次使用<code>pipeline</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> pipeline</span><br><span class="line"></span><br><span class="line">pipe = pipeline(<span class="string">&quot;text-generation&quot;</span>, <span class="string">&quot;HuggingFaceH4/zephyr-7b-beta&quot;</span>)</span><br><span class="line">messages = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>,</span><br><span class="line">        <span class="string">&quot;content&quot;</span>: <span class="string">&quot;You are a friendly chatbot who always responds in the style of a pirate&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;How many helicopters can a human eat in one sitting?&quot;</span>&#125;,</span><br><span class="line">]</span><br><span class="line"><span class="built_in">print</span>(pipe(messages, max_new_tokens=<span class="number">256</span>)[<span class="string">&#x27;generated_text&#x27;</span>][-<span class="number">1</span>])</span><br><span class="line">&#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;assistant&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: <span class="string">&quot;Matey, I&#x27;m afraid I must inform ye that humans cannot eat helicopters. Helicopters are not food, they are flying machines. Food is meant to be eaten, like a hearty plate o&#x27; grog, a savory bowl o&#x27; stew, or a delicious loaf o&#x27; bread. But helicopters, they be for transportin&#x27; and movin&#x27; around, not for eatin&#x27;. So, I&#x27;d say none, me hearties. None at all.&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>将负责处理所有的<code>tokenized</code>并调用<code>apply_chat_template</code>，一旦模型有了聊天模板，您只需要初始化pipeline并传递消息列表！</p>
-<h2 id="什么是”generation-prompts”"><a href="#什么是”generation-prompts”" class="headerlink" title="什么是”generation prompts”?"></a>什么是”generation prompts”?</h2><p>您可能已经注意到<code>apply_chat_template</code>方法有一个<code>add_generation_prompt</code>参数。 这个参数告诉模板添加模型开始答复的标记。例如，考虑以下对话：</p>
+<p><a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>将负责处理所有的<code>tokenized</code>并调用<code>apply_chat_template</code>，一旦模型有了聊天模板，您只需要初始化pipeline并传递消息列表！</p>
+<h2 id="什么是generation-prompts">什么是”generation prompts”?</h2>
+<p>您可能已经注意到<code>apply_chat_template</code>方法有一个<code>add_generation_prompt</code>参数。
+这个参数告诉模板添加模型开始答复的标记。例如，考虑以下对话：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">messages = [</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Hi there!&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Nice to meet you!&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Can I ask a question?&quot;</span>&#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p>这是<code>add_generation_prompt=False</code>的结果，使用ChatML模板：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)</span><br><span class="line">&quot;&quot;&quot;&lt;|im_start|&gt;user</span><br><span class="line">Hi there!&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;assistant</span><br><span class="line">Nice to meet you!&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;user</span><br><span class="line">Can I ask a question?&lt;|im_end|&gt;</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
 <p>下面这是<code>add_generation_prompt=True</code>的结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)</span><br><span class="line">&quot;&quot;&quot;&lt;|im_start|&gt;user</span><br><span class="line">Hi there!&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;assistant</span><br><span class="line">Nice to meet you!&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;user</span><br><span class="line">Can I ask a question?&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;assistant</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
-<p>这一次我们添加了模型开始答复的标记。这可以确保模型生成文本时只会给出答复，而不会做出意外的行为，比如继续用户的消息。 记住，聊天模型只是语言模型，它们被训练来继续文本，而聊天对它们来说只是一种特殊的文本！ 你需要用适当的控制标记来引导它们，让它们知道自己应该做什么。</p>
-<p>并非所有模型都需要生成提示。一些模型，如BlenderBot和LLaMA，在模型回复之前没有任何特殊标记。 在这些情况下，<code>add_generation_prompt</code>参数将不起作用。<code>add_generation_prompt</code>参数取决于你所使用的模板。</p>
-<h2 id="我可以在训练中使用聊天模板吗？"><a href="#我可以在训练中使用聊天模板吗？" class="headerlink" title="我可以在训练中使用聊天模板吗？"></a>我可以在训练中使用聊天模板吗？</h2><p>可以！我们建议您将聊天模板应用为数据集的预处理步骤。之后，您可以像进行任何其他语言模型训练任务一样继续。 在训练时，通常应该设置<code>add_generation_prompt=False</code>，因为添加的助手标记在训练过程中并不会有帮助。 让我们看一个例子：</p>
+<p>这一次我们添加了模型开始答复的标记。这可以确保模型生成文本时只会给出答复，而不会做出意外的行为，比如继续用户的消息。
+记住，聊天模型只是语言模型，它们被训练来继续文本，而聊天对它们来说只是一种特殊的文本！
+你需要用适当的控制标记来引导它们，让它们知道自己应该做什么。</p>
+<p>并非所有模型都需要生成提示。一些模型，如BlenderBot和LLaMA，在模型回复之前没有任何特殊标记。
+在这些情况下，<code>add_generation_prompt</code>参数将不起作用。<code>add_generation_prompt</code>参数取决于你所使用的模板。</p>
+<h2
+id="我可以在训练中使用聊天模板吗">我可以在训练中使用聊天模板吗？</h2>
+<p>可以！我们建议您将聊天模板应用为数据集的预处理步骤。之后，您可以像进行任何其他语言模型训练任务一样继续。
+在训练时，通常应该设置<code>add_generation_prompt=False</code>，因为添加的助手标记在训练过程中并不会有帮助。
+让我们看一个例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> Dataset</span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;HuggingFaceH4/zephyr-7b-beta&quot;</span>)</span><br><span class="line"></span><br><span class="line">chat1 = [</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Which is bigger, the moon or the sun?&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;The sun.&quot;</span>&#125;</span><br><span class="line">]</span><br><span class="line">chat2 = [</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;Which is bigger, a virus or a bacterium?&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;A bacterium.&quot;</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">dataset = Dataset.from_dict(&#123;<span class="string">&quot;chat&quot;</span>: [chat1, chat2]&#125;)</span><br><span class="line">dataset = dataset.<span class="built_in">map</span>(<span class="keyword">lambda</span> x: &#123;<span class="string">&quot;formatted_chat&quot;</span>: tokenizer.apply_chat_template(x[<span class="string">&quot;chat&quot;</span>], tokenize=<span class="literal">False</span>, add_generation_prompt=<span class="literal">False</span>)&#125;)</span><br><span class="line"><span class="built_in">print</span>(dataset[<span class="string">&#x27;formatted_chat&#x27;</span>][<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
 <p>结果是：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;|user|&gt;</span><br><span class="line">Which is bigger, the moon or the sun?&lt;/s&gt;</span><br><span class="line">&lt;|assistant|&gt;</span><br><span class="line">The sun.&lt;/s&gt;</span><br></pre></td></tr></table></figure>
 <p>这样，后面你可以使用<code>formatted_chat</code>列，跟标准语言建模任务中一样训练即可。</p>
-<h2 id="高级：聊天模板是如何工作的？"><a href="#高级：聊天模板是如何工作的？" class="headerlink" title="高级：聊天模板是如何工作的？"></a>高级：聊天模板是如何工作的？</h2><p>模型的聊天模板存储在<code>tokenizer.chat_template</code>属性上。如果没有设置，则将使用该模型的默认模板。 让我们来看看<code>BlenderBot</code>的模板：</p>
+<h2 id="高级聊天模板是如何工作的">高级：聊天模板是如何工作的？</h2>
+<p>模型的聊天模板存储在<code>tokenizer.chat_template</code>属性上。如果没有设置，则将使用该模型的默认模板。
+让我们来看看<code>BlenderBot</code>的模板：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;facebook/blenderbot-400M-distill&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tokenizer.chat_template</span><br><span class="line"><span class="string">&quot;&#123;% for message in messages %&#125;&#123;% if message[&#x27;role&#x27;] == &#x27;user&#x27; %&#125;&#123;&#123; &#x27; &#x27; &#125;&#125;&#123;% endif %&#125;&#123;&#123; message[&#x27;content&#x27;] &#125;&#125;&#123;% if not loop.last %&#125;&#123;&#123; &#x27;  &#x27; &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;&#123;&#123; eos_token &#125;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>这看着有点复杂。让我们添加一些换行和缩进，使其更易读。 请注意，默认情况下忽略每个块后的第一个换行以及块之前的任何前导空格， 使用Jinja的<code>trim_blocks</code>和<code>lstrip_blocks</code>标签。 这里，请注意空格的使用。我们强烈建议您仔细检查模板是否打印了多余的空格！</p>
+<p>这看着有点复杂。让我们添加一些换行和缩进，使其更易读。
+请注意，默认情况下忽略每个块后的第一个换行以及块之前的任何前导空格，
+使用Jinja的<code>trim_blocks</code>和<code>lstrip_blocks</code>标签。
+这里，请注意空格的使用。我们强烈建议您仔细检查模板是否打印了多余的空格！</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for message in messages %&#125;</span><br><span class="line">    &#123;% if message[&#x27;role&#x27;] == &#x27;user&#x27; %&#125;</span><br><span class="line">        &#123;&#123; &#x27; &#x27; &#125;&#125;</span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">    &#123;&#123; message[&#x27;content&#x27;] &#125;&#125;</span><br><span class="line">    &#123;% if not loop.last %&#125;</span><br><span class="line">        &#123;&#123; &#x27;  &#x27; &#125;&#125;</span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&#123;&#123; eos_token &#125;&#125;</span><br></pre></td></tr></table></figure>
-<p>如果你之前不了解<a target="_blank" rel="noopener" href="https://jinja.palletsprojects.com/en/3.1.x/templates/">Jinja template</a>。 Jinja是一种模板语言，允许你编写简单的代码来生成文本。 在许多方面，代码和语法类似于Python。在纯Python中，这个模板看起来会像这样：</p>
+<p>如果你之前不了解<a
+target="_blank" rel="noopener" href="https://jinja.palletsprojects.com/en/3.1.x/templates/">Jinja
+template</a>。 Jinja是一种模板语言，允许你编写简单的代码来生成文本。
+在许多方面，代码和语法类似于Python。在纯Python中，这个模板看起来会像这样：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx, message <span class="keyword">in</span> <span class="built_in">enumerate</span>(messages):</span><br><span class="line">    <span class="keyword">if</span> message[<span class="string">&#x27;role&#x27;</span>] == <span class="string">&#x27;user&#x27;</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(message[<span class="string">&#x27;content&#x27;</span>])</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> idx == <span class="built_in">len</span>(messages) - <span class="number">1</span>:  <span class="comment"># Check for the last message in the conversation</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;  &#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(eos_token)</span><br></pre></td></tr></table></figure>
 <p>这里使用Jinja模板处理如下三步：</p>
-<ol>
+<ol type="1">
 <li>对于每条消息，如果消息是用户消息，则在其前面添加一个空格，否则不打印任何内容</li>
 <li>添加消息内容</li>
 <li>如果消息不是最后一条，请在其后添加两个空格。在最后一条消息之后，打印<code>EOS</code>。</li>
 </ol>
-<p>这是一个简单的模板，它不添加任何控制tokens，也不支持<code>system</code>消息（常用于指导模型在后续对话中如何表现）。 但 Jinja 给了你很大的灵活性来做这些事情！让我们看一个 Jinja 模板， 它可以实现类似于LLaMA的prompt输入（请注意，真正的LLaMA模板包括<code>system</code>消息，请不要在实际代码中使用这个简单模板！）</p>
+<p>这是一个简单的模板，它不添加任何控制tokens，也不支持<code>system</code>消息（常用于指导模型在后续对话中如何表现）。
+但 Jinja 给了你很大的灵活性来做这些事情！让我们看一个 Jinja 模板，
+它可以实现类似于LLaMA的prompt输入（请注意，真正的LLaMA模板包括<code>system</code>消息，请不要在实际代码中使用这个简单模板！）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for message in messages %&#125;</span><br><span class="line">    &#123;% if message[&#x27;role&#x27;] == &#x27;user&#x27; %&#125;</span><br><span class="line">        &#123;&#123; bos_token + &#x27;[INST] &#x27; + message[&#x27;content&#x27;] + &#x27; [/INST]&#x27; &#125;&#125;</span><br><span class="line">    &#123;% elif message[&#x27;role&#x27;] == &#x27;system&#x27; %&#125;</span><br><span class="line">        &#123;&#123; &#x27;&lt;&lt;SYS&gt;&gt;\\n&#x27; + message[&#x27;content&#x27;] + &#x27;\\n&lt;&lt;/SYS&gt;&gt;\\n\\n&#x27; &#125;&#125;</span><br><span class="line">    &#123;% elif message[&#x27;role&#x27;] == &#x27;assistant&#x27; %&#125;</span><br><span class="line">        &#123;&#123; &#x27; &#x27;  + message[&#x27;content&#x27;] + &#x27; &#x27; + eos_token &#125;&#125;</span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
-<p>这里稍微看一下，就能明白这个模板的作用：它根据每条消息的“角色”添加对应的消息。 <code>user</code>、<code>assistant</code>、<code>system</code>的消息需要分别处理，因为它们代表不同的角色输入。</p>
-<h2 id="高级：编辑聊天模板"><a href="#高级：编辑聊天模板" class="headerlink" title="高级：编辑聊天模板"></a>高级：编辑聊天模板</h2><h3 id="如何创建聊天模板？"><a href="#如何创建聊天模板？" class="headerlink" title="如何创建聊天模板？"></a>如何创建聊天模板？</h3><p>很简单，你只需编写一个jinja模板并设置<code>tokenizer.chat_template</code>。你也可以从一个现有模板开始，只需要简单编辑便可以！ 例如，我们可以采用上面的LLaMA模板，并在助手消息中添加”[ASST]“和”[/ASST]“：</p>
+<p>这里稍微看一下，就能明白这个模板的作用：它根据每条消息的“角色”添加对应的消息。
+<code>user</code>、<code>assistant</code>、<code>system</code>的消息需要分别处理，因为它们代表不同的角色输入。</p>
+<h2 id="高级编辑聊天模板">高级：编辑聊天模板</h2>
+<h3 id="如何创建聊天模板">如何创建聊天模板？</h3>
+<p>很简单，你只需编写一个jinja模板并设置<code>tokenizer.chat_template</code>。你也可以从一个现有模板开始，只需要简单编辑便可以！
+例如，我们可以采用上面的LLaMA模板，并在助手消息中添加”[ASST]“和”[/ASST]“：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for message in messages %&#125;</span><br><span class="line">    &#123;% if message[&#x27;role&#x27;] == &#x27;user&#x27; %&#125;</span><br><span class="line">        &#123;&#123; bos_token + &#x27;[INST] &#x27; + message[&#x27;content&#x27;].strip() + &#x27; [/INST]&#x27; &#125;&#125;</span><br><span class="line">    &#123;% elif message[&#x27;role&#x27;] == &#x27;system&#x27; %&#125;</span><br><span class="line">        &#123;&#123; &#x27;&lt;&lt;SYS&gt;&gt;\\n&#x27; + message[&#x27;content&#x27;].strip() + &#x27;\\n&lt;&lt;/SYS&gt;&gt;\\n\\n&#x27; &#125;&#125;</span><br><span class="line">    &#123;% elif message[&#x27;role&#x27;] == &#x27;assistant&#x27; %&#125;</span><br><span class="line">        &#123;&#123; &#x27;[ASST] &#x27;  + message[&#x27;content&#x27;] + &#x27; [/ASST]&#x27; + eos_token &#125;&#125;</span><br><span class="line">    &#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
-<p>现在，只需设置<code>tokenizer.chat_template</code>属性。下次使用<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>时，它将使用您的新模板！ 此属性将保存在<code>tokenizer_config.json</code>文件中，因此您可以使用<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/model#transformers.utils.PushToHubMixin.push_to_hub">push_to_hub()</a>将新模板上传到 Hub， 这样每个人都可以使用你模型的模板！</p>
+<p>现在，只需设置<code>tokenizer.chat_template</code>属性。下次使用<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>时，它将使用您的新模板！
+此属性将保存在<code>tokenizer_config.json</code>文件中，因此您可以使用<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/model#transformers.utils.PushToHubMixin.push_to_hub">push_to_hub()</a>将新模板上传到
+Hub， 这样每个人都可以使用你模型的模板！</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">template = tokenizer.chat_template</span><br><span class="line">template = template.replace(<span class="string">&quot;SYS&quot;</span>, <span class="string">&quot;SYSTEM&quot;</span>)  <span class="comment"># Change the system token</span></span><br><span class="line">tokenizer.chat_template = template  <span class="comment"># Set the new template</span></span><br><span class="line">tokenizer.push_to_hub(<span class="string">&quot;model_name&quot;</span>)  <span class="comment"># Upload your new template to the Hub!</span></span><br></pre></td></tr></table></figure>
-<p>由于<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>方法是由<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>类调用， 因此一旦你设置了聊天模板，您的模型将自动与<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>兼容。</p>
-<h3 id="“默认”模板是什么？"><a href="#“默认”模板是什么？" class="headerlink" title="“默认”模板是什么？"></a>“默认”模板是什么？</h3><p>在引入聊天模板（chat_template）之前，聊天prompt是在模型中通过硬编码处理的。为了向前兼容，我们保留了这种硬编码处理聊天prompt的方法。 如果一个模型没有设置聊天模板，但其模型有默认模板，<code>TextGenerationPipeline</code>类和<code>apply_chat_template</code>等方法将使用该模型的聊天模板。 您可以通过检查<code>tokenizer.default_chat_template</code>属性来查找<code>tokenizer</code>的默认模板。</p>
-<p>这是我们纯粹为了向前兼容性而做的事情，以避免破坏任何现有的工作流程。即使默认的聊天模板适用于您的模型， 我们强烈建议通过显式设置<code>chat_template</code>属性来覆盖默认模板，以便向用户清楚地表明您的模型已经正确的配置了聊天模板， 并且为了未来防范默认模板被修改或弃用的情况。</p>
-<h3 id="我应该使用哪个模板？"><a href="#我应该使用哪个模板？" class="headerlink" title="我应该使用哪个模板？"></a>我应该使用哪个模板？</h3><p>在为已经训练过的聊天模型设置模板时，您应确保模板与模型在训练期间看到的消息格式完全匹配，否则可能会导致性能下降。 即使您继续对模型进行训练，也应保持聊天模板不变，这样可能会获得最佳性能。 这与<code>tokenization</code>非常类似，在推断时，你选用跟训练时一样的<code>tokenization</code>，通常会获得最佳性能。</p>
-<p>如果您从头开始训练模型，或者在微调基础语言模型进行聊天时，您有很大的自由选择适当的模板！ LLMs足够聪明，可以学会处理许多不同的输入格式。我们为没有特定类别模板的模型提供一个默认模板，该模板遵循 <code>ChatML</code> format格式要求，对于许多用例来说， 这是一个很好的、灵活的选择。</p>
+<p>由于<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>方法是由<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>类调用，
+因此一旦你设置了聊天模板，您的模型将自动与<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>兼容。</p>
+<h3 id="默认模板是什么">“默认”模板是什么？</h3>
+<p>在引入聊天模板（chat_template）之前，聊天prompt是在模型中通过硬编码处理的。为了向前兼容，我们保留了这种硬编码处理聊天prompt的方法。
+如果一个模型没有设置聊天模板，但其模型有默认模板，<code>TextGenerationPipeline</code>类和<code>apply_chat_template</code>等方法将使用该模型的聊天模板。
+您可以通过检查<code>tokenizer.default_chat_template</code>属性来查找<code>tokenizer</code>的默认模板。</p>
+<p>这是我们纯粹为了向前兼容性而做的事情，以避免破坏任何现有的工作流程。即使默认的聊天模板适用于您的模型，
+我们强烈建议通过显式设置<code>chat_template</code>属性来覆盖默认模板，以便向用户清楚地表明您的模型已经正确的配置了聊天模板，
+并且为了未来防范默认模板被修改或弃用的情况。</p>
+<h3 id="我应该使用哪个模板">我应该使用哪个模板？</h3>
+<p>在为已经训练过的聊天模型设置模板时，您应确保模板与模型在训练期间看到的消息格式完全匹配，否则可能会导致性能下降。
+即使您继续对模型进行训练，也应保持聊天模板不变，这样可能会获得最佳性能。
+这与<code>tokenization</code>非常类似，在推断时，你选用跟训练时一样的<code>tokenization</code>，通常会获得最佳性能。</p>
+<p>如果您从头开始训练模型，或者在微调基础语言模型进行聊天时，您有很大的自由选择适当的模板！
+LLMs足够聪明，可以学会处理许多不同的输入格式。我们为没有特定类别模板的模型提供一个默认模板，该模板遵循
+<code>ChatML</code> format格式要求，对于许多用例来说，
+这是一个很好的、灵活的选择。</p>
 <p>默认模板看起来像这样：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for message in messages %&#125;</span><br><span class="line">    &#123;&#123;&#x27;&lt;|im_start|&gt;&#x27; + message[&#x27;role&#x27;] + &#x27;\n&#x27; + message[&#x27;content&#x27;] + &#x27;&lt;|im_end|&gt;&#x27; + &#x27;\n&#x27;&#125;&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
-<p>如果您喜欢这个模板，下面是一行代码的模板形式，它可以直接复制到您的代码中。这一行代码还包括了<a href="#什么是”generation prompts”?">generation prompts</a>， 但请注意它不会添加<code>BOS</code>或<code>EOS</code>token。 如果您的模型需要这些token，它们不会被<code>apply_chat_template</code>自动添加，换句话说，文本的默认处理参数是<code>add_special_tokens=False</code>。 这是为了避免模板和<code>add_special_tokens</code>逻辑产生冲突，如果您的模型需要特殊tokens，请确保将它们添加到模板中！</p>
+<p>如果您喜欢这个模板，下面是一行代码的模板形式，它可以直接复制到您的代码中。这一行代码还包括了<a
+href="#什么是”generation%20prompts”?">generation prompts</a>，
+但请注意它不会添加<code>BOS</code>或<code>EOS</code>token。
+如果您的模型需要这些token，它们不会被<code>apply_chat_template</code>自动添加，换句话说，文本的默认处理参数是<code>add_special_tokens=False</code>。
+这是为了避免模板和<code>add_special_tokens</code>逻辑产生冲突，如果您的模型需要特殊tokens，请确保将它们添加到模板中！</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tokenizer.chat_template = &quot;&#123;% if not add_generation_prompt is defined %&#125;&#123;% set add_generation_prompt = false %&#125;&#123;% endif %&#125;&#123;% for message in messages %&#125;&#123;&#123;&#x27;&lt;|im_start|&gt;&#x27; + message[&#x27;role&#x27;] + &#x27;\n&#x27; + message[&#x27;content&#x27;] + &#x27;&lt;|im_end|&gt;&#x27; + &#x27;\n&#x27;&#125;&#125;&#123;% endfor %&#125;&#123;% if add_generation_prompt %&#125;&#123;&#123; &#x27;&lt;|im_start|&gt;assistant\n&#x27; &#125;&#125;&#123;% endif %&#125;&quot;</span><br></pre></td></tr></table></figure>
 <p>该模板将每条消息包装在<code>&lt;|im_start|&gt;</code>和<code>&lt;|im_end|&gt;</code>tokens里面，并将角色简单地写为字符串，这样可以灵活地训练角色。输出如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;|im_start|&gt;system</span><br><span class="line">You are a helpful chatbot that will do its best not to say anything so stupid that people tweet about it.&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;user</span><br><span class="line">How are you?&lt;|im_end|&gt;</span><br><span class="line">&lt;|im_start|&gt;assistant</span><br><span class="line">I&#x27;m doing great!&lt;|im_end|&gt;</span><br></pre></td></tr></table></figure>
-<p><code>user</code>，<code>system</code>和<code>assistant</code>是对话助手模型的标准角色，如果您的模型要与<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>兼容，我们建议你使用这些角色。 但您可以不局限于这些角色，模板非常灵活，任何字符串都可以成为角色。</p>
-<h3 id="如何添加聊天模板？"><a href="#如何添加聊天模板？" class="headerlink" title="如何添加聊天模板？"></a>如何添加聊天模板？</h3><p>如果您有任何聊天模型，您应该设置它们的<code>tokenizer.chat_template</code>属性，并使用<a target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>测试， 然后将更新后的<code>tokenizer</code>推送到 Hub。 即使您不是模型所有者，如果您正在使用一个空的聊天模板或者仍在使用默认的聊天模板， 请发起一个<a target="_blank" rel="noopener" href="https://huggingface.co/docs/hub/repositories-pull-requests-discussions">pull request</a>，以便正确设置该属性！</p>
-<p>一旦属性设置完成，就完成了！<code>tokenizer.apply_chat_template</code>现在将在该模型中正常工作， 这意味着它也会自动支持在诸如<code>TextGenerationPipeline</code>的地方！</p>
-<p>通过确保模型具有这一属性，我们可以确保整个社区都能充分利用开源模型的全部功能。 格式不匹配已经困扰这个领域并悄悄地损害了性能太久了，是时候结束它们了！</p>
-<h2 id="高级：模板写作技巧"><a href="#高级：模板写作技巧" class="headerlink" title="高级：模板写作技巧"></a>高级：模板写作技巧</h2><p>如果你对Jinja不熟悉，我们通常发现编写聊天模板的最简单方法是先编写一个简短的Python脚本，按照你想要的方式格式化消息，然后将该脚本转换为模板。</p>
-<p>请记住，模板处理程序将接收对话历史作为名为<code>messages</code>的变量。每条<code>message</code>都是一个带有两个键<code>role</code>和<code>content</code>的字典。 您可以在模板中像在Python中一样访问<code>messages</code>，这意味着您可以使用<code>&#123;% for message in messages %&#125;`进行循环， 或者例如使用`&#123;&#123; messages[0] &#125;&#125;`访问单个消息。
+<p><code>user</code>，<code>system</code>和<code>assistant</code>是对话助手模型的标准角色，如果您的模型要与<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/main_classes/pipelines#transformers.TextGenerationPipeline">TextGenerationPipeline</a>兼容，我们建议你使用这些角色。
+但您可以不局限于这些角色，模板非常灵活，任何字符串都可以成为角色。</p>
+<h3 id="如何添加聊天模板">如何添加聊天模板？</h3>
+<p>如果您有任何聊天模型，您应该设置它们的<code>tokenizer.chat_template</code>属性，并使用<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/transformers/main/zh/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template">apply_chat_template()</a>测试，
+然后将更新后的<code>tokenizer</code>推送到 Hub。
+即使您不是模型所有者，如果您正在使用一个空的聊天模板或者仍在使用默认的聊天模板，
+请发起一个<a
+target="_blank" rel="noopener" href="https://huggingface.co/docs/hub/repositories-pull-requests-discussions">pull
+request</a>，以便正确设置该属性！</p>
+<p>一旦属性设置完成，就完成了！<code>tokenizer.apply_chat_template</code>现在将在该模型中正常工作，
+这意味着它也会自动支持在诸如<code>TextGenerationPipeline</code>的地方！</p>
+<p>通过确保模型具有这一属性，我们可以确保整个社区都能充分利用开源模型的全部功能。
+格式不匹配已经困扰这个领域并悄悄地损害了性能太久了，是时候结束它们了！</p>
+<h2 id="高级模板写作技巧">高级：模板写作技巧</h2>
+<p>如果你对Jinja不熟悉，我们通常发现编写聊天模板的最简单方法是先编写一个简短的Python脚本，按照你想要的方式格式化消息，然后将该脚本转换为模板。</p>
+<p>请记住，模板处理程序将接收对话历史作为名为<code>messages</code>的变量。每条<code>message</code>都是一个带有两个键<code>role</code>和<code>content</code>的字典。
+您可以在模板中像在Python中一样访问<code>messages</code>，这意味着您可以使用<code>&#123;% for message in messages %&#125;`进行循环， 或者例如使用`&#123;&#123; messages[0] &#125;&#125;`访问单个消息。
 
 您也可以使用以下提示将您的代码转换为Jinja：
 
@@ -349,7 +427,10 @@ Jinja中的if语句如下所示：
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if message[&#x27;role&#x27;] == &#x27;user&#x27; %&#125;</span><br><span class="line">&#123;&#123; message[&#x27;content&#x27;] &#125;&#125;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
 
 注意Jinja使用`&#123;% endfor %&#125;</code>和<code>&#123;% endif %&#125;</code>来表示<code>for</code>和<code>if</code>的结束。</p>
-<h3 id="特殊变量"><a href="#特殊变量" class="headerlink" title="特殊变量"></a>特殊变量</h3><p>在您的模板中，您将可以访问<code>messages</code>列表，但您还可以访问其他几个特殊变量。 这些包括特殊<code>token</code>，如<code>bos_token</code>和<code>eos_token</code>，以及我们上面讨论过的<code>add_generation_prompt</code>变量。 您还可以使用<code>loop</code>变量来访问有关当前循环迭代的信息，例如使用`</p>
+<h3 id="特殊变量">特殊变量</h3>
+<p>在您的模板中，您将可以访问<code>messages</code>列表，但您还可以访问其他几个特殊变量。
+这些包括特殊<code>token</code>，如<code>bos_token</code>和<code>eos_token</code>，以及我们上面讨论过的<code>add_generation_prompt</code>变量。
+您还可以使用<code>loop</code>变量来访问有关当前循环迭代的信息，例如使用`</p>
 
     
 
@@ -489,18 +570,18 @@ Jinja中的if语句如下所示：
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/Tokenizer%E5%88%86%E8%AF%8D%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/tutorial/%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%BE%AE%E8%B0%83%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Tokenizer分词器
+          第七章：微调预训练模型
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/tutorial/%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%BE%AE%E8%B0%83%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">第七章：微调预训练模型</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90transformers%E3%80%91/tutorial/%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">第五章：模型与分词器</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -527,7 +608,7 @@ Jinja中的if语句如下所示：
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#chat-template"><span class="toc-number">1.</span> <span class="toc-text">chat template</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">我如何使用聊天模板？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%87%AA%E5%8A%A8%E5%8C%96%E7%9A%84%E8%81%8A%E5%A4%A9-pipeline-%E5%90%97%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">有自动化的聊天 pipeline 吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9Dgeneration-prompts%E2%80%9D"><span class="toc-number">1.4.</span> <span class="toc-text">什么是”generation prompts”?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%8F%AF%E4%BB%A5%E5%9C%A8%E8%AE%AD%E7%BB%83%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%E5%90%97%EF%BC%9F"><span class="toc-number">1.5.</span> <span class="toc-text">我可以在训练中使用聊天模板吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%EF%BC%9A%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-number">1.6.</span> <span class="toc-text">高级：聊天模板是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%EF%BC%9A%E7%BC%96%E8%BE%91%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.7.</span> <span class="toc-text">高级：编辑聊天模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%EF%BC%9F"><span class="toc-number">1.7.1.</span> <span class="toc-text">如何创建聊天模板？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E9%BB%98%E8%AE%A4%E2%80%9D%E6%A8%A1%E6%9D%BF%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.7.2.</span> <span class="toc-text">“默认”模板是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E5%BA%94%E8%AF%A5%E4%BD%BF%E7%94%A8%E5%93%AA%E4%B8%AA%E6%A8%A1%E6%9D%BF%EF%BC%9F"><span class="toc-number">1.7.3.</span> <span class="toc-text">我应该使用哪个模板？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%EF%BC%9F"><span class="toc-number">1.7.4.</span> <span class="toc-text">如何添加聊天模板？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%EF%BC%9A%E6%A8%A1%E6%9D%BF%E5%86%99%E4%BD%9C%E6%8A%80%E5%B7%A7"><span class="toc-number">1.8.</span> <span class="toc-text">高级：模板写作技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%8F%98%E9%87%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">特殊变量</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#chat-template"><span class="toc-number">1.</span> <span class="toc-text">chat template</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.2.</span> <span class="toc-text">我如何使用聊天模板？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%87%AA%E5%8A%A8%E5%8C%96%E7%9A%84%E8%81%8A%E5%A4%A9-pipeline-%E5%90%97"><span class="toc-number">1.3.</span> <span class="toc-text">有自动化的聊天 pipeline 吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFgeneration-prompts"><span class="toc-number">1.4.</span> <span class="toc-text">什么是”generation prompts”?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%8F%AF%E4%BB%A5%E5%9C%A8%E8%AE%AD%E7%BB%83%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%E5%90%97"><span class="toc-number">1.5.</span> <span class="toc-text">我可以在训练中使用聊天模板吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84"><span class="toc-number">1.6.</span> <span class="toc-text">高级：聊天模板是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E7%BC%96%E8%BE%91%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.7.</span> <span class="toc-text">高级：编辑聊天模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.7.1.</span> <span class="toc-text">如何创建聊天模板？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E6%A8%A1%E6%9D%BF%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.7.2.</span> <span class="toc-text">“默认”模板是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E5%BA%94%E8%AF%A5%E4%BD%BF%E7%94%A8%E5%93%AA%E4%B8%AA%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.7.3.</span> <span class="toc-text">我应该使用哪个模板？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E8%81%8A%E5%A4%A9%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.7.4.</span> <span class="toc-text">如何添加聊天模板？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E6%A8%A1%E6%9D%BF%E5%86%99%E4%BD%9C%E6%8A%80%E5%B7%A7"><span class="toc-number">1.8.</span> <span class="toc-text">高级：模板写作技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%8F%98%E9%87%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">特殊变量</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -710,11 +791,11 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -726,7 +807,7 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -734,15 +815,7 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -750,11 +823,31 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -774,23 +867,7 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -798,15 +875,11 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -814,7 +887,19 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -823,10 +908,6 @@ Jinja中的if语句如下所示：
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -854,7 +935,7 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -862,15 +943,15 @@ Jinja中的if语句如下所示：
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

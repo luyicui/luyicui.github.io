@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="activation在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）： 基本算术运算 乘法（*）和除法（&#x2F;）需要保留两个输入值。例如： 对于 c &#x3D; a * b，反向传播时梯度为 dc&#x2F;da &#x3D; b 和 dc&#x2F;db &#x3D; a，因此需保存 a 和 b 的值。 对于 c &#x3D; a &#x2F; b，梯度为 dc&#x2F;da &#x3D; 1&#x2F;b 和 dc&#x2F;db &#x3D; -a&#x2F;b">
+  <meta name="description" content="activation 在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）： 基本算术运算  **乘法（*）和除法（&#x2F;）需要保留两个输入值**。例如：  对于 c &#x3D; a * b，反向传播时梯度为 dc&#x2F;da &#x3D; b 和 dc&#x2F;db &#x3D; a，因此需保存 a 和 b 的值。 对于 c &#x3D; a &#x2F; b，梯度为 dc&#x2F;da &#x3D; 1&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="activation">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/26/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/activation/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="activation在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）： 基本算术运算 乘法（*）和除法（&#x2F;）需要保留两个输入值。例如： 对于 c &#x3D; a * b，反向传播时梯度为 dc&#x2F;da &#x3D; b 和 dc&#x2F;db &#x3D; a，因此需保存 a 和 b 的值。 对于 c &#x3D; a &#x2F; b，梯度为 dc&#x2F;da &#x3D; 1&#x2F;b 和 dc&#x2F;db &#x3D; -a&#x2F;b">
+<meta property="og:description" content="activation 在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）： 基本算术运算  **乘法（*）和除法（&#x2F;）需要保留两个输入值**。例如：  对于 c &#x3D; a * b，反向传播时梯度为 dc&#x2F;da &#x3D; b 和 dc&#x2F;db &#x3D; a，因此需保存 a 和 b 的值。 对于 c &#x3D; a &#x2F; b，梯度为 dc&#x2F;da &#x3D; 1&#x2F;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-26T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-02-01T07:09:08.680Z">
@@ -262,200 +262,251 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="activation"><a href="#activation" class="headerlink" title="activation"></a>activation</h1><p>在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）：</p>
-<h2 id="基本算术运算"><a href="#基本算术运算" class="headerlink" title="基本算术运算"></a>基本算术运算</h2><ul>
-<li><strong>乘法（*）和除法（/）</strong>需要保留<strong>两个输入值</strong>。例如：<ul>
-<li>对于 <code>c = a * b</code>，反向传播时梯度为 <code>dc/da = b</code> 和 <code>dc/db = a</code>，因此需保存 <code>a</code> 和 <code>b</code> 的值。</li>
-<li>对于 <code>c = a / b</code>，梯度为 <code>dc/da = 1/b</code> 和 <code>dc/db = -a/b²</code>，同样需要 <code>a</code> 和 <code>b</code> 的值。</li>
-</ul>
-</li>
-<li><strong>加（+）和减（-）无需保留输入值</strong>。因为梯度仅需均匀分配（加法）或取反（减法），例如：<ul>
-<li>对于 <code>c = a + b</code>，梯度为 <code>dc/da = 1</code> 和 <code>dc/db = 1</code>，梯度直接传递给 <code>a</code> 和 <code>b</code>，无需具体数值。</li>
-</ul>
-</li>
-</ul>
-<h2 id="三角函数"><a href="#三角函数" class="headerlink" title="三角函数"></a>三角函数</h2><p>三角函数的导数均依赖于<strong>前向传播时的输入值 <code>x</code></strong>：</p>
+    <h1 id="activation">activation</h1>
+<p>在神经网络的前向传播过程中，为了正确计算反向传播的梯度，需要保留以下操作的中间结果（activation）：</p>
+<h2 id="基本算术运算">基本算术运算</h2>
 <ul>
-<li><strong><code>sin(x)</code></strong> 的导数为 <code>cos(x)</code>，需要输入值 <code>x</code> 计算 <code>cos(x)</code>。</li>
-<li><strong><code>cos(x)</code></strong> 的导数为 <code>-sin(x)</code>，同样需要输入值 <code>x</code>。</li>
-<li><strong><code>tan(x)</code></strong> 的导数为 <code>sec²(x) = 1 + tan²(x)</code>，理论上可以通过输出值 <code>tan(x)</code> 间接计算，但直接使用输入值 <code>x</code> 更稳定（避免数值溢出问题）。</li>
+<li>**乘法（*）和除法（/）<strong>需要保留</strong>两个输入值**。例如：
+<ul>
+<li>对于 <code>c = a * b</code>，反向传播时梯度为 <code>dc/da = b</code>
+和 <code>dc/db = a</code>，因此需保存 <code>a</code> 和 <code>b</code>
+的值。</li>
+<li>对于 <code>c = a / b</code>，梯度为 <code>dc/da = 1/b</code> 和
+<code>dc/db = -a/b²</code>，同样需要 <code>a</code> 和 <code>b</code>
+的值。</li>
+</ul></li>
+<li><strong>加（+）和减（-）无需保留输入值</strong>。因为梯度仅需均匀分配（加法）或取反（减法），例如：
+<ul>
+<li>对于 <code>c = a + b</code>，梯度为 <code>dc/da = 1</code> 和
+<code>dc/db = 1</code>，梯度直接传递给 <code>a</code> 和
+<code>b</code>，无需具体数值。</li>
+</ul></li>
 </ul>
-<div class="table-container">
+<h2 id="三角函数">三角函数</h2>
+<p>三角函数的导数均依赖于<strong>前向传播时的输入值
+<code>x</code></strong>：</p>
+<ul>
+<li><strong><code>sin(x)</code></strong> 的导数为
+<code>cos(x)</code>，需要输入值 <code>x</code> 计算
+<code>cos(x)</code>。</li>
+<li><strong><code>cos(x)</code></strong> 的导数为
+<code>-sin(x)</code>，同样需要输入值 <code>x</code>。</li>
+<li><strong><code>tan(x)</code></strong> 的导数为
+<code>sec²(x) = 1 + tan²(x)</code>，理论上可以通过输出值
+<code>tan(x)</code> 间接计算，但直接使用输入值 <code>x</code>
+更稳定（避免数值溢出问题）。</li>
+</ul>
 <table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 12%" />
+<col style="width: 20%" />
+<col style="width: 60%" />
+</colgroup>
 <thead>
-<tr>
-<th style="text-align:center"><strong>操作</strong></th>
-<th style="text-align:center"><strong>导数公式</strong></th>
+<tr class="header">
+<th style="text-align: center;"><strong>操作</strong></th>
+<th style="text-align: center;"><strong>导数公式</strong></th>
 <th><strong>需保留的中间结果</strong></th>
 <th><strong>原因</strong></th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center"><code>sin(x)</code></td>
-<td style="text-align:center"><code>cos(x)</code></td>
+<tr class="odd">
+<td style="text-align: center;"><code>sin(x)</code></td>
+<td style="text-align: center;"><code>cos(x)</code></td>
 <td><strong>输入值 <code>x</code></strong></td>
 <td>梯度计算需要 <code>x</code> 的值（计算 <code>cos(x)</code>）</td>
 </tr>
-<tr>
-<td style="text-align:center"><code>cos(x)</code></td>
-<td style="text-align:center"><code>-sin(x)</code></td>
+<tr class="even">
+<td style="text-align: center;"><code>cos(x)</code></td>
+<td style="text-align: center;"><code>-sin(x)</code></td>
 <td><strong>输入值 <code>x</code></strong></td>
 <td>梯度计算需要 <code>x</code> 的值（计算 <code>-sin(x)</code>）</td>
 </tr>
-<tr>
-<td style="text-align:center"><code>tan(x)</code></td>
-<td style="text-align:center"><code>sec²(x)</code></td>
+<tr class="odd">
+<td style="text-align: center;"><code>tan(x)</code></td>
+<td style="text-align: center;"><code>sec²(x)</code></td>
 <td><strong>输入值 <code>x</code></strong></td>
-<td>直接计算 <code>sec²(x)</code> 更稳定，避免通过 <code>tan(x)</code> 间接计算时的数值溢出问题</td>
+<td>直接计算 <code>sec²(x)</code> 更稳定，避免通过 <code>tan(x)</code>
+间接计算时的数值溢出问题</td>
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="矩阵乘法（Matrix-Multiplication）"><a href="#矩阵乘法（Matrix-Multiplication）" class="headerlink" title="矩阵乘法（Matrix Multiplication）"></a>矩阵乘法（Matrix Multiplication）</h2><ul>
-<li><p><strong>矩阵乘法（如 <code>matmul</code> 或 <code>@</code>）</strong>需要保留<strong>两个输入矩阵</strong>。例如：</p>
-</li>
-<li><p>对于 <code>Y = X @ W</code>，反向传播时梯度计算需要 <code>X</code> 和 <code>W</code> 的值（<code>dY/dX = gradient @ W.T</code> 和 <code>dY/dW = X.T @ gradient</code>）</p>
-</li>
+<h2 id="矩阵乘法matrix-multiplication">矩阵乘法（Matrix
+Multiplication）</h2>
+<ul>
+<li><p><strong>矩阵乘法（如 <code>matmul</code> 或
+<code>@</code>）</strong>需要保留<strong>两个输入矩阵</strong>。例如：</p></li>
+<li><p>对于 <code>Y = X @ W</code>，反向传播时梯度计算需要
+<code>X</code> 和 <code>W</code>
+的值（<code>dY/dX = gradient @ W.T</code> 和
+<code>dY/dW = X.T @ gradient</code>）</p></li>
 </ul>
-<h2 id="向量内积（Dot-Product）"><a href="#向量内积（Dot-Product）" class="headerlink" title="向量内积（Dot Product）"></a>向量内积（Dot Product）</h2><ul>
-<li><p><strong>操作定义</strong>：向量内积是两向量对应元素相乘后求和，即 $c = \mathbf{a} \cdot \mathbf{b} = \sum_i a_i b_i$</p>
-</li>
-<li><p><strong>需保留的 Activation</strong>：<strong>两个输入向量</strong> $\mathbf{a}$ 和 $\mathbf{b}$</p>
-</li>
+<h2 id="向量内积dot-product">向量内积（Dot Product）</h2>
+<ul>
+<li><p><strong>操作定义</strong>：向量内积是两向量对应元素相乘后求和，即
+<span class="math inline">\(c = \mathbf{a} \cdot \mathbf{b} = \sum_i a_i
+b_i\)</span></p></li>
+<li><p><strong>需保留的
+Activation</strong>：<strong>两个输入向量</strong> <span
+class="math inline">\(\mathbf{a}\)</span> 和 <span
+class="math inline">\(\mathbf{b}\)</span></p></li>
 <li><p><strong>原因</strong>：</p>
 <ul>
-<li><p>反向传播时，梯度计算需要对方的输入值：</p>
-<script type="math/tex; mode=display">
+<li><p>反向传播时，梯度计算需要对方的输入值： <span
+class="math display">\[
   \frac{\partial c}{\partial \mathbf{a}} = \mathbf{b}
   \\
-  \frac{\partial c}{\partial \mathbf{b}} = \mathbf{a}</script></li>
-<li><p>例如，若 $\mathbf{a}$ 或 $\mathbf{b}$ 未被保留，则无法计算梯度。</p>
-</li>
+  \frac{\partial c}{\partial \mathbf{b}} = \mathbf{a}
+  \]</span></p></li>
+<li><p>例如，若 <span class="math inline">\(\mathbf{a}\)</span> 或 <span
+class="math inline">\(\mathbf{b}\)</span>
+未被保留，则无法计算梯度。</p></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<hr>
-<h2 id="切片（Slicing）"><a href="#切片（Slicing）" class="headerlink" title="切片（Slicing）"></a>切片（Slicing）</h2><ul>
-<li><strong>操作定义</strong>：从张量中提取子集，例如  y = x[1:3] 。</li>
-<li><strong>需保留的 Activation</strong>：<strong>切片的位置信息</strong>（如起始索引、结束索引、步长），<strong>无需保留输入张量的值</strong>。</li>
+<hr />
+<h2 id="切片slicing">切片（Slicing）</h2>
+<ul>
+<li><p><strong>操作定义</strong>：从张量中提取子集，例如 y = x[1:3]
+。</p></li>
+<li><p><strong>需保留的
+Activation</strong>：<strong>切片的位置信息</strong>（如起始索引、结束索引、步长），<strong>无需保留输入张量的值</strong>。</p></li>
 <li><p><strong>原因</strong>：反向传播时，梯度需要分配到原张量的对应位置：</p>
 <ul>
-<li><p>若  $y = x[1:3]$ ，则梯度 $\frac{\partial L}{\partial x}$ 仅在  $x[1]$、$x[2]$ 处接收 ${\partial L}/{\partial y}$，其余位置梯度为 0。</p>
-</li>
-<li><p><strong>保留的是位置信息</strong>，而非输入的具体数值。例如，在 PyTorch 中，切片操作会自动记录索引，无需显式存储</p>
-</li>
+<li><p>若 <span class="math inline">\(y = x[1:3]\)</span> ，则梯度 <span
+class="math inline">\(\frac{\partial L}{\partial x}\)</span> 仅在 <span
+class="math inline">\(x[1]\)</span>、<span
+class="math inline">\(x[2]\)</span> 处接收 <span
+class="math inline">\({\partial L}/{\partial y}\)</span>，其余位置梯度为
+0。</p></li>
+<li><p><strong>保留的是位置信息</strong>，而非输入的具体数值。例如，在
+PyTorch 中，切片操作会自动记录索引，无需显式存储</p></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<hr>
-<h2 id="索引（Indexing）"><a href="#索引（Indexing）" class="headerlink" title="索引（Indexing）"></a>索引（Indexing）</h2><ul>
-<li><strong>操作定义</strong>：提取张量的某个元素或子集，例如  y = x[i]  或  y = x[:, 2] 。</li>
-<li><strong>需保留的 Activation</strong>：<strong>索引的位置信息</strong>（如索引值或掩码），<strong>无需保留输入张量的值</strong>。</li>
-<li><strong>原因</strong>：<ul>
-<li>反向传播时，梯度仅传递到索引对应的位置：<ul>
-<li>若  y = x[i] ，则 $\frac{\partial L}{\partial x}$ 仅在  x[i]  处接收 $\frac{\partial L}{\partial y}$，其余位置梯度为 0。</li>
-</ul>
-</li>
+<hr />
+<h2 id="索引indexing">索引（Indexing）</h2>
+<ul>
+<li><strong>操作定义</strong>：提取张量的某个元素或子集，例如 y = x[i]
+或 y = x[:, 2] 。</li>
+<li><strong>需保留的
+Activation</strong>：<strong>索引的位置信息</strong>（如索引值或掩码），<strong>无需保留输入张量的值</strong>。</li>
+<li><strong>原因</strong>：
+<ul>
+<li>反向传播时，梯度仅传递到索引对应的位置：
+<ul>
+<li>若 y = x[i] ，则 <span class="math inline">\(\frac{\partial
+L}{\partial x}\)</span> 仅在 x[i] 处接收 <span
+class="math inline">\(\frac{\partial L}{\partial
+y}\)</span>，其余位置梯度为 0。</li>
+</ul></li>
 <li>对于高级索引（如布尔掩码），需记录哪些位置被选中以正确分配梯度。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h2 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h2><ul>
-<li><p><strong>ReLU</strong>需要保留<strong>输入值</strong>，以判断哪些位置的梯度应为零。</p>
+<h2 id="激活函数">激活函数</h2>
 <ul>
-<li>若输入 <code>z &gt; 0</code>，梯度为 1；否则为 0，因此需保存 <code>z</code>。</li>
-</ul>
-</li>
-<li><p><strong>Sigmoid、Tanh</strong>需保留<strong>输出值</strong>。例如：</p>
+<li><strong>ReLU</strong>需要保留<strong>输入值</strong>，以判断哪些位置的梯度应为零。
 <ul>
-<li>Sigmoid 的导数为 <code>s * (1 - s)</code>（<code>s</code> 为输出），Tanh 的导数为 <code>1 - t²</code>（<code>t</code> 为输出），直接通过输出计算梯度，无需输入值。</li>
+<li>若输入 <code>z &gt; 0</code>，梯度为 1；否则为 0，因此需保存
+<code>z</code>。</li>
+</ul></li>
+<li><strong>Sigmoid、Tanh</strong>需保留<strong>输出值</strong>。例如：
+<ul>
+<li>Sigmoid 的导数为 <code>s * (1 - s)</code>（<code>s</code>
+为输出），Tanh 的导数为 <code>1 - t²</code>（<code>t</code>
+为输出），直接通过输出计算梯度，无需输入值。</li>
+</ul></li>
+<li><strong>Softmax</strong>需保留<strong>输出概率分布</strong>，因为梯度计算依赖于输出与其他节点的相互作用。</li>
 </ul>
-</li>
-<li><p><strong>Softmax</strong>需保留<strong>输出概率分布</strong>，因为梯度计算依赖于输出与其他节点的相互作用。</p>
-</li>
-</ul>
-<h2 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h2><ul>
-<li><p><strong>Max Pooling</strong><br>需保留<strong>输入值及最大值索引</strong>，以便反向传播时将梯度路由到正确位置。</p>
-</li>
+<h2 id="其他操作">其他操作</h2>
+<ul>
+<li><p><strong>Max Pooling</strong>
+需保留<strong>输入值及最大值索引</strong>，以便反向传播时将梯度路由到正确位置。</p></li>
 <li><p><strong>指数函数（exp）、对数函数（log）</strong></p>
 <ul>
-<li><code>exp(z)</code> 需保留<strong>输出值</strong>（如用于 Softmax 的梯度计算）。</li>
-<li><code>log(z)</code> 需保留<strong>输入值</strong>，因为梯度为 <code>1/z</code>。</li>
+<li><code>exp(z)</code> 需保留<strong>输出值</strong>（如用于 Softmax
+的梯度计算）。</li>
+<li><code>log(z)</code> 需保留<strong>输入值</strong>，因为梯度为
+<code>1/z</code>。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h2 id="总结表格"><a href="#总结表格" class="headerlink" title="总结表格"></a>总结表格</h2><div class="table-container">
+<h2 id="总结表格">总结表格</h2>
 <table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 49%" />
+</colgroup>
 <thead>
-<tr>
-<th style="text-align:center"><strong>操作</strong></th>
+<tr class="header">
+<th style="text-align: center;"><strong>操作</strong></th>
 <th><strong>需保留的中间结果</strong></th>
 <th><strong>原因</strong></th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center">乘法（*）、除法（/）</td>
+<tr class="odd">
+<td style="text-align: center;">乘法（*）、除法（/）</td>
 <td>两个输入张量</td>
 <td>梯度计算依赖对方输入的值</td>
 </tr>
-<tr>
-<td style="text-align:center">矩阵乘法（@）</td>
+<tr class="even">
+<td style="text-align: center;">矩阵乘法（@）</td>
 <td>两个输入矩阵</td>
 <td>梯度计算需要转置对方矩阵</td>
 </tr>
-<tr>
-<td style="text-align:center">ReLU</td>
+<tr class="odd">
+<td style="text-align: center;">ReLU</td>
 <td>输入值</td>
 <td>梯度取决于输入是否大于零</td>
 </tr>
-<tr>
-<td style="text-align:center">Sigmoid、Tanh</td>
+<tr class="even">
+<td style="text-align: center;">Sigmoid、Tanh</td>
 <td>输出值</td>
 <td>梯度可直接通过输出计算</td>
 </tr>
-<tr>
-<td style="text-align:center">Softmax</td>
+<tr class="odd">
+<td style="text-align: center;">Softmax</td>
 <td>输出概率分布</td>
 <td>梯度涉及输出与其他节点的交互</td>
 </tr>
-<tr>
-<td style="text-align:center">Max Pooling</td>
+<tr class="even">
+<td style="text-align: center;">Max Pooling</td>
 <td>输入值及最大值索引</td>
 <td>梯度需路由到最大值位置</td>
 </tr>
-<tr>
-<td style="text-align:center">指数（exp）</td>
+<tr class="odd">
+<td style="text-align: center;">指数（exp）</td>
 <td>输出值</td>
 <td>梯度计算需要输出值（如 Softmax 的反向）</td>
 </tr>
-<tr>
-<td style="text-align:center">对数（log）</td>
+<tr class="even">
+<td style="text-align: center;">对数（log）</td>
 <td>输入值</td>
 <td>梯度为 <code>1/输入值</code></td>
 </tr>
-<tr>
-<td style="text-align:center">向量内积（Dot Product）</td>
+<tr class="odd">
+<td style="text-align: center;">向量内积（Dot Product）</td>
 <td>两个输入向量</td>
 <td>梯度计算依赖对方的输入值</td>
 </tr>
-<tr>
-<td style="text-align:center">切片（Slicing）</td>
+<tr class="even">
+<td style="text-align: center;">切片（Slicing）</td>
 <td>切片的位置信息（索引范围）</td>
 <td>梯度需分配到原张量的对应位置</td>
 </tr>
-<tr>
-<td style="text-align:center">索引（Indexing）</td>
+<tr class="odd">
+<td style="text-align: center;">索引（Indexing）</td>
 <td>索引的位置信息（索引值或掩码）</td>
 <td>梯度仅传递到被选中的位置</td>
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h2><ul>
+<h2 id="关键点">关键点</h2>
+<ul>
 <li><strong>保留原则</strong>：若梯度计算依赖于某变量的值，则该变量必须在前向传播时保留。</li>
-<li><strong>框架实现</strong>：自动微分框架（如 PyTorch、TensorFlow）会自动管理这些中间结果，但理解其原理对调试和优化至关重要。</li>
+<li><strong>框架实现</strong>：自动微分框架（如
+PyTorch、TensorFlow）会自动管理这些中间结果，但理解其原理对调试和优化至关重要。</li>
 </ul>
 
     
@@ -606,8 +657,8 @@
     </a>
   
   
-    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">索引和切片</div>
+    <a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/Tensor%E7%BB%B4%E5%BA%A6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Tensor维度</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -634,7 +685,8 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#activation"><span class="toc-number">1.</span> <span class="toc-text">activation</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97"><span class="toc-number">1.1.</span> <span class="toc-text">基本算术运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">三角函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%EF%BC%88Matrix-Multiplication%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">矩阵乘法（Matrix Multiplication）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%86%85%E7%A7%AF%EF%BC%88Dot-Product%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">向量内积（Dot Product）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87%EF%BC%88Slicing%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">切片（Slicing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%EF%BC%88Indexing%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">索引（Indexing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="toc-number">1.7.</span> <span class="toc-text">激活函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="toc-number">1.8.</span> <span class="toc-text">其他操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E8%A1%A8%E6%A0%BC"><span class="toc-number">1.9.</span> <span class="toc-text">总结表格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9"><span class="toc-number">1.10.</span> <span class="toc-text">关键点</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#activation"><span class="toc-number">1.</span> <span class="toc-text">activation</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97"><span class="toc-number">1.1.</span> <span class="toc-text">基本算术运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">三角函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95matrix-multiplication"><span class="toc-number">1.3.</span> <span class="toc-text">矩阵乘法（Matrix
+Multiplication）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%86%85%E7%A7%AFdot-product"><span class="toc-number">1.4.</span> <span class="toc-text">向量内积（Dot Product）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87slicing"><span class="toc-number">1.5.</span> <span class="toc-text">切片（Slicing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95indexing"><span class="toc-number">1.6.</span> <span class="toc-text">索引（Indexing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="toc-number">1.7.</span> <span class="toc-text">激活函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="toc-number">1.8.</span> <span class="toc-text">其他操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E8%A1%A8%E6%A0%BC"><span class="toc-number">1.9.</span> <span class="toc-text">总结表格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9"><span class="toc-number">1.10.</span> <span class="toc-text">关键点</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -817,11 +869,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -833,7 +885,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -841,15 +893,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -857,11 +901,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -881,23 +945,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -905,15 +953,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -921,7 +965,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -930,10 +986,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -961,7 +1013,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -969,15 +1021,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

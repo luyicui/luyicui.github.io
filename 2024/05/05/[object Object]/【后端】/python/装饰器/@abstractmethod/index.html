@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="抽象基类在Python中，抽象基类（Abstract Base Classes，简称ABC）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。 什么是抽象基类？抽象基类是一个包含抽象方法（即只有方法签名&#x2F;声明而没有具">
+  <meta name="description" content="抽象基类 在Python中，抽象基类（Abstract Base Classes，简称ABC）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。 什么是抽象基类？ 抽象基类是一个包含抽象方法（即只有方法签名&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="抽象基类">
 <meta property="og:url" content="https://luyicui.github.io/2024/05/05/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@abstractmethod/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="抽象基类在Python中，抽象基类（Abstract Base Classes，简称ABC）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。 什么是抽象基类？抽象基类是一个包含抽象方法（即只有方法签名&#x2F;声明而没有具">
+<meta property="og:description" content="抽象基类 在Python中，抽象基类（Abstract Base Classes，简称ABC）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。 什么是抽象基类？ 抽象基类是一个包含抽象方法（即只有方法签名&#x2F;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-05T06:33:49.000Z">
 <meta property="article:modified_time" content="2024-12-29T03:04:36.687Z">
@@ -262,89 +262,108 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h1><p>在Python中，抽象基类（Abstract Base Classes，简称<strong>ABC</strong>）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。</p>
-<h2 id="什么是抽象基类？"><a href="#什么是抽象基类？" class="headerlink" title="什么是抽象基类？"></a>什么是抽象基类？</h2><p>抽象基类是一个包含<strong>抽象方法</strong>（即只有方法签名/声明而没有具体实现）的类，它的主要作用是定义一组接口或规范，而不是提供具体的实现。抽象基类通常用于定义一组类的通用行为，以确保这些类具有相似的接口和行为。</p>
-<p>让我们从一个实际场景开始：假设你正在开发一个文件处理系统，需要支持不同格式的文件读写，比如 JSON、CSV、XML 等。</p>
-<h3 id="初始版本：简单但不够严谨"><a href="#初始版本：简单但不够严谨" class="headerlink" title="初始版本：简单但不够严谨"></a>初始版本：简单但不够严谨</h3><p>我们先来看看最简单的实现方式：</p>
+    <h1 id="抽象基类">抽象基类</h1>
+<p>在Python中，抽象基类（Abstract Base
+Classes，简称<strong>ABC</strong>）是一种用于定义接口或抽象方法的工具。它们允许你指定一个类的基本结构，而不必实现所有的细节。通过使用抽象基类，你可以强制子类实现特定的方法，从而确保代码的一致性和可维护性。本文将深入探讨Python中抽象基类ABC的实践技巧与优雅实现。</p>
+<h2 id="什么是抽象基类">什么是抽象基类？</h2>
+<p>抽象基类是一个包含<strong>抽象方法</strong>（即只有方法签名/声明而没有具体实现）的类，它的主要作用是定义一组接口或规范，而不是提供具体的实现。抽象基类通常用于定义一组类的通用行为，以确保这些类具有相似的接口和行为。</p>
+<p>让我们从一个实际场景开始：假设你正在开发一个文件处理系统，需要支持不同格式的文件读写，比如
+JSON、CSV、XML 等。</p>
+<h3 id="初始版本简单但不够严谨">初始版本：简单但不够严谨</h3>
+<p>我们先来看看最简单的实现方式：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FileHandler</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename, data</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JsonHandler</span>(<span class="title class_ inherited__">FileHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename</span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> json.load(f)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename, data</span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            json.dump(data, f)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CsvHandler</span>(<span class="title class_ inherited__">FileHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename</span>):</span><br><span class="line">        <span class="keyword">import</span> csv</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">list</span>(csv.reader(f))</span><br></pre></td></tr></table></figure>
 <p>这个实现看起来没什么问题，但实际上存在几个隐患：</p>
-<ol>
+<ol type="1">
 <li>无法强制子类实现所有必要的方法</li>
 <li>基类方法的签名（参数列表）可能与子类不一致</li>
 <li>没有明确的接口契约</li>
 </ol>
-<h3 id="改进版本：使用抽象基类"><a href="#改进版本：使用抽象基类" class="headerlink" title="改进版本：使用抽象基类"></a>改进版本：使用抽象基类</h3><p>让我们引入 <code>abc.ABC</code> 来改进这个设计：</p>
+<h3 id="改进版本使用抽象基类">改进版本：使用抽象基类</h3>
+<p>让我们引入 <code>abc.ABC</code> 来改进这个设计：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FileHandler</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;读取文件内容&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename: <span class="built_in">str</span>, data: <span class="built_in">any</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;写入文件内容&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JsonHandler</span>(<span class="title class_ inherited__">FileHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> json.load(f)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename: <span class="built_in">str</span>, data: <span class="built_in">any</span></span>):</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            json.dump(data, f)</span><br></pre></td></tr></table></figure>
 <p>这个版本引入了两个重要的改进：</p>
-<ol>
-<li>使用 <code>ABC</code> 将 <code>FileHandler</code> 声明为抽象基类</li>
+<ol type="1">
+<li>使用 <code>ABC</code> 将 <code>FileHandler</code>
+声明为抽象基类</li>
 <li>使用 <code>@abstractmethod</code> 装饰器标记抽象方法</li>
 </ol>
-<p>现在，如果我们尝试实例化一个没有实现所有抽象方法的子类，Python 会抛出异常：</p>
+<p>现在，如果我们尝试实例化一个没有实现所有抽象方法的子类，Python
+会抛出异常：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个类缺少 write 方法的实现</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BrokenHandler</span>(<span class="title class_ inherited__">FileHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;some data&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这行代码会抛出 TypeError</span></span><br><span class="line">handler = BrokenHandler()  <span class="comment"># TypeError: Can&#x27;t instantiate abstract class BrokenHandler with abstract method write</span></span><br></pre></td></tr></table></figure>
-<h3 id="进一步优化：添加类型提示和接口约束"><a href="#进一步优化：添加类型提示和接口约束" class="headerlink" title="进一步优化：添加类型提示和接口约束"></a>进一步优化：添加类型提示和接口约束</h3><p>让我们再进一步，添加类型提示和更严格的接口约束：</p>
+<h3
+id="进一步优化添加类型提示和接口约束">进一步优化：添加类型提示和接口约束</h3>
+<p>让我们再进一步，添加类型提示和更严格的接口约束：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Any</span>, <span class="type">List</span>, <span class="type">Dict</span>, <span class="type">Union</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FileHandler</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename: <span class="built_in">str</span></span>) -&gt; <span class="type">Union</span>[<span class="type">Dict</span>, <span class="type">List</span>]:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;读取文件内容并返回解析后的数据结构&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename: <span class="built_in">str</span>, data: <span class="type">Union</span>[<span class="type">Dict</span>, <span class="type">List</span>]</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;将数据结构写入文件&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">supported_extensions</span>(<span class="params">self</span>) -&gt; <span class="type">List</span>[<span class="built_in">str</span>]:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;返回支持的文件扩展名列表&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JsonHandler</span>(<span class="title class_ inherited__">FileHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, filename: <span class="built_in">str</span></span>) -&gt; <span class="type">Dict</span>:</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> json.load(f)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, filename: <span class="built_in">str</span>, data: <span class="type">Dict</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">import</span> json</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            json.dump(data, f)</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">supported_extensions</span>(<span class="params">self</span>) -&gt; <span class="type">List</span>[<span class="built_in">str</span>]:</span><br><span class="line">        <span class="keyword">return</span> [<span class="string">&#x27;.json&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_file</span>(<span class="params">handler: FileHandler, filename: <span class="built_in">str</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(filename.endswith(ext) <span class="keyword">for</span> ext <span class="keyword">in</span> handler.supported_extensions):</span><br><span class="line">        data = handler.read(filename)</span><br><span class="line">        <span class="comment"># 处理数据...</span></span><br><span class="line">        handler.write(<span class="string">f&#x27;processed_<span class="subst">&#123;filename&#125;</span>&#x27;</span>, data)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">f&quot;Unsupported file extension for <span class="subst">&#123;filename&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>这个最终版本的改进包括：</p>
-<ol>
+<ol type="1">
 <li>添加了类型提示，提高代码的可读性和可维护性</li>
 <li>引入了抽象属性（<code>supported_extensions</code>），使接口更完整</li>
 <li>通过 <code>Union</code> 类型提供了更灵活的数据类型支持</li>
 <li>提供了清晰的文档字符串</li>
 </ol>
-<h3 id="使用抽象基类的好处"><a href="#使用抽象基类的好处" class="headerlink" title="使用抽象基类的好处"></a>使用抽象基类的好处</h3><ol>
+<h3 id="使用抽象基类的好处">使用抽象基类的好处</h3>
+<ol type="1">
 <li><strong>接口契约</strong>：抽象基类提供了明确的接口定义，任何违反契约的实现都会在运行前被发现。</li>
 <li><strong>代码可读性</strong>：通过抽象方法清晰地表明了子类需要实现的功能。</li>
 <li><strong>类型安全</strong>：结合类型提示，我们可以在开发时就发现潜在的类型错误。</li>
 <li><strong>设计模式支持</strong>：抽象基类非常适合实现诸如工厂模式、策略模式等设计模式。</li>
 </ol>
-<h2 id="抽象基类的用法"><a href="#抽象基类的用法" class="headerlink" title="抽象基类的用法"></a>抽象基类的用法</h2><h3 id="定义抽象基类"><a href="#定义抽象基类" class="headerlink" title="定义抽象基类"></a>定义抽象基类</h3><p>在 Python 中，有两种方式定义抽象基类。下面是一个简单的示例，展示了如何定义一个抽象基类：</p>
+<h2 id="抽象基类的用法">抽象基类的用法</h2>
+<h3 id="定义抽象基类">定义抽象基类</h3>
+<p>在 Python
+中，有两种方式定义抽象基类。下面是一个简单的示例，展示了如何定义一个抽象基类：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式 1：直接继承 ABC</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Shape</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">area</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">perimeter</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式 2：使用 metaclass</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Shape</span>(metaclass=ABCMeta):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">area</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">perimeter</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>  在这个示例中，定义了一个名为<code>Shape</code>的抽象基类，其中包含两个抽象方法<code>area()</code>和<code>perimeter()</code>，分别用于计算形状的面积和周长。</p>
+<p>在这个示例中，定义了一个名为<code>Shape</code>的抽象基类，其中包含两个抽象方法<code>area()</code>和<code>perimeter()</code>，分别用于计算形状的面积和周长。</p>
 </blockquote>
-<p>这两种方式在功能上是等价的，因为 <code>ABC</code> 类本身就是用 <code>ABCMeta</code> 作为元类定义的：</p>
+<p>这两种方式在功能上是等价的，因为 <code>ABC</code> 类本身就是用
+<code>ABCMeta</code> 作为元类定义的：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ABC</span>(metaclass=ABCMeta):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Helper class that provides a standard way to create an ABC using</span></span><br><span class="line"><span class="string">    inheritance.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>选择建议：</p>
-<ol>
+<ol type="1">
 <li><p><strong>推荐使用 ABC</strong>：</p>
 <ul>
 <li>代码更简洁</li>
 <li>更符合 Python 的简单直观原则</li>
 <li>是 Python 3.4+ 后推荐的方式</li>
-</ul>
-</li>
+</ul></li>
 <li><p><strong>使用 metaclass=ABCMeta 的场景</strong>：</p>
 <ul>
-<li><p>当你的类已经有其他元类时</p>
-</li>
+<li><p>当你的类已经有其他元类时</p></li>
 <li><p>需要自定义元类行为时。例如，当你需要组合多个元类的功能时：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, name, bases, namespace</span>):</span><br><span class="line">        <span class="comment"># 自定义的元类行为</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>().__new__(cls, name, bases, namespace)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CombinedMeta</span>(ABCMeta, MyMeta):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyHandler</span>(metaclass=CombinedMeta):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, name, bases, namespace</span>):</span><br><span class="line">        <span class="comment"># 自定义的元类行为</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>().__new__(cls, name, bases, namespace)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CombinedMeta</span>(ABCMeta, MyMeta):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyHandler</span>(metaclass=CombinedMeta):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></li>
+</ul></li>
 </ol>
-<h3 id="子类实现抽象方法"><a href="#子类实现抽象方法" class="headerlink" title="子类实现抽象方法"></a>子类实现抽象方法</h3><p>子类必须实现抽象基类中定义的所有抽象方法，否则会抛出<code>TypeError</code>异常。</p>
+<h3 id="子类实现抽象方法">子类实现抽象方法</h3>
+<p>子类必须实现抽象基类中定义的所有抽象方法，否则会抛出<code>TypeError</code>异常。</p>
 <p>以下是一个实现抽象基类的示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Rectangle</span>(<span class="title class_ inherited__">Shape</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, width, height</span>):</span><br><span class="line">        self.width = width</span><br><span class="line">        self.height = height</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">area</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.width * self.height</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">perimeter</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * (self.width + self.height)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span>(<span class="title class_ inherited__">Shape</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, radius</span>):</span><br><span class="line">        self.radius = radius</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">area</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">3.14</span> * self.radius * self.radius</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">perimeter</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * <span class="number">3.14</span> * self.radius</span><br></pre></td></tr></table></figure>
 <p>在这个示例中，定义了<code>Rectangle</code>和<code>Circle</code>两个子类，并分别实现了<code>area()</code>和<code>perimeter()</code>方法。</p>
-<h3 id="使用抽象基类"><a href="#使用抽象基类" class="headerlink" title="使用抽象基类"></a>使用抽象基类</h3><p>抽象基类可以用于类型检查和接口规范。例如，可以使用<code>isinstance()</code>函数来检查一个对象是否是某个抽象基类的子类，从而进行类型检查。</p>
+<h3 id="使用抽象基类">使用抽象基类</h3>
+<p>抽象基类可以用于类型检查和接口规范。例如，可以使用<code>isinstance()</code>函数来检查一个对象是否是某个抽象基类的子类，从而进行类型检查。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rectangle = Rectangle(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">circle = Circle(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">isinstance</span>(rectangle, Shape))  <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">isinstance</span>(circle, Shape))  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<h2 id="抽象基类的应用场景"><a href="#抽象基类的应用场景" class="headerlink" title="抽象基类的应用场景"></a>抽象基类的应用场景</h2><h3 id="强制子类实现特定接口"><a href="#强制子类实现特定接口" class="headerlink" title="强制子类实现特定接口"></a>强制子类实现特定接口</h3><p>抽象基类可以用于强制子类实现特定的接口或方法，这在项目开发中尤为重要，特别是在团队合作或开发大型项目时。通过使用抽象基类，可以确保每个子类都实现了特定的方法，从而保证了整个系统的稳定性和可靠性。</p>
+<h2 id="抽象基类的应用场景">抽象基类的应用场景</h2>
+<h3 id="强制子类实现特定接口">强制子类实现特定接口</h3>
+<p>抽象基类可以用于强制子类实现特定的接口或方法，这在项目开发中尤为重要，特别是在团队合作或开发大型项目时。通过使用抽象基类，可以确保每个子类都实现了特定的方法，从而保证了整个系统的稳定性和可靠性。</p>
 <p>例如，假设正在开发一个数据库访问框架，可以定义一个抽象基类来规范所有数据库连接对象的行为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DatabaseConnection</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">connect</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">disconnect</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute_query</span>(<span class="params">self, query</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>然后，可以创建具体的数据库连接类，如MySQLConnection、PostgreSQLConnection等，确保它们都实现了<code>connect()</code>、<code>disconnect()</code>和<code>execute_query()</code>等方法。</p>
-<h3 id="提供统一的API接口"><a href="#提供统一的API接口" class="headerlink" title="提供统一的API接口"></a>提供统一的API接口</h3><p>抽象基类还可以用于提供统一的API接口，使得不同的类具有相似的行为和接口。这样可以简化代码逻辑，提高代码的可读性和可维护性。</p>
+<h3 id="提供统一的api接口">提供统一的API接口</h3>
+<p>抽象基类还可以用于提供统一的API接口，使得不同的类具有相似的行为和接口。这样可以简化代码逻辑，提高代码的可读性和可维护性。</p>
 <p>例如，假设正在开发一个机器学习框架，可以定义一个抽象基类来规范所有机器学习模型的行为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MachineLearningModel</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">self, X, y</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, X</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">evaluate</span>(<span class="params">self, X, y</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>然后，可以创建具体的机器学习模型类，如LinearRegression、RandomForest等，确保它们都实现了<code>train()</code>、<code>predict()</code>和<code>evaluate()</code>等方法。</p>
-<h3 id="定义插件架构"><a href="#定义插件架构" class="headerlink" title="定义插件架构"></a>定义插件架构</h3><p>抽象基类可以用于定义插件架构，使得插件之间具有相似的接口和行为。这样可以灵活地扩展和替换插件，提高系统的可扩展性和灵活性。</p>
+<h3 id="定义插件架构">定义插件架构</h3>
+<p>抽象基类可以用于定义插件架构，使得插件之间具有相似的接口和行为。这样可以灵活地扩展和替换插件，提高系统的可扩展性和灵活性。</p>
 <p>例如，假设正在开发一个图像处理应用，可以定义一个抽象基类来规范所有图像处理插件的行为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ImageProcessorPlugin</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process</span>(<span class="params">self, image</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>然后，可以创建具体的图像处理插件类，如ResizePlugin、FilterPlugin等，确保它们都实现了<code>process()</code>方法。这样，用户可以根据需要选择并使用不同的插件，而无需修改核心代码。</p>
-<h2 id="实践建议"><a href="#实践建议" class="headerlink" title="实践建议"></a>实践建议</h2><ol>
+<h2 id="实践建议">实践建议</h2>
+<ol type="1">
 <li>当你需要确保一组类遵循相同的接口时，使用抽象基类。</li>
 <li>优先使用类型提示，它们能帮助开发者更好地理解代码。</li>
-<li>适当使用抽象属性（<code>@property</code> + <code>@abstractmethod</code>），它们也是接口的重要组成部分。</li>
+<li>适当使用抽象属性（<code>@property</code> +
+<code>@abstractmethod</code>），它们也是接口的重要组成部分。</li>
 <li>在文档字符串中清晰地说明方法的预期行为和返回值。</li>
 </ol>
 
@@ -524,7 +543,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">抽象基类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是抽象基类？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E7%89%88%E6%9C%AC%EF%BC%9A%E7%AE%80%E5%8D%95%E4%BD%86%E4%B8%8D%E5%A4%9F%E4%B8%A5%E8%B0%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">初始版本：简单但不够严谨</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E7%89%88%E6%9C%AC%EF%BC%9A%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text">改进版本：使用抽象基类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E4%BC%98%E5%8C%96%EF%BC%9A%E6%B7%BB%E5%8A%A0%E7%B1%BB%E5%9E%8B%E6%8F%90%E7%A4%BA%E5%92%8C%E6%8E%A5%E5%8F%A3%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.1.3.</span> <span class="toc-text">进一步优化：添加类型提示和接口约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">1.1.4.</span> <span class="toc-text">使用抽象基类的好处</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">抽象基类的用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.2.1.</span> <span class="toc-text">定义抽象基类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E7%B1%BB%E5%AE%9E%E7%8E%B0%E6%8A%BD%E8%B1%A1%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">子类实现抽象方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.2.3.</span> <span class="toc-text">使用抽象基类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.3.</span> <span class="toc-text">抽象基类的应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E5%88%B6%E5%AD%90%E7%B1%BB%E5%AE%9E%E7%8E%B0%E7%89%B9%E5%AE%9A%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text">强制子类实现特定接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BE%9B%E7%BB%9F%E4%B8%80%E7%9A%84API%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">提供统一的API接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="toc-number">1.3.3.</span> <span class="toc-text">定义插件架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.4.</span> <span class="toc-text">实践建议</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">抽象基类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.1.</span> <span class="toc-text">什么是抽象基类？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E7%89%88%E6%9C%AC%E7%AE%80%E5%8D%95%E4%BD%86%E4%B8%8D%E5%A4%9F%E4%B8%A5%E8%B0%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">初始版本：简单但不够严谨</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E7%89%88%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text">改进版本：使用抽象基类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E4%BC%98%E5%8C%96%E6%B7%BB%E5%8A%A0%E7%B1%BB%E5%9E%8B%E6%8F%90%E7%A4%BA%E5%92%8C%E6%8E%A5%E5%8F%A3%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.1.3.</span> <span class="toc-text">进一步优化：添加类型提示和接口约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">1.1.4.</span> <span class="toc-text">使用抽象基类的好处</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">抽象基类的用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.2.1.</span> <span class="toc-text">定义抽象基类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E7%B1%BB%E5%AE%9E%E7%8E%B0%E6%8A%BD%E8%B1%A1%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">子类实现抽象方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB"><span class="toc-number">1.2.3.</span> <span class="toc-text">使用抽象基类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E5%9F%BA%E7%B1%BB%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.3.</span> <span class="toc-text">抽象基类的应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BA%E5%88%B6%E5%AD%90%E7%B1%BB%E5%AE%9E%E7%8E%B0%E7%89%B9%E5%AE%9A%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text">强制子类实现特定接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BE%9B%E7%BB%9F%E4%B8%80%E7%9A%84api%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">提供统一的API接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="toc-number">1.3.3.</span> <span class="toc-text">定义插件架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.4.</span> <span class="toc-text">实践建议</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -707,11 +726,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -723,7 +742,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -731,15 +750,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -747,11 +758,31 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -771,23 +802,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -795,15 +810,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -811,7 +822,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -820,10 +843,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -851,7 +870,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -859,15 +878,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">vllm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -213,6 +213,286 @@
             
 
   
+    <article id="post-【后端】/python/第三方库/【tqdm模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【tqdm模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="tqdm模块">【tqdm模块】</h1>
+<p>有时候在使用 Python
+处理比较耗时操作的时候，为了便于观察处理进度，这时候就需要通过进度条将处理情况进行可视化展示，以便我们能够及时了解情况。</p>
+<p>tqdm 就能非常完美的支持和解决这些问题，可以实时输出处理进度而且占用的
+CPU 资源非常少，支持 windows、Linux、mac
+等系统，支持①循环处理、②多进程、③递归处理、还可以结合 Linux
+的命令来查看处理情况，等进度展示。</p>
+<h2 id="tqdm导入"><code>tqdm</code>导入</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：不是 import tqdm</span></span><br></pre></td></tr></table></figure>
+<h2
+id="tqdm对可迭代对象进行封装"><code>tqdm()</code>对可迭代对象进行封装</h2>
+<h3 id="语法">语法</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法 1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm（可迭代对象）:</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法 2</span></span><br><span class="line"><span class="keyword">for</span> idx, i <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm（可迭代对象）):</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>对于可以迭代的对象都可以使用 tqdm
+进行封装实现可视化进度，使用起来非常方便。</p>
+<h3 id="例子">例子</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<hr />
+<p><strong>Q</strong>：为什么结果会一直新建一行？</p>
+<p><strong>A</strong>：这是因为每次的 print
+内容都不一样，为了能够显示新的内容，所以会这样。</p>
+<p>我们看下面这个程序，它因为没有控制台输出，所以进度条就很正常。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932044.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="带有参数的tqdm">带有参数的<code>tqdm()</code></h3>
+<p><strong>Q</strong>：进度条可以加一些其他信息吗？</p>
+<p><strong>A</strong>：当然可以，需要对 tqdm 进行一些参数调整</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">format_meter</span>(<span class="params">n, total, elapsed, ncols=<span class="literal">None</span>, prefix=<span class="string">&#x27;&#x27;</span>, <span class="built_in">ascii</span>=<span class="literal">False</span>, unit=<span class="string">&#x27;it&#x27;</span>,</span></span><br><span class="line"><span class="params">                 unit_scale=<span class="literal">False</span>, rate=<span class="literal">None</span>, bar_format=<span class="literal">None</span>, postfix=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 unit_divisor=<span class="number">1000</span>, initial=<span class="number">0</span>, colour=<span class="literal">None</span>, **extra_kwargs</span>):</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>iterable</code>: 可迭代的对象，在⼿动更新时不需要进⾏设置</li>
+<li><code>desc</code>: 字符串，左边进度条描述⽂字</li>
+<li><code>total</code>: 总的项⽬数</li>
+<li><code>leave</code>: bool 值，迭代完成后是否保留进度条</li>
+<li><code>file</code>: 输出指向位置，默认是终端，⼀般不需要设置</li>
+<li><code>ncols</code>:
+调整进度条宽度，默认是根据环境⾃动调节长度，如果设置为 0,
+就没有进度条，只有输出的信息</li>
+<li><code>unit</code>: 描述处理项⽬的⽂字，默认是<code>it</code>,
+例如：100 it/s, 处理照⽚的话设置为<code>img</code> , 则为 100 img/s</li>
+<li><code>unit_scale</code>:
+⾃动根据国际标准进⾏项⽬处理速度单位的换算，例如 100000 it/s &gt;&gt;
+100k it/s</li>
+<li><code>colour</code>: 进度条颜色</li>
+</ul>
+<h4 id="例子-1">例子 1</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">d = &#123;<span class="string">&#x27;loss&#x27;</span>:<span class="number">0.2</span>,<span class="string">&#x27;learn&#x27;</span>:<span class="number">0.8</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    desc 设置名称</span></span><br><span class="line"><span class="string">    ncols 设置进度条长度 -&gt; 建议设置在 100 以内</span></span><br><span class="line"><span class="string">    postfix 以字典形式传入详细信息</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm(<span class="built_in">range</span>(<span class="number">50</span>),desc=<span class="string">&#x27;名称&#x27;</span>,ncols=<span class="number">100</span>,postfix=d):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932025.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<blockquote>
+<p>其中<code>xxxit/s</code>表示每秒迭代的次数</p>
+</blockquote>
+<h4 id="例子-2">例子 2</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">iter_object = <span class="built_in">range</span>(<span class="number">10</span>, <span class="number">21</span>)</span><br><span class="line">pbar = tqdm(iter_object, </span><br><span class="line">                 total=<span class="built_in">len</span>(iter_object),</span><br><span class="line">                 leave=<span class="literal">True</span>, </span><br><span class="line">                 ncols=<span class="number">100</span>, </span><br><span class="line">                 unit=<span class="string">&quot;个&quot;</span>, </span><br><span class="line">                 unit_scale=<span class="literal">False</span>, </span><br><span class="line">                 colour=<span class="string">&quot;red&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;正在处理的元素为&quot;</span>: element&#125;)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932058.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="自定义进度条显示信息">自定义进度条显示信息</h2>
+<p><strong>Q</strong>：我就是想 print 一些东西，可以吗？</p>
+<p><strong>A</strong>：当然可以，tqdm 提供了两个个方法：</p>
+<ol type="1">
+<li><code>set_description()</code></li>
+<li><code>set_postfix()</code></li>
+</ol>
+<p>这两个方法就类似于 print，可以在进度条中显示一些变动的信息</p>
+<h3 id="例子-1-1">例子 1</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;d&quot;</span>, <span class="string">&quot;e&quot;</span>, <span class="string">&quot;f&quot;</span>, <span class="string">&quot;g&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932038.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="例子-2-1">例子 2</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">epochs = <span class="number">150</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description() 和 set_postfix() 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm(<span class="built_in">range</span>(epochs), ncols=<span class="number">100</span>)  <span class="comment"># ncols 设置进度条显示的字符长度，小了就显示不全了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;Epoch <span class="subst">&#123;idx&#125;</span>/<span class="subst">&#123;epochs&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;class&quot;</span>: element&#125;, loss=random.random(), cost_time = random.randrange(<span class="number">0</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932156.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="两种方法传参注意事项">两种方法传参注意事项</h3>
+<p><code>set_description</code>和<code>set_postfix</code>都用的 kwargs
+传参，所以我们可以：</p>
+<ol type="1">
+<li>用字典传参 -&gt;
+<code>pbar.set_postfix(&#123;"key_1": "value_1", ...&#125;)</code></li>
+<li>直接用关键字传参 -&gt;
+<code>pbar.set_postfix(key_1 = value_1, key_2 = value_2, ...)</code></li>
+<li>混着用 -&gt;
+<code>pbar.set_postfix(&#123;"key_1": value_1, "key_2": value_2, ...&#125;, key_3 = value_3, ...)</code></li>
+</ol>
+<h2
+id="tqdm内置生成可迭代对象方法-trange"><code>tqdm</code>内置生成可迭代对象方法
+— <code>trange()</code></h2>
+<p><code>trange(i)</code> 是 <code>tqdm(range(i))</code> 的简单写法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> trange</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">pbar = trange(<span class="number">300</span>, <span class="number">400</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span> -&gt; <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932030.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="自定义方法更新进度">自定义方法更新进度</h2>
+<p>有时候我们不仅仅是通过一个 for
+训练来更新进度条，我们也希望在做完某些操作后更新一次进度条，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tqdm(total=<span class="number">10</span>) <span class="keyword">as</span> bar:  <span class="comment"># total 为进度条总的迭代次数</span></span><br><span class="line">    <span class="comment"># 操作 1</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">1</span>)  <span class="comment"># bar.update() 里面的数表示更新的次数，和 optimizer.step 方法类似</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 2</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">3</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 3</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">6</span>)  <span class="comment"># 建议不要超过 total</span></span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932571.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="在深度学习中如何使用">在深度学习中如何使用</h2>
+<p>下面是一段手写数字识别代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,in_channels=<span class="number">1</span>,num_classes=<span class="number">10</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(in_channels=<span class="number">1</span>,out_channels=<span class="number">8</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.pool = nn.MaxPool2d(kernel_size=(<span class="number">2</span>,<span class="number">2</span>),stride=(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">        self.conv2 = nn.Conv2d(in_channels=<span class="number">8</span>,out_channels=<span class="number">16</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">16</span>*<span class="number">7</span>*<span class="number">7</span>,num_classes)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = F.relu(self.conv1(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = F.relu(self.conv2(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = x.reshape(x.shape[<span class="number">0</span>],-<span class="number">1</span>)</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set device</span></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span><span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(device)</span><br><span class="line"><span class="comment"># Hyperparameters</span></span><br><span class="line">in_channels = <span class="number">1</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load Data</span></span><br><span class="line">train_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">True</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">train_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">False</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">test_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize network</span></span><br><span class="line">model = CNN().to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss and optimizer</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(),lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train Network</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loader):</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>如果不给<code>train_loader</code>加上<code>tqdm</code>会什么也不现实，加入后显示如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 152.23it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.74it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 155.11it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.08it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.57it/s]</span></span><br></pre></td></tr></table></figure>
+<p>对应 5 个 eopch 的 5 个进度显示</p>
+<p>如果我们想要它显示在一行，在 tqdm 中添加 <code>leave=False</code>
+参数即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loadr,leave=<span class="literal">False</span>) <span class="comment"># 进度显示在一行</span></span><br></pre></td></tr></table></figure>
+<p>我们觉得还有点不太满足现在的进度条，我们得给他加上我们需要的信息，比如准确率，loss
+值，如何加呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    losses = []</span><br><span class="line">    accuracy = []</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    loop = tqdm((train_loader), total = <span class="built_in">len</span>(train_loader))</span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> loop:</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line">        losses.append(loss)</span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        _,predictions = scores.<span class="built_in">max</span>(<span class="number">1</span>)</span><br><span class="line">        num_correct = (predictions == targets).<span class="built_in">sum</span>()</span><br><span class="line">        running_train_acc = <span class="built_in">float</span>(num_correct) / <span class="built_in">float</span>(data.shape[<span class="number">0</span>])</span><br><span class="line">        accuracy.append(running_train_acc)</span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        loop.set_description(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>]&#x27;</span>)</span><br><span class="line">        loop.set_postfix(loss = loss.item(),acc = running_train_acc)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932545.png"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<p>可以看到我们的 acc 和 epoch 还有 loss 都打在了控制台中。以上就是相关
+tqdm 的使用</p>
+<h2 id="进度条的含义">进度条的含义</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<p>我们以以下一行 <code>tqdm</code> 输出为例说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]</span><br></pre></td></tr></table></figure>
+<ol type="1">
+<li><strong><code>10%|█ |</code></strong>
+<ul>
+<li>当前任务完成了 10%。</li>
+<li>可视化进度条显示 <code>█</code>。</li>
+</ul></li>
+<li><strong><code>1/10</code></strong>
+<ul>
+<li><strong>已完成</strong> 1 次迭代，总共需要完成 10 次。</li>
+<li><strong>目前正在</strong>处理<strong>第 2 次迭代</strong></li>
+</ul></li>
+<li><strong><code>00:27</code></strong>：<strong>已完成</strong>的迭代次数（这里为
+1 次）累计耗时 27 秒。</li>
+<li><strong><code>&lt;04:05</code></strong>：预计剩余时间是 4 分 5
+秒。</li>
+<li><strong><code>27.29s/it</code></strong>：当前每次迭代的<strong>指数移动平均耗时</strong>为
+27.29 秒。</li>
+</ol>
+<p><code>tqdm</code>
+使用了<strong>指数移动平均（EMA）</strong>来平滑显示的速度，因此
+<code>s/it</code>
+并不是严格基于当前累计耗时和迭代次数计算的，而是对历史耗时进行平滑处理后的结果。</p>
+<p>平滑公式如下： <span class="math display">\[
+\text{smoothed\_s/it} = \alpha \cdot \text{current\_s/it} + (1 - \alpha)
+\cdot \text{previous\_smoothed\_{s/it}}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\alpha\)</span> 是平滑系数（默认值为
+0.3）。</li>
+<li><strong>current_s/it</strong> 是当前最新一个 item
+处理的即时时间（即时速率）</li>
+<li><strong>previous_smoothed_s/it</strong> 是上一次的平滑结果。</li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501051501858.png"
+alt="image-20250105150122678" />
+<figcaption aria-hidden="true">image-20250105150122678</figcaption>
+</figure>
+<p>举例： <span class="math display">\[
+7.29\ne \left( 28*60+43 \right) /307
+\\
+7.29=0.3*7.77+\left( 1-0.3 \right) *7.08
+\]</span></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【re模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -539,286 +819,6 @@ HTML 标签：</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90re%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【tqdm模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【tqdm模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="tqdm模块">【tqdm模块】</h1>
-<p>有时候在使用 Python
-处理比较耗时操作的时候，为了便于观察处理进度，这时候就需要通过进度条将处理情况进行可视化展示，以便我们能够及时了解情况。</p>
-<p>tqdm 就能非常完美的支持和解决这些问题，可以实时输出处理进度而且占用的
-CPU 资源非常少，支持 windows、Linux、mac
-等系统，支持①循环处理、②多进程、③递归处理、还可以结合 Linux
-的命令来查看处理情况，等进度展示。</p>
-<h2 id="tqdm导入"><code>tqdm</code>导入</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：不是 import tqdm</span></span><br></pre></td></tr></table></figure>
-<h2
-id="tqdm对可迭代对象进行封装"><code>tqdm()</code>对可迭代对象进行封装</h2>
-<h3 id="语法">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法 1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm（可迭代对象）:</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法 2</span></span><br><span class="line"><span class="keyword">for</span> idx, i <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm（可迭代对象）):</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p>对于可以迭代的对象都可以使用 tqdm
-进行封装实现可视化进度，使用起来非常方便。</p>
-<h3 id="例子">例子</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
-<hr />
-<p><strong>Q</strong>：为什么结果会一直新建一行？</p>
-<p><strong>A</strong>：这是因为每次的 print
-内容都不一样，为了能够显示新的内容，所以会这样。</p>
-<p>我们看下面这个程序，它因为没有控制台输出，所以进度条就很正常。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932044.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h3 id="带有参数的tqdm">带有参数的<code>tqdm()</code></h3>
-<p><strong>Q</strong>：进度条可以加一些其他信息吗？</p>
-<p><strong>A</strong>：当然可以，需要对 tqdm 进行一些参数调整</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">format_meter</span>(<span class="params">n, total, elapsed, ncols=<span class="literal">None</span>, prefix=<span class="string">&#x27;&#x27;</span>, <span class="built_in">ascii</span>=<span class="literal">False</span>, unit=<span class="string">&#x27;it&#x27;</span>,</span></span><br><span class="line"><span class="params">                 unit_scale=<span class="literal">False</span>, rate=<span class="literal">None</span>, bar_format=<span class="literal">None</span>, postfix=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 unit_divisor=<span class="number">1000</span>, initial=<span class="number">0</span>, colour=<span class="literal">None</span>, **extra_kwargs</span>):</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>iterable</code>: 可迭代的对象，在⼿动更新时不需要进⾏设置</li>
-<li><code>desc</code>: 字符串，左边进度条描述⽂字</li>
-<li><code>total</code>: 总的项⽬数</li>
-<li><code>leave</code>: bool 值，迭代完成后是否保留进度条</li>
-<li><code>file</code>: 输出指向位置，默认是终端，⼀般不需要设置</li>
-<li><code>ncols</code>:
-调整进度条宽度，默认是根据环境⾃动调节长度，如果设置为 0,
-就没有进度条，只有输出的信息</li>
-<li><code>unit</code>: 描述处理项⽬的⽂字，默认是<code>it</code>,
-例如：100 it/s, 处理照⽚的话设置为<code>img</code> , 则为 100 img/s</li>
-<li><code>unit_scale</code>:
-⾃动根据国际标准进⾏项⽬处理速度单位的换算，例如 100000 it/s &gt;&gt;
-100k it/s</li>
-<li><code>colour</code>: 进度条颜色</li>
-</ul>
-<h4 id="例子-1">例子 1</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">d = &#123;<span class="string">&#x27;loss&#x27;</span>:<span class="number">0.2</span>,<span class="string">&#x27;learn&#x27;</span>:<span class="number">0.8</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    desc 设置名称</span></span><br><span class="line"><span class="string">    ncols 设置进度条长度 -&gt; 建议设置在 100 以内</span></span><br><span class="line"><span class="string">    postfix 以字典形式传入详细信息</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm(<span class="built_in">range</span>(<span class="number">50</span>),desc=<span class="string">&#x27;名称&#x27;</span>,ncols=<span class="number">100</span>,postfix=d):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932025.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<blockquote>
-<p>其中<code>xxxit/s</code>表示每秒迭代的次数</p>
-</blockquote>
-<h4 id="例子-2">例子 2</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">iter_object = <span class="built_in">range</span>(<span class="number">10</span>, <span class="number">21</span>)</span><br><span class="line">pbar = tqdm(iter_object, </span><br><span class="line">                 total=<span class="built_in">len</span>(iter_object),</span><br><span class="line">                 leave=<span class="literal">True</span>, </span><br><span class="line">                 ncols=<span class="number">100</span>, </span><br><span class="line">                 unit=<span class="string">&quot;个&quot;</span>, </span><br><span class="line">                 unit_scale=<span class="literal">False</span>, </span><br><span class="line">                 colour=<span class="string">&quot;red&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;正在处理的元素为&quot;</span>: element&#125;)</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932058.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h2 id="自定义进度条显示信息">自定义进度条显示信息</h2>
-<p><strong>Q</strong>：我就是想 print 一些东西，可以吗？</p>
-<p><strong>A</strong>：当然可以，tqdm 提供了两个个方法：</p>
-<ol type="1">
-<li><code>set_description()</code></li>
-<li><code>set_postfix()</code></li>
-</ol>
-<p>这两个方法就类似于 print，可以在进度条中显示一些变动的信息</p>
-<h3 id="例子-1-1">例子 1</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;d&quot;</span>, <span class="string">&quot;e&quot;</span>, <span class="string">&quot;f&quot;</span>, <span class="string">&quot;g&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932038.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h3 id="例子-2-1">例子 2</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">epochs = <span class="number">150</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description() 和 set_postfix() 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm(<span class="built_in">range</span>(epochs), ncols=<span class="number">100</span>)  <span class="comment"># ncols 设置进度条显示的字符长度，小了就显示不全了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;Epoch <span class="subst">&#123;idx&#125;</span>/<span class="subst">&#123;epochs&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;class&quot;</span>: element&#125;, loss=random.random(), cost_time = random.randrange(<span class="number">0</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932156.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h3 id="两种方法传参注意事项">两种方法传参注意事项</h3>
-<p><code>set_description</code>和<code>set_postfix</code>都用的 kwargs
-传参，所以我们可以：</p>
-<ol type="1">
-<li>用字典传参 -&gt;
-<code>pbar.set_postfix(&#123;"key_1": "value_1", ...&#125;)</code></li>
-<li>直接用关键字传参 -&gt;
-<code>pbar.set_postfix(key_1 = value_1, key_2 = value_2, ...)</code></li>
-<li>混着用 -&gt;
-<code>pbar.set_postfix(&#123;"key_1": value_1, "key_2": value_2, ...&#125;, key_3 = value_3, ...)</code></li>
-</ol>
-<h2
-id="tqdm内置生成可迭代对象方法-trange"><code>tqdm</code>内置生成可迭代对象方法
-— <code>trange()</code></h2>
-<p><code>trange(i)</code> 是 <code>tqdm(range(i))</code> 的简单写法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> trange</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">pbar = trange(<span class="number">300</span>, <span class="number">400</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span> -&gt; <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932030.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h2 id="自定义方法更新进度">自定义方法更新进度</h2>
-<p>有时候我们不仅仅是通过一个 for
-训练来更新进度条，我们也希望在做完某些操作后更新一次进度条，代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tqdm(total=<span class="number">10</span>) <span class="keyword">as</span> bar:  <span class="comment"># total 为进度条总的迭代次数</span></span><br><span class="line">    <span class="comment"># 操作 1</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">1</span>)  <span class="comment"># bar.update() 里面的数表示更新的次数，和 optimizer.step 方法类似</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 2</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">3</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 3</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">6</span>)  <span class="comment"># 建议不要超过 total</span></span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932571.gif"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h2 id="在深度学习中如何使用">在深度学习中如何使用</h2>
-<p>下面是一段手写数字识别代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,in_channels=<span class="number">1</span>,num_classes=<span class="number">10</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(in_channels=<span class="number">1</span>,out_channels=<span class="number">8</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.pool = nn.MaxPool2d(kernel_size=(<span class="number">2</span>,<span class="number">2</span>),stride=(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">        self.conv2 = nn.Conv2d(in_channels=<span class="number">8</span>,out_channels=<span class="number">16</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">16</span>*<span class="number">7</span>*<span class="number">7</span>,num_classes)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = F.relu(self.conv1(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = F.relu(self.conv2(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = x.reshape(x.shape[<span class="number">0</span>],-<span class="number">1</span>)</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set device</span></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span><span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(device)</span><br><span class="line"><span class="comment"># Hyperparameters</span></span><br><span class="line">in_channels = <span class="number">1</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load Data</span></span><br><span class="line">train_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">True</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">train_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">False</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">test_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize network</span></span><br><span class="line">model = CNN().to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss and optimizer</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(),lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train Network</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loader):</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
-<p>如果不给<code>train_loader</code>加上<code>tqdm</code>会什么也不现实，加入后显示如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 152.23it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.74it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 155.11it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.08it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.57it/s]</span></span><br></pre></td></tr></table></figure>
-<p>对应 5 个 eopch 的 5 个进度显示</p>
-<p>如果我们想要它显示在一行，在 tqdm 中添加 <code>leave=False</code>
-参数即可</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loadr,leave=<span class="literal">False</span>) <span class="comment"># 进度显示在一行</span></span><br></pre></td></tr></table></figure>
-<p>我们觉得还有点不太满足现在的进度条，我们得给他加上我们需要的信息，比如准确率，loss
-值，如何加呢？</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    losses = []</span><br><span class="line">    accuracy = []</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    loop = tqdm((train_loader), total = <span class="built_in">len</span>(train_loader))</span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> loop:</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line">        losses.append(loss)</span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        _,predictions = scores.<span class="built_in">max</span>(<span class="number">1</span>)</span><br><span class="line">        num_correct = (predictions == targets).<span class="built_in">sum</span>()</span><br><span class="line">        running_train_acc = <span class="built_in">float</span>(num_correct) / <span class="built_in">float</span>(data.shape[<span class="number">0</span>])</span><br><span class="line">        accuracy.append(running_train_acc)</span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        loop.set_description(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>]&#x27;</span>)</span><br><span class="line">        loop.set_postfix(loss = loss.item(),acc = running_train_acc)</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932545.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p>可以看到我们的 acc 和 epoch 还有 loss 都打在了控制台中。以上就是相关
-tqdm 的使用</p>
-<h2 id="进度条的含义">进度条的含义</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
-<p>我们以以下一行 <code>tqdm</code> 输出为例说明：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]</span><br></pre></td></tr></table></figure>
-<ol type="1">
-<li><strong><code>10%|█ |</code></strong>
-<ul>
-<li>当前任务完成了 10%。</li>
-<li>可视化进度条显示 <code>█</code>。</li>
-</ul></li>
-<li><strong><code>1/10</code></strong>
-<ul>
-<li><strong>已完成</strong> 1 次迭代，总共需要完成 10 次。</li>
-<li><strong>目前正在</strong>处理<strong>第 2 次迭代</strong></li>
-</ul></li>
-<li><strong><code>00:27</code></strong>：<strong>已完成</strong>的迭代次数（这里为
-1 次）累计耗时 27 秒。</li>
-<li><strong><code>&lt;04:05</code></strong>：预计剩余时间是 4 分 5
-秒。</li>
-<li><strong><code>27.29s/it</code></strong>：当前每次迭代的<strong>指数移动平均耗时</strong>为
-27.29 秒。</li>
-</ol>
-<p><code>tqdm</code>
-使用了<strong>指数移动平均（EMA）</strong>来平滑显示的速度，因此
-<code>s/it</code>
-并不是严格基于当前累计耗时和迭代次数计算的，而是对历史耗时进行平滑处理后的结果。</p>
-<p>平滑公式如下： <span class="math display">\[
-\text{smoothed\_s/it} = \alpha \cdot \text{current\_s/it} + (1 - \alpha)
-\cdot \text{previous\_smoothed\_{s/it}}
-\]</span></p>
-<ul>
-<li><span class="math inline">\(\alpha\)</span> 是平滑系数（默认值为
-0.3）。</li>
-<li><strong>current_s/it</strong> 是当前最新一个 item
-处理的即时时间（即时速率）</li>
-<li><strong>previous_smoothed_s/it</strong> 是上一次的平滑结果。</li>
-</ul>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501051501858.png"
-alt="image-20250105150122678" />
-<figcaption aria-hidden="true">image-20250105150122678</figcaption>
-</figure>
-<p>举例： <span class="math display">\[
-7.29\ne \left( 28*60+43 \right) /307
-\\
-7.29=0.3*7.77+\left( 1-0.3 \right) *7.08
-\]</span></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1930,6 +1930,182 @@ specific.</li>
 
 
   
+    <article id="post-【后端】/python/OOP/Exceptions/3.Raise Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" target="_blank">Raise Exception</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="raise-exception">Raise Exception</h1>
+<p><strong>Summary</strong>: in this tutorial, you’ll learn how to raise
+exceptions by using the Python <code>raise</code> statement.</p>
+<h2 id="introduction-to-the-python-raise-statement">Introduction to the
+Python raise statement</h2>
+<p>To raise an <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>,
+you use the <code>raise</code> statement: 要引发异常，可以使用
+<code>raise</code> 语句：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> ExceptionType()</span><br></pre></td></tr></table></figure>
+<p>The <code>ExceptionType()</code> must be subclass of the
+<code>BaseException</code> class. Typically, it is a subclass of the
+<code>Exception</code> class. Note that the <code>ExceptionType</code>
+doesn’t need to be directly inherited from the <code>Exception</code>
+class. It can indirectly inherit from a class that is a subclass of the
+Exception class. <code>ExceptionType()</code> 必须是
+<code>BaseException</code> 类的子类。通常，它也是 <code>Exception</code>
+类的子类。 请注意， <code>ExceptionType</code> 不需要直接继承自
+<code>Exception</code> 类。它可以间接继承自 Exception 类的子类。</p>
+<p>The <code>BaseException</code> class has the <code>__init__</code>
+method that accepts an <code>*args</code> argument. It means that you
+can pass any number of arguments to the exception object when raising an
+exception. <code>BaseException</code> 类具有 <code>__init__</code>
+方法，该方法接受 <code>*args</code>
+参数。这意味着在引发异常时，您可以向异常对象传递任意数量的参数。</p>
+<p>The following example uses the <code>raise</code> statement to raise
+a <code>ValueError</code> exception. It passes three arguments to the
+<code>ValueError</code> <code>__init__</code> method: 下面的例子使用
+<code>raise</code> 语句引发 <code>ValueError</code> 异常。它向
+<code>ValueError</code> <code>__init__</code> 方法传递三个参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;The value error exception&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex.args)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#x27;The value error exception&#x27;, &#x27;x&#x27;, &#x27;y&#x27;)</span><br></pre></td></tr></table></figure>
+<h2 id="reraise-the-current-exception">Reraise the current
+exception</h2>
+<p>Sometimes, you want to log an exception and raise the same exception
+again. In this case, you can use the <code>raise</code> statement
+without specifying the exception object.
+有时，您想记录异常并再次引发相同的异常。在这种情况下，您可以使用
+<code>raise</code> 语句而不指定异常对象。</p>
+<p>For example, the following defines a <code>division()</code> function
+that returns the division of two numbers:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Logging exception:&#x27;</span>, <span class="built_in">str</span>(ex))</span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+<p>If you pass zero to the second argument of the
+<code>division()</code> function, the <code>ZeroDivisionError</code>
+exception will occur. However, instead of handling the exception, you
+can log the exception and raise it again. 如果将零作为
+<code>division()</code> 函数的第二个参数传递，则会发生
+<code>ZeroDivisionError</code>
+异常。但是，您可以记录异常并再次引发它，而不是处理该异常。</p>
+<p>Note that you don’t need to specify the exception object in the
+<code>raise</code> statement. In this case, Python knows that the
+<code>raise</code> statement will raise the current exception that has
+been caught by the <code>except</code> clause. 注意，你不需要在
+<code>raise</code> 语句中指定异常对象。在这种情况下，Python 知道
+<code>raise</code> 语句将引发由 <code>except</code>
+子句捕获的当前异常。</p>
+<p>The following code causes a <code>ZeroDivisionError</code>
+exception:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>And you’ll see both the logging message and the exception in the
+output:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Logging exception: division by zero</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/pythontutorial/app.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
+<h2 id="raise-another-exception-during-handling-an-exception">Raise
+another exception during handling an exception</h2>
+<p>When handling an exception, you may want to raise another exception.
+For example:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>In the <code>division()</code> function, we raise a
+<code>ValueError</code>exception if the <code>ZeroDivisionError</code>
+occurs.</p>
+<p>If you run the following code, you’ll get the detail of the stack
+trace: 运行以下代码，你将得到详细的堆栈跟踪信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
+<p>First, the <code>ZeroDivisionError</code> exception occurs: 首先，
+<code>ZeroDivisionError</code> 异常发生：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
+<p>Second, during handling the <code>ZeroDivisionError</code> exception,
+the <code>ValueError</code> exception occurs: 其次，在处理
+<code>ZeroDivisionError</code> 异常时，发生 <code>ValueError</code>
+异常：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
+<h2 id="summary">Summary</h2>
+<ul>
+<li>Use the Python <code>raise</code> statement to raise an
+exception.</li>
+<li>When handling exception, you can raise the same or another
+exception. 处理异常时，您可以引发相同或不同的异常。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/OOP/Exceptions/2.Exception Handling" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2198,182 +2374,6 @@ clause.</li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/2.Exception%20Handling/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/OOP/Exceptions/3.Raise Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" target="_blank">Raise Exception</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="raise-exception">Raise Exception</h1>
-<p><strong>Summary</strong>: in this tutorial, you’ll learn how to raise
-exceptions by using the Python <code>raise</code> statement.</p>
-<h2 id="introduction-to-the-python-raise-statement">Introduction to the
-Python raise statement</h2>
-<p>To raise an <a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>,
-you use the <code>raise</code> statement: 要引发异常，可以使用
-<code>raise</code> 语句：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> ExceptionType()</span><br></pre></td></tr></table></figure>
-<p>The <code>ExceptionType()</code> must be subclass of the
-<code>BaseException</code> class. Typically, it is a subclass of the
-<code>Exception</code> class. Note that the <code>ExceptionType</code>
-doesn’t need to be directly inherited from the <code>Exception</code>
-class. It can indirectly inherit from a class that is a subclass of the
-Exception class. <code>ExceptionType()</code> 必须是
-<code>BaseException</code> 类的子类。通常，它也是 <code>Exception</code>
-类的子类。 请注意， <code>ExceptionType</code> 不需要直接继承自
-<code>Exception</code> 类。它可以间接继承自 Exception 类的子类。</p>
-<p>The <code>BaseException</code> class has the <code>__init__</code>
-method that accepts an <code>*args</code> argument. It means that you
-can pass any number of arguments to the exception object when raising an
-exception. <code>BaseException</code> 类具有 <code>__init__</code>
-方法，该方法接受 <code>*args</code>
-参数。这意味着在引发异常时，您可以向异常对象传递任意数量的参数。</p>
-<p>The following example uses the <code>raise</code> statement to raise
-a <code>ValueError</code> exception. It passes three arguments to the
-<code>ValueError</code> <code>__init__</code> method: 下面的例子使用
-<code>raise</code> 语句引发 <code>ValueError</code> 异常。它向
-<code>ValueError</code> <code>__init__</code> 方法传递三个参数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;The value error exception&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(ex.args)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&#x27;The value error exception&#x27;, &#x27;x&#x27;, &#x27;y&#x27;)</span><br></pre></td></tr></table></figure>
-<h2 id="reraise-the-current-exception">Reraise the current
-exception</h2>
-<p>Sometimes, you want to log an exception and raise the same exception
-again. In this case, you can use the <code>raise</code> statement
-without specifying the exception object.
-有时，您想记录异常并再次引发相同的异常。在这种情况下，您可以使用
-<code>raise</code> 语句而不指定异常对象。</p>
-<p>For example, the following defines a <code>division()</code> function
-that returns the division of two numbers:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Logging exception:&#x27;</span>, <span class="built_in">str</span>(ex))</span><br><span class="line">        <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
-<p>If you pass zero to the second argument of the
-<code>division()</code> function, the <code>ZeroDivisionError</code>
-exception will occur. However, instead of handling the exception, you
-can log the exception and raise it again. 如果将零作为
-<code>division()</code> 函数的第二个参数传递，则会发生
-<code>ZeroDivisionError</code>
-异常。但是，您可以记录异常并再次引发它，而不是处理该异常。</p>
-<p>Note that you don’t need to specify the exception object in the
-<code>raise</code> statement. In this case, Python knows that the
-<code>raise</code> statement will raise the current exception that has
-been caught by the <code>except</code> clause. 注意，你不需要在
-<code>raise</code> 语句中指定异常对象。在这种情况下，Python 知道
-<code>raise</code> 语句将引发由 <code>except</code>
-子句捕获的当前异常。</p>
-<p>The following code causes a <code>ZeroDivisionError</code>
-exception:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>And you’ll see both the logging message and the exception in the
-output:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Logging exception: division by zero</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/pythontutorial/app.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<h2 id="raise-another-exception-during-handling-an-exception">Raise
-another exception during handling an exception</h2>
-<p>When handling an exception, you may want to raise another exception.
-For example:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>In the <code>division()</code> function, we raise a
-<code>ValueError</code>exception if the <code>ZeroDivisionError</code>
-occurs.</p>
-<p>If you run the following code, you’ll get the detail of the stack
-trace: 运行以下代码，你将得到详细的堆栈跟踪信息：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">division(<span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
-<p>First, the <code>ZeroDivisionError</code> exception occurs: 首先，
-<code>ZeroDivisionError</code> 异常发生：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<p>Second, during handling the <code>ZeroDivisionError</code> exception,
-the <code>ValueError</code> exception occurs: 其次，在处理
-<code>ZeroDivisionError</code> 异常时，发生 <code>ValueError</code>
-异常：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    division(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;C:/pythontutorial/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> division</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> zero</span><br></pre></td></tr></table></figure>
-<h2 id="summary">Summary</h2>
-<ul>
-<li>Use the Python <code>raise</code> statement to raise an
-exception.</li>
-<li>When handling exception, you can raise the same or another
-exception. 处理异常时，您可以引发相同或不同的异常。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/3.Raise%20Exception/">展开全文 >></a>
     </p>
     
 
@@ -2792,11 +2792,11 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2808,6 +2808,10 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
@@ -2816,11 +2820,7 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2828,11 +2828,11 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2840,19 +2840,19 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2900,11 +2900,11 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2928,10 +2928,6 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
@@ -2940,7 +2936,7 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2948,11 +2944,15 @@ more organized and catch exceptions at multiple levels.
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">

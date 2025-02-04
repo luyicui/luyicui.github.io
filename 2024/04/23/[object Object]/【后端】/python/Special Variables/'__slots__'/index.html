@@ -10,12 +10,12 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="__slots__ 由于 python 是一种动态语言，python 类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；__slots__ 的使用；@property 的使用 实例属性和类属性的绑定 由于 Python 是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过 self 变量： 1">
+  <meta name="description" content="__slots__由于 python 是一种动态语言，python 类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；__slots__ 的使用；@property 的使用 实例属性和类属性的绑定由于 Python 是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过 self 变量： 123456class">
 <meta property="og:type" content="article">
 <meta property="og:title" content="__slots__">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/23/[object%20Object]/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="__slots__ 由于 python 是一种动态语言，python 类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；__slots__ 的使用；@property 的使用 实例属性和类属性的绑定 由于 Python 是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过 self 变量： 1">
+<meta property="og:description" content="__slots__由于 python 是一种动态语言，python 类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；__slots__ 的使用；@property 的使用 实例属性和类属性的绑定由于 Python 是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过 self 变量： 123456class">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-23T06:33:49.000Z">
 <meta property="article:modified_time" content="2025-01-18T10:48:46.120Z">
@@ -262,26 +262,15 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="slots__"><code>__slots__</code></h1>
-<p>由于 python 是一种动态语言，python
-类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；<code>__slots__</code>
-的使用；<span class="citation" data-cites="property">@property</span>
-的使用</p>
-<h2 id="实例属性和类属性的绑定">实例属性和类属性的绑定</h2>
-<p>由于 Python
-是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过
-self 变量：</p>
+    <h1 id="slots"><a href="#slots" class="headerlink" title="__slots__"></a><code>__slots__</code></h1><p>由于 python 是一种动态语言，python 类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；<code>__slots__</code> 的使用；@property 的使用</p>
+<h2 id="实例属性和类属性的绑定"><a href="#实例属性和类属性的绑定" class="headerlink" title="实例属性和类属性的绑定"></a>实例属性和类属性的绑定</h2><p>由于 Python 是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过 self 变量：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&#x27;Bob&#x27;</span>)</span><br><span class="line">s.score = <span class="number">90</span></span><br></pre></td></tr></table></figure>
-<p>但是，如果 Student 类本身需要绑定一个属性呢？可以直接在 class
-中定义属性，这种属性是<strong>类属性</strong>，归 Student 类所有：</p>
+<p>但是，如果 Student 类本身需要绑定一个属性呢？可以直接在 class 中定义属性，这种属性是<strong>类属性</strong>，归 Student 类所有：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name = <span class="string">&#x27;Student&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>当我们定义了一个类属性后，这个属性虽然归类所有，但类的所有实例都可以访问到。来测试一下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">... </span>    name = <span class="string">&#x27;Student&#x27;</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建实例 s</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 打印 name 属性，因为实例并没有 name 属性，所以会继续查找 class 的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 打印类的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 给实例绑定 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 由于实例属性优先级比类属性高，因此，它会屏蔽掉类的 name 属性</span></span><br><span class="line">Michael</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 但是类属性并未消失，用 Student.name 仍然可以访问</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> s.name <span class="comment"># 如果删除实例的 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 再次调用 s.name，由于实例的 name 属性没有找到，类的 name 属性就显示出来了</span></span><br><span class="line">Student</span><br></pre></td></tr></table></figure>
 <p>从上面的例子可以看出，在编写程序的时候，千万不要对实例属性和类属性使用相同的名字，因为相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性。</p>
-<h2 id="动态绑定属性和方法">动态绑定属性和方法</h2>
-<p>正常情况下，当我们定义了一个 class，创建了一个 class
-的实例后，我们可以给该实例绑定任何属性和方法，这就是动态语言的灵活性。先定义
-class：</p>
+<h2 id="动态绑定属性和方法"><a href="#动态绑定属性和方法" class="headerlink" title="动态绑定属性和方法"></a>动态绑定属性和方法</h2><p>正常情况下，当我们定义了一个 class，创建了一个 class 的实例后，我们可以给该实例绑定任何属性和方法，这就是动态语言的灵活性。先定义 class：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
 <p>然后，尝试给实例<strong>绑定一个属性</strong>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 动态给实例绑定一个属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name)</span><br><span class="line">Michael</span><br></pre></td></tr></table></figure>
@@ -291,50 +280,29 @@ class：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2 = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2.set_age(<span class="number">25</span>) <span class="comment"># 尝试调用方法</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;set_age&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>为了给所有实例都绑定方法，可以给 class 绑定方法：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, score</span>):</span><br><span class="line"><span class="meta">... </span>    self.score = score</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Student.set_score = set_score</span><br></pre></td></tr></table></figure>
-<p>给 class 绑定方法后，所有实例均可调用：通常情况下，上面的 set_score
-方法可以直接定义在 class 中，但动态绑定允许我们在程序运行的过程中动态给
-class 加上功能，这在静态语言中很难实现。</p>
-<h2 id="使用__slots__">使用<code>__slots__</code></h2>
-<p>但是，如果我们想要限制实例的属性怎么办？比如，只允许对 Student
-实例添加 name 和 age 属性。</p>
-<p>为了达到限制的目的，Python 允许在定义 class
-的时候，定义一个特殊的<code>__slots__</code>变量，来限制该 class
-实例能添加的属性：</p>
+<p>给 class 绑定方法后，所有实例均可调用：通常情况下，上面的 set_score 方法可以直接定义在 class 中，但动态绑定允许我们在程序运行的过程中动态给 class 加上功能，这在静态语言中很难实现。</p>
+<h2 id="使用-slots"><a href="#使用-slots" class="headerlink" title="使用__slots__"></a>使用<code>__slots__</code></h2><p>但是，如果我们想要限制实例的属性怎么办？比如，只允许对 Student 实例添加 name 和 age 属性。</p>
+<p>为了达到限制的目的，Python 允许在定义 class 的时候，定义一个特殊的<code>__slots__</code>变量，来限制该 class 实例能添加的属性：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    __slots__ = (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;age&#x27;</span>) <span class="comment"># 用 tuple 定义允许绑定的属性名称</span></span><br></pre></td></tr></table></figure>
 <p>然后，我们试试：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 绑定属性&#x27;name&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.age = <span class="number">25</span> <span class="comment"># 绑定属性&#x27;age&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">99</span> <span class="comment"># 绑定属性&#x27;score&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;score&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>由于’score’没有被放到<code>__slots__</code>中，所以不能绑定 score
-属性，试图绑定 score 将得到 AttributeError 的错误。</p>
+<p>由于’score’没有被放到<code>__slots__</code>中，所以不能绑定 score 属性，试图绑定 score 将得到 AttributeError 的错误。</p>
 <p>使用<code>__slots__</code>要注意，<code>__slots__</code>定义的属性仅对当前类实例起作用，<strong>对继承的子类是不起作用的：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">GraduateStudent</span>(<span class="title class_ inherited__">Student</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">pass</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = GraduateStudent()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
 <p>除非在子类中也定义<code>__slots__</code>，这样<strong>子类实例允许定义的属性就是自身的<code>__slots__</code>加上父类的<code>__slots__</code></strong></p>
-<h2 id="使用property">使用@property</h2>
-<p>在绑定属性时，如果我们直接把属性暴露出去，虽然写起来很简单，但是，没办法检查参数，导致可以把成绩随便改：</p>
+<h2 id="使用-property"><a href="#使用-property" class="headerlink" title="使用@property"></a>使用@property</h2><p>在绑定属性时，如果我们直接把属性暴露出去，虽然写起来很简单，但是，没办法检查参数，导致可以把成绩随便改：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = Student()</span><br><span class="line">s.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
-<p>这显然不合逻辑。为了限制 score 的范围，可以通过一个 set_score()
-方法来设置成绩，再通过一个 get_score() 来获取成绩，这样，在 set_score()
-方法里，就可以检查参数：</p>
+<p>这显然不合逻辑。为了限制 score 的范围，可以通过一个 set_score() 方法来设置成绩，再通过一个 get_score() 来获取成绩，这样，在 set_score() 方法里，就可以检查参数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_score</span>(<span class="params">self</span>):</span><br><span class="line">         <span class="keyword">return</span> self._score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value</span><br></pre></td></tr></table></figure>
-<p>现在，对任意的 Student 实例进行操作，就不能随心所欲地设置 score
-了：</p>
+<p>现在，对任意的 Student 实例进行操作，就不能随心所欲地设置 score 了：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">60</span>) <span class="comment"># ok!</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.get_score()</span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">9999</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
-<p>但是，上面的<strong>调用方法</strong>又略显复杂，没有直接用属性这么直接简单。有没有既能检查参数，又可以用类似属性这样简单的方式来访问类的变量呢？Python
-内置的@property 装饰器就是负责把一个方法变成属性调用的：</p>
+<p>但是，上面的<strong>调用方法</strong>又略显复杂，没有直接用属性这么直接简单。有没有既能检查参数，又可以用类似属性这样简单的方式来访问类的变量呢？Python 内置的@property 装饰器就是负责把一个方法变成属性调用的：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._score  <span class="comment">#注意有一个短下划线</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @score.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value  <span class="comment">#注意有一个短下划线</span></span><br></pre></td></tr></table></figure>
-<p><span class="citation" data-cites="property">@property</span>
-的实现比较复杂，我们先考察如何使用。把一个 getter
-方法变成属性，只需要加上@property 就可以了，此时，<span class="citation"
-data-cites="property">@property</span>
-本身又创建了另一个装饰器@score.setter，负责把一个 setter
-方法变成属性赋值，于是，我们就拥有一个可控的属性操作：</p>
+<p>@property 的实现比较复杂，我们先考察如何使用。把一个 getter 方法变成属性，只需要加上@property 就可以了，此时，@property 本身又创建了另一个装饰器@score.setter，负责把一个 setter 方法变成属性赋值，于是，我们就拥有一个可控的属性操作：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">60</span> <span class="comment"># OK，实际转化为 s.set_score(60)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score <span class="comment"># OK，实际转化为 s.get_score()</span></span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">9999</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
-<p>注意到这个神奇的@property，我们在对实例属性操作的时候，就知道该属性很可能不是直接暴露的，而是通过
-getter 和 setter
-方法来实现的。还可以定义<strong>只读属性</strong>，<strong>只定义 getter
-方法，不定义 setter 方法就是一个只读属性：</strong></p>
+<p>注意到这个神奇的@property，我们在对实例属性操作的时候，就知道该属性很可能不是直接暴露的，而是通过 getter 和 setter 方法来实现的。还可以定义<strong>只读属性</strong>，<strong>只定义 getter 方法，不定义 setter 方法就是一个只读属性：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="comment"># 可读写属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._birth</span><br><span class="line"></span><br><span class="line"><span class="meta">    @birth.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self, value</span>):</span><br><span class="line">        self._birth = value</span><br><span class="line">    <span class="comment"># 只读属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">age</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2018</span> - self._birth</span><br></pre></td></tr></table></figure>
-<p>上面的 birth 是可读写属性，而 age 就是一个只读属性，因为 age 可以根据
-birth 和当前时间计算出来</p>
+<p>上面的 birth 是可读写属性，而 age 就是一个只读属性，因为 age 可以根据 birth 和当前时间计算出来</p>
 
     
 
@@ -484,8 +452,8 @@ birth 和当前时间计算出来</p>
     </a>
   
   
-    <a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Reference/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Reference</div>
+    <a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Feature Scaling</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -512,7 +480,7 @@ birth 和当前时间计算出来</p>
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#slots__"><span class="toc-number">1.</span> <span class="toc-text">__slots__</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7%E5%92%8C%E7%B1%BB%E5%B1%9E%E6%80%A7%E7%9A%84%E7%BB%91%E5%AE%9A"><span class="toc-number">1.1.</span> <span class="toc-text">实例属性和类属性的绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">动态绑定属性和方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8__slots__"><span class="toc-number">1.3.</span> <span class="toc-text">使用__slots__</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8property"><span class="toc-number">1.4.</span> <span class="toc-text">使用@property</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#slots"><span class="toc-number">1.</span> <span class="toc-text">__slots__</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7%E5%92%8C%E7%B1%BB%E5%B1%9E%E6%80%A7%E7%9A%84%E7%BB%91%E5%AE%9A"><span class="toc-number">1.1.</span> <span class="toc-text">实例属性和类属性的绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">动态绑定属性和方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-slots"><span class="toc-number">1.3.</span> <span class="toc-text">使用__slots__</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-property"><span class="toc-number">1.4.</span> <span class="toc-text">使用@property</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -691,6 +659,10 @@ birth 和当前时间计算出来</p>
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
@@ -699,7 +671,7 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -707,11 +679,27 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -719,11 +707,11 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -735,7 +723,7 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -743,23 +731,7 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -767,7 +739,7 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -776,10 +748,6 @@ birth 和当前时间计算出来</p>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -827,15 +795,11 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -847,6 +811,10 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
@@ -855,11 +823,11 @@ birth 和当前时间计算出来</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

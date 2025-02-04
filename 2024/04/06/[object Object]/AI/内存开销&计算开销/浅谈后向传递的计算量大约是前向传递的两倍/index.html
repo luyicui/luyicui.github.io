@@ -10,18 +10,27 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="浅谈后向传递的计算量大约是前向传递的两倍 前言 训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。  上图表示一次训练迭代中各个环节（前向传递、后">
+  <meta name="description" content="浅谈后向传递的计算量大约是前向传递的两倍前言训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。  上图表示一次训练迭代中各个环节（前向传递、后向传递、通信">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈后向传递的计算量大约是前向传递的两倍">
 <meta property="og:url" content="https://luyicui.github.io/2024/04/06/[object%20Object]/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="浅谈后向传递的计算量大约是前向传递的两倍 前言 训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。  上图表示一次训练迭代中各个环节（前向传递、后">
+<meta property="og:description" content="浅谈后向传递的计算量大约是前向传递的两倍前言训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。  上图表示一次训练迭代中各个环节（前向传递、后向传递、通信">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013327.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013343.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013337.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013358.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013340.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013372.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013895.jpg">
+<meta property="og:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013056.jpg">
 <meta property="article:published_time" content="2024-04-06T05:59:27.000Z">
 <meta property="article:modified_time" content="2025-01-26T18:14:15.139Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="内存开销&amp;计算开销">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013327.jpg">
   
     <link rel="alternative" href="/atom.xml" title="弘毅 の blog" type="application/atom+xml">
   
@@ -262,321 +271,123 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1
-id="浅谈后向传递的计算量大约是前向传递的两倍">浅谈后向传递的计算量大约是前向传递的两倍</h1>
-<h2 id="前言">前言</h2>
-<p>训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：<strong>后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略</strong>。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013327.jpg" /></p>
-<p>上图表示一次训练迭代中各个环节（前向传递、后向传递、通信环节、优化器更新)的耗时占比，来自于《PyTorch
-Distributed: Experiences on Accelerating Data Parallel
-Training》。上图中，纵轴表示耗时占比，FWD表示一次训练迭代中前向传递的耗时占比，BWD则表示一次训练迭代中后向传递的耗时占比，OPT表示一次训练迭代中优化器更新模型参数的耗时占比。从上图中可以看到，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013343.jpg" /></p>
-<p>上图表示GPipe流水线并行的调度策略，来自于《Efficient large-scale
-language model training on gpu clusters using
-megatron-lm》。上图中，横轴表示耗时，一个蓝色小块表示一个微批次的前向传递，一个绿色小块表示一个微批次的后向传递，黑色竖线表示一次流水线刷新，也就是优化器更新模型参数。从上图中可以看到，一个绿色小块的宽度大约是蓝色小块的二倍，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
+    <h1 id="浅谈后向传递的计算量大约是前向传递的两倍"><a href="#浅谈后向传递的计算量大约是前向传递的两倍" class="headerlink" title="浅谈后向传递的计算量大约是前向传递的两倍"></a>浅谈后向传递的计算量大约是前向传递的两倍</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：<strong>后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略</strong>。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013327.jpg" alt=""></p>
+<p>上图表示一次训练迭代中各个环节（前向传递、后向传递、通信环节、优化器更新)的耗时占比，来自于《PyTorch Distributed: Experiences on Accelerating Data Parallel Training》。上图中，纵轴表示耗时占比，FWD表示一次训练迭代中前向传递的耗时占比，BWD则表示一次训练迭代中后向传递的耗时占比，OPT表示一次训练迭代中优化器更新模型参数的耗时占比。从上图中可以看到，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013343.jpg" alt=""></p>
+<p>上图表示GPipe流水线并行的调度策略，来自于《Efficient large-scale language model training on gpu clusters using megatron-lm》。上图中，横轴表示耗时，一个蓝色小块表示一个微批次的前向传递，一个绿色小块表示一个微批次的后向传递，黑色竖线表示一次流水线刷新，也就是优化器更新模型参数。从上图中可以看到，一个绿色小块的宽度大约是蓝色小块的二倍，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
 <span id="more"></span>
-<h2 id="反向传播算法是怎么工作的">反向传播算法是怎么工作的</h2>
-<p>反向传播算法已经是训练神经网络模型不可缺少的一部分。训练神经网络模型时，用梯度下降算法来学习和更新模型参数（包含权重weights和偏置bias），问题是如何计算损失函数关于模型参数的梯度呢？这就要用到反向传播（backpropagation）算法。</p>
-<p>反向传播算法的核心是计算损失函数<span
-class="math inline">\(C\)</span>关于神经网络权重 <span
-class="math inline">\(w\)</span> 或偏置 <span
-class="math inline">\(b\)</span> 的偏微分 <span
-class="math inline">\(\frac{\partial{C}}{\partial{w}}\)</span> 或 <span
-class="math inline">\(\frac{\partial{C}}{\partial{b}}\)</span>
-，这两个偏微分表达式就是梯度。梯度的物理意义是：我们改变网络权重和偏置可以在多大程度上影响损失函数
-<span class="math inline">\(C\)</span> 。</p>
-<h3 id="前向传递计算神经网络的输出">前向传递：计算神经网络的输出</h3>
-<p>在讨论反向传播算法之前，我们先以多层前馈神经网络为例，用基于矩阵的方法来计算神经网络的输出。在此过程中，先定义一些数学符号。</p>
-<p>首先明确地定义神经网络中的权重参数，用 <span
-class="math inline">\(w^l_{jk}\)</span> 表示第<span
-class="math inline">\(l-1\)</span>层第 <span
-class="math inline">\(k\)</span> 个神经元到第<span
-class="math inline">\(l\)</span>层第 <span
-class="math inline">\(j\)</span> 个神经元的连接。例如，下图中的权重
-<span class="math inline">\(w^3_{24}\)</span>
-表示第2层第4个神经元到第3层第2个神经元的连接。这个定义看起来有些麻烦，一个迷惑之处是
-<span class="math inline">\(jk\)</span> 的顺序，应该用<span
-class="math inline">\(j\)</span>表示输入神经元，用<span
-class="math inline">\(k\)</span>表示输出神经元，而不是相反。但之后的计算中，你会看到这个定义是自然而然的。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013337.jpg" /></p>
-<p>类似地，我们定义网络中的偏置和激活。用 <span
-class="math inline">\(b^l_j\)</span> 表示网络中第<span
-class="math inline">\(l\)</span>层第<span
-class="math inline">\(j\)</span>个神经元的偏置，用 <span
-class="math inline">\(a_j^l\)</span> 表示网络中第<span
-class="math inline">\(l\)</span>层第<span
-class="math inline">\(j\)</span>个神经元的激活。下图给出了示例。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013358.jpg" /></p>
-<p>有了以上定义，我们就可以把网络第<span
-class="math inline">\(l\)</span>层第<span
-class="math inline">\(j\)</span>个神经元的激活 <span
-class="math inline">\(a_j^l\)</span> 与第 <span
-class="math inline">\(l-1\)</span>
-层的激活联系起来。<strong>单个神经元的计算公式(逐点形式)：</strong>
-<span class="math display">\[
-a_{j}^{l}=\sigma(\sum_{k}w^{l}_{jk}a^{l-1}_{k}+b^{l}_{j})
-\]</span> 其中，求和是对第<span
-class="math inline">\(l-1\)</span>层上所有神经元 <span
-class="math inline">\(k\)</span> 的求和， <span
-class="math inline">\(\sigma ()\)</span> 是激活函数。</p>
-<p>为了以矩阵形式重写上式，我们为第<span
-class="math inline">\(l\)</span>层定义一个权重矩阵（weight matrix）
-<span class="math inline">\(w^l\)</span> ，表示连接到第<span
-class="math inline">\(l\)</span>层的权重，矩阵第<span
-class="math inline">\(j\)</span>行第<span
-class="math inline">\(k\)</span>列的元素为 <span
-class="math inline">\(w^l_{jk}\)</span> 。设第<span
-class="math inline">\(l\)</span>层的输入维度为 <span
-class="math inline">\(M\)</span> ，输出维度为 <span
-class="math inline">\(N\)</span> 。则该权重矩阵 <span
-class="math inline">\(w^l\)</span> 的形状为 <span
-class="math inline">\(N\times M\)</span> 。</p>
-<p>同样地，我们定义一个偏置向量（bias vector） <span
-class="math inline">\(b^l\)</span> ，它的元素是 <span
-class="math inline">\(b_j^l\)</span> ，形状是 <span
-class="math inline">\(N\)</span> 。定义一个激活向量（activation vector）
-<span class="math inline">\(a^l\)</span> ，它的元素是 <span
-class="math inline">\(a^l_j\)</span> ，形状是 <span
-class="math inline">\(N\)</span> 。</p>
+<h2 id="反向传播算法是怎么工作的"><a href="#反向传播算法是怎么工作的" class="headerlink" title="反向传播算法是怎么工作的"></a>反向传播算法是怎么工作的</h2><p>反向传播算法已经是训练神经网络模型不可缺少的一部分。训练神经网络模型时，用梯度下降算法来学习和更新模型参数（包含权重weights和偏置bias），问题是如何计算损失函数关于模型参数的梯度呢？这就要用到反向传播（backpropagation）算法。</p>
+<p>反向传播算法的核心是计算损失函数$C$关于神经网络权重 $w$ 或偏置 $b$ 的偏微分 $\frac{\partial{C}}{\partial{w}}$ 或 $\frac{\partial{C}}{\partial{b}}$ ，这两个偏微分表达式就是梯度。梯度的物理意义是：我们改变网络权重和偏置可以在多大程度上影响损失函数 $C$ 。</p>
+<h3 id="前向传递：计算神经网络的输出"><a href="#前向传递：计算神经网络的输出" class="headerlink" title="前向传递：计算神经网络的输出"></a>前向传递：计算神经网络的输出</h3><p>在讨论反向传播算法之前，我们先以多层前馈神经网络为例，用基于矩阵的方法来计算神经网络的输出。在此过程中，先定义一些数学符号。</p>
+<p>首先明确地定义神经网络中的权重参数，用 $w^l<em>{jk}$ 表示第$l-1$层第 $k$ 个神经元到第$l$层第 $j$ 个神经元的连接。例如，下图中的权重 $w^3</em>{24}$ 表示第2层第4个神经元到第3层第2个神经元的连接。这个定义看起来有些麻烦，一个迷惑之处是 $jk$ 的顺序，应该用$j$表示输入神经元，用$k$表示输出神经元，而不是相反。但之后的计算中，你会看到这个定义是自然而然的。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013337.jpg" alt=""></p>
+<p>类似地，我们定义网络中的偏置和激活。用 $b^l_j$ 表示网络中第$l$层第$j$个神经元的偏置，用 $a_j^l$ 表示网络中第$l$层第$j$个神经元的激活。下图给出了示例。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013358.jpg" alt=""></p>
+<p>有了以上定义，我们就可以把网络第$l$层第$j$个神经元的激活 $a_j^l$ 与第 $l-1$ 层的激活联系起来。<strong>单个神经元的计算公式(逐点形式)：</strong> </p>
+<script type="math/tex; mode=display">
+a_{j}^{l}=\sigma(\sum_{k}w^{l}_{jk}a^{l-1}_{k}+b^{l}_{j})</script><p>其中，求和是对第$l-1$层上所有神经元 $k$ 的求和， $\sigma ()$ 是激活函数。</p>
+<p>为了以矩阵形式重写上式，我们为第$l$层定义一个权重矩阵（weight matrix） $w^l$ ，表示连接到第$l$层的权重，矩阵第$j$行第$k$列的元素为 $w^l_{jk}$ 。设第$l$层的输入维度为 $M$ ，输出维度为 $N$ 。则该权重矩阵 $w^l$ 的形状为 $N\times M$ 。</p>
+<p>同样地，我们定义一个偏置向量（bias vector） $b^l$ ，它的元素是 $b_j^l$ ，形状是 $N$ 。定义一个激活向量（activation vector） $a^l$ ，它的元素是 $a^l_j$ ，形状是 $N$ 。</p>
 <p>重写上式需要的最后一个要素是向量化（vectorization）函数。核心是函数逐点应用到向量中的每个元素。</p>
 <p>有了以上定义，我们就可以<strong>将上式改写为矩阵形式</strong>：</p>
-<p><span class="math display">\[
-a^{l}_{N}=\sigma(w^{l}_{N\times M}a^{l-1}_{M}+b^{l}_{N})
-\]</span>
-下标表示了矩阵或者向量的形状。这个公式给出一个更全局的视角来观察一层神经元的激活是如何与上一层神经元的激活联系起来的：先将权重矩阵应用到上一层的激活，再加上偏置向量，最后过激活函数。</p>
-<p>我们<strong>引入中间变量</strong> <span class="math inline">\(z^{l} =
-w^{l}a^{l-1}+b^{l}\)</span> ，我们将 <span
-class="math inline">\(z^l\)</span> 称为第 <span
-class="math inline">\(l\)</span> 层神经元的加权输入（weighted
-input）。其元素为：</p>
-<p><span class="math display">\[
-z^{l}_{jk}=\sum_{k}w^{l}_{jk}a^{l-1}_{k}+b^{l}_{j}
-\]</span></p>
-<h3 id="反向传播的四个基本等式">反向传播的四个基本等式</h3>
-<p>反向传播是要理解改变网络中的权重和偏置多大程度上影响损失函数。这意味着计算偏微分
-<span class="math inline">\(\frac{\partial C}{\partial
-w^{l}_{jk}}\)</span> 和 <span class="math inline">\(\frac{\partial
-C}{\partial b^{l}_{j}}\)</span> 。为了计算这两个偏微分，我们引入中间变量
-<span class="math inline">\(\delta^{l}_{j}\)</span> ，称为第<span
-class="math inline">\(l\)</span>层第<span
-class="math inline">\(j\)</span>个神经元的误差（error）。反向传播会给出计算误差
-<span class="math inline">\(\delta^{l}_{j}\)</span> 的步骤，再将 <span
-class="math inline">\(\delta^{l}_{j}\)</span> 与 <span
-class="math inline">\(\frac{\partial C}{\partial w^{l}_{jk}}\)</span> 和
-<span class="math inline">\(\frac{\partial C}{\partial
-b^{l}_{j}}\)</span> 联系起来。</p>
-<p>将误差 <span class="math inline">\(\delta^{l}_{j}\)</span> 定义为：
-<span class="math display">\[
-\delta^{l}_{j}=\frac{\partial C}{\partial z^{l}_{j}}
-\]</span></p>
-<h4 id="输出层的误差">输出层的误差</h4>
-<p><span class="math display">\[
-\delta^{L}_{j}=\frac{\partial C}{\partial
-a^{L}_{j}}\sigma^{&#39;}(z^{L}_{j})\qquad\qquad\qquad \cdots\cdots(BP1)
-\]</span></p>
-<p>右边的第一项表示第<span
-class="math inline">\(j\)</span>个输出激活多大程度上影响了损失函数。如果损失函数不太依赖于第<span
-class="math inline">\(j\)</span>个神经元激活，那么 <span
-class="math inline">\(\delta^{L}_{j}\)</span>
-会是一个比较小的值。第二项表示激活函数在 <span
-class="math inline">\(z^{L}_{j}\)</span> 上的改变程度。</p>
-<p>将上式改写为矩阵形式： <span class="math display">\[
-\delta^{L} = \nabla _{a}C \odot \sigma^{&#39;}(z^{L})
-\]</span> <strong>证明</strong>：</p>
-<p>从定义出发，应用多元微积分的链式法则： <span class="math display">\[
-\delta^{L}_{j} =\frac{\partial C}{\partial z^{L}_{j}} =
-\sum_{k}\frac{\partial C}{\partial a^{L}_{k}}\frac{\partial
-a^L_k}{z^L_j}=\frac{\partial C}{\partial a^{L}_{j}}\frac{\partial
-a^L_j}{z^L_j}=\frac{\partial C}{\partial a^{L}_{j}}\sigma^{&#39;}(z^L_j)
-\\
-\]</span></p>
-<h4 id="误差与下一层误差的关联">误差与下一层误差的关联</h4>
-<p><span class="math display">\[
-\delta^{l}=((w^{l+1})^{T}\delta^{l+1})\odot\sigma^{&#39;}(z^l)
-\qquad\qquad\qquad \cdots\cdots(BP2) \\
-\]</span></p>
-<p>上式中， <span class="math inline">\((w^{l+1})^{T}\)</span> 是第
-<span class="math inline">\(l+1\)</span> 层权重矩阵 <span
-class="math inline">\(w^{l+1}\)</span>
-的转置。这个式子乍一看是很复杂的，但每一项都有优美的解释。假设我们已经知道第
-<span class="math inline">\(l+1\)</span> 层的误差 <span
-class="math inline">\(\delta^{l+1}\)</span> ，乘以转置的权重矩阵 <span
-class="math inline">\((w^{l+1})^{T}\)</span>
-，可以理解为将误差通过网络反向传播，这衡量了第<span
-class="math inline">\(l\)</span>层输出激活的误差；再乘以阿达玛乘积 <span
-class="math inline">\(\odot\sigma^{&#39;}(z^l_j)\)</span>
-，将误差通过第<span
-class="math inline">\(l\)</span>层的激活函数反向传播，这衡量了第<span
-class="math inline">\(l\)</span>层加权输入的误差。</p>
-<p>这个式子是很优雅的。有了公式(BP1)和(BP2)，就可以计算出所有层对加权输入的误差了。
-<span class="math inline">\(\delta^{L}\rightarrow\delta^{L-1}\rightarrow
-\cdots\rightarrow\delta^{l}\rightarrow
-\cdots\rightarrow\delta^{2}\rightarrow \delta^{1}\)</span>
-。这也就是称之为梯度反向传播算法的原因。</p>
+<script type="math/tex; mode=display">
+a^{l}_{N}=\sigma(w^{l}_{N\times M}a^{l-1}_{M}+b^{l}_{N})</script><p>下标表示了矩阵或者向量的形状。这个公式给出一个更全局的视角来观察一层神经元的激活是如何与上一层神经元的激活联系起来的：先将权重矩阵应用到上一层的激活，再加上偏置向量，最后过激活函数。</p>
+<p>我们<strong>引入中间变量</strong> $z^{l} = w^{l}a^{l-1}+b^{l}$ ，我们将 $z^l$ 称为第 $l$ 层神经元的加权输入（weighted input）。其元素为：</p>
+<script type="math/tex; mode=display">
+z^{l}_{jk}=\sum_{k}w^{l}_{jk}a^{l-1}_{k}+b^{l}_{j}</script><h3 id="反向传播的四个基本等式"><a href="#反向传播的四个基本等式" class="headerlink" title="反向传播的四个基本等式"></a>反向传播的四个基本等式</h3><p>反向传播是要理解改变网络中的权重和偏置多大程度上影响损失函数。这意味着计算偏微分 $\frac{\partial C}{\partial w^{l}<em>{jk}}$ 和 $\frac{\partial C}{\partial b^{l}</em>{j}}$ 。为了计算这两个偏微分，我们引入中间变量 $\delta^{l}<em>{j}$ ，称为第$l$层第$j$个神经元的误差（error）。反向传播会给出计算误差 $\delta^{l}</em>{j}$ 的步骤，再将 $\delta^{l}<em>{j}$ 与 $\frac{\partial C}{\partial w^{l}</em>{jk}}$ 和 $\frac{\partial C}{\partial b^{l}_{j}}$ 联系起来。</p>
+<p>将误差 $\delta^{l}_{j}$ 定义为： </p>
+<script type="math/tex; mode=display">
+\delta^{l}_{j}=\frac{\partial C}{\partial z^{l}_{j}}</script><h4 id="输出层的误差"><a href="#输出层的误差" class="headerlink" title="输出层的误差"></a>输出层的误差</h4><script type="math/tex; mode=display">
+\delta^{L}_{j}=\frac{\partial C}{\partial a^{L}_{j}}\sigma^{'}(z^{L}_{j})\qquad\qquad\qquad \cdots\cdots(BP1)</script><p>右边的第一项表示第$j$个输出激活多大程度上影响了损失函数。如果损失函数不太依赖于第$j$个神经元激活，那么 $\delta^{L}<em>{j}$ 会是一个比较小的值。第二项表示激活函数在 $z^{L}</em>{j}$ 上的改变程度。</p>
+<p>将上式改写为矩阵形式： </p>
+<script type="math/tex; mode=display">
+\delta^{L} = \nabla _{a}C \odot \sigma^{'}(z^{L})</script><p><strong>证明</strong>：</p>
+<p>从定义出发，应用多元微积分的链式法则： </p>
+<script type="math/tex; mode=display">
+\delta^{L}_{j} =\frac{\partial C}{\partial z^{L}_{j}} = \sum_{k}\frac{\partial C}{\partial a^{L}_{k}}\frac{\partial a^L_k}{z^L_j}=\frac{\partial C}{\partial a^{L}_{j}}\frac{\partial a^L_j}{z^L_j}=\frac{\partial C}{\partial a^{L}_{j}}\sigma^{'}(z^L_j) \\</script><h4 id="误差与下一层误差的关联"><a href="#误差与下一层误差的关联" class="headerlink" title="误差与下一层误差的关联"></a>误差与下一层误差的关联</h4><script type="math/tex; mode=display">
+\delta^{l}=((w^{l+1})^{T}\delta^{l+1})\odot\sigma^{'}(z^l) \qquad\qquad\qquad \cdots\cdots(BP2) \\</script><p>上式中， $(w^{l+1})^{T}$ 是第 $l+1$ 层权重矩阵 $w^{l+1}$ 的转置。这个式子乍一看是很复杂的，但每一项都有优美的解释。假设我们已经知道第 $l+1$ 层的误差 $\delta^{l+1}$ ，乘以转置的权重矩阵 $(w^{l+1})^{T}$ ，可以理解为将误差通过网络反向传播，这衡量了第$l$层输出激活的误差；再乘以阿达玛乘积 $\odot\sigma^{‘}(z^l_j)$ ，将误差通过第$l$层的激活函数反向传播，这衡量了第$l$层加权输入的误差。</p>
+<p>这个式子是很优雅的。有了公式(BP1)和(BP2)，就可以计算出所有层对加权输入的误差了。 $\delta^{L}\rightarrow\delta^{L-1}\rightarrow \cdots\rightarrow\delta^{l}\rightarrow \cdots\rightarrow\delta^{2}\rightarrow \delta^{1}$ 。这也就是称之为梯度反向传播算法的原因。</p>
 <p><strong>证明</strong>：</p>
-<p>从定义出发，应用多元微积分的链式法则：有 <span
-class="math inline">\(\delta^{l}_j=\frac{\partial C}{\partial
-z^l_j}\)</span> ，以及 <span
-class="math inline">\(\delta^{l+1}_j=\frac{\partial C}{\partial
-z^{l+1}_j}\)</span> 。</p>
-<p><span class="math display">\[
-\begin{align*} \delta^{l}_j&amp;=\frac{\partial C}{\partial z^l_j} \\
-&amp;=\sum_{k}\frac{\partial C}{\partial z^{l+1}_k}\frac{\partial
-z^{l+1}_{k}}{\partial z^l_j} \\ &amp;=\sum_{k}\frac{\partial
-z^{l+1}_{k}}{\partial z^l_j}\delta^{l+1}_{j} \\ \end{align*} \\
-\]</span></p>
-<p>要评估等式右边的第一项，注意到：</p>
-<p><span class="math display">\[
-z^{l+1}_{k} =\sum_{j}w^{l+1}_{kj}a^{l}_{j}+b^{l+1}_k
-=\sum_{j}w^{l+1}_{kj}\sigma(z^{l}_{j})+b^{l+1}_k
-\]</span> 取微分，得到：</p>
-<p><span class="math display">\[
-\frac{\partial z^{l+1}_k}{\partial z^l_j}
-=w^{l+1}_{kj}\sigma^{&#39;}(z^l_j)
-\]</span> 带入上上式中，得到： <span class="math display">\[
-\delta^l_j=\sum_{k}w^{l+1}_{kj}\delta^{l+1}_k\sigma^{&#39;}(z^l_j)
-\]</span> 重写为矩阵形式，即：</p>
-<p><span class="math display">\[
-\delta^{l}=((w^{l+1})^{T}\delta^{l+1})\odot\sigma^{&#39;}(z^l) \\
-\]</span></p>
-<h4 id="偏置的梯度">偏置的梯度</h4>
-<p><span class="math display">\[
-\frac{\partial C}{\partial b^l_j}=\delta^{l}_{j}\qquad\qquad\qquad
-\cdots\cdots(BP3)
-\]</span> 第<span
-class="math inline">\(l\)</span>层偏置的梯度就等于第<span
-class="math inline">\(l\)</span>层加权输入的误差 <span
-class="math inline">\(\delta^{l}\)</span> 。改写为矩阵形式：</p>
-<p><span class="math display">\[
-\frac{\partial C}{\partial b^l}=\delta^{l}
-\]</span> <strong>证明</strong>：</p>
+<p>从定义出发，应用多元微积分的链式法则：有 $\delta^{l}_j=\frac{\partial C}{\partial z^l_j}$ ，以及 $\delta^{l+1}_j=\frac{\partial C}{\partial z^{l+1}_j}$ 。</p>
+<script type="math/tex; mode=display">
+\begin{align*} \delta^{l}_j&=\frac{\partial C}{\partial z^l_j} \\ &=\sum_{k}\frac{\partial C}{\partial z^{l+1}_k}\frac{\partial z^{l+1}_{k}}{\partial z^l_j} \\ &=\sum_{k}\frac{\partial z^{l+1}_{k}}{\partial z^l_j}\delta^{l+1}_{j} \\ \end{align*} \\</script><p>要评估等式右边的第一项，注意到：</p>
+<script type="math/tex; mode=display">
+z^{l+1}_{k} =\sum_{j}w^{l+1}_{kj}a^{l}_{j}+b^{l+1}_k =\sum_{j}w^{l+1}_{kj}\sigma(z^{l}_{j})+b^{l+1}_k</script><p>取微分，得到：</p>
+<script type="math/tex; mode=display">
+\frac{\partial z^{l+1}_k}{\partial z^l_j} =w^{l+1}_{kj}\sigma^{'}(z^l_j)</script><p>带入上上式中，得到： </p>
+<script type="math/tex; mode=display">
+\delta^l_j=\sum_{k}w^{l+1}_{kj}\delta^{l+1}_k\sigma^{'}(z^l_j)</script><p>重写为矩阵形式，即：</p>
+<script type="math/tex; mode=display">
+\delta^{l}=((w^{l+1})^{T}\delta^{l+1})\odot\sigma^{'}(z^l) \\</script><h4 id="偏置的梯度"><a href="#偏置的梯度" class="headerlink" title="偏置的梯度"></a>偏置的梯度</h4><script type="math/tex; mode=display">
+\frac{\partial C}{\partial b^l_j}=\delta^{l}_{j}\qquad\qquad\qquad \cdots\cdots(BP3)</script><p>第$l$层偏置的梯度就等于第$l$层加权输入的误差 $\delta^{l}$ 。改写为矩阵形式：</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial b^l}=\delta^{l}</script><p><strong>证明</strong>：</p>
 <p>由定义出发，用多元微积分的链式法则：</p>
-<p><span class="math display">\[
-\frac{\partial C}{\partial b^{l}_j}= \frac{\partial C}{\partial
-z^{l}_j}\frac{\partial z^{l}_j}{\partial b^l_j}=\delta^l_j\frac{\partial
-z^{l}_j}{\partial b^l_j}\\
-\]</span></p>
-<p>注意到： <span
-class="math inline">\(z^{l}_{j}=\sum_{k}w^{l}_{jk}a^{l}_{k}+b^{l}_j\)</span>
-，故 <span class="math inline">\(\frac{\partial z^l_j}{\partial
-b^l_j}=1\)</span> 。带入上式中，得到：</p>
-<p><span class="math display">\[
-\frac{\partial C}{\partial b^l_j}=\delta^{l}_{j}
-\]</span></p>
-<h4 id="权重的梯度">权重的梯度</h4>
-<p><span class="math display">\[
-\frac{\partial C}{\partial w^l_{jk}}
-=a^{l-1}_{k}\delta^l_j\qquad\qquad\qquad \cdots\cdots(BP4)
-\]</span></p>
-<p>第<span class="math inline">\(l\)</span>层权重的梯度就等于第<span
-class="math inline">\(l\)</span>层加权输入的误差 <span
-class="math inline">\(\delta^{l}_{j}\)</span> 与 上一层神经元输出激活
-<span class="math inline">\(a^{l-1}_{k}\)</span> 的乘积。将上式改写为：
-<span class="math display">\[
-\frac{\partial C}{\partial w} = a_{in}\delta_{out}\\
-\]</span> 假设权重 <span class="math inline">\(w\)</span>
-连接了两个神经元， <span class="math inline">\(a_{in}\)</span>
-是神经元输入给权重的激活， <span
-class="math inline">\(\delta_{out}\)</span>
-是权重输出给神经元的误差。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013340.jpg" /></p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial b^{l}_j}= \frac{\partial C}{\partial z^{l}_j}\frac{\partial z^{l}_j}{\partial b^l_j}=\delta^l_j\frac{\partial z^{l}_j}{\partial b^l_j}\\</script><p>注意到： $z^{l}<em>{j}=\sum</em>{k}w^{l}<em>{jk}a^{l}</em>{k}+b^{l}_j$ ，故 $\frac{\partial z^l_j}{\partial b^l_j}=1$ 。带入上式中，得到：</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial b^l_j}=\delta^{l}_{j}</script><h4 id="权重的梯度"><a href="#权重的梯度" class="headerlink" title="权重的梯度"></a>权重的梯度</h4><script type="math/tex; mode=display">
+\frac{\partial C}{\partial w^l_{jk}} =a^{l-1}_{k}\delta^l_j\qquad\qquad\qquad \cdots\cdots(BP4)</script><p>第$l$层权重的梯度就等于第$l$层加权输入的误差 $\delta^{l}<em>{j}$ 与 上一层神经元输出激活 $a^{l-1}</em>{k}$ 的乘积。将上式改写为：</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial w} = a_{in}\delta_{out}\\</script><p>假设权重 $w$ 连接了两个神经元， $a<em>{in}$ 是神经元输入给权重的激活， $\delta</em>{out}$ 是权重输出给神经元的误差。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013340.jpg" alt=""></p>
 <p><strong>证明</strong>：</p>
 <p>由定义出发，应用多元微积分的链式法则：</p>
-<p><span class="math display">\[
-\frac{\partial C}{\partial w^{l}_{jk}}= \frac{\partial C}{\partial
-z^{l}_j}\frac{\partial z^{l}_j}{\partial
-w^l_{jk}}=\delta^l_j\frac{\partial z^{l}_j}{\partial w^l_{jk}}
-\]</span> 注意到： <span
-class="math inline">\(z^{l}_{j}=\sum_{k}w^{l}_{jk}a^{l}_{k}+b^{l}_j\)</span>
-，故 <span class="math inline">\(\frac{\partial z^l_j}{\partial
-w^l_{jk}}=a^{l-1}_k\)</span> 。带入上式中，得到： <span
-class="math display">\[
-\frac{\partial C}{\partial w^l_{jk}} =a^{l-1}_{k}\delta^l_j \\
-\]</span></p>
-<h3 id="四个基本等式">2.2.5 四个基本等式</h3>
-<p>综上，梯度反向传播的四个基本等式是：</p>
-<p><span class="math display">\[
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial w^{l}_{jk}}= \frac{\partial C}{\partial z^{l}_j}\frac{\partial z^{l}_j}{\partial w^l_{jk}}=\delta^l_j\frac{\partial z^{l}_j}{\partial w^l_{jk}}</script><p>注意到： $z^{l}<em>{j}=\sum</em>{k}w^{l}<em>{jk}a^{l}</em>{k}+b^{l}<em>j$ ，故 $\frac{\partial z^l_j}{\partial w^l</em>{jk}}=a^{l-1}_k$ 。带入上式中，得到：</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial w^l_{jk}} =a^{l-1}_{k}\delta^l_j \\</script><h3 id="2-2-5-四个基本等式"><a href="#2-2-5-四个基本等式" class="headerlink" title="2.2.5 四个基本等式"></a>2.2.5 四个基本等式</h3><p>综上，梯度反向传播的四个基本等式是：</p>
+<script type="math/tex; mode=display">
 \begin{aligned}
-    \delta ^L&amp;=\nabla _aC\odot \sigma ^{\prime}(z^L)\\
-    \delta ^l&amp;=(w^{l+1})^T\delta ^{l+1}\odot \sigma ^{\prime}(z^l)\\
-    \frac{\partial C}{\partial b_{j}^{l}}&amp;=\delta _{j}^{l}\\
-    \frac{\partial C}{\partial w_{jk}^{l}}&amp;=a_{k}^{l-1}\delta
-_{j}^{l}\\
+    \delta ^L&=\nabla _aC\odot \sigma ^{\prime}(z^L)\\
+    \delta ^l&=(w^{l+1})^T\delta ^{l+1}\odot \sigma ^{\prime}(z^l)\\
+    \frac{\partial C}{\partial b_{j}^{l}}&=\delta _{j}^{l}\\
+    \frac{\partial C}{\partial w_{jk}^{l}}&=a_{k}^{l-1}\delta _{j}^{l}\\
 \end{aligned}
-\\
-\]</span></p>
-<p>有了这四个基本等式，我们就基本理解了梯度的计算过程。</p>
-<h2
-id="后向传递与前向传递的flops比率">后向传递与前向传递的FLOPs比率</h2>
-<h3 id="定义">定义</h3>
-<p><strong>FLOPS</strong>：全大写，floating point operations per
-second，每秒钟浮点数计算次数，理解为运算速度，是衡量硬件性能的指标。例如：A100的float32运算速度是9.7TFLOPS，V100的float32运算速度是7.8TFLOPS。</p>
-<p><strong>FLOPs</strong>：s为小写，floating point
-operations，表示浮点数运算次数，理解为计算量，衡量模型或算法的复杂度。</p>
+\\</script><p>有了这四个基本等式，我们就基本理解了梯度的计算过程。</p>
+<h2 id="后向传递与前向传递的FLOPs比率"><a href="#后向传递与前向传递的FLOPs比率" class="headerlink" title="后向传递与前向传递的FLOPs比率"></a>后向传递与前向传递的FLOPs比率</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p><strong>FLOPS</strong>：全大写，floating point operations per second，每秒钟浮点数计算次数，理解为运算速度，是衡量硬件性能的指标。例如：A100的float32运算速度是9.7TFLOPS，V100的float32运算速度是7.8TFLOPS。</p>
+<p><strong>FLOPs</strong>：s为小写，floating point operations，表示浮点数运算次数，理解为计算量，衡量模型或算法的复杂度。</p>
 <blockquote>
-<p>如何计算矩阵乘法的FLOPs呢？ 对于 <span class="math inline">\(A\in
-R^{1\times n},B\in R^{n\times 1}\)</span> ，计算 <span
-class="math inline">\(AB\)</span> 需要进行 <span
-class="math inline">\(n\)</span> 次乘法运算和 <span
-class="math inline">\(n\)</span> 次加法运算，共计 <span
-class="math inline">\(2n\)</span> 次浮点数运算，需要 <span
-class="math inline">\(2n\)</span> FLOPs。对于 <span
-class="math inline">\(A\in R^{m\times n},B\in R^{n\times p}\)</span>
-，浮点数运算次数为 <span class="math inline">\(2mnp\)</span> 。</p>
+<p>如何计算矩阵乘法的FLOPs呢？ 对于 $A\in R^{1\times n},B\in R^{n\times 1}$ ，计算 $AB$ 需要进行 $n$ 次乘法运算和 $n$ 次加法运算，共计 $2n$ 次浮点数运算，需要 $2n$ FLOPs。对于 $A\in R^{m\times n},B\in R^{n\times p}$ ，浮点数运算次数为 $2mnp$ 。</p>
 </blockquote>
-<p><strong>backward-forward FLOP
-ratio</strong>：后向传递与前向传递的FLOPs比率，表示一次后向传递的浮点数计算次数与一次前向传递的浮点数计算次数的比率。衡量了一次后向传递要比一次前向传递多进行的浮点数运算。</p>
-<h3
-id="前向传递与后向传递的浮点数操作次数的理论分析">前向传递与后向传递的浮点数操作次数的理论分析</h3>
-<p>为了理解后向传递的浮点数运算为什么要比前向传递多？我们就要从反向传播算法的四个基本等式入手。</p>
+<p><strong>backward-forward FLOP ratio</strong>：后向传递与前向传递的FLOPs比率，表示一次后向传递的浮点数计算次数与一次前向传递的浮点数计算次数的比率。衡量了一次后向传递要比一次前向传递多进行的浮点数运算。</p>
+<h3 id="前向传递与后向传递的浮点数操作次数的理论分析"><a href="#前向传递与后向传递的浮点数操作次数的理论分析" class="headerlink" title="前向传递与后向传递的浮点数操作次数的理论分析"></a>前向传递与后向传递的浮点数操作次数的理论分析</h3><p>为了理解后向传递的浮点数运算为什么要比前向传递多？我们就要从反向传播算法的四个基本等式入手。</p>
 <p>我们从一个有2层隐藏层的神经网络入手：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013372.jpg" /></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013372.jpg" alt=""></p>
 <p>我们假设线性层采用ReLU激活函数，采用随机梯度下降优化器。下表中h1和h2分别表示第1层和第2层隐藏层的神经元个数。有2层隐藏层的神经网络一次训练迭代的计算过程如下表所示：</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013895.jpg" /></p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013895.jpg" alt=""></p>
 <p>从上表中，我们可以观察到，对于多层前馈神经网络模型，有以下结论：</p>
-<ol type="1">
-<li><p>相比于线性层，激活函数ReLU和损失函数的浮点数运算量可以忽略。</p></li>
-<li><p>对于第一层，后向传递-前向传递的FLOPs比率是1:1。</p></li>
-<li><p>对于其他层，后向传递-前向传递的FLOPs比率是2:1。</p></li>
-<li><p>采用随机梯度下降作为优化器，权重更新的FLOPs是模型参数规模的2倍。</p></li>
+<ol>
+<li><p>相比于线性层，激活函数ReLU和损失函数的浮点数运算量可以忽略。</p>
+</li>
+<li><p>对于第一层，后向传递-前向传递的FLOPs比率是1:1。</p>
+</li>
+<li><p>对于其他层，后向传递-前向传递的FLOPs比率是2:1。</p>
+</li>
+<li><p>采用随机梯度下降作为优化器，权重更新的FLOPs是模型参数规模的2倍。</p>
+</li>
 </ol>
-<h4 id="第一层与其他层的区别">第一层与其他层的区别</h4>
-<p>对于多层前馈神经网络模型，采用随机梯度下降作为优化器。</p>
+<h4 id="第一层与其他层的区别"><a href="#第一层与其他层的区别" class="headerlink" title="第一层与其他层的区别"></a>第一层与其他层的区别</h4><p>对于多层前馈神经网络模型，采用随机梯度下降作为优化器。</p>
 <p>第一层的后向传递-前向传递的FLOPs比率是1:1，其他层的后向传递-前向传递的FLOPs比率是2:1。模型参数更新的FLOPs是模型参数规模的2倍。</p>
-<h4 id="batch_size的影响">batch_size的影响</h4>
-<p>前向传递和后向传递的计算量FLOPs与batch_size成正比，即随着batch_size增大而线性增长。</p>
+<h4 id="batch-size的影响"><a href="#batch-size的影响" class="headerlink" title="batch_size的影响"></a>batch_size的影响</h4><p>前向传递和后向传递的计算量FLOPs与batch_size成正比，即随着batch_size增大而线性增长。</p>
 <p>优化器更新模型参数的FLOPs与batch_size无关，只与模型参数规模和优化器类型有关。</p>
 <p>随着batch_size增大，前向传递和后向传递的FLOPs线性增长，而权重更新的FLOPs保持不变，这使得权重更新的FLOPs变得逐渐可以忽略不计了。</p>
-<h4 id="网络深度的影响">网络深度的影响</h4>
-<p>神经网络层数对后向传递-前向传递FLOPs比率有着间接的影响。由于第一层的后向-前向FLOPs比率是1:1，而其他层后向-前向FLOPs比率是2:1。层数的影响实际上是第一层与其他层的比较。</p>
+<h4 id="网络深度的影响"><a href="#网络深度的影响" class="headerlink" title="网络深度的影响"></a>网络深度的影响</h4><p>神经网络层数对后向传递-前向传递FLOPs比率有着间接的影响。由于第一层的后向-前向FLOPs比率是1:1，而其他层后向-前向FLOPs比率是2:1。层数的影响实际上是第一层与其他层的比较。</p>
 <p>定义一个CNN神经网络，中间层的数量由0到100，可以看到后向-前向FLOPs比率由1.5提高到了接近2的水平。当层数逐渐变深的时候，第一层对模型整体的FLOPs影响就变小了，模型整体的后向-前向FLOPs比率就很接近2。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013056.jpg" />
-## 总结
-随着batch_size的增大，前向传递和后向传递的FLOPs线性增长，而权重更新的FLOPs保持不变，参数更新的FLOPs变得可以忽略不计了。这体现为：<strong>当batch_size足够大时，在训练神经网络的一次迭代中，前向传递和后向传递是主要的耗时环节，而参数更新的耗时变得几乎可以忽略不计</strong>。</p>
+<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013056.jpg" alt=""></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>随着batch_size的增大，前向传递和后向传递的FLOPs线性增长，而权重更新的FLOPs保持不变，参数更新的FLOPs变得可以忽略不计了。这体现为：<strong>当batch_size足够大时，在训练神经网络的一次迭代中，前向传递和后向传递是主要的耗时环节，而参数更新的耗时变得几乎可以忽略不计</strong>。</p>
 <p>由于第一层的后向-前向FLOPs比率是1:1，而其他层后向-前向FLOPs比率是2:1。随着网络层数的加深，第一层对整体FLOPs的影响变得可以忽略不计了。这体现为：<strong>当网络层数足够深时，后向传递的耗时几乎是前向传递耗时的2倍</strong>。</p>
 <p>总的来说，对于<strong>用大batch_size的深层神经网络</strong>来说，<strong>后向传递-前向传递的FLOPs比率接近于2:1</strong>，换句话说，<strong>后向传递的计算量大约是前向传递的两倍</strong>。</p>
-<h2 id="参考链接">参考链接</h2>
-<ol type="1">
-<li><p>Li S, Zhao Y, Varma R, et al. Pytorch distributed: Experiences on
-accelerating data parallel training[J]. arXiv preprint arXiv:2006.15704,
-2020.</p></li>
-<li><p>Narayanan D, Shoeybi M, Casper J, et al. Efficient large-scale
-language model training on gpu clusters using
-megatron-lm[C]//Proceedings of the International Conference for High
-Performance Computing, Networking, Storage and Analysis. 2021:
-1-15.</p></li>
-<li><p><a
-target="_blank" rel="noopener" href="http://neuralnetworksanddeeplearning.com/chap2.html">http://neuralnetworksanddeeplearning.com/chap2.html</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpBoWJXcSDwhZk/what-s-the-backward-forward-flop-ratio-for-neural-networks">https://www.alignmentforum.org/posts/fnjKpBoWJXcSDwhZk/what-s-the-backward-forward-flop-ratio-for-neural-networks</a></p></li>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
+<li><p>Li S, Zhao Y, Varma R, et al. Pytorch distributed: Experiences on accelerating data parallel training[J]. arXiv preprint arXiv:2006.15704, 2020.</p>
+</li>
+<li><p>Narayanan D, Shoeybi M, Casper J, et al. Efficient large-scale language model training on gpu clusters using megatron-lm[C]//Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis. 2021: 1-15.</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://neuralnetworksanddeeplearning.com/chap2.html">http://neuralnetworksanddeeplearning.com/chap2.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpBoWJXcSDwhZk/what-s-the-backward-forward-flop-ratio-for-neural-networks">https://www.alignmentforum.org/posts/fnjKpBoWJXcSDwhZk/what-s-the-backward-forward-flop-ratio-for-neural-networks</a></p>
+</li>
 </ol>
 
     
@@ -738,8 +549,8 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
     </a>
   
   
-    <a href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%9E%8BFLOPs/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">常见模型FLOPs</div>
+    <a href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">矩阵乘法复杂度分析</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -766,7 +577,7 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D"><span class="toc-number">1.</span> <span class="toc-text">浅谈后向传递的计算量大约是前向传递的两倍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84"><span class="toc-number">1.2.</span> <span class="toc-text">反向传播算法是怎么工作的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E8%AE%A1%E7%AE%97%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BE%93%E5%87%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">前向传递：计算神经网络的输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%9A%84%E5%9B%9B%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%AD%89%E5%BC%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">反向传播的四个基本等式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E5%B1%82%E7%9A%84%E8%AF%AF%E5%B7%AE"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">输出层的误差</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AF%E5%B7%AE%E4%B8%8E%E4%B8%8B%E4%B8%80%E5%B1%82%E8%AF%AF%E5%B7%AE%E7%9A%84%E5%85%B3%E8%81%94"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">误差与下一层误差的关联</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E7%BD%AE%E7%9A%84%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">偏置的梯度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%83%E9%87%8D%E7%9A%84%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">权重的梯度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%AD%89%E5%BC%8F"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.2.5 四个基本等式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E4%B8%8E%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84flops%E6%AF%94%E7%8E%87"><span class="toc-number">1.3.</span> <span class="toc-text">后向传递与前向传递的FLOPs比率</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E4%B8%8E%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E6%B5%AE%E7%82%B9%E6%95%B0%E6%93%8D%E4%BD%9C%E6%AC%A1%E6%95%B0%E7%9A%84%E7%90%86%E8%AE%BA%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">前向传递与后向传递的浮点数操作次数的理论分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E4%B8%8E%E5%85%B6%E4%BB%96%E5%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">第一层与其他层的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#batch_size%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">batch_size的影响</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%B7%B1%E5%BA%A6%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">网络深度的影响</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">1.4.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D"><span class="toc-number">1.</span> <span class="toc-text">浅谈后向传递的计算量大约是前向传递的两倍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84"><span class="toc-number">1.2.</span> <span class="toc-text">反向传播算法是怎么工作的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%EF%BC%9A%E8%AE%A1%E7%AE%97%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BE%93%E5%87%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">前向传递：计算神经网络的输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%9A%84%E5%9B%9B%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%AD%89%E5%BC%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">反向传播的四个基本等式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E5%B1%82%E7%9A%84%E8%AF%AF%E5%B7%AE"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">输出层的误差</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AF%E5%B7%AE%E4%B8%8E%E4%B8%8B%E4%B8%80%E5%B1%82%E8%AF%AF%E5%B7%AE%E7%9A%84%E5%85%B3%E8%81%94"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">误差与下一层误差的关联</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E7%BD%AE%E7%9A%84%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">偏置的梯度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%83%E9%87%8D%E7%9A%84%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">权重的梯度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-5-%E5%9B%9B%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%AD%89%E5%BC%8F"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.2.5 四个基本等式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E4%B8%8E%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84FLOPs%E6%AF%94%E7%8E%87"><span class="toc-number">1.3.</span> <span class="toc-text">后向传递与前向传递的FLOPs比率</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E4%B8%8E%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E6%B5%AE%E7%82%B9%E6%95%B0%E6%93%8D%E4%BD%9C%E6%AC%A1%E6%95%B0%E7%9A%84%E7%90%86%E8%AE%BA%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">前向传递与后向传递的浮点数操作次数的理论分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E4%B8%8E%E5%85%B6%E4%BB%96%E5%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">第一层与其他层的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#batch-size%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">batch_size的影响</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%B7%B1%E5%BA%A6%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">网络深度的影响</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">1.5.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -945,6 +756,10 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
@@ -953,7 +768,7 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">AI</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -961,11 +776,27 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -973,11 +804,11 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -989,7 +820,7 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -997,23 +828,7 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1021,7 +836,7 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1030,10 +845,6 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1081,15 +892,11 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1101,6 +908,10 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
@@ -1109,11 +920,11 @@ target="_blank" rel="noopener" href="https://www.alignmentforum.org/posts/fnjKpB
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

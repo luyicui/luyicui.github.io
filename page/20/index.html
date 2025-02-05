@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/100 numpy exercises" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/Special Variables/&#39;__slots__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" target="_blank">100 numpy exercises</a>
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/" target="_blank">__slots__</a>
   
     </h1>
   
@@ -229,8 +229,8 @@
 
   
   
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
 </a>
 
   
@@ -242,26 +242,80 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="numpy-exercises">100 numpy exercises</h1>
-<p><a
-target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1I-RFqhrOUz0Vq4aZ-iT_CfTNJdLIGdie#scrollTo=1a84bed8">100_Numpy_exercises.ipynb
-- Colab (google.com)</a></p>
-<p>This is a collection of exercises that have been collected in the
-numpy mailing list, on stack overflow and in the numpy documentation.
-The goal of this collection is to offer a quick reference for both old
-and new users but also to provide a set of exercises for those who
-teach.</p>
-<h4 id="import-the-numpy-package-under-the-name-np">1. Import the numpy
-package under the name <code>np</code> (★☆☆)</h4>
-<p><code>hint: import … as</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<h4 id="print-the-numpy-version-and-the-configuration">2. Print the
-numpy version and the configuration (★☆☆)</h4>
-<p><code>hint: np.__version__, np.show_config)</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.__version__)</span><br><span class="line">np.show_config()</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/#more">more >></a>
-    
+    <h1 id="slots__"><code>__slots__</code></h1>
+<p>由于 python 是一种动态语言，python
+类和属性的获取和设置非常灵活，本文主要介绍一下几个方面：实例属性和类属性的绑定；动态绑定属性和方法；<code>__slots__</code>
+的使用；<span class="citation" data-cites="property">@property</span>
+的使用</p>
+<h2 id="实例属性和类属性的绑定">实例属性和类属性的绑定</h2>
+<p>由于 Python
+是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过
+self 变量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&#x27;Bob&#x27;</span>)</span><br><span class="line">s.score = <span class="number">90</span></span><br></pre></td></tr></table></figure>
+<p>但是，如果 Student 类本身需要绑定一个属性呢？可以直接在 class
+中定义属性，这种属性是<strong>类属性</strong>，归 Student 类所有：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    name = <span class="string">&#x27;Student&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>当我们定义了一个类属性后，这个属性虽然归类所有，但类的所有实例都可以访问到。来测试一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">... </span>    name = <span class="string">&#x27;Student&#x27;</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建实例 s</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 打印 name 属性，因为实例并没有 name 属性，所以会继续查找 class 的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 打印类的 name 属性</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 给实例绑定 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 由于实例属性优先级比类属性高，因此，它会屏蔽掉类的 name 属性</span></span><br><span class="line">Michael</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(Student.name) <span class="comment"># 但是类属性并未消失，用 Student.name 仍然可以访问</span></span><br><span class="line">Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> s.name <span class="comment"># 如果删除实例的 name 属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name) <span class="comment"># 再次调用 s.name，由于实例的 name 属性没有找到，类的 name 属性就显示出来了</span></span><br><span class="line">Student</span><br></pre></td></tr></table></figure>
+<p>从上面的例子可以看出，在编写程序的时候，千万不要对实例属性和类属性使用相同的名字，因为相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性。</p>
+<h2 id="动态绑定属性和方法">动态绑定属性和方法</h2>
+<p>正常情况下，当我们定义了一个 class，创建了一个 class
+的实例后，我们可以给该实例绑定任何属性和方法，这就是动态语言的灵活性。先定义
+class：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>然后，尝试给实例<strong>绑定一个属性</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 动态给实例绑定一个属性</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(s.name)</span><br><span class="line">Michael</span><br></pre></td></tr></table></figure>
+<p>还可以尝试给实例<strong>绑定一个方法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">set_age</span>(<span class="params">self, age</span>): <span class="comment"># 定义一个函数作为实例方法</span></span><br><span class="line"><span class="meta">... </span>    self.age = age</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> types <span class="keyword">import</span> MethodType</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_age = MethodType(set_age, s) <span class="comment"># 给实例绑定一个方法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_age(<span class="number">25</span>) <span class="comment"># 调用实例方法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.age <span class="comment"># 测试结果</span></span><br><span class="line"><span class="number">25</span></span><br></pre></td></tr></table></figure>
+<p>但是，给一个实例绑定的方法，对另一个实例是不起作用的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2 = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2.set_age(<span class="number">25</span>) <span class="comment"># 尝试调用方法</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;set_age&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>为了给所有实例都绑定方法，可以给 class 绑定方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, score</span>):</span><br><span class="line"><span class="meta">... </span>    self.score = score</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Student.set_score = set_score</span><br></pre></td></tr></table></figure>
+<p>给 class 绑定方法后，所有实例均可调用：通常情况下，上面的 set_score
+方法可以直接定义在 class 中，但动态绑定允许我们在程序运行的过程中动态给
+class 加上功能，这在静态语言中很难实现。</p>
+<h2 id="使用__slots__">使用<code>__slots__</code></h2>
+<p>但是，如果我们想要限制实例的属性怎么办？比如，只允许对 Student
+实例添加 name 和 age 属性。</p>
+<p>为了达到限制的目的，Python 允许在定义 class
+的时候，定义一个特殊的<code>__slots__</code>变量，来限制该 class
+实例能添加的属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    __slots__ = (<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;age&#x27;</span>) <span class="comment"># 用 tuple 定义允许绑定的属性名称</span></span><br></pre></td></tr></table></figure>
+<p>然后，我们试试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student() <span class="comment"># 创建新的实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.name = <span class="string">&#x27;Michael&#x27;</span> <span class="comment"># 绑定属性&#x27;name&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.age = <span class="number">25</span> <span class="comment"># 绑定属性&#x27;age&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">99</span> <span class="comment"># 绑定属性&#x27;score&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">AttributeError: <span class="string">&#x27;Student&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;score&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>由于’score’没有被放到<code>__slots__</code>中，所以不能绑定 score
+属性，试图绑定 score 将得到 AttributeError 的错误。</p>
+<p>使用<code>__slots__</code>要注意，<code>__slots__</code>定义的属性仅对当前类实例起作用，<strong>对继承的子类是不起作用的：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">class</span> <span class="title class_">GraduateStudent</span>(<span class="title class_ inherited__">Student</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">pass</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g = GraduateStudent()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>g.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
+<p>除非在子类中也定义<code>__slots__</code>，这样<strong>子类实例允许定义的属性就是自身的<code>__slots__</code>加上父类的<code>__slots__</code></strong></p>
+<h2 id="使用property">使用@property</h2>
+<p>在绑定属性时，如果我们直接把属性暴露出去，虽然写起来很简单，但是，没办法检查参数，导致可以把成绩随便改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = Student()</span><br><span class="line">s.score = <span class="number">9999</span></span><br></pre></td></tr></table></figure>
+<p>这显然不合逻辑。为了限制 score 的范围，可以通过一个 set_score()
+方法来设置成绩，再通过一个 get_score() 来获取成绩，这样，在 set_score()
+方法里，就可以检查参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_score</span>(<span class="params">self</span>):</span><br><span class="line">         <span class="keyword">return</span> self._score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value</span><br></pre></td></tr></table></figure>
+<p>现在，对任意的 Student 实例进行操作，就不能随心所欲地设置 score
+了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">60</span>) <span class="comment"># ok!</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.get_score()</span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.set_score(<span class="number">9999</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
+<p>但是，上面的<strong>调用方法</strong>又略显复杂，没有直接用属性这么直接简单。有没有既能检查参数，又可以用类似属性这样简单的方式来访问类的变量呢？Python
+内置的@property 装饰器就是负责把一个方法变成属性调用的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._score  <span class="comment">#注意有一个短下划线</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @score.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        self._score = value  <span class="comment">#注意有一个短下划线</span></span><br></pre></td></tr></table></figure>
+<p><span class="citation" data-cites="property">@property</span>
+的实现比较复杂，我们先考察如何使用。把一个 getter
+方法变成属性，只需要加上@property 就可以了，此时，<span class="citation"
+data-cites="property">@property</span>
+本身又创建了另一个装饰器@score.setter，负责把一个 setter
+方法变成属性赋值，于是，我们就拥有一个可控的属性操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = Student()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">60</span> <span class="comment"># OK，实际转化为 s.set_score(60)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score <span class="comment"># OK，实际转化为 s.get_score()</span></span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.score = <span class="number">9999</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  ...</span><br><span class="line">ValueError: score must between <span class="number">0</span> ~ <span class="number">100</span>!</span><br></pre></td></tr></table></figure>
+<p>注意到这个神奇的@property，我们在对实例属性操作的时候，就知道该属性很可能不是直接暴露的，而是通过
+getter 和 setter
+方法来实现的。还可以定义<strong>只读属性</strong>，<strong>只定义 getter
+方法，不定义 setter 方法就是一个只读属性：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="comment"># 可读写属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._birth</span><br><span class="line"></span><br><span class="line"><span class="meta">    @birth.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">birth</span>(<span class="params">self, value</span>):</span><br><span class="line">        self._birth = value</span><br><span class="line">    <span class="comment"># 只读属性</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">age</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2018</span> - self._birth</span><br></pre></td></tr></table></figure>
+<p>上面的 birth 是可读写属性，而 age 就是一个只读属性，因为 age 可以根据
+birth 和当前时间计算出来</p>
+
     
 
     
@@ -277,7 +331,7 @@ numpy version and the configuration (★☆☆)</h4>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
         		</li>
       		
 		</ul>
@@ -287,7 +341,208 @@ numpy version and the configuration (★☆☆)</h4>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__slots__'/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/Feature Scaling" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/" target="_blank">Feature Scaling</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="feature-scaling">Feature Scaling</h1>
+<h2 id="特征缩放">特征缩放</h2>
+<p><strong>原因：</strong></p>
+<ul>
+<li>数量级的差异将导致量级较大的属性占据主导地位</li>
+<li>数量级的差异将导致迭代收敛速度减慢</li>
+<li>依赖于样本距离的算法对于数据的数量级非常敏感</li>
+</ul>
+<p><strong>好处：</strong></p>
+<ul>
+<li>提升模型的精度：在机器学习算法的目标函数中使用的许多元素（例如支持向量机的
+RBF 内核或线性模型的 <span class="math inline">\(l_1\)</span> 和 <span
+class="math inline">\(l_2\)</span>
+正则化），都是假设所有的特征都是零均值并且具有同一阶级上的方差。如果某个特征的方差比其他特征大几个数量级，那么它就会在学习算法中占据主导位置，导致学习器并不能像我们期望的那样，从其他特征中学习</li>
+<li>提升收敛速度：对于线性模型来说，数据归一化后，寻找最优解的过程明显会变得平缓，更容易正确地收敛到最优解</li>
+</ul>
+<h3 id="standardization-z-score-normalization">Standardization (Z-score
+normalization)</h3>
+<p>通过减去均值然后除以标准差，将数据按比例缩放，使之落入一个小的特定区间，处理后的数据均值为
+0，标准差为 1</p>
+<p>$$ x=</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Feature%20Scaling/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/Reference" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Reference/" target="_blank">Reference</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Reference/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="reference">Reference</h1>
+<ul>
+<li><p><a
+target="_blank" rel="noopener" href="https://jakevdp.github.io/PythonDataScienceHandbook/index.html">Python
+Data Science Handbook | Python Data Science Handbook</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/">NumPy reference
+— NumPy v2.2 Manual</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://pandas.pydata.org/docs/user_guide/">User Guide —
+pandas 2.2.3 documentation</a></p></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/Reference/">展开全文 >></a>
     </p>
     
 
@@ -510,7 +765,7 @@ np.bool_，np.int32，np.float32，等等。</p>
 
 
   
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/np.clip()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/100 numpy exercises" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -518,7 +773,7 @@ np.bool_，np.int32，np.float32，等等。</p>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" target="_blank">np.clip()</a>
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" target="_blank">100 numpy exercises</a>
   
     </h1>
   
@@ -526,7 +781,7 @@ np.bool_，np.int32，np.float32，等等。</p>
 
   
   
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" class="archive-article-date">
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/" class="archive-article-date">
         <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
 </a>
 
@@ -539,14 +794,26 @@ np.bool_，np.int32，np.float32，等等。</p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="np.clip">np.clip()</h1>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412211043839.png"
-alt="image-20241221104319591" />
-<figcaption aria-hidden="true">image-20241221104319591</figcaption>
-</figure>
-
+    <h1 id="numpy-exercises">100 numpy exercises</h1>
+<p><a
+target="_blank" rel="noopener" href="https://colab.research.google.com/drive/1I-RFqhrOUz0Vq4aZ-iT_CfTNJdLIGdie#scrollTo=1a84bed8">100_Numpy_exercises.ipynb
+- Colab (google.com)</a></p>
+<p>This is a collection of exercises that have been collected in the
+numpy mailing list, on stack overflow and in the numpy documentation.
+The goal of this collection is to offer a quick reference for both old
+and new users but also to provide a set of exercises for those who
+teach.</p>
+<h4 id="import-the-numpy-package-under-the-name-np">1. Import the numpy
+package under the name <code>np</code> (★☆☆)</h4>
+<p><code>hint: import … as</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<h4 id="print-the-numpy-version-and-the-configuration">2. Print the
+numpy version and the configuration (★☆☆)</h4>
+<p><code>hint: np.__version__, np.show_config)</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.__version__)</span><br><span class="line">np.show_config()</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/#more">more >></a>
+    
     
 
     
@@ -572,7 +839,7 @@ alt="image-20241221104319591" />
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/100%20numpy%20exercises/">展开全文 >></a>
     </p>
     
 
@@ -895,6 +1162,98 @@ scikit-learn）要求特征数组是二维的，其中每一行代表一个样�
 
 
   
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/np.clip()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" target="_blank">np.clip()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/" class="archive-article-date">
+        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="np.clip">np.clip()</h1>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412211043839.png"
+alt="image-20241221104319591" />
+<figcaption aria-hidden="true">image-20241221104319591</figcaption>
+</figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.clip()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/np.tile()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -962,396 +1321,6 @@ alt="image-20241125001356867" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/np.tile()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/order参数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/order%E5%8F%82%E6%95%B0/" target="_blank">NumPy 副本和视图</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/order%E5%8F%82%E6%95%B0/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="order-参数">order 参数</h1>
-<h2 id="创建数组对象中的-order">创建数组对象中的 order</h2>
-<h3 id="二维数组">二维数组</h3>
-<ol type="1">
-<li>要理解 order 参数首先要需要明确 ndarray 对象的数据结构</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>],[<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>]])</span><br><span class="line"><span class="built_in">print</span>(a, a.strides)</span><br><span class="line"></span><br><span class="line">b = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>],[<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>]], order=<span class="string">&#x27;C&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(b, b.strides)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span>]</span><br><span class="line"> [<span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]</span><br><span class="line"> [<span class="number">6</span> <span class="number">7</span> <span class="number">8</span>]] (<span class="number">12</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">[[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span>]</span><br><span class="line"> [<span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]</span><br><span class="line"> [<span class="number">6</span> <span class="number">7</span> <span class="number">8</span>]] (<span class="number">12</span>, <span class="number">4</span>)  </span><br></pre></td></tr></table></figure>
-<p>从 <code>ndarray.strides</code> 可以读出数据的存储方式：</p>
-<ul>
-<li>第一个参数代表<strong>第一维度</strong>（行）之间相差的字节数，<code>a[0,0]</code>
-与 <code>a[1,0]</code> 相差 12 个字节</li>
-<li>第二个参数代表<strong>第二维度</strong>（列）之间相差的字节数，<code>a[0,0]</code>
-与 <code>a[1,0]</code>相差 4 个字节</li>
-</ul>
-<p>(12,4)
-可以读出该数组是<strong>按行存储</strong>的，即一行中的元素在内存中是相互邻近的</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412031906899.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<hr />
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>],[<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>]], order=<span class="string">&#x27;F&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(c, c.strides)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span>]</span><br><span class="line"> [<span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]</span><br><span class="line"> [<span class="number">6</span> <span class="number">7</span> <span class="number">8</span>]] (<span class="number">4</span>, <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
-<p><code>order='F'</code>即按列读取数据并存储到内存中</p>
-<ul>
-<li>第一个参数代表<strong>第一维度</strong>（行）之间相差的字节数，<code>a[0,0]</code>
-与 <code>a[1,0]</code> 相差 4 个字节</li>
-<li>第二个参数代表<strong>第二维度</strong>（列）之间相差的字节数，<code>a[0,0]</code>
-与 <code>a[1,0]</code>相差 12 个字节</li>
-</ul>
-<p>(4,12)
-可以读出该数组是按列存储的，一列中的元素在内存中是相互邻近的</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412031740303.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<h3 id="三维数组">三维数组</h3>
-<p>再引申到<strong>三维数组</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">x = np.array(</span><br><span class="line">    [[[ <span class="number">1</span> , <span class="number">0</span>],</span><br><span class="line">    [ <span class="number">3</span> , <span class="number">2</span>],</span><br><span class="line">    [ <span class="number">5</span> , <span class="number">4</span>]],</span><br><span class="line"></span><br><span class="line">    [[ <span class="number">7</span> , <span class="number">6</span>],</span><br><span class="line">    [ <span class="number">9</span> , <span class="number">8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">10</span>]],</span><br><span class="line"></span><br><span class="line">    [[<span class="number">12</span> ,<span class="number">13</span>],</span><br><span class="line">    [<span class="number">14</span> ,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">16</span> ,<span class="number">17</span>]]],order=<span class="string">&#x27;C&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(x, x.strides)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">1</span>  <span class="number">0</span>]</span><br><span class="line">  [ <span class="number">3</span>  <span class="number">2</span>]</span><br><span class="line">  [ <span class="number">5</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span>  <span class="number">6</span>]</span><br><span class="line">  [ <span class="number">9</span>  <span class="number">8</span>]</span><br><span class="line">  [<span class="number">11</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">13</span>]</span><br><span class="line">  [<span class="number">14</span> <span class="number">15</span>]</span><br><span class="line">  [<span class="number">16</span> <span class="number">17</span>]]] (<span class="number">24</span>, <span class="number">8</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>内存中的存储顺序为 (1,0,3,2,5,4,…)</p>
-</blockquote>
-<p><code>order='C'</code>即按行读取数据并存储到内存中</p>
-<p>（24，8，4）第一个维度（块）元素之间相差 24
-字节、第二个维度（行）元素之间相差 8
-个字节，第三个维度（列）元素之间相差 4
-个字节，一个块中的元素在内存中是相互邻近的</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">x = np.array(</span><br><span class="line">    [[[ <span class="number">1</span> , <span class="number">0</span>],</span><br><span class="line">    [ <span class="number">3</span> , <span class="number">2</span>],</span><br><span class="line">    [ <span class="number">5</span> , <span class="number">4</span>]],</span><br><span class="line"></span><br><span class="line">    [[ <span class="number">7</span> , <span class="number">6</span>],</span><br><span class="line">    [ <span class="number">9</span> , <span class="number">8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">10</span>]],</span><br><span class="line"></span><br><span class="line">    [[<span class="number">12</span> ,<span class="number">13</span>],</span><br><span class="line">    [<span class="number">14</span> ,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">16</span> ,<span class="number">17</span>]]],order=<span class="string">&#x27;F&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line">x.strides</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">1</span>  <span class="number">0</span>]</span><br><span class="line">  [ <span class="number">3</span>  <span class="number">2</span>]</span><br><span class="line">  [ <span class="number">5</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span>  <span class="number">6</span>]</span><br><span class="line">  [ <span class="number">9</span>  <span class="number">8</span>]</span><br><span class="line">  [<span class="number">11</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">13</span>]</span><br><span class="line">  [<span class="number">14</span> <span class="number">15</span>]</span><br><span class="line">  [<span class="number">16</span> <span class="number">17</span>]]]</span><br><span class="line">(<span class="number">4</span>, <span class="number">12</span>, <span class="number">36</span>)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>内存中的存储顺序为 (1,7,12,3,9,14)</p>
-</blockquote>
-<p>(4,12,36) 第一个维度（块）元素之间相差 4
-个字节，第二个维度（行）元素之间相差 12
-个字节，第三个维度（列）元素之间相差 36 个字节，先块后行再列存储</p>
-<h2 id="reshape-中的-order">reshape 中的 order</h2>
-<blockquote>
-<p><code>reshape()</code>的返回值：This will be a new view object if
-possible; otherwise, it will be a copy. Note there is no guarantee of
-the memory layout (C- or Fortran- contiguous) of the returned array.</p>
-</blockquote>
-<p>即该 函数返回的不一定是原数组的视图，实验后发现</p>
-<ul>
-<li>当<code>order</code>参数与<code>原数组 order</code>参数一致时，返回原数组的<strong>视图</strong></li>
-<li>否则会重新开辟一块内存创建一个新的数组，返回该数组的<strong>副本</strong></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x = np.array(</span><br><span class="line">    [[[ <span class="number">1</span> , <span class="number">0</span>],</span><br><span class="line">    [ <span class="number">3</span> , <span class="number">2</span>],</span><br><span class="line">    [ <span class="number">5</span> , <span class="number">4</span>]],</span><br><span class="line"></span><br><span class="line">    [[ <span class="number">7</span> , <span class="number">6</span>],</span><br><span class="line">    [ <span class="number">9</span> , <span class="number">8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">10</span>]],</span><br><span class="line"></span><br><span class="line">    [[<span class="number">12</span> ,<span class="number">13</span>],</span><br><span class="line">    [<span class="number">14</span> ,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">16</span> ,<span class="number">17</span>]]])  </span><br></pre></td></tr></table></figure>
-<h3 id="参数不一致">参数不一致</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x1 = np.array(x,order=<span class="string">&#x27;C&#x27;</span>)   <span class="comment"># 内存中顺序 (1,0,3,2,5,4,...)</span></span><br><span class="line">x2 = x1.reshape(<span class="number">3</span>,<span class="number">2</span>,<span class="number">3</span>,order =<span class="string">&#x27;F&#x27;</span>)   <span class="comment"># 内存中顺序 (1,7,12,3,9,14,...)</span></span><br><span class="line"><span class="built_in">print</span>(x2)</span><br><span class="line"><span class="built_in">print</span>(x2.strides)</span><br><span class="line">x2.base <span class="keyword">is</span> x1</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">1</span>  <span class="number">5</span>  <span class="number">2</span>]</span><br><span class="line">  [ <span class="number">3</span>  <span class="number">0</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span> <span class="number">11</span>  <span class="number">8</span>]</span><br><span class="line">  [ <span class="number">9</span>  <span class="number">6</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">16</span> <span class="number">15</span>]</span><br><span class="line">  [<span class="number">14</span> <span class="number">13</span> <span class="number">17</span>]]]</span><br><span class="line">(<span class="number">4</span>, <span class="number">12</span>, <span class="number">24</span>)   <span class="comment"># 内存顺序 (1,7,12,...) 显示时 1 和 7 相差 4 个字节，</span></span><br><span class="line"><span class="literal">False</span>    <span class="comment"># 说明返回的不是原数组的视图</span></span><br></pre></td></tr></table></figure>
-<h3 id="参数一致">参数一致</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x1 = np.array(x,order=<span class="string">&#x27;C&#x27;</span>)   <span class="comment"># 内存中顺序 (1,0,3,2,5,4,...)</span></span><br><span class="line">x2 = x1.reshape(<span class="number">3</span>,<span class="number">2</span>,<span class="number">3</span>,order =<span class="string">&#x27;C&#x27;</span>)   <span class="comment"># 内存中顺序 (1,0,3,2,5,4...)</span></span><br><span class="line"><span class="built_in">print</span>(x2)</span><br><span class="line"><span class="built_in">print</span>(x2.strides)</span><br><span class="line">x2.base <span class="keyword">is</span> x1</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[[[ <span class="number">1</span>  <span class="number">0</span>  <span class="number">3</span>]</span><br><span class="line">  [ <span class="number">2</span>  <span class="number">5</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span>  <span class="number">6</span>  <span class="number">9</span>]</span><br><span class="line">  [ <span class="number">8</span> <span class="number">11</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">13</span> <span class="number">14</span>]</span><br><span class="line">  [<span class="number">15</span> <span class="number">16</span> <span class="number">17</span>]]]</span><br><span class="line">(<span class="number">24</span>, <span class="number">12</span>, <span class="number">4</span>)</span><br><span class="line"><span class="literal">True</span>    <span class="comment"># 说明返回为原数组的视图</span></span><br></pre></td></tr></table></figure>
-<p><code>reshape()</code>工作流程：</p>
-<ol type="1">
-<li>根据传入的<code>order</code>参数读取数组，如果参数与原数组参数相同则引用原数组的数据，否则新开辟内存</li>
-<li>根据<code>order</code>参数设置返回数组的<code>strides</code>：C
-就是按行主序显示；F 就是按列主序显示</li>
-<li>根据<code>strides</code>返回<code>view</code>（这里的 view
-指数据显示为什么样的数组）</li>
-</ol>
-<p>下面用一个例子帮助理解：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1</span>,<span class="number">2</span>],</span><br><span class="line">                [<span class="number">4</span>,<span class="number">5</span>],</span><br><span class="line">                [<span class="number">7</span>,<span class="number">8</span>]],order=<span class="string">&#x27;F&#x27;</span>)</span><br><span class="line">arr1 = arr.reshape((<span class="number">2</span>,<span class="number">3</span>),order=<span class="string">&#x27;F&#x27;</span>)  <span class="comment"># 参数一致，引用原数组数据，内存中顺序为 (1,4,7,2,5,8) </span></span><br><span class="line">arr2 = arr.reshape((<span class="number">2</span>,<span class="number">3</span>),order=<span class="string">&#x27;C&#x27;</span>)  <span class="comment"># 参数不一致，按行读取数据，内存中顺序为 (1,2,4,5,7,8)</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;是否引用原数组数据：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;arr1:&#x27;</span>,arr1.base <span class="keyword">is</span> arr)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;arr2:&#x27;</span>,arr2.base <span class="keyword">is</span> arr)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;数据的 strides:&quot;</span>) <span class="comment">#决定如何显示数据，即数组的外观</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;arr1.strides:&#x27;</span>,arr1.strides)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;arr2.strides:&#x27;</span>,arr2.strides)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;arr1 为：&quot;</span>,<span class="string">&#x27;\n&#x27;</span>,arr1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;arr2 为：&quot;</span>,<span class="string">&#x27;\n&#x27;</span>,arr2)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">是否引用原数组数据：</span><br><span class="line">arr1: <span class="literal">True</span></span><br><span class="line">arr2: <span class="literal">False</span></span><br><span class="line">数据的 strides:</span><br><span class="line">arr1.strides: (<span class="number">4</span>, <span class="number">8</span>)</span><br><span class="line">arr2.strides: (<span class="number">12</span>, <span class="number">4</span>)</span><br><span class="line">arr1 为：</span><br><span class="line"> [[<span class="number">1</span> <span class="number">7</span> <span class="number">5</span>]</span><br><span class="line"> [<span class="number">4</span> <span class="number">2</span> <span class="number">8</span>]]</span><br><span class="line">arr2 为：</span><br><span class="line"> [[<span class="number">1</span> <span class="number">2</span> <span class="number">4</span>]</span><br><span class="line"> [<span class="number">5</span> <span class="number">7</span> <span class="number">8</span>]]</span><br></pre></td></tr></table></figure>
-<p><code>arr1.strides</code>为<code>(4,8)</code>，即显示的行元素之间相差
-4 个字节，列元素之间相差 8 个字节，其中 1 和 4 相差 4 个字节 1 和 7 相差
-8 个字节符合内存中的顺序 (1,4,7,2,5,8)</p>
-<p><code>arr2.strides</code>为<code>(12,4)</code>，即显示的行元素之间相差
-12 个字节，列元素之间相差 8 个字节，其中 1 和 5 相差 12 个字节 1 和 2
-相差 4 个字节符号内存中的顺序 (1,2,4,5,7,8)</p>
-<p>因此可以通过 order 参数获取以列主序的数据</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1</span>,<span class="number">2</span>],</span><br><span class="line">                [<span class="number">4</span>,<span class="number">5</span>],</span><br><span class="line">                [<span class="number">7</span>,<span class="number">8</span>]],order=<span class="string">&#x27;F&#x27;</span>)</span><br><span class="line">arr1 = arr.reshape((<span class="number">6</span>,),order=<span class="string">&#x27;F&#x27;</span>)  <span class="comment"># 参数一致，引用原数组数据，内存中顺序为 (1,4,7,2,5,8) </span></span><br><span class="line">arr1</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array([<span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>])</span><br></pre></td></tr></table></figure>
-<h2 id="orderk-和-ordera">order=‘K’ 和 order=‘A’</h2>
-<p>除了比较常见的 C（行主序）和 F（列主序）外，order 还可以为 K 和 A</p>
-<ul>
-<li><code>order='C'</code>: 按行去读取 x 数组</li>
-<li><code>order='F'</code>: 按列去读取 x 数组</li>
-<li><code>order='K'</code>: 按内存中的顺序读取数据</li>
-<li><code>order='A'</code>: 按行或列读取数组（不推荐）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x = np.array(</span><br><span class="line">    [[[ <span class="number">1</span> , <span class="number">0</span>],</span><br><span class="line">    [ <span class="number">3</span> , <span class="number">2</span>],</span><br><span class="line">    [ <span class="number">5</span> , <span class="number">4</span>]],</span><br><span class="line"></span><br><span class="line">    [[ <span class="number">7</span> , <span class="number">6</span>],</span><br><span class="line">    [ <span class="number">9</span> , <span class="number">8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">10</span>]],</span><br><span class="line"></span><br><span class="line">    [[<span class="number">12</span> ,<span class="number">13</span>],</span><br><span class="line">    [<span class="number">14</span> ,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">16</span> ,<span class="number">17</span>]]])</span><br><span class="line">re_x = x.reshape(<span class="number">3</span>,<span class="number">2</span>,<span class="number">3</span>)       <span class="comment"># 引用 x 的数据，内存中顺序为 (1,0,3,2,5,4,...) 并按行主序显示  </span></span><br><span class="line">swap_x = re_x.swapaxes(<span class="number">1</span>,<span class="number">2</span>)   <span class="comment"># 返回 re_x 的视图，因此数据仍引用 x 的数据，该函数作用交换指定维度的 strides</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;交换前 strides:&quot;</span>,re_x.strides)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;交换后 strides:&quot;</span>,swap_x.strides)</span><br><span class="line">x_C=np.ravel(swap_x, order=<span class="string">&#x27;C&#x27;</span>) </span><br><span class="line">x_F=np.ravel(swap_x, order=<span class="string">&#x27;F&#x27;</span>)</span><br><span class="line">x_K=np.ravel(swap_x, order=<span class="string">&#x27;K&#x27;</span>)  <span class="comment"># 按内存布局的顺序读取数据</span></span><br><span class="line">x_A=np.ravel(swap_x, order=<span class="string">&#x27;A&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;reshape:\n&#x27;</span>,re_x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;swapaxe:\n&#x27;</span>,swap_x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;order=C:&#x27;</span>,x_C)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;order=F:&#x27;</span>,x_F)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;order=K:&#x27;</span>,x_K)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;order=A:&#x27;</span>,x_A)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">交换前 strides: (<span class="number">24</span>, <span class="number">12</span>, <span class="number">4</span>)</span><br><span class="line">交换后 strides: (<span class="number">24</span>, <span class="number">4</span>, <span class="number">12</span>)</span><br><span class="line">reshape:</span><br><span class="line"> [[[ <span class="number">1</span>  <span class="number">0</span>  <span class="number">3</span>]</span><br><span class="line">  [ <span class="number">2</span>  <span class="number">5</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span>  <span class="number">6</span>  <span class="number">9</span>]</span><br><span class="line">  [ <span class="number">8</span> <span class="number">11</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">13</span> <span class="number">14</span>]</span><br><span class="line">  [<span class="number">15</span> <span class="number">16</span> <span class="number">17</span>]]]</span><br><span class="line">swapaxe:</span><br><span class="line"> [[[ <span class="number">1</span>  <span class="number">2</span>]</span><br><span class="line">  [ <span class="number">0</span>  <span class="number">5</span>]</span><br><span class="line">  [ <span class="number">3</span>  <span class="number">4</span>]]</span><br><span class="line"></span><br><span class="line"> [[ <span class="number">7</span>  <span class="number">8</span>]</span><br><span class="line">  [ <span class="number">6</span> <span class="number">11</span>]</span><br><span class="line">  [ <span class="number">9</span> <span class="number">10</span>]]</span><br><span class="line"></span><br><span class="line"> [[<span class="number">12</span> <span class="number">15</span>]</span><br><span class="line">  [<span class="number">13</span> <span class="number">16</span>]</span><br><span class="line">  [<span class="number">14</span> <span class="number">17</span>]]]</span><br><span class="line">order=C: [ <span class="number">1</span>  <span class="number">2</span>  <span class="number">0</span>  <span class="number">5</span>  <span class="number">3</span>  <span class="number">4</span>  <span class="number">7</span>  <span class="number">8</span>  <span class="number">6</span> <span class="number">11</span>  <span class="number">9</span> <span class="number">10</span> <span class="number">12</span> <span class="number">15</span> <span class="number">13</span> <span class="number">16</span> <span class="number">14</span> <span class="number">17</span>]</span><br><span class="line">order=F: [ <span class="number">1</span>  <span class="number">7</span> <span class="number">12</span>  <span class="number">0</span>  <span class="number">6</span> <span class="number">13</span>  <span class="number">3</span>  <span class="number">9</span> <span class="number">14</span>  <span class="number">2</span>  <span class="number">8</span> <span class="number">15</span>  <span class="number">5</span> <span class="number">11</span> <span class="number">16</span>  <span class="number">4</span> <span class="number">10</span> <span class="number">17</span>]</span><br><span class="line">order=K: [ <span class="number">1</span>  <span class="number">0</span>  <span class="number">3</span>  <span class="number">2</span>  <span class="number">5</span>  <span class="number">4</span>  <span class="number">7</span>  <span class="number">6</span>  <span class="number">9</span>  <span class="number">8</span> <span class="number">11</span> <span class="number">10</span> <span class="number">12</span> <span class="number">13</span> <span class="number">14</span> <span class="number">15</span> <span class="number">16</span> <span class="number">17</span>]</span><br><span class="line">order=A: [ <span class="number">1</span>  <span class="number">2</span>  <span class="number">0</span>  <span class="number">5</span>  <span class="number">3</span>  <span class="number">4</span>  <span class="number">7</span>  <span class="number">8</span>  <span class="number">6</span> <span class="number">11</span>  <span class="number">9</span> <span class="number">10</span> <span class="number">12</span> <span class="number">15</span> <span class="number">13</span> <span class="number">16</span> <span class="number">14</span> <span class="number">17</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="总结">总结</h2>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412041059087.jpg"
-alt="b3ea29c37641b95140d2ade01ce3e7f" />
-<figcaption
-aria-hidden="true">b3ea29c37641b95140d2ade01ce3e7f</figcaption>
-</figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/order%E5%8F%82%E6%95%B0/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/【References】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/" target="_blank">References</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p><a target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-numpy/">Python Numpy
-Tutorial</a></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E3%80%90References%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/Python_Data_Science/【numpy】/副本和视图" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" target="_blank">NumPy 副本和视图</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/" class="archive-article-date">
-        <time datetime="2024-04-22T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-22</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="numpy-副本和视图">NumPy 副本和视图</h1>
-<p>副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</p>
-<p>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置。</p>
-<p><strong>视图一般发生在：</strong></p>
-<ul>
-<li>1、numpy 的切片操作返回原数据的视图。</li>
-<li>2、调用 ndarray 的 <code>view()</code> 函数产生一个视图。</li>
-</ul>
-<p><strong>副本一般发生在：</strong></p>
-<ul>
-<li>Python 序列的切片操作，调用<code>deepCopy()</code>函数。</li>
-<li>调用 ndarray 的 <code>copy()</code> 函数产生一个副本。</li>
-</ul>
-    
-    <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">numpy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/22/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90numpy%E3%80%91/%E5%89%AF%E6%9C%AC%E5%92%8C%E8%A7%86%E5%9B%BE/">展开全文 >></a>
     </p>
     
 
@@ -1474,7 +1443,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/19/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/43/">43</a><a class="extend next" rel="next" href="/page/21/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/19/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/21/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1630,15 +1599,11 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1646,7 +1611,19 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1658,43 +1635,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1706,7 +1647,39 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1714,7 +1687,7 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1726,15 +1699,15 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1743,6 +1716,10 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1758,19 +1735,11 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gradio</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">ollama</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1782,6 +1751,10 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
@@ -1790,11 +1763,11 @@ target="_blank" rel="noopener" href="https://blog.csdn.net/mahoon411/article/det
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-LLM/LLM Basic/自监督学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LLM/LLM Notation/Qwen2.5-math" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" target="_blank">自监督学习</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/" target="_blank">Qwen2.5-math</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -242,164 +242,145 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="自监督学习">自监督学习</h1>
-<p>前段时间在杭州参加华尔兹，在会场听报告和看 Poster 的时候，我发现 AI
-领域的论文研究不再跟前几年一样专注于某个特定的任务提出全监督的网络模型（比如语义分割、目标检测和风格迁移等）。因为这些年深度学习的发展使得在数据充足情况下，经典任务的模型已经能达到很好的效果了，但是对于数据和标签匮乏的特定任务，这种监督学习的模型的效果就很受限。</p>
-<p>目前 CV
-领域主流的研究一般是结合多任务学习或者基于特定的学习方式，比如域自适应（Domain
-Adaptation）、自监督学习（Self-supervised
-Learning）、无监督学习（Unsupervised Learning）以及增量学习（Incremental
-Learning）等，本文主要来聊一聊自监督学习。</p>
-<h2 id="什么是自监督学习">什么是自监督学习</h2>
-<p>在基于深度学习的模型中，我们一般先对数据通过主干网络 Backbone
-来进行特征提取，比如用 VGG、ResNet、MobileNet 和 Inception
-等，然后再将提取到的 Feature Maps
-送入下游的分类、检测或者分割等任务。Backbone
-之所以有效是因为我们将其事先在 ImageNet
-等数据集上进行了预训练，所以具有很强的特征提取能力。在这里，一个带标签的大数据集（比如
-ImageNet）是至关重要的，但如果我们在面临一个没有大量标注数据的新领域新任务时，要如何提升模型的特征提取能力呢？</p>
-<p>自监督学习的出现回答了这个问题！</p>
-<p><strong>自监督学习 (Self-supervised learning)</strong>
-是这两年比较热门的一个研究领域，它旨在对于<strong>无标签数据</strong>
-，通过设计 <strong>辅助任务（Proxy tasks）</strong>
-来挖掘数据自身的表征特性作为监督信息，来提升模型的特征提取能力（PS：这里获取的监督信息不是指自监督学习所面对的原始任务标签，而是构造的辅助任务标签）。注意这里的两个关键词：无标签数据和辅助信息，这是定义自监督学习的两个关键依据。</p>
-<p>既然说到了自监督，我们这里也顺便将几种学习类型进行一个统一介绍：</p>
+    <p># Qwen2.5-math</p>
+<p>我们知道最新发布的<strong>Qwen2.5</strong>全家桶共有 3
+个模型，除常规的大语言模型 Qwen2.5 和专门针对编程的 Qwen2.5-Coder
+模型之外，还有一个专门针对数学的 <strong>Qwen2.5-Math</strong>
+模型，它号称是<strong>世界领先的数学开源大语言模型</strong>，我们今天就通过奥数题目来实实在在的感受一下它的强大之处。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316156.jpeg"
+alt="Qwen2.5-Math评测结果世界领先" />
+<figcaption aria-hidden="true">Qwen2.5-Math评测结果世界领先</figcaption>
+</figure>
+<p>因此，我们将通过以下 3 个主要部分来完成 <strong>Qwen2.5-Math</strong>
+模型的实战之旅：</p>
+<ol type="1">
+<li><strong>Qwen2.5-Math</strong>的基本介绍，主要是简单了解一下<strong>Qwen2.5-Math</strong>的特点和能力</li>
+<li>本地部署<strong>Qwen2.5-Math-1.5B</strong>模型，通过一个一元一次方程简单数学题，体验一下其数学推理能力</li>
+<li>我们选取<strong>小学</strong>和<strong>初中</strong>阶段经典的几道奥数题，让
+<strong>Qwen2.5-Math-72B</strong> 作为 AI
+老师，来实战验证其逻辑推导能力</li>
+</ol>
+<h2 id="基本介绍">基本介绍</h2>
+<p><strong>Qwen2.5-Math</strong> 明确说明：Qwen2.5-Math
+主要被设计用于通过<strong>CoT</strong>或<strong>TIR</strong>的方式解中英数学题，不推荐在其他任务上使用该系列模型。那么，什么是
+<strong>CoT</strong> 和 <strong>TIR</strong> 推理方式呢？</p>
+<h3 id="cot">CoT</h3>
+<p>【<strong>CoT</strong> 推理方式：】即思维链（Chain of
+Thought），主要目的是让大模型一步一步的展现出其推理过程，而不是直接给答案，就像我们人类逻辑思维过程一样，通过多步分解的方式，能更好的理解和解决复杂问题。如下数学题目的解答过程：</p>
 <ul>
-<li><p><strong>有监督（Supervised）：</strong>
-监督学习是从给定的带标签训练数据集中学习出一个函数（模型参数），在输入新的测试数据时，可以根据这个函数预测结果；</p></li>
-<li><p><strong>无监督（Unsupervisedg）：</strong>
-无监督学习是从无标签数据中分析数据本身的规律性等解析特征。无监督学习算法分为两大类：基于概率密度函数估计的方法和基于样本间相似性度量的方法；</p></li>
-<li><p><strong>半监督习（Semi-supervised）：</strong>
-半监督介于监督学习和无监督之间，即训练集中只有一部分数据有标签，需要通过伪标签生成等方式完成模型训练；</p></li>
-<li><p><strong>弱监督（Weakly-supervised）：</strong>
-弱监督是指训练数据只有不确切或者不完全的标签信息，比如在<strong>目标检测</strong>任务中，训练数据只有分类的类别标签，没有包含
-Bounding box 坐标信息。</p></li>
+<li>题目：小明有 10 个苹果，他给了小红 3 个苹果，然后又买了 5
+个苹果，请问小明现在有几个苹果？</li>
+<li><strong>CoT</strong> 推理过程：
+<ul>
+<li>第一步：小明最初有 10 个苹果。</li>
+<li>第二步：小明给了小红 3 个苹果，所以现在剩下 10-3=7 个苹果。</li>
+<li>第三步：小明又买了 5 个苹果，所以现在共有 7+5=12 个苹果。</li>
+<li>答案：现在小明有 12 个苹果。</li>
+</ul></li>
 </ul>
-<p>在上述概念中，无监督和自监督学习相似性最大，两者的训练数据都是无标签，但区别在于：自监督学习会通过构造辅助任务来获取监督信息，这个过程中有学习到新的知识；而无监督学习不会从数据中挖掘新任务的标签信息。</p>
-<h2 id="自监督学习中辅助任务的构造">自监督学习中辅助任务的构造</h2>
-<p>辅助任务（Proxy
-tasks）是自监督学习最关键的内容，我们接下来分别介绍自然语言处理 NLP
-和计算机视觉 CV 两大类任务中的自监督学习辅助任务设计。</p>
+<h3 id="tir">TIR</h3>
+<p>【<strong>TIR</strong> 推理方式：】即工具集成推理（Tool integrated
+Reasoning），就是在推理过程中使用外部工具（如：使用 Python
+执行代码获取结果）。<strong>TIR</strong>
+是<strong>Qwen2.5-Math</strong>的新特性，它能显著提升中英文的数学解题能力，包括精确计算、符号操作和算法操作等方面。具体用法可以阅读样例代码：<a
+target="_blank" rel="noopener" href="https://github.com/QwenLM/Qwen-Agent">https://github.com/QwenLM/Qwen-Agent</a></p>
+<p>另外，有关 <strong>Qwen2.5-Math</strong>
+的预训练架构设计，有个特别<strong>有趣</strong>的地方：<strong>Qwen2.5-Math</strong>的部分预训练数据，竟然是由<strong>Qwen2-Math-Instruct</strong>
+模型提供的，感觉它们已经开始在左右互搏了，因此<strong>世界领先</strong>也就不为奇了。</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934867.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316043.jpeg"
+alt="Qwen2.5-Math架构设计" />
+<figcaption aria-hidden="true">Qwen2.5-Math架构设计</figcaption>
 </figure>
-<h3 id="自然语言处理nlp">自然语言处理（NLP）</h3>
+<p>更多 <strong>Qwen2.5-Math</strong> 的详细介绍，可查看官网：<a
+target="_blank" rel="noopener" href="https://qwenlm.github.io/zh/blog/qwen2.5-math">https://qwenlm.github.io/zh/blog/qwen2.5-math/</a></p>
+<h2 id="本地部署和体验">本地部署和体验</h2>
+<p>我们先本地部署 <strong>Qwen2.5-Math</strong>
+模型，然后进行简单的数学题推理。由于老牛同学电脑配置不够强悍，因此本次演示我们使用<strong>1.5B</strong>参数版本（大家可根据自己硬件配置，选择不同的参数量版本）。我们通过以下三步完成整个流程：</p>
+<p>【<strong>第一步</strong>：下载 <strong>Qwen2.5-Math</strong>
+模型权重文件】</p>
+<p>存放权重文件目录：<code>Qwen2.5-Math-1.5B-Instruct</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Git大文件系统</span></span><br><span class="line">git lfs install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载模型权重文件</span></span><br><span class="line">git clone https://www.modelscope.cn/qwen/Qwen2.5-math-1.5B-Instruct.git Qwen2.5-Math-1.5B-Instruct</span><br></pre></td></tr></table></figure>
+<p>若下载过程中异常中断，可以通过<code>git lfs install</code>命令继续下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换到Git目录</span></span><br><span class="line">cd Qwen2.5-Math-1.5B-Instruct</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">继续下载</span></span><br><span class="line">git lfs install</span><br><span class="line">git lfs pull</span><br></pre></td></tr></table></figure>
+<p>【<strong>第二步</strong>：设置 Python 虚拟环境和安装依赖】</p>
+<p><strong>工欲善其事，必先利其器</strong>，我们通过<strong>Miniconda</strong>管理
+Python
+虚拟环境，<strong>Miniconda</strong>的安装和使用可以参考老牛同学之前的文章：<a
+target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/P_ufvz4MWVSqv_VM-rJp9w">大模型应用研发基础环境配置（Miniconda、Python、Jupyter
+Lab、Ollama 等）</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python虚拟环境名：Qwen2.5，版本号：3.10</span></span><br><span class="line">conda create -n Qwen2.5 python=3.10 -y</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">激活虚拟环境</span></span><br><span class="line">conda activate Qwen2.5</span><br></pre></td></tr></table></figure>
+<p>接下来，在虚拟环境中下载依赖包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pip install torch</span><br><span class="line">pip install modelscope</span><br><span class="line">pip install &quot;transformers&gt;=4.37.0&quot;</span><br><span class="line">pip install &quot;accelerate&gt;=0.26.0&quot;</span><br></pre></td></tr></table></figure>
+<p>【<strong>第三步</strong>：使用<strong>CoT</strong>方式进行数学推理验证】</p>
+<p>我们先通过一个简单数学方程：<code>4X+5=6X+7</code>，验证一下
+<strong>Qwen2.5-Math</strong> 的推理能力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Qwen2.5-Math-Eval-01.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> modelscope <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 权重文件目录</span></span><br><span class="line">model_dir = os.path.join(<span class="string">&#x27;D:&#x27;</span>, os.path.sep, <span class="string">&#x27;ModelSpace&#x27;</span>, <span class="string">&#x27;Qwen2.5&#x27;</span>, <span class="string">&#x27;Qwen2.5-Math-1.5B-Instruct&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;权重目录: <span class="subst">&#123;model_dir&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化模型</span></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    model_dir,</span><br><span class="line">    torch_dtype=<span class="string">&#x27;auto&#x27;</span>,</span><br><span class="line">    device_map=<span class="string">&#x27;auto&#x27;</span>,</span><br><span class="line">    local_files_only=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化分词器</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(</span><br><span class="line">	model_dir,</span><br><span class="line">	local_files_only=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Prompt提示词</span></span><br><span class="line">prompt = <span class="string">&#x27;请计算等式中的X值: 4X+5=6X+7&#x27;</span></span><br><span class="line">messages = [</span><br><span class="line">    &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;system&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: <span class="string">&#x27;你是一位数学专家，特别擅长解答数学题。&#x27;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: prompt&#125;</span><br><span class="line">]</span><br><span class="line">text = tokenizer.apply_chat_template(</span><br><span class="line">    messages,</span><br><span class="line">    tokenize=<span class="literal">False</span>,</span><br><span class="line">    add_generation_prompt=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line">model_inputs = tokenizer(</span><br><span class="line">    [text],</span><br><span class="line">    return_tensors=<span class="string">&#x27;pt&#x27;</span>,</span><br><span class="line">).to(model.device)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;开始推理: <span class="subst">&#123;prompt&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">generated_ids = model.generate(</span><br><span class="line">    **model_inputs,</span><br><span class="line">    max_new_tokens=<span class="number">512</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;推理完成.&#x27;</span>)</span><br><span class="line"></span><br><span class="line">generated_ids = [</span><br><span class="line">    output_ids[<span class="built_in">len</span>(input_ids):] <span class="keyword">for</span> input_ids, output_ids <span class="keyword">in</span> <span class="built_in">zip</span>(model_inputs.input_ids, generated_ids)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">response = tokenizer.batch_decode(</span><br><span class="line">    generated_ids,</span><br><span class="line">    skip_special_tokens=<span class="literal">True</span>,</span><br><span class="line">)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;推理结果: <span class="subst">&#123;response&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>执行本 Python
+程序：<code>python Qwen2.5-Math-Eval-01.py</code>，可以看到
+<strong>Qwen2.5-Math</strong> 模型通过 <strong>CoT</strong>
+的推理方式给出了结果：</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934834.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316172.jpeg"
+alt="Qwen2.5-Math解方程推理过程" />
+<figcaption aria-hidden="true">Qwen2.5-Math解方程推理过程</figcaption>
 </figure>
-<p>句子的语序有很强的规律性，所以自然语言处理任务中，语序信息是用来设计辅助任务的关键。常见的辅助任务主要分为以下三类：</p>
-<h4 id="单词预测word-prediction">单词预测（Word prediction）</h4>
-<p>通过随机删去训练集句子中的单词来构造辅助任务训练集和标签，来训练网络预测被删去的单词，以提升模型对于语序特征的提取能力。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934350.png"
-alt="在这里插入图片描述" /></p>
-<h4 id="句子序列预测sentence-sequence-prediction">句子序列预测（Sentence
-sequence prediction）</h4>
-<p>通过随机打乱每段话中的句子顺序来构造辅助任务训练集，来训练网络对句子进行正确的排序，标签为原来正确的句子顺序。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934551.png"
-alt="在这里插入图片描述" /></p>
-<h4 id="词序列预测word-sequence-prediction">词序列预测（Word sequence
-prediction）</h4>
-<p>打乱正常语句中的单词顺序，让模型学习组句，标签信息为原来正确的词序。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934923.gif"
-alt="在这里插入图片描述" /></p>
-<h3 id="计算机视觉cv">计算机视觉（CV）</h3>
-<p>我们将计算机视觉任务根据输入信息的不同分为图像任务和视频处理任务，来分别介绍其自监督学习中的辅助任务设计。</p>
-<h4 id="图像任务">图像任务</h4>
-<h5 id="图像重组jigsaw-puzzles">图像重组（Jigsaw Puzzles）</h5>
-<p>将图像分为不同的 patch，比如九宫格，然后让网络预测不同 patch
-的相对位置信息。这个过程中可以提高模型的局部特征提取能力以及全局空间信息提取能力。
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934848.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934995.jpeg"
-alt="在这里插入图片描述" /></p>
-<h5 id="图像渲染image-colorization">图像渲染（Image Colorization）</h5>
-<p>将原来数据集中的 RGB
-图像进行灰度化处理，然后通过图像色彩恢复任务来训练网络</p>
+<p>从最终结果来看，<strong>Qwen2.5-Math</strong>
+推理过程很清晰，和我们的思维模型比较相近（唯一不足就是老牛同学电脑配置有点吃力）。</p>
+<h2 id="小学和初中奥数题挑战">小学和初中奥数题挑战</h2>
+<p>上面一元一次方程只是简单体验，接下来我们通过奥数题目，对
+<strong>Qwen2.5-Math</strong> 发出挑战。因此，我们将采用
+<strong>Qwen2.5-Math-72B</strong>
+目前地表最强数学模型，来解答<strong>小学</strong>和<strong>初中</strong>奥数题目。（那为啥没有高中奥数题呢？因为老牛同学有点担心自己不会，当不了裁判，因此就不好去挑战大模型了_）</p>
+<p>我们将通过以下 3 个步骤，完成 <strong>Qwen2.5-Math</strong>
+整个奥数题挑战验证：</p>
+<p>【<strong>第一步</strong>：整理奥数题目，小学和初中分别 3
+道题目】</p>
+<p>老牛同学在网上分别找了 3 道奥数题目，我们通过 JSON
+格式文件存储每道题目，每道题由等级、题目和答案组成：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明和小红共有100元钱，小明比小红多20元。请问小明和小红分别有多少钱？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明：60元，小红：40元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明围绕长方形操场跑步，跑了3圈共480米，操场的长比宽多20米。请问操场面积是多少平方米？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;操场面积：1500平方米&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小学&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;甲乙二人从两地沿直线同时相对而行，经过4小时，在距离中点4千米处相遇，甲比乙的速度快。请问甲每小时比乙快多少千米？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;甲每小时比乙快：2千米&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;小明和小红以同样多的钱买了同一种铅笔，小明要了13支，小红要了7支，小明又给小红0.6元钱。请问每支铅笔多少钱？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;每支铅笔：0.2元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;父亲今年45岁，儿子今年15岁。请问多少年前父亲的年龄是儿子年龄的11倍？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;12年前&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;初中&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;商店有一套运动服，成本价为100元，按标价的8折出售仍可获利20元。请问这套运动服的标价是多少元？&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;answer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这套运动服的标价：150元&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>【<strong>第二步</strong>：调用 <strong>Qwen2.5-Math-72B</strong> API
+完成推理】</p>
+<p>由于老牛同学本地推理比较慢，接下来将使用阿里云百炼平台 API
+完成奥数推理。大家如果对自己电脑配置有信心的话，可以直接使用本地模型进行验证，可以免费完全接下来的推理。</p>
+<p>有关阿里云百炼平台的介绍，可参考老牛同学之前的文章：<a
+target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xclHiuy7gFPUlWZW5oOBSg">太卷了，阿里云免费
+1 个月大模型算力额度，玩转 Llama3.1/Qwen2 等训练推理</a></p>
+<p>奥数题目的推理程序逻辑有 3
+部分组成（<code>Qwen2.5-Math-奥数推理.py</code>）：</p>
+<ol type="1">
+<li>读取奥数题目 JSON 文件，并循环每一道题</li>
+<li>使用 <strong>Qwen2-Math</strong> 模型进行推理（或者：百炼平台
+API），获取结果</li>
+<li>存储奥数题目和推理结果到新文件，便于我们进行查看检测</li>
+</ol>
+<p>如果大家是通过调用 API
+完成推理，请先安装依赖包：<code>pip install OpenAI</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Qwen2.5-Math-奥数推理.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化客户端：提前配置好`DASHSCOPE_API_KEY`环境变量</span></span><br><span class="line">client = OpenAI(</span><br><span class="line">    api_key=os.getenv(<span class="string">&#x27;DASHSCOPE_API_KEY&#x27;</span>),</span><br><span class="line">    base_url=<span class="string">&#x27;https://dashscope.aliyuncs.com/compatible-mode/v1&#x27;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取奥数题目</span></span><br><span class="line">input_file = <span class="string">&#x27;Qwen2.5-Math-奥数题目.json&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(input_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    data = json.load(file)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环每道题目，请求推理服务</span></span><br><span class="line">output_data = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;奥数题目-&gt; <span class="subst">&#123;item[<span class="string">&quot;title&quot;</span>]&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;期望答案-&gt; <span class="subst">&#123;item[<span class="string">&quot;answer&quot;</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    completion = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&#x27;qwen2.5-math-72b-instruct&#x27;</span>,</span><br><span class="line">        messages=[</span><br><span class="line">            &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;system&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: <span class="string">&#x27;你是一位数学专家，特别擅长解答数学题。&#x27;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&#x27;role&#x27;</span>: <span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;content&#x27;</span>: item[<span class="string">&quot;title&quot;</span>]&#125;</span><br><span class="line">        ],</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取推理结果</span></span><br><span class="line">    result = json.loads(completion.model_dump_json())</span><br><span class="line">    content = result[<span class="string">&#x27;choices&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>][<span class="string">&#x27;content&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;推理结果-&gt; <span class="subst">&#123;content&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 暂存结果，后面统一存储到文件</span></span><br><span class="line">    output = &#123;</span><br><span class="line">        <span class="string">&#x27;level&#x27;</span>: item[<span class="string">&#x27;level&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;title&#x27;</span>: item[<span class="string">&#x27;title&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;answer&#x27;</span>: item[<span class="string">&#x27;answer&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;result&#x27;</span>: content</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    output_data.append(output)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存推理结果</span></span><br><span class="line">output_file = <span class="string">&#x27;Qwen2.5-Math-推理结果.md&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(output_file, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    <span class="keyword">for</span> output <span class="keyword">in</span> output_data:</span><br><span class="line">        file.write(<span class="string">f&#x27;<span class="subst">&#123;output[<span class="string">&quot;level&quot;</span>]&#125;</span>题目：<span class="subst">&#123;output[<span class="string">&quot;title&quot;</span>]&#125;</span>\n\n期望答案：<span class="subst">&#123;output[<span class="string">&quot;answer&quot;</span>]&#125;</span>\n\n&#x27;</span>)</span><br><span class="line">        file.write(<span class="string">f&#x27;<span class="subst">&#123;output[<span class="string">&quot;result&quot;</span>]&#125;</span>\n\n---\n\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>Qwen2.5-Math-72B</strong>
+果然没有让人失望，推理过程较快，并且推理的每一步都清晰明了：</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934733.png"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316326.jpeg"
+alt="Qwen2.5-Math-72B推理过程样例" />
+<figcaption aria-hidden="true">Qwen2.5-Math-72B推理过程样例</figcaption>
 </figure>
-<h5 id="图像旋转角度预测image-colorization">图像旋转角度预测（Image
-Colorization）</h5>
-<p>将训练集中的图像进行随机旋转，然后通过旋转角回归任务来训练网络 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934057.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="图像修复image-in-painting">图像修复（Image In-painting）</h5>
-<p>对图像进行随机裁剪，训练网络修复图像</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934968.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934494.jpeg"
-alt="在这里插入图片描述" /></p>
-<h5 id="多任务学习multi-tasks">多任务学习（Multi-Tasks）</h5>
-<p>结合上述的几种辅助任务一起对模型进行训练 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934039.jpeg"
-alt="在这里插入图片描述" /></p>
-<h4 id="视频处理任务">视频处理任务</h4>
-<p>视频是一系列图像帧的时间序列，哪些信息可用于设计辅助任务呢？</p>
-<p>我们知道，时序相邻帧之间具有很强的关联信息，较远帧之间的关联较弱，所以视频帧的时序信息是我们可以用到的一个重要设计依据；此外，视频中的目标物体在不同时序帧中具有一致性，比如色彩、形状等，所以这也可以作为一个辅助任务设计的重要依据。</p>
-<h5 id="基于视频帧的序列信息">基于视频帧的序列信息</h5>
-<p>这个跟自然语言处理中的语序预测很相似，我们通过随机打乱训练集中视频帧的顺序，来训练网络让其对正确视频时序进行预测
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934486.png"
-alt="在这里插入图片描述" /> <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934917.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="基于视频中目标的相似性">基于视频中目标的相似性</h5>
-<p>一般来说，视频相邻帧中目标相似性比较高，相隔较远帧中目标相似性比较低，所以可以训练网络判断不同帧中目标的相似性来提升其特征提取能力
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934761.png"
-alt="在这里插入图片描述" /></p>
-<h5 id="基于无监督目标跟踪">基于无监督目标跟踪</h5>
-<p>视频中同一物体在不同帧的特征应该是相似的，而不同物体的特征是不同的。可以根据无监督模型获得目标跟踪框，然后让网络学习同一目标和不同目标在不同帧中的相似性判别来提升特征提取能力
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934900.png"
-alt="在这里插入图片描述" /></p>
-<h2 id="总结">总结</h2>
-<p>以上介绍的主要为自监督学习中一些比较经典的辅助任务设计，在实际的任务中，如何根据自己的数据特点来设计有效辅助任务是自监督学习的关键，也是其难点。</p>
-<p>在设计自监督辅助任务时，以下三点需要考虑：</p>
-<p><strong>1、Shotcuts：</strong>
-根据自己的数据和任务特点设计辅助任务，常常有事半功倍的效果。比如对于镜头检测任务来说，获取成像色差、镜头畸变以及暗角等信息来构造辅助任务是比较有效的</p>
+<p>【<strong>第三步</strong>：验证推理结果的正确性，给出评分】</p>
+<p>最后一步，我们打开 <strong>Qwen2.5-Math-72B</strong>
+推理结果文件<code>Qwen2.5-Math-推理结果.md</code>，确定其准确率：<strong>100%</strong>（奥数题全对）</p>
 <figure>
 <img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934332.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501052316248.jpeg"
+alt="所有奥数题结果样例" />
+<figcaption aria-hidden="true">所有奥数题结果样例</figcaption>
 </figure>
-<p><strong>2、辅助任务的复杂度选择：</strong>
-之前人们的实验结果表明，辅助任务并不是越复杂越有效，比如图像重组任务中，最优的
-patch 数为 9，patch 太多会导致每个 patch 特征过少，并且相邻 patch
-间的差异性不大，导致模型的学习效果并不好</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934531.jpeg"
-alt="在这里插入图片描述" />
-<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
-</figure>
-<p><strong>3、模糊性：</strong>
-模糊性是指设计的辅助任务的标签必须是唯一确定的，不然会给网络学习引入噪声，影响
-<a
-target="_blank" rel="noopener" href="https://edu.csdn.net/cloud/pm_summit?utm_source=blogglc&amp;spm=1001.2101.3001.7020">模型性能</a>。比如在动作预测中，这个半蹲的动作就具有二义性，因为其下个状态有可能是蹲下，也有可能是正在站起，标签不具有唯一性
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412130934946.jpeg"
-alt="在这里插入图片描述" /></p>
-<p><strong>参考文献</strong></p>
-<p>[1] <a
-target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg3OTYxNjcyMw==&amp;mid=2247484227&amp;idx=1&amp;sn=fcc9ee7e2b928f518ba2305310a046af&amp;chksm=cf00f4fff8777de9ab82f2d4716cad96856ff1ec74475545dfa6560f2028eaab824b37ba7359&amp;token=1255814810&amp;lang=zh_CN#rd">自监督学习（Self-supervised
-Learning）</a> [2] <a target="_blank" rel="noopener" href="https://docdro.id/ABMilFG">EEML summer
-school–self-supervised learning_Zisserman</a></p>
+<p>说实话，老牛同学还是挺吃惊的，它的推理速度，比老牛同学要快得多，并且推理的步骤都非常清晰明了。</p>
+<p>对于有娃的朋友们，如果您在辅导家庭作业感到头疼的话，<strong>Qwen2.5-Math</strong>
+赶紧使用起来吧，让我们真正体验一下父慈子孝的和谐乐趣~</p>
 
     
 
@@ -416,7 +397,7 @@ school–self-supervised learning_Zisserman</a></p>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">LLM Basic</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">LLM Notation</a>
         		</li>
       		
 		</ul>
@@ -437,7 +418,121 @@ school–self-supervised learning_Zisserman</a></p>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Basic/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/LLM/LLM%20Notation/Qwen2.5-math/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2 id="modulenotfounderror">ModuleNotFoundError</h2>
+<p><a href="./ModuleNotFoundError.md">ModuleNotFoundError</a></p>
+<h2 id="valueerror-not-enough-values-to-unpack">ValueError: not enough
+values to unpack</h2>
+<p>好的，以下是一个简单的示例，展示了在 <code>for</code>
+循环中无法正确解包导致出错的情况。</p>
+<h3 id="示例代码">示例代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设我们有一个列表，其中包含元组和非元组的元素</span></span><br><span class="line">data = [</span><br><span class="line">    (<span class="string">&quot;a&quot;</span>, <span class="number">1</span>, <span class="string">&quot;x&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    (<span class="string">&quot;b&quot;</span>, <span class="number">2</span>),       <span class="comment"># 错误的元组，少了一个元素</span></span><br><span class="line">    (<span class="string">&quot;c&quot;</span>, <span class="number">3</span>, <span class="string">&quot;y&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    <span class="string">&quot;&quot;</span>,            <span class="comment"># 错误的元素，不是元组</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尝试在for循环中解包每个元素</span></span><br><span class="line"><span class="keyword">for</span> i, (letter, num, value) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Index <span class="subst">&#123;i&#125;</span>: <span class="subst">&#123;letter&#125;</span>, <span class="subst">&#123;num&#125;</span>, <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>上面错误的元素通常意味着处理的时候出现了问题</p>
+<h3 id="错误输出">错误输出</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Index 0: a, 1, x</span><br><span class="line">Index 1: b, 2, Traceback (most recent call last):</span><br><span class="line">  File &quot;example.py&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    for i, (letter, num, value) in enumerate(data):</span><br><span class="line">ValueError: not enough values to unpack (expected 3, got 2)</span><br></pre></td></tr></table></figure>
+<h3 id="说明">说明</h3>
+<ul>
+<li>第 1 个和第 3 个元素是正常的元组，包含 3 个元素，可以成功解包。</li>
+<li>第 2 个元素是一个只包含 2 个元素的元组 (<code>("b", 2)</code>)，这时
+<code>for</code> 循环解包时会报错，因为期望解包 3 个元素，但实际上只有 2
+个。</li>
+<li>第 4 个元素是一个字符串 <code>"d"</code>，它不是元组，也无法解包成
+<code>letter, num, value</code>，同样会引发错误。</li>
+</ul>
+<h3 id="错误的原因">错误的原因</h3>
+<ul>
+<li><p>当 <code>for</code> 循环尝试解包时，它期望每个元素都包含 3
+个值，但在某些元素中缺少或不符合这个格式，导致解包失败。</p>
+<p>在这个例子中，代码尝试将每个元素解包为 3 个变量
+(<code>letter, num, value</code>)，但第二个元素是一个只有 2
+个值的元组，而第四个元素根本不是一个元组，因此会报错。</p></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/">展开全文 >></a>
     </p>
     
 
@@ -561,6 +656,308 @@ pkg-config 工具查找 <code>.pc</code> 文件的路径。</p></li>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/ModuleNotFoundError/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/global与nonlocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" target="_blank">global与nonlocal</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="global与nonlocal">global与nonlocal</h1>
+<p>学习过程中，我们会遇到两个有趣的关键字，一个是
+<code>global</code>，一个是 <code>nonlocal</code>。</p>
+<p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p>
+<p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p>
+<p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p>
+<h2 id="python的定义域">python的定义域</h2>
+<p>先试看一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()	<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
+<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量
+<code>b</code> 的值 <code>1</code>。</p>
+<p>来看第二个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
+<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量
+<code>b</code> 的赋值。那它的结果是什么呢？</p>
+<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对
+<code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p>
+<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量
+<code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
+<p>这是因为 Python
+在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python
+遵循以下规则：</p>
+<ol type="1">
+<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python
+会将该变量视为局部变量。
+<ul>
+<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code>
+函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的
+<code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code>
+时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了
+<code>UnboundLocalError</code> 错误）。</li>
+</ul></li>
+<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。
+<ul>
+<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code>
+进行赋值操作，所以 Python 会认为 <code>b</code>
+是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量
+<code>b</code> 的值。</li>
+</ul></li>
+</ol>
+<p>总结一下：</p>
+<ul>
+<li>如果在函数内对变量进行赋值，Python
+会认为这个变量是局部的，并会在函数内部查找它。</li>
+<li>如果函数内没有赋值操作，Python
+会尝试访问外部作用域（如全局作用域）的变量。</li>
+</ul>
+<p>因此，在第二个例子中，虽然你想访问的是全局变量
+<code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将
+<code>b</code> 视为局部变量并抛出了错误。</p>
+<h2 id="global的作用">global的作用</h2>
+<p>那如何在函数中使用全局变量呢？用 <code>global</code>
+标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量
+<code>b</code> 而言的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
+<p>全局的问题解决了，再来看另外一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>因为函数 <code>a()</code> 中，对 <code>count</code>
+变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行
+<code>count + 1</code> 操作时，却没有找到
+<code>count</code>，所以报错了。</p>
+<p>那怎么处理呢？</p>
+<h2 id="nonlocal的作用">nonlocal的作用</h2>
+<p>我猜你会用 <code>global</code>
+标记一下，但是注意啊。<code>global</code>
+标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code>
+函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure>
+<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉
+<code>a()</code> 函数，<code>count</code>
+不在本地定义，但也不在全局变量里。在 Python
+中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用
+<code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而
+<code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>nonlocal</code> 告诉
+Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p></li>
+<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code>
+的变量，而不是重新定义新的局部变量</p></li>
+</ul>
+<h2 id="闭包">闭包</h2>
+<p>学习 Python
+时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
+<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回
+<code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code>
+函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的
+<code>count</code> 变量。</p>
+<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code>
+已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
+<p>像函数 <code>a()</code> 中 <code>count</code>
+这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
+<p>用 <code>nonlocal</code> 标记后呢，Python
+就会保留自由变量的绑定（或者说定义环境）。</p>
+<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是
+<code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
+<p>因为 <code>a()</code>
+延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li><p><code>global</code> 和 <code>nonlocal</code>
+的功能都是<strong>改变变量作用域</strong>。</p></li>
+<li><p><code>global</code> 标记全局变量，<code>nonlocal</code>
+标记非全局、非本地的<strong>自由变量</strong>。</p></li>
+<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/python执行顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" target="_blank">python执行顺序</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="python-执行顺序">python 执行顺序</h1>
+<p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
+<h2 id="代码执行顺序">代码执行顺序</h2>
+<p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
+<blockquote>
+<p>案例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span>=<span class="string">&#x27;我爱中华人民共和国&#x27;</span>	  <span class="comment">#第一行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>)				<span class="comment">#第二行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 输出: 我爱中华人民共和国</span></span><br></pre></td></tr></table></figure>
+<p>执行顺序：先执行第一行，第一行是赋值语句，从右到左执行；执行完毕后，执行第二行。</p>
+</blockquote>
+<p><strong>2.
+函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
+<blockquote>
+<p>案例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu1</span>():                       <span class="comment">#第一行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱中华人民共和国！&#x27;</span>)       <span class="comment">#第二行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;函数的执行顺序！&#x27;</span>)              <span class="comment">#第三行</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu2</span>():                       <span class="comment">#第四行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱写代码！&#x27;</span>)              <span class="comment">#第五行</span></span><br><span class="line">hanshu2()                            <span class="comment">#第六行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;好好工作，好好学习！&#x27;</span>)           <span class="comment">#第七行</span></span><br><span class="line">hanshu1()                            <span class="comment">#第八行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#---输出：---</span></span><br><span class="line"><span class="comment"># 函数的执行顺序！</span></span><br><span class="line"><span class="comment"># 我爱写代码！</span></span><br><span class="line"><span class="comment"># 好好工作，好好学习！</span></span><br><span class="line"><span class="comment"># 我爱中华人民共和国！</span></span><br></pre></td></tr></table></figure>
+<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 →
+执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
+</blockquote>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
     </p>
     
 
@@ -835,318 +1232,6 @@ Meaning of Underscores in Python – dbader.org</a></p>
 
 
   
-    <article id="post-【后端】/python/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" target="_blank">Errors</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="errors">Errors</h1>
-<h2 id="modulenotfounderror">ModuleNotFoundError</h2>
-<p><a href="./ModuleNotFoundError.md">ModuleNotFoundError</a></p>
-<h2 id="valueerror-not-enough-values-to-unpack">ValueError: not enough
-values to unpack</h2>
-<p>好的，以下是一个简单的示例，展示了在 <code>for</code>
-循环中无法正确解包导致出错的情况。</p>
-<h3 id="示例代码">示例代码</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设我们有一个列表，其中包含元组和非元组的元素</span></span><br><span class="line">data = [</span><br><span class="line">    (<span class="string">&quot;a&quot;</span>, <span class="number">1</span>, <span class="string">&quot;x&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    (<span class="string">&quot;b&quot;</span>, <span class="number">2</span>),       <span class="comment"># 错误的元组，少了一个元素</span></span><br><span class="line">    (<span class="string">&quot;c&quot;</span>, <span class="number">3</span>, <span class="string">&quot;y&quot;</span>),  <span class="comment"># 正常的元组，能够解包</span></span><br><span class="line">    <span class="string">&quot;&quot;</span>,            <span class="comment"># 错误的元素，不是元组</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尝试在for循环中解包每个元素</span></span><br><span class="line"><span class="keyword">for</span> i, (letter, num, value) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Index <span class="subst">&#123;i&#125;</span>: <span class="subst">&#123;letter&#125;</span>, <span class="subst">&#123;num&#125;</span>, <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>上面错误的元素通常意味着处理的时候出现了问题</p>
-<h3 id="错误输出">错误输出</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Index 0: a, 1, x</span><br><span class="line">Index 1: b, 2, Traceback (most recent call last):</span><br><span class="line">  File &quot;example.py&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    for i, (letter, num, value) in enumerate(data):</span><br><span class="line">ValueError: not enough values to unpack (expected 3, got 2)</span><br></pre></td></tr></table></figure>
-<h3 id="说明">说明</h3>
-<ul>
-<li>第 1 个和第 3 个元素是正常的元组，包含 3 个元素，可以成功解包。</li>
-<li>第 2 个元素是一个只包含 2 个元素的元组 (<code>("b", 2)</code>)，这时
-<code>for</code> 循环解包时会报错，因为期望解包 3 个元素，但实际上只有 2
-个。</li>
-<li>第 4 个元素是一个字符串 <code>"d"</code>，它不是元组，也无法解包成
-<code>letter, num, value</code>，同样会引发错误。</li>
-</ul>
-<h3 id="错误的原因">错误的原因</h3>
-<ul>
-<li><p>当 <code>for</code> 循环尝试解包时，它期望每个元素都包含 3
-个值，但在某些元素中缺少或不符合这个格式，导致解包失败。</p>
-<p>在这个例子中，代码尝试将每个元素解包为 3 个变量
-(<code>letter, num, value</code>)，但第二个元素是一个只有 2
-个值的元组，而第四个元素根本不是一个元组，因此会报错。</p></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Errors/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/global与nonlocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" target="_blank">global与nonlocal</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="global与nonlocal">global与nonlocal</h1>
-<p>学习过程中，我们会遇到两个有趣的关键字，一个是
-<code>global</code>，一个是 <code>nonlocal</code>。</p>
-<p>如果直接对英文进行翻译，一个会被翻译成“<strong>全局</strong>”，一个被翻译成“<strong>非局部</strong>”。</p>
-<p>无论怎么想，都感觉两个意思差不多。这就很有趣了，就像是在讨论“美”和“不丑”的区别。</p>
-<p>其实两个关键字功能都是在划定变量的定义域，需要视场景需要而定。</p>
-<h2 id="python的定义域">python的定义域</h2>
-<p>先试看一个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()	<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
-<p>特别简单，一下就得出了结果。<code>f()</code> 函数输出了全局变量
-<code>b</code> 的值 <code>1</code>。</p>
-<p>来看第二个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
-<p>与上一个例子相比，<code>f()</code> 函数中，多了一步对变量
-<code>b</code> 的赋值。那它的结果是什么呢？</p>
-<p>首先输出全局变量 <code>b</code> 的值 <code>1</code>，然后对
-<code>b</code> 重新赋值 <code>2</code>？错了，输出结果如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">9</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File <span class="string">&quot;d:\Document\Projects\temp\demo.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> f</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;b&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
-<p>结果是无法运行，原因是局部变量 <code>b</code> 未定义。</p>
-<p>嘿，这就奇怪了。第一个例子里面我也没有定义局部变量
-<code>b</code>，怎么它就能去找全局变量 <code>b</code> 呢？</p>
-<p>这是因为 Python
-在执行函数时会根据代码的上下文来决定是否将变量视为局部变量。具体地，Python
-遵循以下规则：</p>
-<ol type="1">
-<li>如果函数内有对变量的赋值操作（比如 <code>b = 2</code>），Python
-会将该变量视为局部变量。
-<ul>
-<li>在第二个例子中，<code>b = 2</code> 表示你试图在 <code>f()</code>
-函数内创建一个局部变量 <code>b</code>。这时，Python 会认为函数内的
-<code>b</code> 是局部变量，因此在函数内部尝试访问 <code>b</code>
-时，Python 会认为你正在引用一个尚未初始化的局部变量（导致了
-<code>UnboundLocalError</code> 错误）。</li>
-</ul></li>
-<li>如果函数内没有对变量赋值，Python 会尝试从外部作用域查找该变量。
-<ul>
-<li>在第一个例子中，<code>f()</code> 函数没有对 <code>b</code>
-进行赋值操作，所以 Python 会认为 <code>b</code>
-是一个全局变量，并从全局作用域中查找它。因此，它能够顺利打印出全局变量
-<code>b</code> 的值。</li>
-</ul></li>
-</ol>
-<p>总结一下：</p>
-<ul>
-<li>如果在函数内对变量进行赋值，Python
-会认为这个变量是局部的，并会在函数内部查找它。</li>
-<li>如果函数内没有赋值操作，Python
-会尝试访问外部作用域（如全局作用域）的变量。</li>
-</ul>
-<p>因此，在第二个例子中，虽然你想访问的是全局变量
-<code>b</code>，但由于函数内有对 <code>b</code> 的赋值操作，Python 将
-<code>b</code> 视为局部变量并抛出了错误。</p>
-<h2 id="global的作用">global的作用</h2>
-<p>那如何在函数中使用全局变量呢？用 <code>global</code>
-标记一下，告诉函数，这个变量是个全局变量，接下来的操作都是对全局变量
-<code>b</code> 而言的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    <span class="keyword">global</span> b</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()<span class="comment"># 输出 1</span></span><br><span class="line"><span class="built_in">print</span>(b)<span class="comment"># 输出 2</span></span><br></pre></td></tr></table></figure>
-<p>全局的问题解决了，再来看另外一个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>猜猜看结果是什么？有了前面的分析，这个例子就很好得出结果了，依旧是报错嘛。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 8, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 5, in a</span><br><span class="line">    count += 1</span><br><span class="line">UnboundLocalError: local variable &#x27;count&#x27; referenced before assignment</span><br></pre></td></tr></table></figure>
-<p>因为函数 <code>a()</code> 中，对 <code>count</code>
-变量进行了赋值，所以 Python 认定 <code>count</code> 是局部变量，但在执行
-<code>count + 1</code> 操作时，却没有找到
-<code>count</code>，所以报错了。</p>
-<p>那怎么处理呢？</p>
-<h2 id="nonlocal的作用">nonlocal的作用</h2>
-<p>我猜你会用 <code>global</code>
-标记一下，但是注意啊。<code>global</code>
-标记的是全局变量，而这个例子中的 <code>count</code> 是 <code>a()</code>
-函数上一级 <code>f()</code> 函数中的局部变量，并不是全局变量。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>运行结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    f()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 9, in f</span><br><span class="line">    return a()</span><br><span class="line">  File &quot;d:\Document\Projects\temp\demo.py&quot;, line 6, in a</span><br><span class="line">    count += 1</span><br><span class="line">NameError: name &#x27;count&#x27; is not defined</span><br></pre></td></tr></table></figure>
-<p>对比 <code>global</code>，这里要用 <code>nonlocal</code> 标记，告诉
-<code>a()</code> 函数，<code>count</code>
-不在本地定义，但也不在全局变量里。在 Python
-中，当你需要在嵌套函数中修改外层函数的局部变量时，需要使用
-<code>nonlocal</code>。这是因为 <code>global</code> 仅作用于全局变量，而
-<code>nonlocal</code> 标记的变量是嵌套函数的直接外层函数的局部变量</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f() <span class="comment"># 输出 1</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p><code>nonlocal</code> 告诉
-Python，这个变量不是当前函数中的局部变量，而是直接外层函数的局部变量</p></li>
-<li><p>修改 <code>count</code> 时，实际更新的是外层函数 <code>f()</code>
-的变量，而不是重新定义新的局部变量</p></li>
-</ul>
-<h2 id="闭包">闭包</h2>
-<p>学习 Python
-时你可能经常听到“闭包”这个词。那么什么是闭包呢？简单来说，闭包是指<strong>延伸了作用域的函数</strong>。来看下面的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">a</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(count)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a()</span><br><span class="line"></span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>调用函数 <code>f()</code> 时，<code>f()</code> 会返回
-<code>a()</code>，当执行 <code>a()</code> 的时候，<code>f()</code>
-函数的任务已经完成了，它占用的资源就会释放掉，这其中包括了函数f环境中定义的
-<code>count</code> 变量。</p>
-<p>也就是说，在执行 <code>a()</code> 的时候，函数 <code>f()</code>
-已经“撒手人寰”了，没有办法再去找到其中的数据。</p>
-<p>像函数 <code>a()</code> 中 <code>count</code>
-这一类，不在本地定义域中绑定的变量，我们叫做<strong>自由变量</strong></p>
-<p>用 <code>nonlocal</code> 标记后呢，Python
-就会保留自由变量的绑定（或者说定义环境）。</p>
-<p>因此最后例子中，整个函数 <code>a()</code> 的作用域是
-<code>count = 0</code>，加上 <code>a()</code> 本身的局部变量</p>
-<p>因为 <code>a()</code>
-延伸了自己的作用域，所以这里就可以被称作“闭包”。</p>
-<h2 id="总结">总结</h2>
-<ul>
-<li><p><code>global</code> 和 <code>nonlocal</code>
-的功能都是<strong>改变变量作用域</strong>。</p></li>
-<li><p><code>global</code> 标记全局变量，<code>nonlocal</code>
-标记非全局、非本地的<strong>自由变量</strong>。</p></li>
-<li><p><strong>延伸了作用域的函数</strong>，被称作“闭包”</p></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/global%E4%B8%8Enonlocal/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/python项目中的相对路径与绝对路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1262,110 +1347,6 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
 
 
   
-    <article id="post-【后端】/python/python执行顺序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" target="_blank">python执行顺序</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="python-执行顺序">python 执行顺序</h1>
-<p>以下内容建议使用 pycharm 进行 <strong>逐步调试</strong>，加深理解</p>
-<h2 id="代码执行顺序">代码执行顺序</h2>
-<p><strong>1. 普通语句逐行执行，自上而下。</strong></p>
-<blockquote>
-<p>案例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span>=<span class="string">&#x27;我爱中华人民共和国&#x27;</span>	  <span class="comment">#第一行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>)				<span class="comment">#第二行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 输出: 我爱中华人民共和国</span></span><br></pre></td></tr></table></figure>
-<p>执行顺序：先执行第一行，第一行是赋值语句，从右到左执行；执行完毕后，执行第二行。</p>
-</blockquote>
-<p><strong>2.
-函数的执行过程，从上往下，先执行函数名，不执行函数内部，只有函数被调用时才执行 。</strong></p>
-<blockquote>
-<p>案例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu1</span>():                       <span class="comment">#第一行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱中华人民共和国！&#x27;</span>)       <span class="comment">#第二行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;函数的执行顺序！&#x27;</span>)              <span class="comment">#第三行</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hanshu2</span>():                       <span class="comment">#第四行</span></span><br><span class="line">   	<span class="built_in">print</span>(<span class="string">&#x27;我爱写代码！&#x27;</span>)              <span class="comment">#第五行</span></span><br><span class="line">hanshu2()                            <span class="comment">#第六行</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;好好工作，好好学习！&#x27;</span>)           <span class="comment">#第七行</span></span><br><span class="line">hanshu1()                            <span class="comment">#第八行</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#---输出：---</span></span><br><span class="line"><span class="comment"># 函数的执行顺序！</span></span><br><span class="line"><span class="comment"># 我爱写代码！</span></span><br><span class="line"><span class="comment"># 好好工作，好好学习！</span></span><br><span class="line"><span class="comment"># 我爱中华人民共和国！</span></span><br></pre></td></tr></table></figure>
-<p> 执行顺序：执行第一行 → 执行第三行 → 执行第四行 → 执行第六行 →
-执行第五行 → 执行第七行 → 执行第八行 → 执行第二行。</p>
-</blockquote>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/python%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/全局变量&amp;局部变量" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1440,143 +1421,6 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F&%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/字符串自动连接" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="字符串自动连接">字符串自动连接</h1>
-<p>在 Python 中，<strong>字符串自动连接</strong>
-是一个方便的特性，允许你将多个字符串字面量（即用引号包裹的字符串）放在相邻位置，Python
-会自动将它们连接为一个完整的字符串，而无需显式使用 <code>+</code>
-运算符或 <code>str.join()</code> 方法。</p>
-<h2 id="规则">规则</h2>
-<ol type="1">
-<li><p><strong>相邻字符串会自动连接：</strong>
-如果两个或多个字符串字面量直接相邻，Python 会自动将它们连接起来。</p>
-<ul>
-<li>这些字符串字面量可以用单引号 <code>'...'</code> 或双引号
-<code>"..."</code> 表示。</li>
-<li>还可以混合使用三引号 <code>'''...'''</code> 或
-<code>"""..."""</code>。</li>
-</ul>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">combined = <span class="string">&#x27;Hello, &#x27;</span> <span class="string">&#x27;world!&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(combined)  <span class="comment"># 输出: Hello, world!</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>支持跨多行写法：</strong>
-字符串字面量可以分行书写，适用于代码格式化，特别是长字符串的场景。</p>
-<ul>
-<li><strong>括号<code>()</code>写法</strong>（推荐，PEP 8 建议）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">message = (</span><br><span class="line">    <span class="string">&quot;This is a very long string &quot;</span></span><br><span class="line">    <span class="string">&quot;that spans multiple lines &quot;</span></span><br><span class="line">    <span class="string">&quot;but is treated as one string.&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(message)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that spans multiple lines but is treated as one string.</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>行末<code>\</code>写法</strong></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">long_string = <span class="string">&quot;This is a very long string that &quot;</span> \</span><br><span class="line">              <span class="string">&quot;we want to split across multiple lines &quot;</span> \</span><br><span class="line">              <span class="string">&quot;for better readability.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(long_string)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that we want to split across multiple lines for better readability.</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>原始字符串和普通字符串的连接：</strong>
-如果一个字符串是原始字符串（以 <code>r</code>
-开头），另一个是普通字符串，它们也可以自动连接。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">raw_and_normal = <span class="string">r&quot;Path with \\slashes &quot;</span> <span class="string">&quot;and some normal text.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(raw_and_normal)</span><br><span class="line"><span class="comment"># 输出: Path with \\slashes and some normal text.</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>不会连接变量或表达式：</strong> 自动连接只适用于
-<strong>字符串字面量</strong>。如果有变量或表达式，必须用 <code>+</code>
-显式连接。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">part1 = <span class="string">&quot;Hello, &quot;</span></span><br><span class="line">part2 = <span class="string">&quot;world!&quot;</span></span><br><span class="line"><span class="comment"># 自动连接不适用，需使用 + 运算符</span></span><br><span class="line"><span class="built_in">print</span>(part1 + part2)  <span class="comment"># 输出: Hello, world!</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr />
-<h2 id="实例">实例</h2>
-<ol type="1">
-<li><p><strong>分行书写长字符串：</strong>
-当一个字符串太长而不适合单行时，可以用字符串自动连接分为多行。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">long_string = (</span><br><span class="line">    <span class="string">&quot;This is a very long string that &quot;</span></span><br><span class="line">    <span class="string">&quot;we want to split across multiple lines &quot;</span></span><br><span class="line">    <span class="string">&quot;for better readability.&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(long_string)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that we want to split across multiple lines for better readability.</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>避免显式使用加号：</strong>
-自动连接让代码更简洁，并避免频繁使用 <code>+</code>。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">welcome_message = <span class="string">&quot;Welcome &quot;</span> <span class="string">&quot;to &quot;</span> <span class="string">&quot;Python programming.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(welcome_message)</span><br><span class="line"><span class="comment"># 输出: Welcome to Python programming.</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>书写格式化文本：</strong>
-特别是在书写多行字符串（如SQL查询或文档内容）时，字符串自动连接非常实用。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sql_query = (</span><br><span class="line">    <span class="string">&quot;SELECT * FROM users &quot;</span></span><br><span class="line">    <span class="string">&quot;WHERE age &gt; 18 &quot;</span></span><br><span class="line">    <span class="string">&quot;ORDER BY last_login DESC;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(sql_query)</span><br><span class="line"><span class="comment"># 输出: SELECT * FROM users WHERE age &gt; 18 ORDER BY last_login DESC;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr />
-<h2 id="注意事项">注意事项</h2>
-<ol type="1">
-<li><p><strong>间隔空白字符：</strong>
-自动连接不会在字符串之间插入任何额外的空格。你需要自己显式添加空格。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">greeting = <span class="string">&quot;Hello,&quot;</span> <span class="string">&quot;world!&quot;</span>  <span class="comment"># 没有空格</span></span><br><span class="line"><span class="built_in">print</span>(greeting)  <span class="comment"># 输出: Hello,world!</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>不能用于表达式：</strong>
-自动连接仅适用于字符串字面量，不能用于变量、函数返回值或复杂表达式。</p>
-<p><strong>错误示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">part1 = <span class="string">&quot;Hello, &quot;</span></span><br><span class="line">part2 = <span class="string">&quot;world!&quot;</span></span><br><span class="line">message = part1 <span class="string">&quot; &quot;</span> part2  <span class="comment"># SyntaxError: invalid syntax</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>容易被忽略的隐式行为：</strong>
-如果无意中在两行代码中写了两个相邻的字符串字面量，可能导致意外的结果。</p>
-<p><strong>示例：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mistake = <span class="string">&quot;Hello&quot;</span></span><br><span class="line"><span class="string">&quot;world!&quot;</span>  <span class="comment"># Python 将其视为一个被忽略的字符串，代码无效</span></span><br><span class="line"><span class="built_in">print</span>(mistake)  <span class="comment"># 输出: Hello</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr />
-<h2 id="如何检查结果">如何检查结果</h2>
-<p>你可以使用 <code>print()</code> 或 <code>len()</code>
-检查连接后的字符串内容和长度。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&quot;Hello, &quot;</span> <span class="string">&quot;world!&quot;</span></span><br><span class="line"><span class="built_in">print</span>(s)  <span class="comment"># 输出: Hello, world!</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(s))  <span class="comment"># 输出: 13</span></span><br></pre></td></tr></table></figure>
-<p>希望这个解释能帮你彻底理解字符串自动连接！ 😊</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5/">展开全文 >></a>
     </p>
     
 
@@ -1732,6 +1576,143 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/字符串自动连接" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="字符串自动连接">字符串自动连接</h1>
+<p>在 Python 中，<strong>字符串自动连接</strong>
+是一个方便的特性，允许你将多个字符串字面量（即用引号包裹的字符串）放在相邻位置，Python
+会自动将它们连接为一个完整的字符串，而无需显式使用 <code>+</code>
+运算符或 <code>str.join()</code> 方法。</p>
+<h2 id="规则">规则</h2>
+<ol type="1">
+<li><p><strong>相邻字符串会自动连接：</strong>
+如果两个或多个字符串字面量直接相邻，Python 会自动将它们连接起来。</p>
+<ul>
+<li>这些字符串字面量可以用单引号 <code>'...'</code> 或双引号
+<code>"..."</code> 表示。</li>
+<li>还可以混合使用三引号 <code>'''...'''</code> 或
+<code>"""..."""</code>。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">combined = <span class="string">&#x27;Hello, &#x27;</span> <span class="string">&#x27;world!&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(combined)  <span class="comment"># 输出: Hello, world!</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>支持跨多行写法：</strong>
+字符串字面量可以分行书写，适用于代码格式化，特别是长字符串的场景。</p>
+<ul>
+<li><strong>括号<code>()</code>写法</strong>（推荐，PEP 8 建议）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">message = (</span><br><span class="line">    <span class="string">&quot;This is a very long string &quot;</span></span><br><span class="line">    <span class="string">&quot;that spans multiple lines &quot;</span></span><br><span class="line">    <span class="string">&quot;but is treated as one string.&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(message)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that spans multiple lines but is treated as one string.</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>行末<code>\</code>写法</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">long_string = <span class="string">&quot;This is a very long string that &quot;</span> \</span><br><span class="line">              <span class="string">&quot;we want to split across multiple lines &quot;</span> \</span><br><span class="line">              <span class="string">&quot;for better readability.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(long_string)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that we want to split across multiple lines for better readability.</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>原始字符串和普通字符串的连接：</strong>
+如果一个字符串是原始字符串（以 <code>r</code>
+开头），另一个是普通字符串，它们也可以自动连接。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">raw_and_normal = <span class="string">r&quot;Path with \\slashes &quot;</span> <span class="string">&quot;and some normal text.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(raw_and_normal)</span><br><span class="line"><span class="comment"># 输出: Path with \\slashes and some normal text.</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>不会连接变量或表达式：</strong> 自动连接只适用于
+<strong>字符串字面量</strong>。如果有变量或表达式，必须用 <code>+</code>
+显式连接。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">part1 = <span class="string">&quot;Hello, &quot;</span></span><br><span class="line">part2 = <span class="string">&quot;world!&quot;</span></span><br><span class="line"><span class="comment"># 自动连接不适用，需使用 + 运算符</span></span><br><span class="line"><span class="built_in">print</span>(part1 + part2)  <span class="comment"># 输出: Hello, world!</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr />
+<h2 id="实例">实例</h2>
+<ol type="1">
+<li><p><strong>分行书写长字符串：</strong>
+当一个字符串太长而不适合单行时，可以用字符串自动连接分为多行。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">long_string = (</span><br><span class="line">    <span class="string">&quot;This is a very long string that &quot;</span></span><br><span class="line">    <span class="string">&quot;we want to split across multiple lines &quot;</span></span><br><span class="line">    <span class="string">&quot;for better readability.&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(long_string)</span><br><span class="line"><span class="comment"># 输出: This is a very long string that we want to split across multiple lines for better readability.</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>避免显式使用加号：</strong>
+自动连接让代码更简洁，并避免频繁使用 <code>+</code>。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">welcome_message = <span class="string">&quot;Welcome &quot;</span> <span class="string">&quot;to &quot;</span> <span class="string">&quot;Python programming.&quot;</span></span><br><span class="line"><span class="built_in">print</span>(welcome_message)</span><br><span class="line"><span class="comment"># 输出: Welcome to Python programming.</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>书写格式化文本：</strong>
+特别是在书写多行字符串（如SQL查询或文档内容）时，字符串自动连接非常实用。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sql_query = (</span><br><span class="line">    <span class="string">&quot;SELECT * FROM users &quot;</span></span><br><span class="line">    <span class="string">&quot;WHERE age &gt; 18 &quot;</span></span><br><span class="line">    <span class="string">&quot;ORDER BY last_login DESC;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(sql_query)</span><br><span class="line"><span class="comment"># 输出: SELECT * FROM users WHERE age &gt; 18 ORDER BY last_login DESC;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr />
+<h2 id="注意事项">注意事项</h2>
+<ol type="1">
+<li><p><strong>间隔空白字符：</strong>
+自动连接不会在字符串之间插入任何额外的空格。你需要自己显式添加空格。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">greeting = <span class="string">&quot;Hello,&quot;</span> <span class="string">&quot;world!&quot;</span>  <span class="comment"># 没有空格</span></span><br><span class="line"><span class="built_in">print</span>(greeting)  <span class="comment"># 输出: Hello,world!</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>不能用于表达式：</strong>
+自动连接仅适用于字符串字面量，不能用于变量、函数返回值或复杂表达式。</p>
+<p><strong>错误示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">part1 = <span class="string">&quot;Hello, &quot;</span></span><br><span class="line">part2 = <span class="string">&quot;world!&quot;</span></span><br><span class="line">message = part1 <span class="string">&quot; &quot;</span> part2  <span class="comment"># SyntaxError: invalid syntax</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>容易被忽略的隐式行为：</strong>
+如果无意中在两行代码中写了两个相邻的字符串字面量，可能导致意外的结果。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mistake = <span class="string">&quot;Hello&quot;</span></span><br><span class="line"><span class="string">&quot;world!&quot;</span>  <span class="comment"># Python 将其视为一个被忽略的字符串，代码无效</span></span><br><span class="line"><span class="built_in">print</span>(mistake)  <span class="comment"># 输出: Hello</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr />
+<h2 id="如何检查结果">如何检查结果</h2>
+<p>你可以使用 <code>print()</code> 或 <code>len()</code>
+检查连接后的字符串内容和长度。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&quot;Hello, &quot;</span> <span class="string">&quot;world!&quot;</span></span><br><span class="line"><span class="built_in">print</span>(s)  <span class="comment"># 输出: Hello, world!</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(s))  <span class="comment"># 输出: 13</span></span><br></pre></td></tr></table></figure>
+<p>希望这个解释能帮你彻底理解字符串自动连接！ 😊</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5/">展开全文 >></a>
     </p>
     
 
@@ -1919,19 +1900,19 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1943,11 +1924,11 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1955,15 +1936,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1979,15 +1952,15 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2003,7 +1976,11 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2011,15 +1988,11 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2027,15 +2000,15 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2043,15 +2016,23 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2071,15 +2052,15 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2087,7 +2068,7 @@ Directory）是在程序启动时由操作系统或运行环境设置的，具�
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

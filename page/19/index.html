@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/data与detach()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch/max()与argmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/data%E4%B8%8Edetach()/" target="_blank">data与detach()</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/" target="_blank">max() 与 argmax()</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/data%E4%B8%8Edetach()/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -242,170 +242,96 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="data与detach">data与detach()</h1>
-<blockquote>
-<p>请先看完<a
-href="D:\downloads\hexo\blog\source_posts【后端】\python\第三方库【pytorch】\Base\inplace%20operation\inplace%20operation禁用场景.md">inplace
-operation禁用场景</a>后，再阅读下面内容，下面例子参考了</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y = x.data</span><br><span class="line">y = x.detach()</span><br></pre></td></tr></table></figure>
-<p><code>x.data</code> 与 <code>x.detach()</code> 返回的 tensor
-<code>y</code>有相同的地方，也有不同的地方</p>
-<h2 id="相同">相同</h2>
+    <h1 id="max-与-argmax">max() 与 argmax()</h1>
+<p>在 PyTorch 中，<code>torch.max()</code> 和
+<code>torch.argmax()</code>
+是两个常用的函数，但它们的用途和返回值有所不同。以下是它们的详细讲解：</p>
+<hr />
+<h2 id="torch.max"><code>torch.max()</code></h2>
+<h3 id="功能">功能</h3>
 <ul>
-<li><code>y</code> 都和 <code>x</code>
-<strong>共享</strong>同一块数据</li>
-<li><code>y</code> 都和 <code>x</code> 的
-计算历史<strong>无关</strong></li>
-<li><code>y</code> 的 <code>requires_grad</code> 属性为
-<code>False</code></li>
+<li><strong><code>torch.max(input)</code></strong>:
+返回输入张量中所有元素的最大值。</li>
+<li><strong><code>torch.max(input, dim)</code></strong>:
+返回指定维度上的最大值以及其对应的索引。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">a = torch.tensor([<span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>],requires_grad=<span class="literal">True</span>)</span><br><span class="line">b = a.detach()  <span class="comment"># 也可以换成 b = a.data 两者是等价的</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 内存位置相同</span></span><br><span class="line"><span class="built_in">print</span>(a.data_ptr()) <span class="comment"># 2432102290752</span></span><br><span class="line"><span class="built_in">print</span>(b.data_ptr()) <span class="comment"># 2432102290752</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a) <span class="comment"># tensor([1., 2., 3.], requires_grad=True)</span></span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># tensor([1., 2., 3.]) # 这里为False，就省略了</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line">c = a * <span class="number">2</span></span><br><span class="line">d = b * <span class="number">3</span></span><br><span class="line"></span><br><span class="line">c.<span class="built_in">sum</span>().backward()</span><br><span class="line"><span class="built_in">print</span>(a.grad) <span class="comment"># tensor([2., 2., 2.])</span></span><br><span class="line"></span><br><span class="line">d.<span class="built_in">sum</span>().backward()  <span class="comment"># 报错了！ 由于 b 不记录计算图，因此无法计算 b 的相关梯度信息</span></span><br><span class="line"><span class="built_in">print</span>(a.grad)</span><br><span class="line"><span class="built_in">print</span>(b.grad)</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">2432102290752</span><br><span class="line">2432102290752</span><br><span class="line">tensor([1., 2., 3.], requires_grad=True)</span><br><span class="line">tensor([1., 2., 3.])</span><br><span class="line">------------------------------</span><br><span class="line">tensor([2., 2., 2.])</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\GitHub\temp\demo1.py&quot;, line 19, in &lt;module&gt;</span><br><span class="line">    d.sum().backward()  # 报错了！ 由于b不记录计算图，因此无法计算b的相关梯度信息</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\_tensor.py&quot;, line 581, in backward</span><br><span class="line">    torch.autograd.backward(</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\autograd\__init__.py&quot;, line 347, in backward</span><br><span class="line">    _engine_run_backward(</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\autograd\graph.py&quot;, line 825, in _engine_run_backward</span><br><span class="line">    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass</span><br><span class="line">RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn</span><br></pre></td></tr></table></figure>
-<p>如果绘制此时的计算图，是这样的：</p>
-<div style="text-align: center">
-<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501271654885.jpeg&quot; style=&quot;zoom:40&quot;&gt;
-&lt;br&gt;
-b 脱离计算图，pytorch不再记录其后续操作，自然也没有梯度信息了</code></pre>
-</div>
-<p>由于 b
-已经从计算图脱离出来，pytorch自然也不跟踪其后续计算过程了。</p>
-<p>如果我在 <code>b = a.detach()</code> 后面，紧接着加一句
-<code>b.requires_grad_()</code>。那么，b 又需要梯度了，pytorch
-会继续跟踪其有关计算，这种情况下，得到的计算图如下：</p>
-<div style="text-align: center">
-<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501271654887.jpeg&quot;&gt;
-&lt;br&gt;
-b 脱离计算图，pytorch不再记录其后续操作，自然也没有梯度信息了</code></pre>
-</div>
-<p>可以看到，pytorch 可以继续跟踪 b 的计算，但梯度不会从 b 流回
-a，梯度被截断，但由于 b 与 a 共享内存，a 与 b 的值会一直相等。</p>
-<p>总结一句话，<code>detach()</code>
-操作产生的节点与原节点共享内存，但梯度截断。</p>
-<h2 id="不同">不同</h2>
-<p><code>y = x.data</code>
-在某些情况下<strong>不安全</strong>，某些情况指的就是上述 inplace
-operation 的第二种情况，因此 pytorch 建议尽量不使用
-<code>y = x.data</code>，均使用 <code>y = x.detach()</code></p>
-<h3 id="例1">例1</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">x = torch.FloatTensor([[<span class="number">1.</span>, <span class="number">2.</span>]])</span><br><span class="line">w1 = torch.FloatTensor([[<span class="number">2.</span>], [<span class="number">1.</span>]])</span><br><span class="line">w2 = torch.FloatTensor([<span class="number">3.</span>])</span><br><span class="line">w1.requires_grad = <span class="literal">True</span></span><br><span class="line">w2.requires_grad = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">d = torch.matmul(x, w1)</span><br><span class="line"></span><br><span class="line">d_ = d.data</span><br><span class="line"></span><br><span class="line">f = torch.matmul(d, w2)</span><br><span class="line">d_[:] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">f.backward()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这段代码没有报错, 但是计算上的确错了</span></span><br><span class="line"><span class="comment"># 如果 打印 w2.grad 结果看一下的话, 得到 是 1, 但是正确的结果应该是 4.</span></span><br></pre></td></tr></table></figure>
-<p>上述代码<strong>应该报错</strong>，因为：<code>d_</code> 和
-<code>d</code> 共享同一块数据，改 <code>d_</code> 就相当于 改
-<code>d</code> 了</p>
-<p>但是代码并没有<strong>报错，但是计算上的确错了</strong></p>
-<p>所以，release note 中指出，如果想要 detach 的效果的话，还是
-<code>y = x.detach()</code> 安全一些</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">x = torch.FloatTensor([[<span class="number">1.</span>, <span class="number">2.</span>]])</span><br><span class="line">w1 = torch.FloatTensor([[<span class="number">2.</span>], [<span class="number">1.</span>]])</span><br><span class="line">w2 = torch.FloatTensor([<span class="number">3.</span>])</span><br><span class="line">w1.requires_grad = <span class="literal">True</span></span><br><span class="line">w2.requires_grad = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">d = torch.matmul(x, w1)</span><br><span class="line"></span><br><span class="line">d_ = d.detach() <span class="comment"># 换成 .detach(), 就可以看到 程序报错了...</span></span><br><span class="line"></span><br><span class="line">f = torch.matmul(d, w2)</span><br><span class="line">d_[:] = <span class="number">1</span></span><br><span class="line">f.backward()</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;d:\Document\GitHub\temp\demo1.py&quot;, line 15, in &lt;module&gt;</span><br><span class="line">    f.backward()</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\_tensor.py&quot;, line 581, in backward</span><br><span class="line">    torch.autograd.backward(</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\autograd\__init__.py&quot;, line 347, in backward</span><br><span class="line">    _engine_run_backward(</span><br><span class="line">  File &quot;D:\Anaconda3\envs\qwen-agent\lib\site-packages\torch\autograd\graph.py&quot;, line 825, in _engine_run_backward</span><br><span class="line">    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass</span><br><span class="line">RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.FloatTensor [1, 1]], which is output 0 of MmBackward0, is at version 1; expected version 0 instead. Hint: enable anomaly detection to find the operation that failed to compute its gradient, with torch.autograd.set_detect_anomaly(True).</span><br></pre></td></tr></table></figure>
-<h3 id="例2">例2</h3>
-<p><code>.data</code> 不安全，不会报错，但实际梯度计算错误</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">a = torch.tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">out = a.softmax(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">c = out.data</span><br><span class="line"><span class="comment"># c = out.detach()</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;a.requires_grad: <span class="subst">&#123;a.requires_grad&#125;</span>, out.requires_grad: <span class="subst">&#123;out.requires_grad&#125;</span>, c.requires_grad: <span class="subst">&#123;c.requires_grad&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line">c.zero_()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"></span><br><span class="line">out.<span class="built_in">sum</span>().backward()</span><br><span class="line"><span class="built_in">print</span>(a.grad, a.sigmoid()*(<span class="number">1</span> - a.sigmoid()))</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a.requires_grad: True, out.requires_grad: True, c.requires_grad: False</span><br><span class="line">tensor([0.0900, 0.2447, 0.6652], grad_fn=&lt;SoftmaxBackward0&gt;)</span><br><span class="line">tensor([0.0900, 0.2447, 0.6652])</span><br><span class="line">tensor([0., 0., 0.], grad_fn=&lt;SoftmaxBackward0&gt;)</span><br><span class="line">tensor([0., 0., 0.])</span><br><span class="line">tensor([0., 0., 0.]) tensor([0.1966, 0.1050, 0.0452], grad_fn=&lt;MulBackward0&gt;)</span><br></pre></td></tr></table></figure>
-<p><code>.data</code> 安全，会报错，因为 Sigmoid 函数的 Activation
-是输出值 <code>out</code> 而不是
-输入值，因此对于求梯度阶段需要用到的张量不能进行 in-place operation</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">a = torch.tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">out = a.softmax(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># c = out.data</span></span><br><span class="line">c = out.detach()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;a.requires_grad: <span class="subst">&#123;a.requires_grad&#125;</span>, out.requires_grad: <span class="subst">&#123;out.requires_grad&#125;</span>, c.requires_grad: <span class="subst">&#123;c.requires_grad&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line">c.zero_()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"></span><br><span class="line">out.<span class="built_in">sum</span>().backward()</span><br><span class="line"><span class="built_in">print</span>(a.grad, a.sigmoid()*(<span class="number">1</span> - a.sigmoid()))</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">---------------------------------------------------------------------------</span><br><span class="line">RuntimeError                              Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input-37-6545a457b224&gt; in &lt;module&gt;()</span><br><span class="line">     15 print(c)</span><br><span class="line">     16 </span><br><span class="line">---&gt; 17 out.sum().backward()</span><br><span class="line">     18 print(a.grad, a.sigmoid()*(1-a.sigmoid()))</span><br><span class="line"></span><br><span class="line">~/anaconda3/lib/python3.6/site-packages/torch/_tensor.py in backward(self, gradient, retain_graph, create_graph, inputs)</span><br><span class="line">    305                 create_graph=create_graph,</span><br><span class="line">    306                 inputs=inputs)</span><br><span class="line">--&gt; 307         torch.autograd.backward(self, gradient, retain_graph, create_graph, inputs=inputs)</span><br><span class="line">    308 </span><br><span class="line">    309     def register_hook(self, hook):</span><br><span class="line"></span><br><span class="line">~/anaconda3/lib/python3.6/site-packages/torch/autograd/__init__.py in backward(tensors, grad_tensors, retain_graph, create_graph, grad_variables, inputs)</span><br><span class="line">    154     Variable._execution_engine.run_backward(</span><br><span class="line">    155         tensors, grad_tensors_, retain_graph, create_graph, inputs,</span><br><span class="line">--&gt; 156         allow_unreachable=True, accumulate_grad=True)  # allow_unreachable flag</span><br><span class="line">    157 </span><br><span class="line">    158 </span><br><span class="line"></span><br><span class="line">RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.FloatTensor [3]], which is output 0 of SigmoidBackward0, is at version 1; expected version 0 instead. Hint: enable anomaly detection to find the operation that failed to compute its gradient, with torch.autograd.set_detect_anomaly(True).</span><br></pre></td></tr></table></figure>
-
+<h3 id="用法示例">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">max_value = torch.<span class="built_in">max</span>(x)</span><br><span class="line"><span class="built_in">print</span>(max_value)  <span class="comment"># 输出：7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">max_values, indices = torch.<span class="built_in">max</span>(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(max_values)  <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(indices)     <span class="comment"># 输出：tensor([1, 0]) 表示每行中最大值的索引</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值">返回值</h3>
+<ul>
+<li><p>当不指定 <code>dim</code>：返回整个张量的最大值（标量）</p></li>
+<li><p>当指定
+<code>dim</code>：返回两个张量<strong>最大值张量</strong>和<strong>最大值所在的索引张量</strong></p></li>
+</ul>
+<hr />
+<h2 id="torch.argmax"><code>torch.argmax()</code></h2>
+<h3 id="功能-1">功能</h3>
+<ul>
+<li>返回输入张量中最大值的索引。</li>
+<li>可选择在指定维度中查找最大值的索引。</li>
+</ul>
+<h3 id="用法示例-1">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">argmax_index = torch.argmax(x)</span><br><span class="line"><span class="built_in">print</span>(argmax_index)  <span class="comment"># 输出：3 （索引从 0 开始）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">indices = torch.argmax(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值-1">返回值</h3>
+<ul>
+<li>返回最大值的索引，形状与指定维度（如果有的话）相匹配。</li>
+<li>如果不指定维度，返回最大值索引（标量）。</li>
+</ul>
+<hr />
+<h2 id="二者的对比">二者的对比</h2>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 42%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>功能</strong></th>
+<th><strong><code>torch.max()</code></strong></th>
+<th><strong><code>torch.argmax()</code></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>主要作用</strong></td>
+<td>返回最大值（可以同时返回索引）。</td>
+<td>返回最大值的索引。</td>
+</tr>
+<tr class="even">
+<td><strong>是否返回最大值的索引</strong></td>
+<td>是，但需要指定 <code>dim</code> 参数。</td>
+<td>是，仅返回索引。</td>
+</tr>
+<tr class="odd">
+<td><strong>是否返回最大值本身</strong></td>
+<td>是，默认返回最大值（可同时返回索引）。</td>
+<td>否，仅返回索引。</td>
+</tr>
+<tr class="even">
+<td><strong>支持多维张量</strong></td>
+<td>是，支持在指定维度上计算最大值和索引。</td>
+<td>是，支持在指定维度上查找最大值索引。</td>
+</tr>
+<tr class="odd">
+<td><strong>返回值类型</strong></td>
+<td>最大值（标量或张量）和索引（张量，若指定维度）。</td>
+<td>最大值的索引（标量或张量，取决于输入）。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="综合示例">综合示例</h2>
+<h3 id="例一">例一</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.max()</span></span><br><span class="line">max_values, max_indices = torch.<span class="built_in">max</span>(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值：&quot;</span>, max_values)     <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, max_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.argmax()</span></span><br><span class="line">argmax_indices = torch.argmax(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, argmax_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="例二">例二</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">output:</span><br><span class="line">tensor([[-<span class="number">1.0214</span>,  <span class="number">0.7577</span>, -<span class="number">0.0481</span>, -<span class="number">1.0252</span>,  <span class="number">0.9443</span>],</span><br><span class="line">        [ <span class="number">0.5071</span>, -<span class="number">1.6073</span>, -<span class="number">0.6960</span>, -<span class="number">0.6066</span>,  <span class="number">1.6297</span>],</span><br><span class="line">        [-<span class="number">0.2776</span>, -<span class="number">1.3551</span>,  <span class="number">0.0036</span>, -<span class="number">0.9210</span>, -<span class="number">0.6517</span>]])</span><br><span class="line">tensor(<span class="number">9</span>)</span><br><span class="line">tensor([<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
     
-
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/#more">more >></a>
     
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/data%E4%B8%8Edetach()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/normal_()和_fill_()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/" target="_blank">normal_()和fill_()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="normal_和fill_">normal_()和fill_()</h1>
-<h2 id="normal_"><code>normal_()</code></h2>
-<p>比如有个张量 <code>a</code>，那么 <code>a.normal_()</code>
-就表示用<strong>标准正态分布填充 <code>a</code></strong>，是 in_place
-操作，如下图所示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: a = torch.ones([<span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a</span><br><span class="line">Out[<span class="number">3</span>]:</span><br><span class="line">tensor([[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: a.normal()</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">AttributeError                            Traceback (most recent call last)</span><br><span class="line">Cell In[<span class="number">4</span>], line <span class="number">1</span></span><br><span class="line">----&gt; <span class="number">1</span> a.normal()</span><br><span class="line"></span><br><span class="line">AttributeError: <span class="string">&#x27;Tensor&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;normal&#x27;</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: a.normal_()</span><br><span class="line">Out[<span class="number">5</span>]:</span><br><span class="line">tensor([[ <span class="number">1.2059</span>, -<span class="number">0.1822</span>,  <span class="number">0.1581</span>],</span><br><span class="line">        [-<span class="number">0.1894</span>,  <span class="number">0.7149</span>,  <span class="number">0.0630</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: a</span><br><span class="line">Out[<span class="number">6</span>]:</span><br><span class="line">tensor([[ <span class="number">1.2059</span>, -<span class="number">0.1822</span>,  <span class="number">0.1581</span>],</span><br><span class="line">        [-<span class="number">0.1894</span>,  <span class="number">0.7149</span>,  <span class="number">0.0630</span>]])</span><br></pre></td></tr></table></figure>
-<h2 id="fill_"><code>fill_()</code></h2>
-<p>比如有个张量 <code>b</code>，那么<code>b.fill_(0)</code>
-就表示<strong>用 0 填充 <code>b</code></strong>，是 in_place
-操作，如下图所示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">7</span>]: b = torch.rand([<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: b</span><br><span class="line">Out[<span class="number">8</span>]:</span><br><span class="line">tensor([[<span class="number">0.2148</span>, <span class="number">0.5875</span>, <span class="number">0.2101</span>],</span><br><span class="line">        [<span class="number">0.2995</span>, <span class="number">0.4495</span>, <span class="number">0.2382</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: b.fill(<span class="number">0</span>)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">AttributeError                            Traceback (most recent call last)</span><br><span class="line">Cell In[<span class="number">9</span>], line <span class="number">1</span></span><br><span class="line">----&gt; <span class="number">1</span> b.fill(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">AttributeError: <span class="string">&#x27;Tensor&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;fill&#x27;</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: b.fill_(<span class="number">0</span>)</span><br><span class="line">Out[<span class="number">10</span>]:</span><br><span class="line">tensor([[<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: b</span><br><span class="line">Out[<span class="number">11</span>]:</span><br><span class="line">tensor([[<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]])</span><br></pre></td></tr></table></figure>
-<h2 id="实例">实例</h2>
-<p>这两个函数常常用在<strong>神经网络模型参数的初始化</strong>中，例如</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line">net = nn.Linear(<span class="number">16</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> m <span class="keyword">in</span> net.modules():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(m, nn.Linear):</span><br><span class="line">        m.weight.detach().normal_(mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">        m.bias.detach().fill_(<span class="number">0.0</span>)</span><br></pre></td></tr></table></figure>
-
     
 
     
@@ -431,7 +357,7 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/">展开全文 >></a>
     </p>
     
 
@@ -578,6 +504,105 @@ target="_blank" rel="noopener" href="https://docs.python.org/3/library/functions
 
 
   
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/normal_()和_fill_()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/" target="_blank">normal_()和fill_()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="normal_和fill_">normal_()和fill_()</h1>
+<h2 id="normal_"><code>normal_()</code></h2>
+<p>比如有个张量 <code>a</code>，那么 <code>a.normal_()</code>
+就表示用<strong>标准正态分布填充 <code>a</code></strong>，是 in_place
+操作，如下图所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: a = torch.ones([<span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a</span><br><span class="line">Out[<span class="number">3</span>]:</span><br><span class="line">tensor([[<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: a.normal()</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">AttributeError                            Traceback (most recent call last)</span><br><span class="line">Cell In[<span class="number">4</span>], line <span class="number">1</span></span><br><span class="line">----&gt; <span class="number">1</span> a.normal()</span><br><span class="line"></span><br><span class="line">AttributeError: <span class="string">&#x27;Tensor&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;normal&#x27;</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: a.normal_()</span><br><span class="line">Out[<span class="number">5</span>]:</span><br><span class="line">tensor([[ <span class="number">1.2059</span>, -<span class="number">0.1822</span>,  <span class="number">0.1581</span>],</span><br><span class="line">        [-<span class="number">0.1894</span>,  <span class="number">0.7149</span>,  <span class="number">0.0630</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: a</span><br><span class="line">Out[<span class="number">6</span>]:</span><br><span class="line">tensor([[ <span class="number">1.2059</span>, -<span class="number">0.1822</span>,  <span class="number">0.1581</span>],</span><br><span class="line">        [-<span class="number">0.1894</span>,  <span class="number">0.7149</span>,  <span class="number">0.0630</span>]])</span><br></pre></td></tr></table></figure>
+<h2 id="fill_"><code>fill_()</code></h2>
+<p>比如有个张量 <code>b</code>，那么<code>b.fill_(0)</code>
+就表示<strong>用 0 填充 <code>b</code></strong>，是 in_place
+操作，如下图所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">7</span>]: b = torch.rand([<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: b</span><br><span class="line">Out[<span class="number">8</span>]:</span><br><span class="line">tensor([[<span class="number">0.2148</span>, <span class="number">0.5875</span>, <span class="number">0.2101</span>],</span><br><span class="line">        [<span class="number">0.2995</span>, <span class="number">0.4495</span>, <span class="number">0.2382</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: b.fill(<span class="number">0</span>)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">AttributeError                            Traceback (most recent call last)</span><br><span class="line">Cell In[<span class="number">9</span>], line <span class="number">1</span></span><br><span class="line">----&gt; <span class="number">1</span> b.fill(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">AttributeError: <span class="string">&#x27;Tensor&#x27;</span> <span class="built_in">object</span> has no attribute <span class="string">&#x27;fill&#x27;</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: b.fill_(<span class="number">0</span>)</span><br><span class="line">Out[<span class="number">10</span>]:</span><br><span class="line">tensor([[<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: b</span><br><span class="line">Out[<span class="number">11</span>]:</span><br><span class="line">tensor([[<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>]])</span><br></pre></td></tr></table></figure>
+<h2 id="实例">实例</h2>
+<p>这两个函数常常用在<strong>神经网络模型参数的初始化</strong>中，例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line">net = nn.Linear(<span class="number">16</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> m <span class="keyword">in</span> net.modules():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(m, nn.Linear):</span><br><span class="line">        m.weight.detach().normal_(mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">        m.bias.detach().fill_(<span class="number">0.0</span>)</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/normal_()%E5%92%8C_fill_()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/C++/【Tips】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -658,6 +683,100 @@ alt="在这里插入图片描述" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/25/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E3%80%90Tips%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/单星号✳与双星号✳✳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" target="_blank">单星号（*）与双星号（**）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" class="archive-article-date">
+        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="单星号与双星号">单星号（*）与双星号（**）</h1>
+<h2 id="作为运算符">作为运算符</h2>
+<p><code>*</code> 表示乘法运算、<code>**</code> 表示乘方运算</p>
+<p>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># * ** 作为运算符</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n------运算符测试------&#x27;</span>)</span><br><span class="line">a = <span class="number">3</span>*<span class="number">2</span>  <span class="comment">#乘法</span></span><br><span class="line">b = <span class="number">3</span>**<span class="number">2</span> <span class="comment">#乘方</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a = &quot;</span>, a)  <span class="comment">#输出 6</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;b = &quot;</span>, b)  <span class="comment">#输出 9</span></span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------运算符测试------</span><br><span class="line">a =  6</span><br><span class="line">b =  9</span><br></pre></td></tr></table></figure>
+    
+    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/">展开全文 >></a>
     </p>
     
 
@@ -1018,7 +1137,7 @@ class="math inline">\(1\)</span>，表示步长</li>
 
 
   
-    <article id="post-【后端】/python/单星号✳与双星号✳✳" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/查看python帮助文档" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1026,7 +1145,7 @@ class="math inline">\(1\)</span>，表示步长</li>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" target="_blank">单星号（*）与双星号（**）</a>
+	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" target="_blank">查看python帮助文档</a>
   
     </h1>
   
@@ -1034,7 +1153,7 @@ class="math inline">\(1\)</span>，表示步长</li>
 
   
   
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/" class="archive-article-date">
+<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" class="archive-article-date">
         <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
 </a>
 
@@ -1047,16 +1166,27 @@ class="math inline">\(1\)</span>，表示步长</li>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="单星号与双星号">单星号（*）与双星号（**）</h1>
-<h2 id="作为运算符">作为运算符</h2>
-<p><code>*</code> 表示乘法运算、<code>**</code> 表示乘方运算</p>
-<p>代码示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># * ** 作为运算符</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n------运算符测试------&#x27;</span>)</span><br><span class="line">a = <span class="number">3</span>*<span class="number">2</span>  <span class="comment">#乘法</span></span><br><span class="line">b = <span class="number">3</span>**<span class="number">2</span> <span class="comment">#乘方</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a = &quot;</span>, a)  <span class="comment">#输出 6</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;b = &quot;</span>, b)  <span class="comment">#输出 9</span></span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------运算符测试------</span><br><span class="line">a =  6</span><br><span class="line">b =  9</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/#more">more >></a>
-    
+    <h1 id="查看python帮助文档">查看python帮助文档</h1>
+<h2 id="dir函数">dir()函数</h2>
+<p><code>dir()</code> 函数可以查看对象属性和方法，以 str 为例，输入
+<code>dir(str)</code>，就可以看到 str 的属性和方法。如下图</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953253.png" /></p>
+<h2 id="doc__">__doc__</h2>
+<p>如何查看对象某个属性的帮助文档？如何查看str的capitalize属性，可以用__doc__，使用方法为<code>print(srt.capitalize__doc__)</code>，如下图</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953207.png" /></p>
+<h2 id="help函数">help()函数</h2>
+<p>查看对象属性还可以用help()函数，使用方法为help(str.capitalize),如下图</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953210.png" /></p>
+<p>查看某个对象的详细文档用help()，
+如查看str类型的详细文档可以用<code>help(str)</code>。如果文档的内容很多，help会列出全部文档的一部分，并在左下角提示“--
+More --”，按Enter键盘会显示更多的信息，要回到命令行交互模式可按Ctrl +
+C。</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953321.png" /></p>
+
     
 
     
@@ -1082,7 +1212,7 @@ class="math inline">\(1\)</span>，表示步长</li>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8D%95%E6%98%9F%E5%8F%B7%E2%9C%B3%E4%B8%8E%E5%8F%8C%E6%98%9F%E5%8F%B7%E2%9C%B3%E2%9C%B3/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/">展开全文 >></a>
     </p>
     
 
@@ -1226,111 +1356,6 @@ vs Immutable Objects in Python</a></p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E5%8F%AF%E5%8F%98%E5%AF%B9%E8%B1%A1&%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%AF%B9%E8%B1%A1/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/查看python帮助文档" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" target="_blank">查看python帮助文档</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" class="archive-article-date">
-        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="查看python帮助文档">查看python帮助文档</h1>
-<h2 id="dir函数">dir()函数</h2>
-<p><code>dir()</code> 函数可以查看对象属性和方法，以 str 为例，输入
-<code>dir(str)</code>，就可以看到 str 的属性和方法。如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953253.png" /></p>
-<h2 id="doc__">__doc__</h2>
-<p>如何查看对象某个属性的帮助文档？如何查看str的capitalize属性，可以用__doc__，使用方法为<code>print(srt.capitalize__doc__)</code>，如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953207.png" /></p>
-<h2 id="help函数">help()函数</h2>
-<p>查看对象属性还可以用help()函数，使用方法为help(str.capitalize),如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953210.png" /></p>
-<p>查看某个对象的详细文档用help()，
-如查看str类型的详细文档可以用<code>help(str)</code>。如果文档的内容很多，help会列出全部文档的一部分，并在左下角提示“--
-More --”，按Enter键盘会显示更多的信息，要回到命令行交互模式可按Ctrl +
-C。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953321.png" /></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/">展开全文 >></a>
     </p>
     
 
@@ -1838,19 +1863,19 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1862,11 +1887,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1874,15 +1899,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1898,15 +1915,15 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1922,7 +1939,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1930,15 +1951,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1946,15 +1963,15 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1962,15 +1979,23 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1990,15 +2015,15 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2006,7 +2031,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

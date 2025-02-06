@@ -213,7 +213,7 @@
             
 
   
-    <article id="post-【后端】/python/Special Variables/&#39;__name__&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/Special Variables/&#39;__new__()和__init__()&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -221,7 +221,7 @@
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__name__'/" target="_blank">__name__</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/" target="_blank">_&#39;_new__()和__init__()&#39;</a>
   
     </h1>
   
@@ -229,7 +229,7 @@
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__name__'/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -242,27 +242,59 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="name__"><code>__name__</code></h1>
-<h2 id="作用">作用</h2>
-<p><code>__name__</code> 用于表示模块的名字：</p>
+    <h1
+id="new__和__init__"><code>__new__()</code>和<code>__init__()</code></h1>
+<p>__new__()和__init__()都是python中的构造方法，其中__new__()方法使用较少，__init__()方法使用较多</p>
+<h2 id="介绍">介绍</h2>
+<ol type="1">
+<li><p>__new__是在实例创建<strong>之前</strong>被调用的，用于创建实例，然后<strong>返回该实例对象</strong>，是个<strong>静态方法</strong>。</p></li>
+<li><p>__init__是当<strong>实例对象创建完成后</strong>被调用的，用于<strong>初始化一个类实例</strong>，是个<strong>实例方法</strong>。</p></li>
+</ol>
+<p>由上可知，<strong>__new__先被调用，__new__的返回值将传递给__init__方法的第一个参数，然后__init__被调用</strong>，给这个实例设置一些参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="comment"># return super(A, cls).__new__(cls)  # 或者下面这种形式，两种都可</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">object</span>.__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = A(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br><span class="line">this is A __init__</span><br></pre></td></tr></table></figure>
+<h2 id="区别">区别</h2>
+<ol type="1">
+<li>__new__至少要有一个参数cls，且必须要有返回值，返回的是实例化出来的实例，有两种return方式：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="built_in">super</span>(父类, cls).__new__(cls)</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">object</span>.__new__(cls)</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>__init__有一个参数
+<code>self</code>，就是这个__new__返回的实例，__init__在__new__基础上完成一些其他初始化的动作，__init__不需要有返回值；</li>
+</ol>
+<h2 id="注意事项">注意事项</h2>
+<ol type="1">
+<li>如果__new__没有返回
+<code>cls</code>（即当前类）的实例，那么当前类的__init__方法是不会被调用的；</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="comment"># return super(A, cls).__new__(cls)  </span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = A(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>在定义子类的时候，没有重新定义__new__方法，那么直接继承父类的__new__方法构造该类的实例;</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>在定义子类的时候，重写__new__方法，就不会调用父类的__new__方法；</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)  <span class="comment"># 或者下面return的方式</span></span><br><span class="line">        <span class="comment"># return object.__new__(cls)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is B __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>如果子类重写__new__方法时，return
+super(<strong>子类</strong>，cls)，那么会调用父类的__new__方法构造类的实例；</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(B, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is B __new__</span><br><span class="line">this is A __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料">参考资料</h2>
 <ul>
-<li><strong>作为脚本执行时</strong>：当一个Python文件被直接作为脚本运行时，<code>__name__</code>
-的值会被设置为 <code>"__main__"</code></li>
-<li><strong>被导入为模块时</strong>：当一个Python文件被其他脚本导入作为模块使用时，<code>__name__</code>
-的值会被设置为该模块的名称（即文件名去掉<code>.py</code>扩展名）。例如，有一个名为
-<code>module_example.py</code>
-的文件，当它被其他脚本导入时，<code>__name__</code> 的值就是
-<code>'module_example'</code></li>
-</ul>
-<h2 id="示例">示例</h2>
-<p><code>__name__</code>
-通常用于判断一个Python文件是被<strong>直接执行</strong>还是<strong>作为模块导入</strong>，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># script.py</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;This script is being run directly.\n The value of __name__ is <span class="subst">&#123;__name__&#125;</span>&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;This script is imported as a module.\n The value of __name__ is <span class="subst">&#123;__name__&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当Python解释器直接运行该脚本时，<code>__name__</code>的值为
-<code>"__main__"</code></li>
-<li>如果该脚本被其他脚本导入，<code>__name__</code>的值是文件名（不含扩展名），即
-<code>script</code></li>
+<li><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/qq_26442553/article/details/82464682?ops_request_misc=%7B%22request%5Fid%22%3A%227d479adfefa998b457464347fdf1f3c4%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=7d479adfefa998b457464347fdf1f3c4&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-82464682-null-null.142%5Ev100%5Econtrol&amp;utm_term=__new__与__init__&amp;spm=1018.2226.3001.4187">Python常用内建方法：<strong>init</strong>,<strong>new</strong>,__class__的使用详解_python
+init、new、class-CSDN博客</a></li>
 </ul>
 
     
@@ -290,7 +322,7 @@
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__name__'/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/">展开全文 >></a>
     </p>
     
 
@@ -457,145 +489,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__package__'/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/Special Variables/&#39;__new__()和__init__()&#39;" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/" target="_blank">_&#39;_new__()和__init__()&#39;</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1
-id="new__和__init__"><code>__new__()</code>和<code>__init__()</code></h1>
-<p>__new__()和__init__()都是python中的构造方法，其中__new__()方法使用较少，__init__()方法使用较多</p>
-<h2 id="介绍">介绍</h2>
-<ol type="1">
-<li><p>__new__是在实例创建<strong>之前</strong>被调用的，用于创建实例，然后<strong>返回该实例对象</strong>，是个<strong>静态方法</strong>。</p></li>
-<li><p>__init__是当<strong>实例对象创建完成后</strong>被调用的，用于<strong>初始化一个类实例</strong>，是个<strong>实例方法</strong>。</p></li>
-</ol>
-<p>由上可知，<strong>__new__先被调用，__new__的返回值将传递给__init__方法的第一个参数，然后__init__被调用</strong>，给这个实例设置一些参数。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="comment"># return super(A, cls).__new__(cls)  # 或者下面这种形式，两种都可</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">object</span>.__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = A(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br><span class="line">this is A __init__</span><br></pre></td></tr></table></figure>
-<h2 id="区别">区别</h2>
-<ol type="1">
-<li>__new__至少要有一个参数cls，且必须要有返回值，返回的是实例化出来的实例，有两种return方式：</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="built_in">super</span>(父类, cls).__new__(cls)</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">object</span>.__new__(cls)</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>__init__有一个参数
-<code>self</code>，就是这个__new__返回的实例，__init__在__new__基础上完成一些其他初始化的动作，__init__不需要有返回值；</li>
-</ol>
-<h2 id="注意事项">注意事项</h2>
-<ol type="1">
-<li>如果__new__没有返回
-<code>cls</code>（即当前类）的实例，那么当前类的__init__方法是不会被调用的；</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="comment"># return super(A, cls).__new__(cls)  </span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = A(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>在定义子类的时候，没有重新定义__new__方法，那么直接继承父类的__new__方法构造该类的实例;</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is A __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
-<ol start="3" type="1">
-<li>在定义子类的时候，重写__new__方法，就不会调用父类的__new__方法；</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)  <span class="comment"># 或者下面return的方式</span></span><br><span class="line">        <span class="comment"># return object.__new__(cls)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">this is B __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>如果子类重写__new__方法时，return
-super(<strong>子类</strong>，cls)，那么会调用父类的__new__方法构造类的实例；</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(A, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is A __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>(<span class="title class_ inherited__">A</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __new__&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>(B, cls).__new__(cls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, title</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;this is B __init__&#x27;</span>)</span><br><span class="line">        self.title = title</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = B(<span class="string">&#x27;python book&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is B __new__</span><br><span class="line">this is A __new__</span><br><span class="line">this is B __init__</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料">参考资料</h2>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://blog.csdn.net/qq_26442553/article/details/82464682?ops_request_misc=%7B%22request%5Fid%22%3A%227d479adfefa998b457464347fdf1f3c4%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fall.%22%7D&amp;request_id=7d479adfefa998b457464347fdf1f3c4&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-1-82464682-null-null.142%5Ev100%5Econtrol&amp;utm_term=__new__与__init__&amp;spm=1018.2226.3001.4187">Python常用内建方法：<strong>init</strong>,<strong>new</strong>,__class__的使用详解_python
-init、new、class-CSDN博客</a></li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/'__new__()%E5%92%8C__init__()'/">展开全文 >></a>
     </p>
     
 
@@ -1205,106 +1098,6 @@ alt="image-20250111140743828" />
 
 
   
-    <article id="post-【后端】/python/Special Variables/比较运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" target="_blank">比较运算符相关的魔法方法</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="比较运算符相关的魔法方法">比较运算符相关的魔法方法</h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br></pre></td></tr></table></figure>
-<p>s1 和 s2 是否是同一个对象？</p>
-<p>比较两个对象是否是同一个对象，我们需要比较的是<strong>内存地址</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;0x%X&#x27;</span> % <span class="built_in">id</span>(s1))  <span class="comment"># 0x16AA83BB408</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;0x%X&#x27;</span> % <span class="built_in">id</span>(s2))  <span class="comment"># 0x16AA83BB448</span></span><br></pre></td></tr></table></figure>
-<p>由上可知，它们的内存地址不一样，两个对象不是同一个对象。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;s1 is s2&#x27;</span>, s1 <span class="keyword">is</span> s2)  <span class="comment"># s1 is s2 False</span></span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p><code>is</code> 是身份运算符，比较两个对象的内存地址</p>
-</blockquote>
-<p>== 会调用对象的 <strong>__eq__</strong>
-方法，如果不重写，默认比较依然是内存地址，如果重写方法，便可以获取这个方法的比较结果。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name == other.name <span class="keyword">and</span> self.score == other.score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<p>其它比较运算符，也是如此。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name == other.name <span class="keyword">and</span> self.score == other.score</span><br><span class="line"></span><br><span class="line">    <span class="comment"># def __ne__(self, other):# 使用 != 运算符会自动调用这个方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__lt__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &lt; other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__gt__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &gt; other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__le__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &lt;= other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__ge__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &gt;= other.score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s3 = Student(<span class="string">&quot;lisi&quot;</span>, <span class="number">94</span>)</span><br><span class="line">s4 = Student(<span class="string">&quot;wangwu&quot;</span>, <span class="number">99</span>)</span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(s1 != s2)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &gt; s3)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &gt;= s4)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &lt; s4)  <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(s1 &lt;= s3)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/Special Variables/容器相关的魔术方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1433,6 +1226,106 @@ alt="image-20250111140743828" />
 
 
   
+    <article id="post-【后端】/python/Special Variables/比较运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" target="_blank">比较运算符相关的魔法方法</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="比较运算符相关的魔法方法">比较运算符相关的魔法方法</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br></pre></td></tr></table></figure>
+<p>s1 和 s2 是否是同一个对象？</p>
+<p>比较两个对象是否是同一个对象，我们需要比较的是<strong>内存地址</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;0x%X&#x27;</span> % <span class="built_in">id</span>(s1))  <span class="comment"># 0x16AA83BB408</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;0x%X&#x27;</span> % <span class="built_in">id</span>(s2))  <span class="comment"># 0x16AA83BB448</span></span><br></pre></td></tr></table></figure>
+<p>由上可知，它们的内存地址不一样，两个对象不是同一个对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;s1 is s2&#x27;</span>, s1 <span class="keyword">is</span> s2)  <span class="comment"># s1 is s2 False</span></span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>is</code> 是身份运算符，比较两个对象的内存地址</p>
+</blockquote>
+<p>== 会调用对象的 <strong>__eq__</strong>
+方法，如果不重写，默认比较依然是内存地址，如果重写方法，便可以获取这个方法的比较结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name == other.name <span class="keyword">and</span> self.score == other.score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+<p>其它比较运算符，也是如此。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name == other.name <span class="keyword">and</span> self.score == other.score</span><br><span class="line"></span><br><span class="line">    <span class="comment"># def __ne__(self, other):# 使用 != 运算符会自动调用这个方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__lt__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &lt; other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__gt__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &gt; other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__le__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &lt;= other.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__ge__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &gt;= other.score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s2 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line">s3 = Student(<span class="string">&quot;lisi&quot;</span>, <span class="number">94</span>)</span><br><span class="line">s4 = Student(<span class="string">&quot;wangwu&quot;</span>, <span class="number">99</span>)</span><br><span class="line"><span class="built_in">print</span>(s1 == s2)  <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(s1 != s2)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &gt; s3)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &gt;= s4)  <span class="comment"># False</span></span><br><span class="line"><span class="built_in">print</span>(s1 &lt; s4)  <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(s1 &lt;= s3)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/Special Variables/算术运算符相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1491,6 +1384,93 @@ alt="image-20250111140743828" />
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/Special Variables/类型转换相关的魔法方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" target="_blank">类型转换相关的魔法方法</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="类型转换相关的魔法方法">类型转换相关的魔法方法</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, score</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__int__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__float__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score * <span class="number">1.0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__bool__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.score &gt; <span class="number">60</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s1 = Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">90</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(s1))  <span class="comment"># 90</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">float</span>(s1))  <span class="comment"># 90.0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>(s1))  <span class="comment"># zhangsan</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">bool</span>(s1))  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Special%20Variables/%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%9B%B8%E5%85%B3%E7%9A%84%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95/">展开全文 >></a>
     </p>
     
 
@@ -1682,11 +1662,15 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1694,7 +1678,7 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1706,19 +1690,7 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1726,19 +1698,15 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1746,7 +1714,7 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1754,11 +1722,7 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1770,7 +1734,23 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1778,7 +1758,7 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1794,11 +1774,11 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1806,11 +1786,11 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1830,19 +1810,19 @@ alt="image-20250111140743828" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">

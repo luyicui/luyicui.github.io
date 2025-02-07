@@ -686,329 +686,6 @@ exception. 处理异常时，您可以引发相同或不同的异常。</li>
 
 
   
-    <article id="post-【后端】/python/OOP/设计模式/单例模式（Singleton Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" target="_blank">单例模式（Singleton Pattern）</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="单例模式singleton-pattern">单例模式（Singleton Pattern）</h1>
-<p>单例模式（Singleton
-Pattern）是一种创建型设计模式，它确保一个类只有一个实例，并提供全局访问点。单例模式适用于需要确保全局唯一实例的场景，例如配置管理、日志记录器、数据库连接等。</p>
-<h2 id="单例模式的特点">单例模式的特点</h2>
-<ul>
-<li><strong>全局唯一性</strong>：在整个应用程序的生命周期内，单例类只能有一个实例。</li>
-<li><strong>全局访问</strong>：提供了一个全局访问点，任何地方都可以获取到该实例。</li>
-<li><strong>延迟实例化</strong>：单例模式可以延迟实例化，即实例在第一次使用时才创建。</li>
-</ul>
-<h2 id="实现单例模式的方法">实现单例模式的方法</h2>
-<p>在Python中，可以通过多种方式实现单例模式。以下是几种常见的方法：</p>
-<h3 id="方法一使用类的静态实例">方法一：使用类的静态实例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    _instance = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls._instance:</span><br><span class="line">            cls._instance = <span class="built_in">super</span>(Singleton, cls).__new__(cls, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = Singleton()</span><br><span class="line">obj2 = Singleton()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<p>解释：</p>
-<ul>
-<li>类变量 <code>_instance</code> 用于保存类的唯一实例。</li>
-<li><code>__new__</code>
-方法在实例创建时调用，确保实例只会被创建一次。</li>
-</ul>
-<h3 id="方法二使用装饰器">方法二：使用装饰器</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleton</span>(<span class="params">cls</span>):</span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_instance</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">            instances[cls] = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> get_instance</span><br><span class="line"></span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = MyClass()</span><br><span class="line">obj2 = MyClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>装饰器 <code>singleton</code>
-用字典存储类的实例，如果实例不存在，就创建一个新的实例。</li>
-</ul>
-<h3 id="方法三使用模块">方法三：使用模块</h3>
-<p>Python模块本身就是单例的。可以直接在模块中定义全局变量来实现单例模式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># singleton_module.py</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = <span class="number">42</span></span><br><span class="line"></span><br><span class="line">singleton_instance = Singleton()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>模块在首次导入时会被初始化并保持单例状态。</li>
-</ul>
-<p>使用元类（metaclass）来实现单例模式是Python中特有且更高级的方式。元类是控制类创建行为的“类的类”，通过自定义元类，我们可以控制类的实例化过程来实现单例模式。</p>
-<h3 id="方法四使用元类实现单例模式">方法四：使用元类实现单例模式</h3>
-<p>使用元类实现单例模式的核心思想是在<code>__call__</code>方法中拦截类的实例化过程，从而确保类只有一个实例。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">            <span class="comment"># 创建一个新的实例，并将其存入_instances字典中</span></span><br><span class="line">            cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用元类实现单例模式的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>SingletonMeta</code>继承自<code>type</code>，因此是一个元类。</li>
-<li><code>__call__</code>方法在类实例化时被调用。通过重写此方法，我们可以控制类实例的创建过程。</li>
-<li><code>_instances</code>是一个类变量，用于保存每个类的唯一实例。如果类实例不存在，则调用<code>super().__call__()</code>来创建一个新实例并存储在<code>_instances</code>中；如果已存在，直接返回存储的实例。</li>
-</ul>
-<p><strong>元类实现的优点</strong></p>
-<ul>
-<li><strong>灵活性</strong>：可以将元类应用于多个不同的类，从而减少重复代码。</li>
-<li><strong>可扩展性</strong>：方便地在单例逻辑中添加额外功能，如线程安全控制。</li>
-</ul>
-<h2 id="线程安全性改进">线程安全性改进</h2>
-<p>在多线程环境中，需要确保单例模式是线程安全的。可以使用线程锁来实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line">    _lock = threading.Lock()  <span class="comment"># 锁对象用于同步</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">with</span> cls._lock:  <span class="comment"># 确保线程安全</span></span><br><span class="line">            <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">                cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
-<h2 id="应用场景">应用场景</h2>
-<ul>
-<li><strong>日志系统</strong>：日志记录器在整个应用程序中应当只有一个实例来防止资源竞争。</li>
-<li><strong>配置管理</strong>：使用单例模式来加载和管理配置文件以确保一致性。</li>
-<li><strong>资源共享</strong>：在涉及共享资源如数据库连接池时，单例模式可以有效管理连接实例。</li>
-</ul>
-<h2 id="注意事项">注意事项</h2>
-<ul>
-<li>单例模式的实现要保证线程安全，特别是在多线程应用中。</li>
-<li><strong>过度使用单例模式会导致代码耦合度高</strong>，因此应谨慎使用，确保符合设计需求。</li>
-</ul>
-<p>单例模式虽然简单，但其全局状态可能带来潜在的问题，例如难以进行单元测试或状态管理不清晰。在使用时要权衡利弊。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/OOP/Exceptions/4.Raise Exception from cause" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/" target="_blank">Raise Exception from cause</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="raise-exception-from-cause">Raise Exception from cause</h1>
-<p><strong>Summary</strong>: in this tutorial, you will learn how to use
-the Python raise from statement to raise an exception with extra
-information. 摘要：本教程将讲解如何使用 Python 的 raise from
-语句抛出包含额外信息的异常。</p>
-<h2 id="introduction-to-the-python-raise-from-statement">Introduction to
-the Python raise from statement</h2>
-<p>The <code>raise from</code> statement has the following syntax:
-<code>raise from</code> 语句的语法如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> &lt;ExceptionType&gt; <span class="keyword">from</span> &lt;cause&gt;</span><br></pre></td></tr></table></figure>
-<p>Technically, it’s equivalent to the following:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ex = ExceptionType</span><br><span class="line">ex.__cause__ = cause</span><br><span class="line"><span class="keyword">raise</span> ex</span><br></pre></td></tr></table></figure>
-<p>By default, the <code>__cause__</code> attribute on <a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>
-objects is always initialized to <code>None</code>.
-默认情况下，异常对象上的 <code>__cause__</code> 属性始终初始化为
-<code>None</code> 。</p>
-<h2 id="python-raise-from-statement-example">Python raise from statement
-example</h2>
-<p>The following <code>divide()</code> function divides a number by
-another and returns the result of the division:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>The <code>divide()</code> function has an exception handler that
-catches the <code>ZeroDivisionError</code> exception. Inside the
-handler, we raise a new <code>ValueError</code> exception.
-<code>divide()</code> 函数有一个异常处理程序，可以捕获
-<code>ZeroDivisionError</code> 异常。在处理程序内部，我们引发一个新的
-<code>ValueError</code> 异常。</p>
-<p>If you pass zero to the second argument of the <code>divide()</code>
-function: 如果将零作为 <code>divide()</code> 函数的第二个参数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>you’ll get the following stack trace:</p>
-<p>你会得到以下堆栈跟踪：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
-<p>The import message is:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">During handling of the above exception, another exception occurred:</span><br></pre></td></tr></table></figure>
-<p>It means that while you were handling the
-<code>ZeroDivisionError</code> exception, the <code>ValueError</code>
-exception occurred. 这意味着在你处理 <code>ZeroDivisionError</code>
-异常时，发生了 <code>ValueError</code> 异常。</p>
-<p>To instruct Python that you want to modify and forward the
-<code>ZeroDivisionError</code> exception, you can use the
-<code>raise from</code> statement like this: 要指示 Python 修改并转发
-<code>ZeroDivisionError</code> 异常，可以使用 <code>raise from</code>
-语句，如下所示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>When you run the code, you’ll get the following stack trace:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">The above exception was the direct cause of the following exception:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
-<p>Now, you receive the <code>ValueError</code> exception with a cause
-added to the <code>__cause__</code> attribute of the exception object.
-现在，你接收到了 <code>ValueError</code> 异常，其原因已添加到异常对象的
-<code>__cause__</code> 属性中。</p>
-<p>The following modifies the above code to show the
-<code>__cause__</code> attribute of the <code>ValueError</code>
-exception: 以下代码修改了上述代码，以显示 <code>ValueError</code> 异常的
-<code>__cause__</code> 属性：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;cause:&#x27;</span>, ex.__cause__)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;exception:&#x27;</span>, ex)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cause: division by zero</span><br><span class="line">exception: b must not be zero</span><br></pre></td></tr></table></figure>
-<h2 id="python-raise-exception-from-none">Python raise exception from
-None</h2>
-<p>If the cause of the exception is not important, you can omit the
-cause by using the <code>raise exception from None</code> statement:
-如果异常的原因不重要，你可以使用 <code>raise exception from None</code>
-语句省略原因：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> &lt;ExceptionType&gt; <span class="keyword">from</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-<p>For example, you can hide the cause of the <code>ValueError</code>
-exception in the <code>divide()</code> function as follows:
-例如，你可以像下面这样隐藏 <code>ValueError</code> 异常在
-<code>divide()</code> 函数中的原因：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;cause:&#x27;</span>, ex.__cause__)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;exception:&#x27;</span>, ex)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cause: None</span><br><span class="line">exception: b must not be zero</span><br></pre></td></tr></table></figure>
-<p>Now, the <code>__cause__</code> is <code>None</code>. Also, the
-<code>divide()</code> function raises the <code>ValueError</code>
-exception without any additional information. 现在，
-<code>__cause__</code> 是 <code>None</code> 。此外，
-<code>divide()</code> 函数引发了 <code>ValueError</code>
-异常，没有任何附加信息。</p>
-<p>If you remove the <code>try</code> statement in the code that calls
-the <code>divide()</code> function:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>you’ll get the following stack trace:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
-<h2 id="summary">Summary</h2>
-<ul>
-<li>Use the Python <code>raise from</code> statement to modify and
-forward an existing exception. 使用 Python 的 <code>raise from</code>
-语句修改并转发现有异常。</li>
-<li>Use the <code>raise exception from None</code> statment to hide the
-cause of the exception. 使用 <code>raise exception from None</code>
-语句隐藏异常的原因。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/OOP/Exceptions/5.Custom Exception" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1240,7 +917,7 @@ more organized and catch exceptions at multiple levels.
 
 
   
-    <article id="post-【后端】/python/OOP/Exceptions/Exception Tutorial" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/OOP/Exceptions/4.Raise Exception from cause" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1248,7 +925,7 @@ more organized and catch exceptions at multiple levels.
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/" target="_blank">Exception Tutorial</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/" target="_blank">Raise Exception from cause</a>
   
     </h1>
   
@@ -1256,7 +933,7 @@ more organized and catch exceptions at multiple levels.
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -1269,27 +946,98 @@ more organized and catch exceptions at multiple levels.
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="section-10.-exceptions">Section 10. Exceptions</h1>
+    <h1 id="raise-exception-from-cause">Raise Exception from cause</h1>
+<p><strong>Summary</strong>: in this tutorial, you will learn how to use
+the Python raise from statement to raise an exception with extra
+information. 摘要：本教程将讲解如何使用 Python 的 raise from
+语句抛出包含额外信息的异常。</p>
+<h2 id="introduction-to-the-python-raise-from-statement">Introduction to
+the Python raise from statement</h2>
+<p>The <code>raise from</code> statement has the following syntax:
+<code>raise from</code> 语句的语法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> &lt;ExceptionType&gt; <span class="keyword">from</span> &lt;cause&gt;</span><br></pre></td></tr></table></figure>
+<p>Technically, it’s equivalent to the following:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ex = ExceptionType</span><br><span class="line">ex.__cause__ = cause</span><br><span class="line"><span class="keyword">raise</span> ex</span><br></pre></td></tr></table></figure>
+<p>By default, the <code>__cause__</code> attribute on <a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">exception</a>
+objects is always initialized to <code>None</code>.
+默认情况下，异常对象上的 <code>__cause__</code> 属性始终初始化为
+<code>None</code> 。</p>
+<h2 id="python-raise-from-statement-example">Python raise from statement
+example</h2>
+<p>The following <code>divide()</code> function divides a number by
+another and returns the result of the division:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>The <code>divide()</code> function has an exception handler that
+catches the <code>ZeroDivisionError</code> exception. Inside the
+handler, we raise a new <code>ValueError</code> exception.
+<code>divide()</code> 函数有一个异常处理程序，可以捕获
+<code>ZeroDivisionError</code> 异常。在处理程序内部，我们引发一个新的
+<code>ValueError</code> 异常。</p>
+<p>If you pass zero to the second argument of the <code>divide()</code>
+function: 如果将零作为 <code>divide()</code> 函数的第二个参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>you’ll get the following stack trace:</p>
+<p>你会得到以下堆栈跟踪：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>)</span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
+<p>The import message is:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">During handling of the above exception, another exception occurred:</span><br></pre></td></tr></table></figure>
+<p>It means that while you were handling the
+<code>ZeroDivisionError</code> exception, the <code>ValueError</code>
+exception occurred. 这意味着在你处理 <code>ZeroDivisionError</code>
+异常时，发生了 <code>ValueError</code> 异常。</p>
+<p>To instruct Python that you want to modify and forward the
+<code>ZeroDivisionError</code> exception, you can use the
+<code>raise from</code> statement like this: 要指示 Python 修改并转发
+<code>ZeroDivisionError</code> 异常，可以使用 <code>raise from</code>
+语句，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>When you run the code, you’ll get the following stack trace:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">3</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line">ZeroDivisionError: division by zero</span><br><span class="line"></span><br><span class="line">The above exception was the direct cause of the following exception:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
+<p>Now, you receive the <code>ValueError</code> exception with a cause
+added to the <code>__cause__</code> attribute of the exception object.
+现在，你接收到了 <code>ValueError</code> 异常，其原因已添加到异常对象的
+<code>__cause__</code> 属性中。</p>
+<p>The following modifies the above code to show the
+<code>__cause__</code> attribute of the <code>ValueError</code>
+exception: 以下代码修改了上述代码，以显示 <code>ValueError</code> 异常的
+<code>__cause__</code> 属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> ex:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> ex</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;cause:&#x27;</span>, ex.__cause__)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;exception:&#x27;</span>, ex)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cause: division by zero</span><br><span class="line">exception: b must not be zero</span><br></pre></td></tr></table></figure>
+<h2 id="python-raise-exception-from-none">Python raise exception from
+None</h2>
+<p>If the cause of the exception is not important, you can omit the
+cause by using the <code>raise exception from None</code> statement:
+如果异常的原因不重要，你可以使用 <code>raise exception from None</code>
+语句省略原因：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">raise</span> &lt;ExceptionType&gt; <span class="keyword">from</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>For example, you can hide the cause of the <code>ValueError</code>
+exception in the <code>divide()</code> function as follows:
+例如，你可以像下面这样隐藏 <code>ValueError</code> 异常在
+<code>divide()</code> 函数中的原因：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">except</span> ValueError <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;cause:&#x27;</span>, ex.__cause__)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;exception:&#x27;</span>, ex)</span><br></pre></td></tr></table></figure>
+<p>Output:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cause: None</span><br><span class="line">exception: b must not be zero</span><br></pre></td></tr></table></figure>
+<p>Now, the <code>__cause__</code> is <code>None</code>. Also, the
+<code>divide()</code> function raises the <code>ValueError</code>
+exception without any additional information. 现在，
+<code>__cause__</code> 是 <code>None</code> 。此外，
+<code>divide()</code> 函数引发了 <code>ValueError</code>
+异常，没有任何附加信息。</p>
+<p>If you remove the <code>try</code> statement in the code that calls
+the <code>divide()</code> function:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">divide(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>you’ll get the following stack trace:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    divide(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line">  File <span class="string">&quot;c:/python/app.py&quot;</span>, line <span class="number">5</span>, <span class="keyword">in</span> divide</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;b must not be zero&#x27;</span>) <span class="keyword">from</span> <span class="literal">None</span></span><br><span class="line">ValueError: b must <span class="keyword">not</span> be zero</span><br></pre></td></tr></table></figure>
+<h2 id="summary">Summary</h2>
 <ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">Exceptions</a>
-– learn about exceptions in the context of objects</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exception-handling/">Exception
-Handling</a> – guide you on how to handle exceptions in the right way
-using the try statement.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-raise-exception/">Raise
-Exceptions</a> – show you how to use the raise statement to raise
-exceptions.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-raise-from/">Raise
-Exception from cause</a> – learn how to modify and forward an existing
-exception with a cause.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-custom-exception/">Custom
-exceptions</a> – walk you through the steps of creating a custom
-exception class.</li>
+<li>Use the Python <code>raise from</code> statement to modify and
+forward an existing exception. 使用 Python 的 <code>raise from</code>
+语句修改并转发现有异常。</li>
+<li>Use the <code>raise exception from None</code> statment to hide the
+cause of the exception. 使用 <code>raise exception from None</code>
+语句隐藏异常的原因。</li>
 </ul>
 
     
@@ -1317,7 +1065,152 @@ exception class.</li>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/4.Raise%20Exception%20from%20cause/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/OOP/设计模式/单例模式（Singleton Pattern）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" target="_blank">单例模式（Singleton Pattern）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="单例模式singleton-pattern">单例模式（Singleton Pattern）</h1>
+<p>单例模式（Singleton
+Pattern）是一种创建型设计模式，它确保一个类只有一个实例，并提供全局访问点。单例模式适用于需要确保全局唯一实例的场景，例如配置管理、日志记录器、数据库连接等。</p>
+<h2 id="单例模式的特点">单例模式的特点</h2>
+<ul>
+<li><strong>全局唯一性</strong>：在整个应用程序的生命周期内，单例类只能有一个实例。</li>
+<li><strong>全局访问</strong>：提供了一个全局访问点，任何地方都可以获取到该实例。</li>
+<li><strong>延迟实例化</strong>：单例模式可以延迟实例化，即实例在第一次使用时才创建。</li>
+</ul>
+<h2 id="实现单例模式的方法">实现单例模式的方法</h2>
+<p>在Python中，可以通过多种方式实现单例模式。以下是几种常见的方法：</p>
+<h3 id="方法一使用类的静态实例">方法一：使用类的静态实例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    _instance = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__new__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cls._instance:</span><br><span class="line">            cls._instance = <span class="built_in">super</span>(Singleton, cls).__new__(cls, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = Singleton()</span><br><span class="line">obj2 = Singleton()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ul>
+<li>类变量 <code>_instance</code> 用于保存类的唯一实例。</li>
+<li><code>__new__</code>
+方法在实例创建时调用，确保实例只会被创建一次。</li>
+</ul>
+<h3 id="方法二使用装饰器">方法二：使用装饰器</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleton</span>(<span class="params">cls</span>):</span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_instance</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">            instances[cls] = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> get_instance</span><br><span class="line"></span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = MyClass()</span><br><span class="line">obj2 = MyClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>装饰器 <code>singleton</code>
+用字典存储类的实例，如果实例不存在，就创建一个新的实例。</li>
+</ul>
+<h3 id="方法三使用模块">方法三：使用模块</h3>
+<p>Python模块本身就是单例的。可以直接在模块中定义全局变量来实现单例模式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># singleton_module.py</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = <span class="number">42</span></span><br><span class="line"></span><br><span class="line">singleton_instance = Singleton()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>模块在首次导入时会被初始化并保持单例状态。</li>
+</ul>
+<p>使用元类（metaclass）来实现单例模式是Python中特有且更高级的方式。元类是控制类创建行为的“类的类”，通过自定义元类，我们可以控制类的实例化过程来实现单例模式。</p>
+<h3 id="方法四使用元类实现单例模式">方法四：使用元类实现单例模式</h3>
+<p>使用元类实现单例模式的核心思想是在<code>__call__</code>方法中拦截类的实例化过程，从而确保类只有一个实例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">            <span class="comment"># 创建一个新的实例，并将其存入_instances字典中</span></span><br><span class="line">            cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用元类实现单例模式的类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>SingletonMeta</code>继承自<code>type</code>，因此是一个元类。</li>
+<li><code>__call__</code>方法在类实例化时被调用。通过重写此方法，我们可以控制类实例的创建过程。</li>
+<li><code>_instances</code>是一个类变量，用于保存每个类的唯一实例。如果类实例不存在，则调用<code>super().__call__()</code>来创建一个新实例并存储在<code>_instances</code>中；如果已存在，直接返回存储的实例。</li>
+</ul>
+<p><strong>元类实现的优点</strong></p>
+<ul>
+<li><strong>灵活性</strong>：可以将元类应用于多个不同的类，从而减少重复代码。</li>
+<li><strong>可扩展性</strong>：方便地在单例逻辑中添加额外功能，如线程安全控制。</li>
+</ul>
+<h2 id="线程安全性改进">线程安全性改进</h2>
+<p>在多线程环境中，需要确保单例模式是线程安全的。可以使用线程锁来实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line">    _lock = threading.Lock()  <span class="comment"># 锁对象用于同步</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">with</span> cls._lock:  <span class="comment"># 确保线程安全</span></span><br><span class="line">            <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">                cls._instances[cls] = <span class="built_in">super</span>(SingletonMeta, cls).__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonClass</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Instance created&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">obj1 = SingletonClass()</span><br><span class="line">obj2 = SingletonClass()</span><br><span class="line"><span class="built_in">print</span>(obj1 <span class="keyword">is</span> obj2)  <span class="comment"># 输出: True</span></span><br></pre></td></tr></table></figure>
+<h2 id="应用场景">应用场景</h2>
+<ul>
+<li><strong>日志系统</strong>：日志记录器在整个应用程序中应当只有一个实例来防止资源竞争。</li>
+<li><strong>配置管理</strong>：使用单例模式来加载和管理配置文件以确保一致性。</li>
+<li><strong>资源共享</strong>：在涉及共享资源如数据库连接池时，单例模式可以有效管理连接实例。</li>
+</ul>
+<h2 id="注意事项">注意事项</h2>
+<ul>
+<li>单例模式的实现要保证线程安全，特别是在多线程应用中。</li>
+<li><strong>过度使用单例模式会导致代码耦合度高</strong>，因此应谨慎使用，确保符合设计需求。</li>
+</ul>
+<p>单例模式虽然简单，但其全局状态可能带来潜在的问题，例如难以进行单元测试或状态管理不清晰。在使用时要权衡利弊。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%EF%BC%88Singleton%20Pattern%EF%BC%89/">展开全文 >></a>
     </p>
     
 
@@ -1555,6 +1448,113 @@ target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AE%9E%E
 
 
   
+    <article id="post-【后端】/python/OOP/Exceptions/Exception Tutorial" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/" target="_blank">Exception Tutorial</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="section-10.-exceptions">Section 10. Exceptions</h1>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exceptions/">Exceptions</a>
+– learn about exceptions in the context of objects</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-exception-handling/">Exception
+Handling</a> – guide you on how to handle exceptions in the right way
+using the try statement.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-raise-exception/">Raise
+Exceptions</a> – show you how to use the raise statement to raise
+exceptions.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-raise-from/">Raise
+Exception from cause</a> – learn how to modify and forward an existing
+exception with a cause.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-custom-exception/">Custom
+exceptions</a> – walk you through the steps of creating a custom
+exception class.</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/Exception%20Tutorial/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【ray】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1631,6 +1631,118 @@ Overflow</a>，试了一下很管用</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90ray%E3%80%91/Errors/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【gradio】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/" target="_blank">Errors</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="errors">Errors</h1>
+<h2
+id="gradio无法生成可分享的外部连接could-not-create-share-link.-missing-file或could-not-create-share-link.-please-che">gradio无法生成可分享的外部连接Could
+not create share link. Missing file:或Could not create share link.
+Please che</h2>
+<ul>
+<li>如果是：Could not create share link. Missing
+file，按照给出的提示下载frpc_linux_amd64文件，并且按照他的要求修改名称，移动到提示指定的位置，并进行下面2的操作</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Running on local URL: http://127.0.0.1:7860</span><br><span class="line"></span><br><span class="line">Could not create share link. Missing file: /data/cuiluyi/anaconda3/envs/llama_factory/lib/python3.8/site-packages/gradio</span><br><span class="line"></span><br><span class="line">Please check your internet connection. This can happen if your antivirus software blocks the download of this file. You can install manually by following these steps: </span><br><span class="line"></span><br><span class="line">1. Download this file: [frpc_windows_amd64.exe](https://cdn-media.huggingface.co/frpc-gradio-0.2/frpc_windows_amd64.exe)</span><br><span class="line">2. Rename the downloaded file to: `frpc_windows_amd64_v0.2`</span><br><span class="line">3. Move the file to this location: `E:\venv\lib\site-packages\gradio`</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果是：Could not create share link. Please check your internet
+connection or our status page:
+https://status.gradio.app，cd进入frpc_linux_amd64文件的位置（应该在.conda/envs/ChatGLM2/lib/python3.11/site-packages/gradio），输入以下命令给予权限：<code>chmod +x frpc_linux_amd64_v0.2</code></li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070023561.png"
+alt="image-20250107002312461" />
+<figcaption aria-hidden="true">image-20250107002312461</figcaption>
+</figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070037991.png"
+alt="image-20250107003719924" />
+<figcaption aria-hidden="true">image-20250107003719924</figcaption>
+</figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">gradio</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/">展开全文 >></a>
     </p>
     
 
@@ -1873,118 +1985,6 @@ Started — Ray 2.40.0</a></p>
 
 
   
-    <article id="post-【后端】/python/第三方库/【gradio】/Errors" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/" target="_blank">Errors</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="errors">Errors</h1>
-<h2
-id="gradio无法生成可分享的外部连接could-not-create-share-link.-missing-file或could-not-create-share-link.-please-che">gradio无法生成可分享的外部连接Could
-not create share link. Missing file:或Could not create share link.
-Please che</h2>
-<ul>
-<li>如果是：Could not create share link. Missing
-file，按照给出的提示下载frpc_linux_amd64文件，并且按照他的要求修改名称，移动到提示指定的位置，并进行下面2的操作</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Running on local URL: http://127.0.0.1:7860</span><br><span class="line"></span><br><span class="line">Could not create share link. Missing file: /data/cuiluyi/anaconda3/envs/llama_factory/lib/python3.8/site-packages/gradio</span><br><span class="line"></span><br><span class="line">Please check your internet connection. This can happen if your antivirus software blocks the download of this file. You can install manually by following these steps: </span><br><span class="line"></span><br><span class="line">1. Download this file: [frpc_windows_amd64.exe](https://cdn-media.huggingface.co/frpc-gradio-0.2/frpc_windows_amd64.exe)</span><br><span class="line">2. Rename the downloaded file to: `frpc_windows_amd64_v0.2`</span><br><span class="line">3. Move the file to this location: `E:\venv\lib\site-packages\gradio`</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果是：Could not create share link. Please check your internet
-connection or our status page:
-https://status.gradio.app，cd进入frpc_linux_amd64文件的位置（应该在.conda/envs/ChatGLM2/lib/python3.11/site-packages/gradio），输入以下命令给予权限：<code>chmod +x frpc_linux_amd64_v0.2</code></li>
-</ul>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070023561.png"
-alt="image-20250107002312461" />
-<figcaption aria-hidden="true">image-20250107002312461</figcaption>
-</figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501070037991.png"
-alt="image-20250107003719924" />
-<figcaption aria-hidden="true">image-20250107003719924</figcaption>
-</figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">gradio</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90gradio%E3%80%91/Errors/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/12/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/14/">Next &amp;raquo;</a>
@@ -2147,11 +2147,11 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2163,6 +2163,10 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
@@ -2171,7 +2175,7 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2187,11 +2191,19 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2207,23 +2219,7 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2231,15 +2227,11 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2247,7 +2239,15 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2259,10 +2259,6 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
@@ -2271,11 +2267,19 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2295,11 +2299,11 @@ alt="image-20250107003719924" />
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2308,10 +2312,6 @@ alt="image-20250107003719924" />
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

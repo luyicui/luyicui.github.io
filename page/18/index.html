@@ -320,7 +320,7 @@ tensors</strong>，且<strong>不支持广播机制</strong></li>
 
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch/softmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch/max()与argmax()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -328,7 +328,7 @@ tensors</strong>，且<strong>不支持广播机制</strong></li>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/softmax()/" target="_blank">softmax()</a>
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/" target="_blank">max() 与 argmax()</a>
   
     </h1>
   
@@ -336,7 +336,7 @@ tensors</strong>，且<strong>不支持广播机制</strong></li>
 
   
   
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/softmax()/" class="archive-article-date">
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/" class="archive-article-date">
         <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
 </a>
 
@@ -349,27 +349,95 @@ tensors</strong>，且<strong>不支持广播机制</strong></li>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="softmax">softmax()</h1>
-<h2 id="softmax-函数">Softmax 函数</h2>
-<p>首先说一下 Softmax 函数，公式如下：</p>
-<p><span class="math display">\[
-Softmax(x_i) = \frac{exp(x_i)}{\sum_jexp(x_j)}
-\]</span></p>
-<p>简单例子：比如说有 1 个一维数组 [1, 1, 2, 2]，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">1</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.134</span></span><br><span class="line"><span class="built_in">print</span>(np.exp(<span class="number">2</span>)/(np.exp(<span class="number">1</span>)+np.exp(<span class="number">1</span>)+np.exp(<span class="number">2</span>)+np.exp(<span class="number">2</span>)))	<span class="comment"># = 0.365</span></span><br></pre></td></tr></table></figure>
-<p>所以计算所有值的 Softmax，写入数组对应位置，为 [0.134, 0.134, 0.365,
-0.365]。</p>
-<p>再说两句题外话，为什么叫 Softmax 呢，因为可以看成一种 max 的 soft
-形式。</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202410282349090.jpg"
-alt="36a034ac7464ecd31f8e582b254271c" />
-<figcaption
-aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
-</figure>
+    <h1 id="max-与-argmax">max() 与 argmax()</h1>
+<p>在 PyTorch 中，<code>torch.max()</code> 和
+<code>torch.argmax()</code>
+是两个常用的函数，但它们的用途和返回值有所不同。以下是它们的详细讲解：</p>
+<hr />
+<h2 id="torch.max"><code>torch.max()</code></h2>
+<h3 id="功能">功能</h3>
+<ul>
+<li><strong><code>torch.max(input)</code></strong>:
+返回输入张量中所有元素的最大值。</li>
+<li><strong><code>torch.max(input, dim)</code></strong>:
+返回指定维度上的最大值以及其对应的索引。</li>
+</ul>
+<h3 id="用法示例">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">max_value = torch.<span class="built_in">max</span>(x)</span><br><span class="line"><span class="built_in">print</span>(max_value)  <span class="comment"># 输出：7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">max_values, indices = torch.<span class="built_in">max</span>(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(max_values)  <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(indices)     <span class="comment"># 输出：tensor([1, 0]) 表示每行中最大值的索引</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值">返回值</h3>
+<ul>
+<li><p>当不指定 <code>dim</code>：返回整个张量的最大值（标量）</p></li>
+<li><p>当指定
+<code>dim</code>：返回两个张量<strong>最大值张量</strong>和<strong>最大值所在的索引张量</strong></p></li>
+</ul>
+<hr />
+<h2 id="torch.argmax"><code>torch.argmax()</code></h2>
+<h3 id="功能-1">功能</h3>
+<ul>
+<li>返回输入张量中最大值的索引。</li>
+<li>可选择在指定维度中查找最大值的索引。</li>
+</ul>
+<h3 id="用法示例-1">用法示例</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 1: 不指定维度</span></span><br><span class="line">x = torch.tensor([<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>])</span><br><span class="line">argmax_index = torch.argmax(x)</span><br><span class="line"><span class="built_in">print</span>(argmax_index)  <span class="comment"># 输出：3 （索引从 0 开始）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例 2: 指定维度</span></span><br><span class="line">y = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line">indices = torch.argmax(y, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<h3 id="返回值-1">返回值</h3>
+<ul>
+<li>返回最大值的索引，形状与指定维度（如果有的话）相匹配。</li>
+<li>如果不指定维度，返回最大值索引（标量）。</li>
+</ul>
+<hr />
+<h2 id="二者的对比">二者的对比</h2>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 42%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>功能</strong></th>
+<th><strong><code>torch.max()</code></strong></th>
+<th><strong><code>torch.argmax()</code></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>主要作用</strong></td>
+<td>返回最大值（可以同时返回索引）。</td>
+<td>返回最大值的索引。</td>
+</tr>
+<tr class="even">
+<td><strong>是否返回最大值的索引</strong></td>
+<td>是，但需要指定 <code>dim</code> 参数。</td>
+<td>是，仅返回索引。</td>
+</tr>
+<tr class="odd">
+<td><strong>是否返回最大值本身</strong></td>
+<td>是，默认返回最大值（可同时返回索引）。</td>
+<td>否，仅返回索引。</td>
+</tr>
+<tr class="even">
+<td><strong>支持多维张量</strong></td>
+<td>是，支持在指定维度上计算最大值和索引。</td>
+<td>是，支持在指定维度上查找最大值索引。</td>
+</tr>
+<tr class="odd">
+<td><strong>返回值类型</strong></td>
+<td>最大值（标量或张量）和索引（张量，若指定维度）。</td>
+<td>最大值的索引（标量或张量，取决于输入）。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="综合示例">综合示例</h2>
+<h3 id="例一">例一</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.tensor([[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.max()</span></span><br><span class="line">max_values, max_indices = torch.<span class="built_in">max</span>(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值：&quot;</span>, max_values)     <span class="comment"># 输出：tensor([3, 7])</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, max_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 torch.argmax()</span></span><br><span class="line">argmax_indices = torch.argmax(x, dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大值索引：&quot;</span>, argmax_indices)  <span class="comment"># 输出：tensor([1, 0])</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="例二">例二</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.randn(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(torch.argmax(x, dim=-<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">output:</span><br><span class="line">tensor([[-<span class="number">1.0214</span>,  <span class="number">0.7577</span>, -<span class="number">0.0481</span>, -<span class="number">1.0252</span>,  <span class="number">0.9443</span>],</span><br><span class="line">        [ <span class="number">0.5071</span>, -<span class="number">1.6073</span>, -<span class="number">0.6960</span>, -<span class="number">0.6066</span>,  <span class="number">1.6297</span>],</span><br><span class="line">        [-<span class="number">0.2776</span>, -<span class="number">1.3551</span>,  <span class="number">0.0036</span>, -<span class="number">0.9210</span>, -<span class="number">0.6517</span>]])</span><br><span class="line">tensor(<span class="number">9</span>)</span><br><span class="line">tensor([<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">4</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
     
-    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/softmax()/#more">more >></a>
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/#more">more >></a>
     
     
 
@@ -396,7 +464,7 @@ aria-hidden="true">36a034ac7464ecd31f8e582b254271c</figcaption>
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/softmax()/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch/max()%E4%B8%8Eargmax()/">展开全文 >></a>
     </p>
     
 
@@ -524,115 +592,6 @@ Tensors are automatically moved to the CPU first if necessary.</p>
 
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/permute()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" target="_blank">permute()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="permute">permute()</h1>
-<p><strong>交换维度 <code>permute</code></strong> 与
-<code>transpose</code>
-函数每次只能交换两个维度不同，<code>permute</code>
-可以直接设置新的维度排列方式，参数 <code>dims</code>
-是一个元组，表示新的维度顺序：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">         [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = x.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">4</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">2</span>, <span class="number">5</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">3</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png"
-alt="image-20250101132035181" />
-<figcaption aria-hidden="true">image-20250101132035181</figcaption>
-</figure>
-<p><code>(2, 0, 1)</code> 的含义：</p>
-<ul>
-<li>将原来的 <strong>第 2 维</strong> 移到第 0 个位置。</li>
-<li>将原来的 <strong>第 0 维</strong> 移到第 1 个位置。</li>
-<li>将原来的 <strong>第 1 维</strong> 移到第 2 个位置。</li>
-</ul>
-<p>对应的形状变为：</p>
-<ul>
-<li>原来 <code>x.size()</code> 为 <code>(2, 3, 5)</code>。</li>
-<li>调整后变为 <code>(5, 2, 3)</code>。</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/elementwise compute" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -722,6 +681,115 @@ z=(x+y)×(y−2)
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/elementwise%20compute/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/permute()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" target="_blank">permute()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="permute">permute()</h1>
+<p><strong>交换维度 <code>permute</code></strong> 与
+<code>transpose</code>
+函数每次只能交换两个维度不同，<code>permute</code>
+可以直接设置新的维度排列方式，参数 <code>dims</code>
+是一个元组，表示新的维度顺序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">         [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = x.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(x, x.shape)</span><br><span class="line">tensor([[[<span class="number">1</span>, <span class="number">4</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">2</span>, <span class="number">5</span>]],</span><br><span class="line">  </span><br><span class="line">        [[<span class="number">3</span>, <span class="number">6</span>]]]) torch.Size([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011320299.png"
+alt="image-20250101132035181" />
+<figcaption aria-hidden="true">image-20250101132035181</figcaption>
+</figure>
+<p><code>(2, 0, 1)</code> 的含义：</p>
+<ul>
+<li>将原来的 <strong>第 2 维</strong> 移到第 0 个位置。</li>
+<li>将原来的 <strong>第 0 维</strong> 移到第 1 个位置。</li>
+<li>将原来的 <strong>第 1 维</strong> 移到第 2 个位置。</li>
+</ul>
+<p>对应的形状变为：</p>
+<ul>
+<li>原来 <code>x.size()</code> 为 <code>(2, 3, 5)</code>。</li>
+<li>调整后变为 <code>(5, 2, 3)</code>。</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/permute()/">展开全文 >></a>
     </p>
     
 
@@ -1699,11 +1767,11 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1715,6 +1783,10 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
@@ -1723,7 +1795,7 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1739,11 +1811,19 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1759,23 +1839,7 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1783,15 +1847,11 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1799,7 +1859,15 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">windows</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1811,10 +1879,6 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">STL</a>
               </li>
              
@@ -1823,11 +1887,19 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1847,11 +1919,11 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1860,10 +1932,6 @@ operation 的第二种情况，因此 pytorch 建议尽量不使用
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
             
             <div class="clearfix"></div>

@@ -252,6 +252,46 @@
 <h2 id="re-模块中的常用函数">re 模块中的常用函数</h2>
 <p>Python 的 <code>re</code>
 模块提供了众多用于处理正则表达式的函数。下面是一些常用的函数：</p>
+<h3 id="re.match">re.match()</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re.<span class="keyword">match</span>(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>pattern</strong>：表示要匹配的正则表达式模式。</li>
+<li><strong>string</strong>：待匹配的字符串。</li>
+<li><strong>flags</strong>：可选参数，用于设置匹配模式（如忽略大小写、多行匹配等），例如
+<code>re.IGNORECASE</code>、<code>re.MULTILINE</code> 等。</li>
+</ul>
+<h4 id="主要特点">主要特点</h4>
+<ul>
+<li><strong>从字符串开头匹配</strong>：<code>re.match()</code>
+只会尝试匹配字符串的开头部分。如果正则表达式模式在字符串开头没有匹配到，即使字符串中有其他部分匹配，该函数也会返回
+<code>None</code>。</li>
+<li><strong>返回 Match 对象</strong>：当匹配成功时，返回一个 Match
+对象，该对象包含了匹配的详细信息（如匹配的内容、起始位置、结束位置等）。可以使用
+<code>group()</code> 方法获取匹配的字符串。</li>
+</ul>
+<hr />
+<h4 id="示例-1简单的数字匹配">示例 1：简单的数字匹配</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;123abc&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d+&quot;</span>  <span class="comment"># 匹配一个或多个数字</span></span><br><span class="line"></span><br><span class="line">match_obj = re.<span class="keyword">match</span>(pattern, text)</span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配成功！&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配的内容:&quot;</span>, match_obj.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配失败。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>输出：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">匹配成功！</span><br><span class="line">匹配的内容: 123</span><br></pre></td></tr></table></figure>
+<p>解释：<code>r"\d+"</code> 用来匹配一个或多个数字。由于字符串
+<code>"123abc"</code> 以数字开头，所以匹配成功。</p>
+<hr />
+<h4 id="示例-2匹配失败的情况">示例 2：匹配失败的情况</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;abc123&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d+&quot;</span>  <span class="comment"># 匹配一个或多个数字</span></span><br><span class="line"></span><br><span class="line">match_obj = re.<span class="keyword">match</span>(pattern, text)</span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配成功！&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配失败。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>输出：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">匹配失败。</span><br></pre></td></tr></table></figure>
+<p>解释：虽然字符串 <code>"abc123"</code>
+中包含数字，但开头部分不是数字，因此 <code>re.match()</code> 返回
+<code>None</code>。</p>
+<hr />
+<h4 id="与-re.search-的区别">与 <code>re.search()</code> 的区别</h4>
+<ul>
+<li><strong><code>re.match()</code></strong>：仅检查字符串的<strong>开头</strong>是否符合正则表达式模式。</li>
+<li><strong><code>re.search()</code></strong>：会在整个字符串中搜索符合模式的第一次匹配，不限于开头部分。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;abc123&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;\d+&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 re.match() 只检查字符串开头</span></span><br><span class="line">match_obj = re.<span class="keyword">match</span>(pattern, text)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;re.match() 返回:&quot;</span>, match_obj)  <span class="comment"># 输出: None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 re.search() 在整个字符串中查找匹配</span></span><br><span class="line">search_obj = re.search(pattern, text)</span><br><span class="line"><span class="keyword">if</span> search_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;re.search() 匹配内容:&quot;</span>, search_obj.group())  <span class="comment"># 输出: 123</span></span><br></pre></td></tr></table></figure>
+<hr />
 <h3 id="re.search">re.search()</h3>
 <p><code>re.search()</code>
 函数用于在字符串中搜索正则表达式的第一个匹配项：</p>
@@ -260,17 +300,17 @@
 <p>输出：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
 <h3 id="re.findall">re.findall()</h3>
-<p><code>re.findall()</code>函数用于在字符串中查找所有匹配的子串，并以列表形式返回。如果没有找到匹配，返回空列表。</p>
+<p><code>re.findall()</code>函数用于在字符串中查找所有匹配的子串，并以<strong>列表</strong>形式返回。如果没有找到匹配，返回空列表。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">matches: <span class="built_in">list</span>[<span class="built_in">str</span>] = re.findall(<span class="string">&quot;o&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> matches:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, matches)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: [<span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;o&#x27;</span>]</span><br></pre></td></tr></table></figure>
 <h3 id="re.sub">re.sub()</h3>
-<p><code>re.sub()</code>函数用于在字符串中用指定的字符串替换所有匹配的子串，并返回新的字符串。可以使用正则表达式来指定要替换的模式。</p>
+<p><code>re.sub()</code>函数用于在字符串中用指定的字符串替换所有匹配的子串，并返回新的<strong>字符串</strong>。可以使用正则表达式来指定要替换的模式。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">new_string: <span class="built_in">str</span> = re.sub(<span class="string">&quot;fox&quot;</span>, <span class="string">&quot;cat&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Old string:&quot;</span>, string)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New string:&quot;</span>, new_string)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Old string: The quick brown fox jumps over the lazy dog.</span><br><span class="line">New string: The quick brown cat jumps over the lazy dog.</span><br></pre></td></tr></table></figure>
 <h3 id="re.compile">re.compile()</h3>
-<p><code>re.compile()</code>函数用于将正则表达式编译成一个正则表达式对象，以便在后续的匹配中重复使用。</p>
+<p><code>re.compile()</code>函数用于将正则表达式<strong>编译</strong>成一个正则表达式对象，以便在后续的匹配中重复使用。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">&quot;fox&quot;</span>)</span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = pattern.search(string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, <span class="keyword">match</span>.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
@@ -392,28 +432,63 @@
 </tbody>
 </table>
 <h2 id="匹配对象的属性和方法">匹配对象的属性和方法</h2>
-<p>当使用 <code>re</code> 模块的 <code>search</code>
-函数对字符串进行匹配时，将返回一个匹配对象<code>&lt;class 're.Match'&gt;</code>。匹配对象具有以下常用属性和方法：</p>
-<h3 id="group">group()</h3>
-<p><code>group()</code>方法返回匹配的子串。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Found:&quot;</span>, <span class="keyword">match</span>.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found: fox</span><br></pre></td></tr></table></figure>
-<h3 id="start">start()</h3>
-<p><code>start()</code>方法返回匹配的子串在原始字符串中的开始位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Start index:&quot;</span>, <span class="keyword">match</span>.start())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Start index: <span class="number">16</span></span><br></pre></td></tr></table></figure>
-<h3 id="end">end()</h3>
-<p><code>end()</code>方法返回匹配的子串在原始字符串中的结束位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;End index:&quot;</span>, <span class="keyword">match</span>.end())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">End index: <span class="number">19</span></span><br></pre></td></tr></table></figure>
-<h3 id="span">span()</h3>
-<p><code>span()</code>方法返回匹配的子串在原始字符串中的开始和结束位置的索引。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">string = <span class="string">&quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line"><span class="keyword">match</span> = re.search(<span class="string">&quot;fox&quot;</span>, string)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">match</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Span:&quot;</span>, <span class="keyword">match</span>.span())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Not found&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Span: (<span class="number">16</span>, <span class="number">19</span>)</span><br></pre></td></tr></table></figure>
+<p>当使用 <code>re.match()</code> 或 <code>re.search</code>
+函数对字符串匹配成功时，将返回一个匹配对象
+<code>&lt;class 're.Match'&gt;</code>，匹配对象具有以下常用属性和方法：</p>
+<ul>
+<li><strong><code>group()</code></strong>：返回匹配的字符串。可以指定组号来获取特定捕获组的内容。</li>
+<li><strong><code>start()</code></strong> 和
+<strong><code>end()</code></strong>：分别返回匹配字符串的起始和结束位置。</li>
+<li><strong><code>span()</code></strong>：返回一个元组，包含匹配字符串的起始和结束位置。</li>
+</ul>
+<h3 id="使用-group-获取匹配内容">使用 <code>group()</code>
+获取匹配内容</h3>
+<p><code>group()</code> 方法用于返回匹配的字符串内容。</p>
+<ul>
+<li><strong><code>group(0)</code></strong> 或直接
+<strong><code>group()</code></strong> 返回整个匹配到的字符串。</li>
+<li><strong><code>group(n)</code></strong> 返回第 n
+个捕获组（正则表达式中用小括号分组）的内容。</li>
+</ul>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;My favorite language is Python 3.9&quot;</span></span><br><span class="line"><span class="comment"># 正则表达式中有两个捕获组：</span></span><br><span class="line"><span class="comment"># 第1个组匹配 &quot;Python&quot;，第2个组匹配版本号 &quot;3.9&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;(Python)\s([\d.]+)&quot;</span></span><br><span class="line">match_obj = re.search(pattern, text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;使用 group() 方法：&quot;</span>)</span><br><span class="line">    <span class="comment"># 返回整个匹配的字符串：&quot;Python 3.9&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;group(0) 或 group():&quot;</span>, match_obj.group())</span><br><span class="line">    <span class="comment"># 返回第1个捕获组的内容：&quot;Python&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;group(1):&quot;</span>, match_obj.group(<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 返回第2个捕获组的内容：&quot;3.9&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;group(2):&quot;</span>, match_obj.group(<span class="number">2</span>))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;未匹配到内容。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>输出结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">使用 group() 方法：</span><br><span class="line">group(0) 或 group(): Python 3.9</span><br><span class="line">group(1): Python</span><br><span class="line">group(2): 3.9</span><br></pre></td></tr></table></figure>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;hello 123 world&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;(hello) (\d+) (world)&quot;</span></span><br><span class="line"></span><br><span class="line">match_obj = re.<span class="keyword">match</span>(pattern, text)</span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;完整匹配:&quot;</span>, match_obj.group(<span class="number">0</span>))   <span class="comment"># 完整匹配的字符串</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;第1个组:&quot;</span>, match_obj.group(<span class="number">1</span>))     <span class="comment"># 捕获组1的内容，即 &quot;hello&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;第2个组:&quot;</span>, match_obj.group(<span class="number">2</span>))     <span class="comment"># 捕获组2的内容，即 &quot;123&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配位置:&quot;</span>, match_obj.span())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;匹配失败。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>输出结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">完整匹配: hello 123 world</span><br><span class="line">第1个组: hello</span><br><span class="line">第2个组: 123</span><br><span class="line">匹配位置: (0, 15)</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="使用-start-与-end-获取匹配位置">使用 <code>start()</code> 与
+<code>end()</code> 获取匹配位置</h3>
+<ul>
+<li><strong><code>start()</code></strong>
+返回匹配字符串在原字符串中的起始索引。</li>
+<li><strong><code>end()</code></strong>
+返回匹配字符串在原字符串中的结束索引（不包括该索引位置的字符）。</li>
+</ul>
+<p>你可以对整个匹配或对指定的捕获组调用这两个方法。</p>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;My favorite language is Python 3.9&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;(Python)\s([\d.]+)&quot;</span></span><br><span class="line">match_obj = re.search(pattern, text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n使用 start() 与 end() 方法：&quot;</span>)</span><br><span class="line">    <span class="comment"># 整个匹配 &quot;Python 3.9&quot; 在原字符串中的起始和结束位置</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;start(0):&quot;</span>, match_obj.start(<span class="number">0</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;end(0):&quot;</span>, match_obj.end(<span class="number">0</span>))</span><br><span class="line">    <span class="comment"># 第1个捕获组 &quot;Python&quot; 的起始和结束位置</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;start(1):&quot;</span>, match_obj.start(<span class="number">1</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;end(1):&quot;</span>, match_obj.end(<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 第2个捕获组 &quot;3.9&quot; 的起始和结束位置</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;start(2):&quot;</span>, match_obj.start(<span class="number">2</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;end(2):&quot;</span>, match_obj.end(<span class="number">2</span>))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;未匹配到内容。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>可能的输出结果（具体索引依赖于字符串内容）：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">使用 start() 与 end() 方法：</span><br><span class="line">start(0): 25</span><br><span class="line">end(0): 36</span><br><span class="line">start(1): 25</span><br><span class="line">end(1): 31</span><br><span class="line">start(2): 32</span><br><span class="line">end(2): 36</span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ul>
+<li>整个匹配 <code>"Python 3.9"</code> 在字符串中的位置是从索引 25 到
+36（不包含索引 36 的字符）。</li>
+<li>捕获组 <code>"Python"</code> 占据索引 25 到 31；</li>
+<li>捕获组 <code>"3.9"</code> 占据索引 32 到 36。</li>
+</ul>
+<hr />
+<h3 id="使用-span-获取匹配区间">使用 <code>span()</code>
+获取匹配区间</h3>
+<p><code>span()</code>
+方法返回一个元组，包含匹配字符串（或指定捕获组）的起始和结束索引，等效于
+<code>(start(), end())</code>。</p>
+<p><strong>示例代码：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;My favorite language is Python 3.9&quot;</span></span><br><span class="line">pattern = <span class="string">r&quot;(Python)\s([\d.]+)&quot;</span></span><br><span class="line">match_obj = re.search(pattern, text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> match_obj:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n使用 span() 方法：&quot;</span>)</span><br><span class="line">    <span class="comment"># 整个匹配的起始和结束索引元组</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;span(0):&quot;</span>, match_obj.span(<span class="number">0</span>))</span><br><span class="line">    <span class="comment"># 第1个捕获组的起始和结束索引元组</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;span(1):&quot;</span>, match_obj.span(<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 第2个捕获组的起始和结束索引元组</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;span(2):&quot;</span>, match_obj.span(<span class="number">2</span>))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;未匹配到内容。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>可能的输出结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">使用 span() 方法：</span><br><span class="line">span(0): (25, 36)</span><br><span class="line">span(1): (25, 31)</span><br><span class="line">span(2): (32, 36)</span><br></pre></td></tr></table></figure>
 <h2 id="常用示例">常用示例</h2>
 <p>正则表达式是一种强大的文本匹配工具，可以用于处理字符串中的数据和信息。在
 Python
@@ -568,7 +643,7 @@ HTML 标签：</p>
 
 
   
-    <article id="post-【后端】/python/第三方库/【uvicorn模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【后端】/python/第三方库/【tqdm模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -576,7 +651,7 @@ HTML 标签：</p>
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【uvicorn模块】</a>
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【tqdm模块】</a>
   
     </h1>
   
@@ -584,7 +659,7 @@ HTML 标签：</p>
 
   
   
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
         <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
 </a>
 
@@ -597,146 +672,201 @@ HTML 标签：</p>
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="uvicorn模块">【uvicorn模块】</h1>
-<p>在构建现代Web应用程序时，性能和并发能力是重要的考量因素。传统的WSGI服务器已无法满足异步Web框架的需求，而ASGI（Asynchronous
-Server Gateway
-Interface）成为新一代Web服务器接口的标准。<code>Uvicorn</code>
-是一个快速、轻量级的ASGI服务器，支持异步Web框架（如FastAPI和Starlette）以及HTTP/2和WebSocket。<code>Uvicorn</code>
-基于 <code>uvloop</code> 和 <code>httptools</code>
-构建，具有高性能、易用性和灵活性的特点。</p>
-<h2 id="安装和运行">安装和运行</h2>
-<h3 id="安装">安装</h3>
-<p>可以通过 <code>pip</code> 安装：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install uvicorn</span><br></pre></td></tr></table></figure>
-<p>为了获得最佳性能，可以安装带Cython优化的版本：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install &quot;uvicorn[standard]&quot;</span><br></pre></td></tr></table></figure>
-<p>安装完成后，可以通过以下命令验证安装是否成功：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn --version</span><br></pre></td></tr></table></figure>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Optional</span></span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;Hello&quot;</span>: <span class="string">&quot;World&quot;</span>&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>详细解释：</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app</span>.<span class="keyword">get</span>(<span class="string">&quot;/items/&#123;item_id&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>路径操作装饰器，告诉 FastAPI 在该装饰器下方的 <code>read_item</code>
-函数是负责处理如下请求的：</p>
+    <h1 id="tqdm模块">【tqdm模块】</h1>
+<p>有时候在使用 Python
+处理比较耗时操作的时候，为了便于观察处理进度，这时候就需要通过进度条将处理情况进行可视化展示，以便我们能够及时了解情况。</p>
+<p>tqdm 就能非常完美的支持和解决这些问题，可以实时输出处理进度而且占用的
+CPU 资源非常少，支持 windows、Linux、mac
+等系统，支持①循环处理、②多进程、③递归处理、还可以结合 Linux
+的命令来查看处理情况，等进度展示。</p>
+<h2 id="tqdm导入"><code>tqdm</code>导入</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：不是 import tqdm</span></span><br></pre></td></tr></table></figure>
+<h2
+id="tqdm对可迭代对象进行封装"><code>tqdm()</code>对可迭代对象进行封装</h2>
+<h3 id="语法">语法</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法 1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm（可迭代对象）:</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法 2</span></span><br><span class="line"><span class="keyword">for</span> idx, i <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm（可迭代对象）):</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>对于可以迭代的对象都可以使用 tqdm
+进行封装实现可视化进度，使用起来非常方便。</p>
+<h3 id="例子">例子</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<hr />
+<p><strong>Q</strong>：为什么结果会一直新建一行？</p>
+<p><strong>A</strong>：这是因为每次的 print
+内容都不一样，为了能够显示新的内容，所以会这样。</p>
+<p>我们看下面这个程序，它因为没有控制台输出，所以进度条就很正常。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932044.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="带有参数的tqdm">带有参数的<code>tqdm()</code></h3>
+<p><strong>Q</strong>：进度条可以加一些其他信息吗？</p>
+<p><strong>A</strong>：当然可以，需要对 tqdm 进行一些参数调整</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">format_meter</span>(<span class="params">n, total, elapsed, ncols=<span class="literal">None</span>, prefix=<span class="string">&#x27;&#x27;</span>, <span class="built_in">ascii</span>=<span class="literal">False</span>, unit=<span class="string">&#x27;it&#x27;</span>,</span></span><br><span class="line"><span class="params">                 unit_scale=<span class="literal">False</span>, rate=<span class="literal">None</span>, bar_format=<span class="literal">None</span>, postfix=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 unit_divisor=<span class="number">1000</span>, initial=<span class="number">0</span>, colour=<span class="literal">None</span>, **extra_kwargs</span>):</span><br></pre></td></tr></table></figure>
 <ul>
-<li>请求路径为 <code>/items/&#123;item_id&#125;</code></li>
-<li>使用 get 操作</li>
+<li><code>iterable</code>: 可迭代的对象，在⼿动更新时不需要进⾏设置</li>
+<li><code>desc</code>: 字符串，左边进度条描述⽂字</li>
+<li><code>total</code>: 总的项⽬数</li>
+<li><code>leave</code>: bool 值，迭代完成后是否保留进度条</li>
+<li><code>file</code>: 输出指向位置，默认是终端，⼀般不需要设置</li>
+<li><code>ncols</code>:
+调整进度条宽度，默认是根据环境⾃动调节长度，如果设置为 0,
+就没有进度条，只有输出的信息</li>
+<li><code>unit</code>: 描述处理项⽬的⽂字，默认是<code>it</code>,
+例如：100 it/s, 处理照⽚的话设置为<code>img</code> , 则为 100 img/s</li>
+<li><code>unit_scale</code>:
+⾃动根据国际标准进⾏项⽬处理速度单位的换算，例如 100000 it/s &gt;&gt;
+100k it/s</li>
+<li><code>colour</code>: 进度条颜色</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>)</span><br></pre></td></tr></table></figure>
-<p><code>read_item</code> 函数有两个参数 <code>item_id</code> 和
-<code>q</code>，且 <code>item_id</code> 是 int 型且必填，<code>q</code>
-是字符串类型且默认值为 None 的可选参数</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p>return 的对象就是返回内容 reponse ，你可以返回一个
-<code>dict</code>、<code>list</code>，像
-<code>str</code>、<code>int</code> 一样的单个值等等。</p>
-<h3 id="启动server两个方式">启动server两个方式</h3>
+<h4 id="例子-1">例子 1</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">d = &#123;<span class="string">&#x27;loss&#x27;</span>:<span class="number">0.2</span>,<span class="string">&#x27;learn&#x27;</span>:<span class="number">0.8</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    desc 设置名称</span></span><br><span class="line"><span class="string">    ncols 设置进度条长度 -&gt; 建议设置在 100 以内</span></span><br><span class="line"><span class="string">    postfix 以字典形式传入详细信息</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm(<span class="built_in">range</span>(<span class="number">50</span>),desc=<span class="string">&#x27;名称&#x27;</span>,ncols=<span class="number">100</span>,postfix=d):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932025.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<blockquote>
+<p>其中<code>xxxit/s</code>表示每秒迭代的次数</p>
+</blockquote>
+<h4 id="例子-2">例子 2</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">iter_object = <span class="built_in">range</span>(<span class="number">10</span>, <span class="number">21</span>)</span><br><span class="line">pbar = tqdm(iter_object, </span><br><span class="line">                 total=<span class="built_in">len</span>(iter_object),</span><br><span class="line">                 leave=<span class="literal">True</span>, </span><br><span class="line">                 ncols=<span class="number">100</span>, </span><br><span class="line">                 unit=<span class="string">&quot;个&quot;</span>, </span><br><span class="line">                 unit_scale=<span class="literal">False</span>, </span><br><span class="line">                 colour=<span class="string">&quot;red&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;正在处理的元素为&quot;</span>: element&#125;)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932058.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="自定义进度条显示信息">自定义进度条显示信息</h2>
+<p><strong>Q</strong>：我就是想 print 一些东西，可以吗？</p>
+<p><strong>A</strong>：当然可以，tqdm 提供了两个个方法：</p>
 <ol type="1">
-<li>命令行启动</li>
+<li><code>set_description()</code></li>
+<li><code>set_postfix()</code></li>
 </ol>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D:\myproject\20210622\test_server&gt;uvicorn example:app --port 8002 --reload</span><br><span class="line">INFO:     Started server process [32504]</span><br><span class="line">INFO:     Waiting for application startup.</span><br><span class="line">INFO:     Application startup complete.</span><br><span class="line">INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>example</code>：example.py 文件（一个 Python "模块"）</li>
-<li><code>app</code>：在 main.py 文件中通过 <code>app = FastAPI()</code>
-创建的对象</li>
-<li><code>--reload</code>：让服务器在更新代码后重新启动。仅在开发时使用该选项</li>
-</ul>
-<ol start="2" type="1">
-<li>代码里面写main函数，在main函数里指定app、主机、端口，直接运行代码启动</li>
+<p>这两个方法就类似于 print，可以在进度条中显示一些变动的信息</p>
+<h3 id="例子-1-1">例子 1</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;d&quot;</span>, <span class="string">&quot;e&quot;</span>, <span class="string">&quot;f&quot;</span>, <span class="string">&quot;g&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932038.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="例子-2-1">例子 2</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">epochs = <span class="number">150</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在使用 set_description() 和 set_postfix() 时一般会创建一个 tqdm() 对象</span></span><br><span class="line">pbar = tqdm(<span class="built_in">range</span>(epochs), ncols=<span class="number">100</span>)  <span class="comment"># ncols 设置进度条显示的字符长度，小了就显示不全了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;Epoch <span class="subst">&#123;idx&#125;</span>/<span class="subst">&#123;epochs&#125;</span>&quot;</span>)</span><br><span class="line">    pbar.set_postfix(&#123;<span class="string">&quot;class&quot;</span>: element&#125;, loss=random.random(), cost_time = random.randrange(<span class="number">0</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932156.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h3 id="两种方法传参注意事项">两种方法传参注意事项</h3>
+<p><code>set_description</code>和<code>set_postfix</code>都用的 kwargs
+传参，所以我们可以：</p>
+<ol type="1">
+<li>用字典传参 -&gt;
+<code>pbar.set_postfix(&#123;"key_1": "value_1", ...&#125;)</code></li>
+<li>直接用关键字传参 -&gt;
+<code>pbar.set_postfix(key_1 = value_1, key_2 = value_2, ...)</code></li>
+<li>混着用 -&gt;
+<code>pbar.set_postfix(&#123;"key_1": value_1, "key_2": value_2, ...&#125;, key_3 = value_3, ...)</code></li>
 </ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    uvicorn.run(app=<span class="string">&#x27;example:app&#x27;</span>, host=<span class="string">&quot;127.0.0.1&quot;</span>, port=<span class="number">8001</span>, reload=<span class="literal">True</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-<p>运行起来后，因为示例是get请求，可以直接在浏览器看一下效果：</p>
-<p>浏览器输入 http://127.0.0.1:8002/items/100?q=1
-回车，你会看到页面显示的返回内容为:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;item_id&quot;</span>:<span class="number">100</span>,<span class="string">&quot;q&quot;</span>:<span class="string">&quot;1&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>引用官方的总结</p>
+<h2
+id="tqdm内置生成可迭代对象方法-trange"><code>tqdm</code>内置生成可迭代对象方法
+— <code>trange()</code></h2>
+<p><code>trange(i)</code> 是 <code>tqdm(range(i))</code> 的简单写法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> trange</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">pbar = trange(<span class="number">300</span>, <span class="number">400</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(pbar):</span><br><span class="line">    time.sleep(<span class="number">0.01</span>)</span><br><span class="line">    pbar.set_description(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span> -&gt; <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932030.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="自定义方法更新进度">自定义方法更新进度</h2>
+<p>有时候我们不仅仅是通过一个 for
+训练来更新进度条，我们也希望在做完某些操作后更新一次进度条，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tqdm(total=<span class="number">10</span>) <span class="keyword">as</span> bar:  <span class="comment"># total 为进度条总的迭代次数</span></span><br><span class="line">    <span class="comment"># 操作 1</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">1</span>)  <span class="comment"># bar.update() 里面的数表示更新的次数，和 optimizer.step 方法类似</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 2</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">3</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 操作 3</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 更新进度条</span></span><br><span class="line">    bar.update(<span class="number">6</span>)  <span class="comment"># 建议不要超过 total</span></span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932571.gif"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h2 id="在深度学习中如何使用">在深度学习中如何使用</h2>
+<p>下面是一段手写数字识别代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,in_channels=<span class="number">1</span>,num_classes=<span class="number">10</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(in_channels=<span class="number">1</span>,out_channels=<span class="number">8</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.pool = nn.MaxPool2d(kernel_size=(<span class="number">2</span>,<span class="number">2</span>),stride=(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">        self.conv2 = nn.Conv2d(in_channels=<span class="number">8</span>,out_channels=<span class="number">16</span>,kernel_size=(<span class="number">3</span>,<span class="number">3</span>),stride=(<span class="number">1</span>,<span class="number">1</span>),padding=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">16</span>*<span class="number">7</span>*<span class="number">7</span>,num_classes)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = F.relu(self.conv1(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = F.relu(self.conv2(x))</span><br><span class="line">        x = self.pool(x)</span><br><span class="line">        x = x.reshape(x.shape[<span class="number">0</span>],-<span class="number">1</span>)</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set device</span></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span><span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(device)</span><br><span class="line"><span class="comment"># Hyperparameters</span></span><br><span class="line">in_channels = <span class="number">1</span></span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load Data</span></span><br><span class="line">train_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">True</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">train_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_dataset = datasets.MNIST(root=<span class="string">&quot;dataset/&quot;</span>,train=<span class="literal">False</span>,transform=transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">test_loader = DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize network</span></span><br><span class="line">model = CNN().to(device)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss and optimizer</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(),lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train Network</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loader):</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>如果不给<code>train_loader</code>加上<code>tqdm</code>会什么也不现实，加入后显示如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 152.23it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.74it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 155.11it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.08it/s]</span></span><br><span class="line"><span class="meta prompt_">100%</span><span class="language-bash">|██████████| 938/938 [00:06&lt;00:00, 153.57it/s]</span></span><br></pre></td></tr></table></figure>
+<p>对应 5 个 eopch 的 5 个进度显示</p>
+<p>如果我们想要它显示在一行，在 tqdm 中添加 <code>leave=False</code>
+参数即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> data,targets <span class="keyword">in</span> tqdm(train_loadr,leave=<span class="literal">False</span>) <span class="comment"># 进度显示在一行</span></span><br></pre></td></tr></table></figure>
+<p>我们觉得还有点不太满足现在的进度条，我们得给他加上我们需要的信息，比如准确率，loss
+值，如何加呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    losses = []</span><br><span class="line">    accuracy = []</span><br><span class="line">    <span class="comment"># for data,targets in tqdm(train_loadr,leave=False) # 进度显示在一行</span></span><br><span class="line">    loop = tqdm((train_loader), total = <span class="built_in">len</span>(train_loader))</span><br><span class="line">    <span class="keyword">for</span> data,targets <span class="keyword">in</span> loop:</span><br><span class="line">        <span class="comment"># Get data to cuda if possible</span></span><br><span class="line">        data = data.to(device=device)</span><br><span class="line">        targets = targets.to(device=device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># forward</span></span><br><span class="line">        scores = model(data)</span><br><span class="line">        loss = criterion(scores,targets)</span><br><span class="line">        losses.append(loss)</span><br><span class="line">        <span class="comment"># backward</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        _,predictions = scores.<span class="built_in">max</span>(<span class="number">1</span>)</span><br><span class="line">        num_correct = (predictions == targets).<span class="built_in">sum</span>()</span><br><span class="line">        running_train_acc = <span class="built_in">float</span>(num_correct) / <span class="built_in">float</span>(data.shape[<span class="number">0</span>])</span><br><span class="line">        accuracy.append(running_train_acc)</span><br><span class="line">        <span class="comment"># gardient descent or adam step</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        loop.set_description(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>]&#x27;</span>)</span><br><span class="line">        loop.set_postfix(loss = loss.item(),acc = running_train_acc)</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501011932545.png"
+alt="在这里插入图片描述" />
+<figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<p>可以看到我们的 acc 和 epoch 还有 loss 都打在了控制台中。以上就是相关
+tqdm 的使用</p>
+<h2 id="进度条的含义">进度条的含义</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个可迭代对象</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常的遍历（没有进度条）</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(a):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 使用 tqdm 对可迭代对象进行包装，实现进度条可视化</span></span><br><span class="line"><span class="keyword">for</span> idx, element <span class="keyword">in</span> <span class="built_in">enumerate</span>(tqdm(a)):</span><br><span class="line">    time.sleep(<span class="number">0.5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;No.<span class="subst">&#123;idx&#125;</span>: <span class="subst">&#123;element&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  0%|          | 0/10 [00:00&lt;?, ?it/s]No.0: 1</span><br><span class="line"> 10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]No.1: 2</span><br><span class="line"> 20%|██        | 2/10 [01:04&lt;04:23, 32.96s/it]No.2: 3</span><br><span class="line"> 30%|███       | 3/10 [01:05&lt;02:09, 18.51s/it]No.3: 4</span><br><span class="line"> 40%|████      | 4/10 [01:06&lt;01:09, 11.58s/it]No.4: 5</span><br><span class="line"> 50%|█████     | 5/10 [01:13&lt;00:49,  9.85s/it]No.5: 6</span><br><span class="line"> 60%|██████    | 6/10 [01:14&lt;00:27,  6.93s/it]No.6: 7</span><br><span class="line"> 70%|███████   | 7/10 [01:15&lt;00:15,  5.11s/it]No.7: 8</span><br><span class="line"> 80%|████████  | 8/10 [01:17&lt;00:08,  4.02s/it]No.8: 9</span><br><span class="line"> 90%|█████████ | 9/10 [01:19&lt;00:03,  3.47s/it]No.9: 10</span><br><span class="line">100%|██████████| 10/10 [02:10&lt;00:00, 13.04s/it]</span><br></pre></td></tr></table></figure>
+<p>我们以以下一行 <code>tqdm</code> 输出为例说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10%|█         | 1/10 [00:27&lt;04:05, 27.29s/it]</span><br></pre></td></tr></table></figure>
+<ol type="1">
+<li><strong><code>10%|█ |</code></strong>
 <ul>
-<li>导入 <code>FastAPI</code>。</li>
-<li>创建一个 <code>app</code> 实例。</li>
-<li>编写一个<strong>路径操作装饰器</strong>(如
-<code>@app.get("/")</code>)。</li>
-<li>编写一个<strong>路径操作函数</strong>(如上面的
-<code>def root(): ...</code>)。</li>
-<li>运行开发服务器(如 <code>uvicorn main:app --reload</code>)。</li>
-</ul>
-<h2 id="主要功能">主要功能</h2>
+<li>当前任务完成了 10%。</li>
+<li>可视化进度条显示 <code>█</code>。</li>
+</ul></li>
+<li><strong><code>1/10</code></strong>
 <ul>
-<li><p><strong>支持ASGI协议</strong>：完全兼容ASGI标准，可以运行异步和同步的Web应用。</p></li>
-<li><p><strong>高性能</strong>：基于 <code>uvloop</code> 和
-<code>httptools</code>，支持高吞吐量和低延迟。</p></li>
-<li><p><strong>支持HTTP/2和WebSocket</strong>：满足现代Web应用的实时通信需求。</p></li>
-<li><p><strong>热重载</strong>：开发模式下支持代码热重载，提升开发效率。</p></li>
-<li><p><strong>灵活的配置</strong>：通过命令行参数或Python代码自定义运行选项。</p></li>
+<li><strong>已完成</strong> 1 次迭代，总共需要完成 10 次。</li>
+<li><strong>目前正在</strong>处理<strong>第 2 次迭代</strong></li>
+</ul></li>
+<li><strong><code>00:27</code></strong>：<strong>已完成</strong>的迭代次数（这里为
+1 次）累计耗时 27 秒。</li>
+<li><strong><code>&lt;04:05</code></strong>：预计剩余时间是 4 分 5
+秒。</li>
+<li><strong><code>27.29s/it</code></strong>：当前每次迭代的<strong>指数移动平均耗时</strong>为
+27.29 秒。</li>
+</ol>
+<p><code>tqdm</code>
+使用了<strong>指数移动平均（EMA）</strong>来平滑显示的速度，因此
+<code>s/it</code>
+并不是严格基于当前累计耗时和迭代次数计算的，而是对历史耗时进行平滑处理后的结果。</p>
+<p>平滑公式如下： <span class="math display">\[
+\text{smoothed\_s/it} = \alpha \cdot \text{current\_s/it} + (1 - \alpha)
+\cdot \text{previous\_smoothed\_{s/it}}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\alpha\)</span> 是平滑系数（默认值为
+0.3）。</li>
+<li><strong>current_s/it</strong> 是当前最新一个 item
+处理的即时时间（即时速率）</li>
+<li><strong>previous_smoothed_s/it</strong> 是上一次的平滑结果。</li>
 </ul>
-<p>这些功能使 <code>Uvicorn</code> 成为构建高性能Web应用的理想选择。</p>
-<h2 id="基础用法">基础用法</h2>
-<h3 id="运行简单的asgi应用">运行简单的ASGI应用</h3>
-<p>以下是一个最简单的ASGI应用示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Uvicorn!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
-<p>使用 <code>Uvicorn</code> 运行该应用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn app:app --host 127.0.0.1 --port 8000</span><br></pre></td></tr></table></figure>
-<p>打开浏览器访问 <code>http://127.0.0.1:8000</code>，将显示 “Hello,
-Uvicorn!”。</p>
-<h3 id="集成异步web框架">集成异步Web框架</h3>
-<p><code>Uvicorn</code> 常与异步Web框架（如FastAPI）一起使用。</p>
-<p>以下是一个集成FastAPI的示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;Welcome to Uvicorn with FastAPI!&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>运行该应用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --reload</span><br></pre></td></tr></table></figure>
-<p><code>--reload</code>
-参数启用代码热重载功能，每次修改代码后服务器将自动重启。</p>
-<h3 id="自定义运行参数">自定义运行参数</h3>
-<p><code>Uvicorn</code> 支持通过命令行或Python代码自定义运行参数。</p>
-<p>例如，可以启用HTTP/2支持或设置工作线程数：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --host 0.0.0.0 --port 8080 --http h11 --workers 4</span><br></pre></td></tr></table></figure>
-<p>也可以通过Python脚本运行：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">8080</span>, workers=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="进阶用法">进阶用法</h2>
-<h3 id="日志配置">日志配置</h3>
-<p><code>Uvicorn</code> 提供了灵活的日志配置选项，可以通过
-<code>--log-level</code> 参数设置日志级别：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --log-level debug</span><br></pre></td></tr></table></figure>
-<p>如果需要自定义日志格式，可以在Python脚本中配置：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    logging.basicConfig(level=logging.INFO, <span class="built_in">format</span>=<span class="string">&quot;%(asctime)s - %(message)s&quot;</span>)</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, log_level=<span class="string">&quot;info&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="启用ssl支持">启用SSL支持</h3>
-<p><code>Uvicorn</code> 支持HTTPS，通过指定SSL证书和私钥即可启用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --ssl-keyfile key.pem --ssl-certfile cert.pem</span><br></pre></td></tr></table></figure>
-<p>这在需要保护敏感数据的场景中非常有用。</p>
-<h3 id="使用自定义中间件">使用自定义中间件</h3>
-<p><code>Uvicorn</code> 支持自定义中间件来扩展ASGI应用的功能。</p>
-<p>例如，可以创建一个简单的日志中间件：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LogMiddleware</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, app</span>):</span><br><span class="line">        self.app = app</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, scope, receive, send</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;New request: <span class="subst">&#123;scope[<span class="string">&#x27;path&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">await</span> self.app(scope, receive, send)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Middleware!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br><span class="line"> </span><br><span class="line">app = LogMiddleware(app)</span><br></pre></td></tr></table></figure>
-<p>运行上述代码后，服务器将记录每个请求的路径。</p>
-<h3 id="多进程模式">多进程模式</h3>
-<p>在高并发场景下，可以通过 <code>--workers</code>
-参数启用多进程模式，以提升性能：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --workers 4</span><br></pre></td></tr></table></figure>
-<p>每个进程将独立处理请求，有助于充分利用多核CPU。</p>
-<h2 id="实际应用">实际应用</h2>
-<h3 id="构建实时聊天应用">构建实时聊天应用</h3>
-<p>以下是一个简单的WebSocket聊天应用：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, WebSocket</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.websocket(<span class="params"><span class="string">&quot;/chat&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">chat</span>(<span class="params">websocket: WebSocket</span>):</span><br><span class="line">    <span class="keyword">await</span> websocket.accept()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = <span class="keyword">await</span> websocket.receive_text()</span><br><span class="line">        <span class="keyword">await</span> websocket.send_text(<span class="string">f&quot;Message received: <span class="subst">&#123;data&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>运行该应用并使用WebSocket客户端测试，即可实现实时消息交互。</p>
-<h3 id="开发高性能api服务">开发高性能API服务</h3>
-<p>通过 <code>Uvicorn</code> 和 FastAPI，可以快速构建一个高性能的RESTful
-API：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="built_in">str</span> = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
-<p>运行后可以通过 <code>curl</code> 或其他工具测试：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://127.0.0.1:8000/items/42?q=test&quot;</span><br></pre></td></tr></table></figure>
-<p>返回结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;item_id&quot;</span>: <span class="number">42</span>,</span><br><span class="line">  <span class="string">&quot;q&quot;</span>: <span class="string">&quot;test&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="部署机器学习模型">部署机器学习模型</h3>
-<p><code>Uvicorn</code> 常用于部署机器学习模型。</p>
-<p>以下示例展示了如何将一个预训练的模型暴露为API：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">import</span> joblib</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line">model = joblib.load(<span class="string">&quot;model.pkl&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/predict&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">features: <span class="built_in">dict</span></span>):</span><br><span class="line">    prediction = model.predict([<span class="built_in">list</span>(features.values())])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;prediction&quot;</span>: prediction[<span class="number">0</span>]&#125;</span><br></pre></td></tr></table></figure>
-<p>通过 <code>Uvicorn</code>
-运行该服务，即可将机器学习模型集成到应用中。</p>
-<h2 id="总结">总结</h2>
-<p>Uvicorn
-是一个高性能的ASGI服务器，专为支持现代异步Web框架而设计，如FastAPI和Starlette。它基于
-uvloop 和
-httptools，具有快速响应、高并发处理能力以及对HTTP/2和WebSocket的原生支持。作为轻量级服务器，Uvicorn
-提供了灵活的配置选项，包括多进程模式、SSL支持和自定义日志配置等，同时支持代码热重载，大大提高了开发效率。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501051501858.png"
+alt="image-20250105150122678" />
+<figcaption aria-hidden="true">image-20250105150122678</figcaption>
+</figure>
+<p>举例： <span class="math display">\[
+7.29\ne \left( 28*60+43 \right) /307
+\\
+7.29=0.3*7.77+\left( 1-0.3 \right) *7.08
+\]</span></p>
 
     
 
@@ -763,7 +893,7 @@ httptools，具有快速响应、高并发处理能力以及对HTTP/2和WebSocke
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90tqdm%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1187,6 +1317,231 @@ Typing 模块——类型注解</a> 2019.6</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90typing%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【uvicorn模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【uvicorn模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="uvicorn模块">【uvicorn模块】</h1>
+<p>在构建现代Web应用程序时，性能和并发能力是重要的考量因素。传统的WSGI服务器已无法满足异步Web框架的需求，而ASGI（Asynchronous
+Server Gateway
+Interface）成为新一代Web服务器接口的标准。<code>Uvicorn</code>
+是一个快速、轻量级的ASGI服务器，支持异步Web框架（如FastAPI和Starlette）以及HTTP/2和WebSocket。<code>Uvicorn</code>
+基于 <code>uvloop</code> 和 <code>httptools</code>
+构建，具有高性能、易用性和灵活性的特点。</p>
+<h2 id="安装和运行">安装和运行</h2>
+<h3 id="安装">安装</h3>
+<p>可以通过 <code>pip</code> 安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install uvicorn</span><br></pre></td></tr></table></figure>
+<p>为了获得最佳性能，可以安装带Cython优化的版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install &quot;uvicorn[standard]&quot;</span><br></pre></td></tr></table></figure>
+<p>安装完成后，可以通过以下命令验证安装是否成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn --version</span><br></pre></td></tr></table></figure>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Optional</span></span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;Hello&quot;</span>: <span class="string">&quot;World&quot;</span>&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>详细解释：</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app</span>.<span class="keyword">get</span>(<span class="string">&quot;/items/&#123;item_id&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>路径操作装饰器，告诉 FastAPI 在该装饰器下方的 <code>read_item</code>
+函数是负责处理如下请求的：</p>
+<ul>
+<li>请求路径为 <code>/items/&#123;item_id&#125;</code></li>
+<li>使用 get 操作</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span>)</span><br></pre></td></tr></table></figure>
+<p><code>read_item</code> 函数有两个参数 <code>item_id</code> 和
+<code>q</code>，且 <code>item_id</code> 是 int 型且必填，<code>q</code>
+是字符串类型且默认值为 None 的可选参数</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
+<p>return 的对象就是返回内容 reponse ，你可以返回一个
+<code>dict</code>、<code>list</code>，像
+<code>str</code>、<code>int</code> 一样的单个值等等。</p>
+<h3 id="启动server两个方式">启动server两个方式</h3>
+<ol type="1">
+<li>命令行启动</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D:\myproject\20210622\test_server&gt;uvicorn example:app --port 8002 --reload</span><br><span class="line">INFO:     Started server process [32504]</span><br><span class="line">INFO:     Waiting for application startup.</span><br><span class="line">INFO:     Application startup complete.</span><br><span class="line">INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>example</code>：example.py 文件（一个 Python "模块"）</li>
+<li><code>app</code>：在 main.py 文件中通过 <code>app = FastAPI()</code>
+创建的对象</li>
+<li><code>--reload</code>：让服务器在更新代码后重新启动。仅在开发时使用该选项</li>
+</ul>
+<ol start="2" type="1">
+<li>代码里面写main函数，在main函数里指定app、主机、端口，直接运行代码启动</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    uvicorn.run(app=<span class="string">&#x27;example:app&#x27;</span>, host=<span class="string">&quot;127.0.0.1&quot;</span>, port=<span class="number">8001</span>, reload=<span class="literal">True</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p>运行起来后，因为示例是get请求，可以直接在浏览器看一下效果：</p>
+<p>浏览器输入 http://127.0.0.1:8002/items/100?q=1
+回车，你会看到页面显示的返回内容为:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;item_id&quot;</span>:<span class="number">100</span>,<span class="string">&quot;q&quot;</span>:<span class="string">&quot;1&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>引用官方的总结</p>
+<ul>
+<li>导入 <code>FastAPI</code>。</li>
+<li>创建一个 <code>app</code> 实例。</li>
+<li>编写一个<strong>路径操作装饰器</strong>(如
+<code>@app.get("/")</code>)。</li>
+<li>编写一个<strong>路径操作函数</strong>(如上面的
+<code>def root(): ...</code>)。</li>
+<li>运行开发服务器(如 <code>uvicorn main:app --reload</code>)。</li>
+</ul>
+<h2 id="主要功能">主要功能</h2>
+<ul>
+<li><p><strong>支持ASGI协议</strong>：完全兼容ASGI标准，可以运行异步和同步的Web应用。</p></li>
+<li><p><strong>高性能</strong>：基于 <code>uvloop</code> 和
+<code>httptools</code>，支持高吞吐量和低延迟。</p></li>
+<li><p><strong>支持HTTP/2和WebSocket</strong>：满足现代Web应用的实时通信需求。</p></li>
+<li><p><strong>热重载</strong>：开发模式下支持代码热重载，提升开发效率。</p></li>
+<li><p><strong>灵活的配置</strong>：通过命令行参数或Python代码自定义运行选项。</p></li>
+</ul>
+<p>这些功能使 <code>Uvicorn</code> 成为构建高性能Web应用的理想选择。</p>
+<h2 id="基础用法">基础用法</h2>
+<h3 id="运行简单的asgi应用">运行简单的ASGI应用</h3>
+<p>以下是一个最简单的ASGI应用示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Uvicorn!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<p>使用 <code>Uvicorn</code> 运行该应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn app:app --host 127.0.0.1 --port 8000</span><br></pre></td></tr></table></figure>
+<p>打开浏览器访问 <code>http://127.0.0.1:8000</code>，将显示 “Hello,
+Uvicorn!”。</p>
+<h3 id="集成异步web框架">集成异步Web框架</h3>
+<p><code>Uvicorn</code> 常与异步Web框架（如FastAPI）一起使用。</p>
+<p>以下是一个集成FastAPI的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;Welcome to Uvicorn with FastAPI!&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>运行该应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --reload</span><br></pre></td></tr></table></figure>
+<p><code>--reload</code>
+参数启用代码热重载功能，每次修改代码后服务器将自动重启。</p>
+<h3 id="自定义运行参数">自定义运行参数</h3>
+<p><code>Uvicorn</code> 支持通过命令行或Python代码自定义运行参数。</p>
+<p>例如，可以启用HTTP/2支持或设置工作线程数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --host 0.0.0.0 --port 8080 --http h11 --workers 4</span><br></pre></td></tr></table></figure>
+<p>也可以通过Python脚本运行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, host=<span class="string">&quot;0.0.0.0&quot;</span>, port=<span class="number">8080</span>, workers=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="进阶用法">进阶用法</h2>
+<h3 id="日志配置">日志配置</h3>
+<p><code>Uvicorn</code> 提供了灵活的日志配置选项，可以通过
+<code>--log-level</code> 参数设置日志级别：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --log-level debug</span><br></pre></td></tr></table></figure>
+<p>如果需要自定义日志格式，可以在Python脚本中配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> uvicorn</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    logging.basicConfig(level=logging.INFO, <span class="built_in">format</span>=<span class="string">&quot;%(asctime)s - %(message)s&quot;</span>)</span><br><span class="line">    uvicorn.run(<span class="string">&quot;main:app&quot;</span>, log_level=<span class="string">&quot;info&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="启用ssl支持">启用SSL支持</h3>
+<p><code>Uvicorn</code> 支持HTTPS，通过指定SSL证书和私钥即可启用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --ssl-keyfile key.pem --ssl-certfile cert.pem</span><br></pre></td></tr></table></figure>
+<p>这在需要保护敏感数据的场景中非常有用。</p>
+<h3 id="使用自定义中间件">使用自定义中间件</h3>
+<p><code>Uvicorn</code> 支持自定义中间件来扩展ASGI应用的功能。</p>
+<p>例如，可以创建一个简单的日志中间件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LogMiddleware</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, app</span>):</span><br><span class="line">        self.app = app</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, scope, receive, send</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;New request: <span class="subst">&#123;scope[<span class="string">&#x27;path&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">await</span> self.app(scope, receive, send)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">app</span>(<span class="params">scope, receive, send</span>):</span><br><span class="line">    <span class="keyword">assert</span> scope[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;http&#x27;</span></span><br><span class="line">    response = <span class="string">b&quot;Hello, Middleware!&quot;</span></span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.start&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;status&#x27;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&#x27;headers&#x27;</span>: [(<span class="string">b&#x27;content-type&#x27;</span>, <span class="string">b&#x27;text/plain&#x27;</span>)],</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> send(&#123;</span><br><span class="line">        <span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;http.response.body&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;body&#x27;</span>: response,</span><br><span class="line">    &#125;)</span><br><span class="line"> </span><br><span class="line">app = LogMiddleware(app)</span><br></pre></td></tr></table></figure>
+<p>运行上述代码后，服务器将记录每个请求的路径。</p>
+<h3 id="多进程模式">多进程模式</h3>
+<p>在高并发场景下，可以通过 <code>--workers</code>
+参数启用多进程模式，以提升性能：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --workers 4</span><br></pre></td></tr></table></figure>
+<p>每个进程将独立处理请求，有助于充分利用多核CPU。</p>
+<h2 id="实际应用">实际应用</h2>
+<h3 id="构建实时聊天应用">构建实时聊天应用</h3>
+<p>以下是一个简单的WebSocket聊天应用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, WebSocket</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.websocket(<span class="params"><span class="string">&quot;/chat&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">chat</span>(<span class="params">websocket: WebSocket</span>):</span><br><span class="line">    <span class="keyword">await</span> websocket.accept()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = <span class="keyword">await</span> websocket.receive_text()</span><br><span class="line">        <span class="keyword">await</span> websocket.send_text(<span class="string">f&quot;Message received: <span class="subst">&#123;data&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>运行该应用并使用WebSocket客户端测试，即可实现实时消息交互。</p>
+<h3 id="开发高性能api服务">开发高性能API服务</h3>
+<p>通过 <code>Uvicorn</code> 和 FastAPI，可以快速构建一个高性能的RESTful
+API：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_item</span>(<span class="params">item_id: <span class="built_in">int</span>, q: <span class="built_in">str</span> = <span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id, <span class="string">&quot;q&quot;</span>: q&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后可以通过 <code>curl</code> 或其他工具测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://127.0.0.1:8000/items/42?q=test&quot;</span><br></pre></td></tr></table></figure>
+<p>返回结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;item_id&quot;</span>: <span class="number">42</span>,</span><br><span class="line">  <span class="string">&quot;q&quot;</span>: <span class="string">&quot;test&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="部署机器学习模型">部署机器学习模型</h3>
+<p><code>Uvicorn</code> 常用于部署机器学习模型。</p>
+<p>以下示例展示了如何将一个预训练的模型暴露为API：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">import</span> joblib</span><br><span class="line"> </span><br><span class="line">app = FastAPI()</span><br><span class="line">model = joblib.load(<span class="string">&quot;model.pkl&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/predict&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">features: <span class="built_in">dict</span></span>):</span><br><span class="line">    prediction = model.predict([<span class="built_in">list</span>(features.values())])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;prediction&quot;</span>: prediction[<span class="number">0</span>]&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 <code>Uvicorn</code>
+运行该服务，即可将机器学习模型集成到应用中。</p>
+<h2 id="总结">总结</h2>
+<p>Uvicorn
+是一个高性能的ASGI服务器，专为支持现代异步Web框架而设计，如FastAPI和Starlette。它基于
+uvloop 和
+httptools，具有快速响应、高并发处理能力以及对HTTP/2和WebSocket的原生支持。作为轻量级服务器，Uvicorn
+提供了灵活的配置选项，包括多进程模式、SSL支持和自定义日志配置等，同时支持代码热重载，大大提高了开发效率。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90uvicorn%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -2145,232 +2500,6 @@ Python 的描述符。</p>
 
 
   
-    <article id="post-【后端】/python/OOP/Exceptions/1.Exceptions" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" target="_blank">Exceptions</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="exceptions">Exceptions</h1>
-<p><strong>Summary</strong>: in this tutorial, you’ll learn about the
-Python exceptions and how to handle them gracefully in programs.</p>
-<h2 id="introduction-to-python-exceptions">Introduction to Python
-exceptions</h2>
-<p>In Python, exceptions are objects of the exception <a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-oop/python-class/">classes</a>.
-All exception classes are the subclasses of the
-<code>BaseException</code> class. 在 Python
-中，异常是异常类的对象。所有异常类都是 <code>BaseException</code>
-类的子类。</p>
-<p>However, almost all built-in exception classes inherit from the
-<code>Exception</code> class, which is the subclass of the
-<code>BaseException</code> class: 然而，几乎所有内置异常类都继承自
-<code>Exception</code> 类，它是 <code>BaseException</code>
-类的子类：</p>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505399.png"
-alt="image-20250112150523242" />
-<figcaption aria-hidden="true">image-20250112150523242</figcaption>
-</figure>
-<p>This page shows a complete <a
-target="_blank" rel="noopener" href="https://docs.python.org/3/library/exceptions.html#exception-hierarchy">class
-hierarchy for built-in exceptions in Python</a>.</p>
-<p>The following example defines a list of three elements and attempts
-to access the fourth one:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<p>The invalid index caused the <code>IndexError</code> exception as
-expected:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexError: list index out of range</span><br></pre></td></tr></table></figure>
-<p>When an exception occurs, Python stops the program unless you handle
-it. To handle an exception, you use the <code>try...except</code>
-statement. For example:</p>
-<p>当发生异常时，Python
-会停止程序运行，除非你处理了它。要处理异常，可以使用
-<code>try...except</code> 语句。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> IndexError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In this example, we use the <code>try...except</code> statement to
-handle the <code>IndexError</code> exception. As you can see from the
-output, the program continues to run after the <code>try...except</code>
-statement. 在这个例子中，我们使用 <code>try...except</code> 语句来处理
-<code>IndexError</code> 异常。从输出可以看到，程序在
-<code>try...except</code> 语句之后继续运行。</p>
-<p>The <code>IndexError</code> class inherits from the
-<code>LookupError</code> class which inherits from the
-<code>Exception</code> class:</p>
-<p><img src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501121505825.png" alt="image-20250112150546744" style="zoom: 20%;" /></p>
-<p>And you can catch either <code>LookupError</code> or
-<code>Exception</code> class when an <code>IndexError</code> exception
-occurs. For example:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> LookupError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In this example, the exception is still <code>IndexError</code> even
-though we catch the <code>LookupError</code> exception. Therefore, when
-you handle an exception, the exception handler will catch the exception
-type you specify and any of its subclasses. 在这个例子中，即使我们捕获了
-<code>LookupError</code> 异常，异常仍然是 <code>IndexError</code>
-。因此，当您处理异常时，异常处理程序将捕获您指定的异常类型及其任何子类。</p>
-<p>The program runs the same if you use the <code>Exception</code> class
-instead of the <code>LookupError</code> class:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">colors = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(colors[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(e.__class__, <span class="string">&#x27;-&#x27;</span>, e)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Continue to run&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;IndexError&#x27;&gt; - list index out of range</span><br><span class="line">Continue to run</span><br></pre></td></tr></table></figure>
-<p>In practice, you should catch the exceptions as specific as possible
-so that you know how to deal with each exception in a specific way.
-实践中，你应该尽可能具体地捕获异常，以便知道如何以特定方式处理每个异常。</p>
-<h2 id="python-exception-handling-example">Python exception handling
-example</h2>
-<p>The following example defines a <code>division</code> function that
-returns the result of a is divided by b:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = division(<span class="number">10</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZeroDivisionError: division by zero</span><br></pre></td></tr></table></figure>
-<p>In this example, if b is zero, the <code>ZeroDivisionError</code>
-exception will occur. To handle the <code>ZeroDivisionError</code>
-exception, you use the <code>try...except</code> statement as
-follows:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>In this example, the function returns a dictionary that has three
-elements:</p>
-<ul>
-<li><code>success</code> is a boolean value that indicates whethere the
-operation is successful or not.</li>
-<li><code>message</code> indicates the error or success message.</li>
-<li><code>result</code> stores the result of a / b or <code>None</code>
-if b is zero.</li>
-</ul>
-<p>The following shows the output if the <code>ZeroDivisionError</code>
-occurs:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<p>Now, if you don’t catch the <code>ZeroDivisionError</code> exception
-but the more general exception like <code>Exception</code> class:
-现在，如果你没有捕获 <code>ZeroDivisionError</code>
-异常，而是捕获了更通用的 <code>Exception</code> 类异常：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>The program works as before because the <code>try...except</code>
-also catches the exception type that is the subclass of the
-<code>Exception</code> class. 程序仍然有效，因为
-<code>try...except</code> 也捕获了 <code>Exception</code>
-类的子类异常类型。</p>
-<p>However, if you pass two strings instead of two numbers to the
-<code>division()</code> function, you’ll get the same message as if the
-<code>ZeroDivisionError</code> exception occurred: 但是，如果你向
-<code>division()</code> 函数传递两个字符串而不是两个数字，你将得到与发生
-<code>ZeroDivisionError</code> 异常时相同的提示信息：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;b cannot be zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<p>In this example, the exception is not <code>ZeroDivisionError</code>
-but the <code>TypeError</code>. However, the code still handles it like
-the <code>ZeroDivisionError</code> exception. 在这个例子中，异常不是
-<code>ZeroDivisionError</code> 而是 <code>TypeError</code>
-。但是，代码仍然像处理 <code>ZeroDivisionError</code>
-异常一样处理它。</p>
-<p>Therefore, you should always handle the exceptions from the most
-specific to the least specific. For example:
-因此，你应该始终按照从最具体到最不具体的顺序处理异常。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> TypeError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;Both a &amp; b must be numbers&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;b cannot be zero&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="string">&#x27;10&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>In this example, we catch the <code>TypeError</code>,
-<code>ZeroDivisionError</code>, and <code>Exception</code> in the order
-that they appear in the <code>try...except</code> statement.
-在这个例子中，我们按照它们在 <code>try...except</code>
-语句中出现的顺序捕获 <code>TypeError</code> 、
-<code>ZeroDivisionError</code> 和 <code>Exception</code> 。</p>
-<p>If the code that handles different exceptions are the same, you can
-group all exceptions into one as follows:
-如果处理不同异常的代码相同，可以将所有异常分组如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">division</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: a / b</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">except</span> (TypeError, ZeroDivisionError, Exception) <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;success&#x27;</span>: <span class="literal">False</span>,</span><br><span class="line">            <span class="string">&#x27;message&#x27;</span>: <span class="built_in">str</span>(e),</span><br><span class="line">            <span class="string">&#x27;result&#x27;</span>: <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = division(<span class="number">10</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>Output:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;success&#x27;: False, &#x27;message&#x27;: &#x27;division by zero&#x27;, &#x27;result&#x27;: None&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="summary">Summary</h2>
-<ul>
-<li>Python exceptions are objects of classes, which are the subclasses
-of the BaseException class.</li>
-<li>Do handle the exception from the most specific to lest
-specific.</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/OOP/Exceptions/1.Exceptions/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/11/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/13/">Next &amp;raquo;</a>
@@ -2537,10 +2666,6 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -2549,7 +2674,7 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2561,15 +2686,7 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2577,7 +2694,19 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2585,7 +2714,11 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2601,7 +2734,7 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2609,15 +2742,11 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2625,7 +2754,7 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2633,23 +2762,11 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2665,15 +2782,15 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2685,7 +2802,19 @@ specific.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

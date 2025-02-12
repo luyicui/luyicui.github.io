@@ -213,6 +213,540 @@
             
 
   
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/clone()与copy_()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/clone()%E4%B8%8Ecopy_()/" target="_blank">clone()与copy_()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/clone()%E4%B8%8Ecopy_()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="clone与copy_">clone()与copy_()</h1>
+<blockquote>
+<p>请先看完<a
+href="D:\downloads\hexo\blog\source_posts【后端】\python\第三方库【pytorch】\Base\inplace%20operation\inplace%20operation禁用场景.md">inplace
+operation禁用场景</a>后，再阅读下面内容，下面例子参考了</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y = x.clone()</span><br><span class="line">y.copy_(x)</span><br></pre></td></tr></table></figure>
+<p><code>y = x.clone()</code> 与 <code>y.copy_(x)</code> 返回的 tensor
+<code>y</code>有相同的地方，也有不同的地方</p>
+<h2 id="相同">相同</h2>
+<ul>
+<li><code>y</code> 都和 <code>x</code>
+有<strong>相同的数据</strong>（value、shape、dtype 和
+device），但<strong>不</strong>共享同一块数据</li>
+<li><code>y</code> 和 <code>x</code> 的
+计算历史<strong>有关</strong></li>
+</ul>
+<p>可以理解为：<code>x</code> 经过<strong>恒等变换</strong>后得到
+<code>y</code></p>
+<h2 id="不同">不同</h2>
+<ul>
+<li>调用方式不同</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># source tensor: x    target tensor: y</span></span><br><span class="line">y = x.clone()</span><br><span class="line">y = torch.clone(x)</span><br><span class="line"></span><br><span class="line">y.copy_(x)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>y = x.clone()</code> 中 <code>y</code> 的 <code>grad_fn</code>
+属性为 <code>&lt;CloneBackward&gt;</code>；<code>y.copy_(x)</code> 中
+<code>y</code> 的 <code>grad_fn</code> 属性为
+<code>&lt;CopyBackward&gt;</code></li>
+<li><code>y.copy_(x)</code> 是 inplace_operation</li>
+</ul>
+<h2 id="实例">实例</h2>
+<h3 id="clone">clone()</h3>
+<p>创建一个 tensor 与源 tensor 有相同的 shape，dtype 和
+device，不共享内存地址，但新 tensor 的梯度会叠加在源 tensor
+上，下面例子可以说明上述特点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line"></span><br><span class="line">a = torch.tensor([1.,2.,3.],requires_grad=True)</span><br><span class="line">b = a.clone()    # 或者 b = torch.clone(a)</span><br><span class="line"></span><br><span class="line">print(a.data_ptr()) # 3004830353216</span><br><span class="line">print(b.data_ptr()) # 3004830353344 内存地址不同</span><br><span class="line"></span><br><span class="line">print(a) # tensor([1., 2., 3.], requires_grad=True)</span><br><span class="line">print(b) # tensor([1., 2., 3.], grad_fn=&lt;CloneBackward&gt;)  复制成功</span><br><span class="line">print(&#x27;-&#x27;*30)</span><br><span class="line"></span><br><span class="line">c = a * 2</span><br><span class="line">d = b * 3</span><br><span class="line"></span><br><span class="line">c.sum().backward() </span><br><span class="line">print(a.grad) # tensor([2., 2., 2.])</span><br><span class="line"></span><br><span class="line">d.sum().backward() </span><br><span class="line">print(a.grad) # tensor([5., 5., 5.]) # 源tensor的梯度叠加了新tensor的梯度</span><br><span class="line">print(b.grad) # None # 此时复制出来的节点已经不属于叶子节点，因此不能直接得到其梯度</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，<code>b = a.clone()</code> 之后，<code>b</code>
+并非叶子节点（最后输出 <code>b</code> 的梯度时 warning
+会提醒我们，<code>b</code> 节点更像是 <code>a</code>
+经过一个恒等函数之后得到的输出。</p>
+<div style="text-align: center">
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501271703094.jpeg&quot;&gt;
+&lt;br&gt;
+计算图，蓝色箭头为正向计算，红色箭头为梯度流向</code></pre>
+</div>
+<p>如图所示，我们需要留意从 <code>a</code> 到 <code>b</code>
+的变换。我们应该把 <code>clone()</code> 理解成一个“函数”，而不能把
+<code>b</code> 理解成一个完全独立的节点。</p>
+<p>总结一句话：由于不共享内存，因此 <code>a</code> 与 <code>b</code>
+的值是非关联的，但梯度是有联系的。</p>
+<h3 id="copy_">copy_()</h3>
+<p><code>copy_()</code> 函数完成与 <code>clone()</code>
+函数类似的功能，但也存在区别。调用 <code>copy_()</code> 的对象是目标
+tensor，参数是复制操作 from 的 tensor，最后会返回目标 tensor；而
+<code>clone()</code> 的调用对象为源 tensor，返回一个新 tensor。当然
+<code>clone()</code> 函数也可以采用 <code>torch.clone()</code>
+调用，将源 tensor 作为参数。</p>
+<p><code>copy_()</code> 函数的调用对象既然是目标
+tensor，那么就需要我们预先已有一个目标
+tensor（<code>clone()</code>就不需要），源 tensor
+的尺度需要可以广播到目标 tensor 的尺度。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line"></span><br><span class="line">a = torch.tensor([1., 2., 3.],requires_grad=True)</span><br><span class="line">b = torch.empty_like(a).copy_(a)</span><br><span class="line"># 等价于</span><br><span class="line"># b = torch.empty_like(a)</span><br><span class="line"># b.copy_(a)</span><br><span class="line"></span><br><span class="line">print(a.data_ptr()) # 1597834661312</span><br><span class="line">print(b.data_ptr()) # 1597834659712 # 内存地址不同</span><br><span class="line"></span><br><span class="line">print(a) # tensor([1., 2., 3.], requires_grad=True)</span><br><span class="line">print(b) # tensor([1., 2., 3.], grad_fn=&lt;CopyBackwards&gt;) # 复制成功</span><br><span class="line">print(&#x27;-&#x27;*30)</span><br><span class="line"></span><br><span class="line">c = a * 2</span><br><span class="line">d = b * 3</span><br><span class="line"></span><br><span class="line">c.sum().backward()</span><br><span class="line">print(a.grad) # tensor([2., 2., 2.])</span><br><span class="line"></span><br><span class="line">d.sum().backward()</span><br><span class="line">print(a.grad) # tensor([5., 5., 5.]) # 源tensor梯度累加了</span><br><span class="line">print(b.grad) # None # 复制得到的节点依然不是叶子节点</span><br></pre></td></tr></table></figure>
+<p>由此可以看出，这个 <code>copy_()</code> 和 <code>clone()</code>
+真的很像。</p>
+<p><code>A.copy(B)</code> 这个操作将 A 变成了 B
+经过恒等函数后的输出。就好像 <code>A = torch.clone(B)</code>
+一样，因此，上面例子中，B 梯度回传回 A 也就不难理解了。</p>
+<p>总结一句话：由于不共享内存，因此 a 与 b
+的值是非关联的，但梯度是有联系的。</p>
+<h2 id="综合应用">综合应用</h2>
+<h3 id="创建新tensor">创建新tensor</h3>
+<ul>
+<li><p><code>clone()</code> 与 <code>copy_()</code>
+<strong>内存独立</strong>（在新的内存空间复制源
+tensor），但<strong>梯度不独立</strong></p></li>
+<li><p><code>detach()</code> 与 <code>.data</code>
+<strong>梯度独立</strong>，但<strong>内存不独立</strong>（与源 tensor
+具有相同内存）</p></li>
+</ul>
+<p>因此<strong>联合使用二者</strong>可以创建出<strong>数据相同，梯度独立、内存独立</strong>的新
+tensor</p>
+<p>常见的手段便是 <strong><code>b = a.clone().detach()</code></strong>
+或是 <code>b = a.detach().clone()</code></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55266154/pytorch-preferred-way-to-copy-a-tensor">python
+- PyTorch preferred way to copy a tensor - Stack Overflow</a>
+介绍了5种建立新tensor的方式并进行了速度比较</p>
+<h3 id="tensor值的改变">tensor值的改变</h3>
+<p>在深度学习中，如果我们创建了一个 model，那么 model
+中可以训练的参数都是叶子节点。pytorch 规定
+<code>requires_grad=True</code> 的叶子节点是不能做 in-place operation
+的。那么他们是如何被初始化的呢？</p>
+<p>一种曲线救国的方式是通过对 <code>XX.detach()</code> 进行操作。例如
+<code>XX.detach().zero_</code> 便可以达到初始化效果了，毕竟
+<code>XX.detach()</code> 与 <code>XX</code> 共享内存。</p>
+<p>在 MoCo 中，需要用一个网络的参数初始化另一个网络的参数。由于
+<code>copy_()</code> 也是一种 inplace operation，因此，只能采用
+<code>A.data.copy_(B.data)</code> 的方式。</p>
+<p>类似的例子应该还有很多，在阅读代码的时候可以多思考，多尝试。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/clone()%E4%B8%8Ecopy_()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/In-place Operation" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/In-place%20Operation/" target="_blank">In-place Operation</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/In-place%20Operation/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="in-place-operation">In-place Operation</h1>
+<p>在 PyTorch 中，<strong>原地操作（in-place operations）</strong>
+会直接修改张量的内存数据，而非原地操作则会创建新的张量。以下是详细的分类和示例：</p>
+<hr />
+<h2 id="原地操作in-place-operations">原地操作（In-place
+Operations）</h2>
+<h3 id="特点">特点：</h3>
+<ul>
+<li><p>直接修改原张量的数据，不创建新张量。</p></li>
+<li><p>方法名通常以 <code>_</code> 结尾。</p></li>
+<li><p><strong>返回的张量与源张量共享内存空间</strong></p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: <span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a = torch.randn(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: a</span><br><span class="line">Out[<span class="number">4</span>]:</span><br><span class="line">tensor([[-<span class="number">0.1629</span>,  <span class="number">0.4871</span>,  <span class="number">2.0132</span>],</span><br><span class="line">        [ <span class="number">0.3863</span>, -<span class="number">0.1139</span>,  <span class="number">2.0849</span>]])</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: b = a.normal_()</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: b.data_ptr()</span><br><span class="line">Out[<span class="number">6</span>]: <span class="number">658488832</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: a.data_ptr()</span><br><span class="line">Out[<span class="number">7</span>]: <span class="number">658488832</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: b == a</span><br><span class="line">Out[<span class="number">8</span>]:</span><br><span class="line">tensor([[<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>],</span><br><span class="line">        [<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>]])</span><br></pre></td></tr></table></figure></p></li>
+</ul>
+<h3 id="常见原地操作">常见原地操作</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 27%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>操作类型</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>以 <code>_</code>结尾的方法</td>
+<td><code>x.add_(y)</code>、<code>x.mul_(2)</code></td>
+<td>直接在 <code>x</code> 的内存上修改数据。</td>
+</tr>
+<tr class="even">
+<td>索引赋值</td>
+<td><code>x[0] = 1</code>、<code>x[:, 1:3] = y</code></td>
+<td>直接修改 <code>x</code> 的部分元素，属于原地操作。</td>
+</tr>
+<tr class="odd">
+<td>原地激活函数</td>
+<td><code>torch.relu_(x)</code></td>
+<td>对 <code>x</code> 应用 ReLU
+并覆盖原值（需手动调用，默认不启用）。</td>
+</tr>
+<tr class="even">
+<td>数学运算简写</td>
+<td><code>x += y</code>、<code>x *= 2</code></td>
+<td>等价于 <code>x.add_(y)</code>、<code>x.mul_(2)</code>。</td>
+</tr>
+<tr class="odd">
+<td>内存操作</td>
+<td><code>x.copy_(y)</code>、<code>x.fill_(0)</code></td>
+<td>覆盖 <code>x</code> 的数据为 <code>y</code> 的值或填充固定值。</td>
+</tr>
+</tbody>
+</table>
+<p>某些激活函数（如 <code>torch.nn.ReLU</code>）支持
+<code>inplace=True</code>，此时会直接修改输入张量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">relu = torch.nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">x = relu(x)  <span class="comment"># 原地操作，x 被覆盖为 ReLU(x)</span></span><br></pre></td></tr></table></figure>
+<h2 id="非原地操作out-of-place-operations">非原地操作（Out-of-place
+Operations）</h2>
+<h3 id="特点-1">特点</h3>
+<ul>
+<li>创建新张量，保留原始张量的数据。</li>
+<li>方法名无 <code>_</code> 后缀。</li>
+<li>安全用于自动微分，不会破坏计算图。</li>
+</ul>
+<h3 id="常见非原地操作">常见非原地操作</h3>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 30%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>操作类型</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>张量方法（无 <code>_</code>）</td>
+<td><code>x.add(y)</code>、<code>x.mul(2)</code></td>
+<td>返回新张量，原张量 <code>x</code> 不变。</td>
+</tr>
+<tr class="even">
+<td>数学运算符</td>
+<td><code>x + y</code>、<code>x * 2</code></td>
+<td>等价于
+<code>torch.add(x, y)</code>、<code>torch.mul(x, 2)</code>。</td>
+</tr>
+<tr class="odd">
+<td>函数式操作</td>
+<td><code>torch.relu(x)</code>、<code>torch.sigmoid(x)</code></td>
+<td>返回新张量，原张量 <code>x</code> 不变（默认
+<code>inplace=False</code>）。</td>
+</tr>
+<tr class="even">
+<td>形状变换</td>
+<td><code>x.view(...)</code>、<code>x.reshape(...)</code></td>
+<td>返回新张量（注意：<code>reshape</code>
+可能复制数据，<code>view</code> 要求内存连续）。</td>
+</tr>
+<tr class="odd">
+<td>张量克隆</td>
+<td><code>x.clone()</code></td>
+<td>创建 <code>x</code> 的副本，保留梯度信息。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="总结"><strong>总结</strong></h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 29%" />
+<col style="width: 29%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>操作类型</strong></th>
+<th><strong>特点</strong></th>
+<th><strong>风险</strong></th>
+<th><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>原地操作</strong></td>
+<td>修改原张量，节省内存</td>
+<td>破坏计算图，导致梯度错误</td>
+<td>无梯度张量的内存优化</td>
+</tr>
+<tr class="even">
+<td><strong>非原地操作</strong></td>
+<td>创建新张量，保留计算历史</td>
+<td>内存开销略大</td>
+<td>需要自动微分的场景</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心原则</strong>：<br />
+-
+<strong>需要梯度计算的张量</strong>（如模型参数、中间变量）<strong>避免使用原地操作</strong>。
+-
+仅在明确知道不会影响梯度时（如预处理无梯度张量），才使用原地操作优化内存。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/torch.Tensor/inplace%20operation/In-place%20Operation/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/调整张量形状/view()与reshape()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" target="_blank">view()与reshape()</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="view与reshape">view()与reshape()</h1>
+<p>总之，两者都是用来重塑 tensor 的 shape 的。view
+只适合对满足连续性条件（contiguous）的 tensor 进行操作，而 reshape
+同时还可以对不满足连续性条件的 tensor 进行操作，具有更好的鲁棒性。view
+能干的 reshape 都能干，如果 view 不能干就可以用 reshape 来处理。</p>
+<h2 id="pytorch-中-tensor-的存储方式">PyTorch 中 tensor 的存储方式</h2>
+<blockquote>
+<p>想要深入理解 view 与 reshape 的区别，首先要理解一些有关 PyTorch
+张量存储的底层原理，比如 tensor 的头信息区（Tensor）和存储区
+（Storage）以及 tensor 的步长 Stride</p>
+</blockquote>
+<h3 id="pytorch-张量存储的底层原理">PyTorch 张量存储的底层原理</h3>
+<p>tensor 数据采用头信息区（Tensor）和存储区
+（Storage）分开存储的形式，如图 1
+所示。变量名以及其存储的数据是分为两个区域分别存储的。比如，我们定义并初始化一个
+tensor，tensor 名为 A，A 的形状 size、步长
+stride、数据的索引等信息都存储在头信息区，而 A
+所存储的真实数据则存储在存储区。另外，如果我们对 A
+进行截取、转置或修改等操作后赋值给 B，则 B 的数据共享 A
+的存储区，存储区的数据数量没变，<font color='red'> 变化的只是 B
+的头信息区对数据的索引方式
+</font>。如果听说过浅拷贝和深拷贝的话，很容易明白
+<strong>这种方式其实就是 <font color='green'> 浅拷贝
+</font></strong></p>
+<div style="text-align: center">
+<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411251356974.png&quot;&gt;
+&lt;br&gt;
+图 1 Torch 中 Tensor 的存储结构</code></pre>
+</div>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E8%B0%83%E6%95%B4%E5%BC%A0%E9%87%8F%E5%BD%A2%E7%8A%B6/view()%E4%B8%8Ereshape()/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【pytorch】/Base/torch.Tensor/inplace operation/In-place Operation禁用场景" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1343,431 +1877,6 @@ vs Immutable Objects in Python</a></p>
 
 
   
-    <article id="post-【后端】/python/查看python帮助文档" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" target="_blank">查看python帮助文档</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/" class="archive-article-date">
-        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="查看python帮助文档">查看python帮助文档</h1>
-<h2 id="dir函数">dir()函数</h2>
-<p><code>dir()</code> 函数可以查看对象属性和方法，以 str 为例，输入
-<code>dir(str)</code>，就可以看到 str 的属性和方法。如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953253.png" /></p>
-<h2 id="doc__">__doc__</h2>
-<p>如何查看对象某个属性的帮助文档？如何查看str的capitalize属性，可以用__doc__，使用方法为<code>print(srt.capitalize__doc__)</code>，如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953207.png" /></p>
-<h2 id="help函数">help()函数</h2>
-<p>查看对象属性还可以用help()函数，使用方法为help(str.capitalize),如下图</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953210.png" /></p>
-<p>查看某个对象的详细文档用help()，
-如查看str类型的详细文档可以用<code>help(str)</code>。如果文档的内容很多，help会列出全部文档的一部分，并在左下角提示“--
-More --”，按Enter键盘会显示更多的信息，要回到命令行交互模式可按Ctrl +
-C。</p>
-<p><img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412260953321.png" /></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E6%9F%A5%E7%9C%8Bpython%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/迭代器&amp;&amp;生成器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8&&%E7%94%9F%E6%88%90%E5%99%A8/" target="_blank">迭代器&amp;&amp;生成器</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8&&%E7%94%9F%E6%88%90%E5%99%A8/" class="archive-article-date">
-        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="迭代器生成器">迭代器&amp;&amp;生成器</h1>
-<h2 id="迭代器iterator">迭代器（Iterator）</h2>
-<p>Python 中的 <strong>迭代器（Iterator）</strong>
-是一个可以记住遍历位置的
-<strong>对象</strong>，用于迭代列表、元组、字典、集合和字符串等
-<strong>可迭代（Iterable）对象</strong>，迭代器从可迭代对象的第一个元素开始访问，直到所有的元素被访问完结束，并且只能往前不会后退。使用
-<code>collections.abc</code> 库中的
-<strong><code>Iterable</code></strong> 和
-<strong><code>Iterator</code></strong>
-可以判断对象<strong>是否为可迭代对象</strong>和<strong>是否为迭代器</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterable</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>((), Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterable)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="number">100</span>, Iterable)</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
-<p><font color='blue'><strong>可迭代对象不等于迭代器</strong></font>。正如上面代码所示，列表、元组、字典和字符串都是<strong>可迭代的</strong>，而数字就不是可迭代的。但列表、元组、字典和字符串都
-<strong>不是迭代器</strong>，因为<strong>可迭代对象必须首先使用
-<code>iter()</code> 方法把它们 初始化 为迭代器之后，才能使用
-<code>next()</code> 方法对其进行 迭代</strong>。所以
-<code>iter([])</code> 和 <code>iter('abc')</code> 都是迭代器。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterator</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>([], Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>((), Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(&#123;&#125;, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>, Iterator)</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>([]), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">isinstance</span>(<span class="built_in">iter</span>(<span class="string">&#x27;abc&#x27;</span>), Iterator)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8&&%E7%94%9F%E6%88%90%E5%99%A8/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%BF%AD%E4%BB%A3%E5%99%A8&&%E7%94%9F%E6%88%90%E5%99%A8/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/Concurrency/Concurrency Tutorial" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Concurrency/Concurrency%20Tutorial/" target="_blank">Concurrency</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Concurrency/Concurrency%20Tutorial/" class="archive-article-date">
-        <time datetime="2024-04-23T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="concurrency"><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/">Concurrency</a></h1>
-<p>In this section, you’ll learn about Python concurrency including
-multithreading, multiprocessing, and asynchronous programming from
-scratch.</p>
-<p>What you’ll learn:</p>
-<ul>
-<li>Build high-performance &amp; responsive Python applications using
-concurrency techniques.</li>
-<li>Develop multithreaded applications using multithreading.</li>
-<li>Develop a program that processes tasks in parallel.</li>
-<li>Understand the single-threaded concurrency model.</li>
-</ul>
-<h2 id="section-1.-multithreading">Section 1. Multithreading</h2>
-<p>In this section, you’ll have a good understanding of processes and
-threads and how to develop multithreaded programs.</p>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/differences-between-processes-and-threads/">Understanding
-Processes and Threads</a> – help you understand the processes and
-threads, and the main differences between them.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-threading/">Threading</a>
-– show you how to use the threading module to develop a multi-threaded
-application.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-thread-class/">Extending
-the Thread class</a> – learn how to extend the Thread class to run
-multiple threads in a program.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-thread-return-value/">Returning
-values from a Thread</a> – show you how to return values from a thread
-by extending the Thread class.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-multithreading-example/">Multithreading
-Example</a> – build a multithreaded program that scraps stock
-prices.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-daemon-threads/">Daemon
-threads</a> – learn about daemon threads.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-threadpoolexecutor/">Thread
-Pools</a> – guide you on managing multiple threads efficiently using the
-thread pool.</li>
-</ul>
-<h2 id="section-2.-thread-synchronization-techniques">Section 2. Thread
-Synchronization Techniques</h2>
-<p>In this section, you’ll learn various techniques to synchronize
-between threads using a lock, event, thread-safe queue, and
-semaphore.</p>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-threading-lock/">Lock</a>
-– show you how to use a lock object to control access to a shared
-variable safely from multiple threads.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-threading-event/">Event</a>
-– learn how to use the threading Event to communicate between
-threads.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-stop-thread/">How
-to stop a thread</a> – learn how to stop a child thread from the main
-thread.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-semaphore/">Semaphore</a>
-– explain the semaphore concept and how to use the Semaphore object to
-limit the number of threads that can access a shared resource
-simultaneously.</li>
-</ul>
-<h2 id="section-3.-sharing-data-between-threads">Section 3. Sharing Data
-Between Threads</h2>
-<p>In this section, you’ll learn various techniques to share data
-between threads.</p>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-thread-queue/">Thread-safe
-Queue</a> – show you how to use a thread-safe queue to exchange data
-safely between multiple threads.</li>
-</ul>
-<h2 id="section-4.-multiprocessing">Section 4. Multiprocessing</h2>
-<p>In this section, you’ll learn how to utilize the multiprocessing
-package to develop programs that run tasks in parallel.</p>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-multiprocessing/">Multiprocessing</a>
-– show you how to run code in parallel using the multiprocessing
-module.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/advanced-python/python-processpoolexecutor/">Process
-Pools</a> – learn how to manage processes more efficiently by using a
-process pool.</li>
-</ul>
-<h2 id="section-5.-async-io">Section 5. Async I/O</h2>
-<p>In this section, you’ll how to utilize concurrency provided by the
-<code>asyncio</code> package to improve program performance, throughput,
-and responsiveness.</p>
-<ul>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-event-loop/">Understanding
-Event Loop</a> – explain how the event loop works and how
-<code>asyncio</code> package uses the event loop to achieve a
-single-threaded concurrency model.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-async-await/">async/await</a>
-– introduce to you coroutines and how to use the async and await
-keywords to define and pause coroutines.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-asyncio-create_task/">Creating
-tasks</a> – learn how to create tasks and schedule them for running on
-the event loop.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-cancel-tasks/">Canceling
-tasks</a> – show you how to cancel a task using the
-<code>cancel()</code> method of the <code>Task</code> object.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-asyncio-wait_for/">Canceling
-a task with a timeout</a> – show you how to use the
-<code>asyncio.wait_for()</code> function to cancel a task with a
-timeout.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-asyncio-wait/">asyncio.wait()</a>
-– learn about the <code>asyncio.wait()</code> function to run an
-iterable of awaitable objects concurrently.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-asyncio-future/">Future</a>
-– explain to you the Future object and awaitables.</li>
-<li><a
-target="_blank" rel="noopener" href="https://www.pythontutorial.net/python-concurrency/python-asyncio-gather/">Running
-multiple tasks concurrently with gather()</a> – run a list of tasks
-concurrently with the <code>asyncio.gather()</code> function.</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/23/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/Concurrency/Concurrency%20Tutorial/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/18/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/20/">Next &amp;raquo;</a>
@@ -1934,10 +2043,6 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -1946,7 +2051,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1958,15 +2063,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1974,7 +2071,19 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1982,7 +2091,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1998,7 +2111,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2006,15 +2119,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2022,7 +2131,7 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2030,23 +2139,11 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2062,15 +2159,15 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2082,7 +2179,19 @@ concurrently with the <code>asyncio.gather()</code> function.</li>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

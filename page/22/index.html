@@ -213,6 +213,485 @@
             
 
   
+    <article id="post-AI/内存开销&amp;计算开销/浅谈后向传递的计算量大约是前向传递的两倍" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D/" target="_blank">浅谈后向传递的计算量大约是前向传递的两倍</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D/" class="archive-article-date">
+        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1
+id="浅谈后向传递的计算量大约是前向传递的两倍">浅谈后向传递的计算量大约是前向传递的两倍</h1>
+<h2 id="前言">前言</h2>
+<p>训练神经网络的一次迭代分为三步：（1）前向传递计算损失函数；（2）后向传递计算梯度；（3）优化器更新模型参数。在实验中，我们观察到一个现象：<strong>后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时几乎可以忽略</strong>。要解释这个现象，我们要从前向传递、后向传递和优化器参数更新的浮点数计算次数入手。</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013327.jpg" /></p>
+<p>上图表示一次训练迭代中各个环节（前向传递、后向传递、通信环节、优化器更新)的耗时占比，来自于《PyTorch
+Distributed: Experiences on Accelerating Data Parallel
+Training》。上图中，纵轴表示耗时占比，FWD表示一次训练迭代中前向传递的耗时占比，BWD则表示一次训练迭代中后向传递的耗时占比，OPT表示一次训练迭代中优化器更新模型参数的耗时占比。从上图中可以看到，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262013343.jpg" /></p>
+<p>上图表示GPipe流水线并行的调度策略，来自于《Efficient large-scale
+language model training on gpu clusters using
+megatron-lm》。上图中，横轴表示耗时，一个蓝色小块表示一个微批次的前向传递，一个绿色小块表示一个微批次的后向传递，黑色竖线表示一次流水线刷新，也就是优化器更新模型参数。从上图中可以看到，一个绿色小块的宽度大约是蓝色小块的二倍，一次训练迭代中，后向传递的耗时几乎是前向传递的两倍，相比之下，优化器更新的耗时占比很小，几乎可以忽略。</p>
+    
+    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">内存开销&计算开销</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/AI//" class="article-tag-list-link color3">AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E6%B5%85%E8%B0%88%E5%90%8E%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8F%E5%A4%A7%E7%BA%A6%E6%98%AF%E5%89%8D%E5%90%91%E4%BC%A0%E9%80%92%E7%9A%84%E4%B8%A4%E5%80%8D/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-AI/内存开销&amp;计算开销/常见模型FLOPs" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%9E%8BFLOPs/" target="_blank">常见模型FLOPs</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%9E%8BFLOPs/" class="archive-article-date">
+        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="常见模型flops">常见模型FLOPs</h1>
+<p>以下推导中主要统计权重矩阵相乘累加的操作需要进行浮点运算，对于激活函数等计算量较小操作是忽略不计（理论上激活层不算进MACC但应该被算进FLOPs)，以下其中</p>
+<ul>
+<li>FC Layer、CNN Layer、LSTM
+Layer的推导是模拟模型进行单样本的前向推理（Forward）的计算量，公式中不带有
+Batch_size</li>
+<li>Transfomer&amp;&amp;LLM 的 FLOPs 推导中带有 Batch_size
+并考虑了反向传播的计算量。</li>
+</ul>
+<h2 id="fc-layer">FC Layer</h2>
+<p>一个全连接层的神经网络计算的过程可以看成是两个矩阵进行相乘的操作，忽略掉激活函数（activation）部分的计算，假设输入矩阵是
+<span class="math inline">\(A\)</span>、矩阵大小是 <span
+class="math inline">\(H\times I\)</span>，全连接层的参数矩阵是 <span
+class="math inline">\(B\)</span>、矩阵大小是 <span
+class="math inline">\(I\times
+W\)</span>，全连接层矩阵计算过程实际就是：</p>
+<p><span class="math display">\[
+Y=AB
+\]</span></p>
+<p>结果矩阵 <span class="math inline">\(Y\)</span> 中的每个元素都是经过
+<span class="math inline">\(I\)</span> 次乘法和 <span
+class="math inline">\(I−1\)</span> 次加法，因此 FC 层的 FLOPs
+公式就是：</p>
+<p><span class="math display">\[
+H \times W \times (I + (I -1)) = H \times W \times (2I -1)
+\]</span> 如果忽略这个常数项或者考虑加入 bias，即 <span
+class="math inline">\(Y\)</span>
+中每一个元素需要额外进行一次加法，则可以将公式中 <span
+class="math inline">\(-1\)</span> 去掉：<span class="math inline">\(H
+\times W \times 2I\)</span></p>
+<p>观察上面FC
+layer中最终计算量FLOPs公式的结果，同时该层参数量Paramster是 <span
+class="math inline">\(I \times W\)</span> , 输入值大小Input_size是 <span
+class="math inline">\(H\)</span>，因此看出在矩阵乘法中有： <span
+class="math display">\[
+FLOPs = Input\_size \times Parameter \times 2 = 2 \times H \times I
+\times W
+\]</span></p>
+<h2 id="cnn-layer">CNN Layer</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262133757.png"
+alt="image-20250126173732679" />
+<figcaption aria-hidden="true">image-20250126173732679</figcaption>
+</figure>
+<p>一个卷积神经网络（CNN）进行的计算主要来自<strong>卷积层</strong>，忽略掉激活函数（activation）部分计算，分析每一层卷积输出结果矩阵中每个值都经过对卷积核的每个元素都进行一次“乘加累积”（MACs）运算操作（等价2倍FLOPs）。因此假设这一层输出的结果矩阵维度是<span
+class="math inline">\(H \times W\)</span>、输出通道数（卷积核的个数）是
+<span
+class="math inline">\(Out\_Chanel\)</span>，卷积层的卷积核的大小（kernel
+size）是 <span class="math inline">\(K\)</span>，输入卷积层前通道数是
+<span class="math inline">\(In\_Chanle\)</span>，则 CNN
+每一层的计算量（FLOPs）有如下公式： <span class="math display">\[
+H\times W\times Out\_Chanel\times \left[ 2\cdot \left( K\times K\times
+In\_Chanel \right) -1 \right]
+\]</span> 为什么括号里是 <span class="math inline">\((2 \times K^{2}
+\times In\_Chanel - 1)\)</span> 有一个 <span
+class="math inline">\(−1\)</span>,
+是因为仔细分析这里每个卷积核的实际上进行了 <span
+class="math inline">\(K^{2} \times In\_Chanel\)</span> 次乘法，<span
+class="math inline">\(K^{2} \times In\_Chanel-1\)</span>
+次加法操作（<span class="math inline">\(n\)</span> 个数相加，进行 <span
+class="math inline">\(n-1\)</span>
+次加法）。如果忽略这个常数项或者考虑加入 bias，则 <span
+class="math inline">\(-1\)</span> 去掉后的公式为：</p>
+<p><span class="math display">\[
+H \times W \times Out\_Chanel \times 2 \times K^{2} \times In\_Chanel
+\]</span></p>
+<h2 id="lstm-layer">LSTM Layer</h2>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262133800.png"
+alt="image-20250126173759619" />
+<figcaption aria-hidden="true">image-20250126173759619</figcaption>
+</figure>
+<p>对于一个循环神经网络层（LSTM），忽略掉激活层等操作只关注矩阵之间计算量，分析一下每层
+LSTM 的计算量（FLOPs），假设词向量的维度（embedding dimension）是 <span
+class="math inline">\(E\)</span>，隐藏层的维度是 <span
+class="math inline">\(H\)</span>（hidden state dimension），则计算 LSTM
+层的 FLOPs 有以下公式：</p>
+<p><span class="math display">\[
+(E+H) \times H \times 4 \times 2
+\]</span> 公式中的 <span class="math inline">\(4\)</span> 是指 LSTM 层的
+<span class="math inline">\(4\)</span> 个非线性变换（3个门+1个tanh）</p>
+<h2 id="transformers">Transformers</h2>
+<h3 id="结构">结构</h3>
+<p>语言模型（LLM）都是以Transformers模型架构为基础，transformer结构（如下图）相比MLP、CNN、LSTM复杂得多。同时推导公式依旧只考虑每层中矩阵乘加法的运算量，对于其他部分（layernorm,
+activation
+）的计算忽略不计，我们首先先简单回顾一下Transformer结构，如下图：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262133655.png"
+alt="image-20250126174033335" />
+<figcaption aria-hidden="true">image-20250126174033335</figcaption>
+</figure>
+<p>Transformer模型中Encoder和Decoder部分都是由每一层的attention
+layer组成, 例如标准的transformer的Encoder和Decoder默认都是由6层attention
+layer。</p>
+<ul>
+<li>上个时代大名鼎鼎的Bert就是只用了Encoder部分的12层attention
+layer构成</li>
+<li>进入LLM时代的以GPT系列的模型则以只用了Decoder部分的attention
+layer</li>
+</ul>
+<p>这两部分的attention layer的差别就是Decoder模块里是Mask Multi-Head
+Attention，mask的作用是将当前输入字符的后面内容统一赋值为0，在实际计算中通过对mask矩阵赋值0、1来实现遮蔽的作用。</p>
+<p>具体的每一层的attention layer
+中的计算全部来自于多头注意力（Multi-Head Attention） 和 前向传播（Feed
+Forawrd）中矩阵相乘的操作，其中Multi-Head Attention
+操作就是将输入值根据multi-head个数切分成均等大小维度的输入，每个head的输入单独分别乘上三个权重矩阵
+<span class="math inline">\(V\)</span>、<span
+class="math inline">\(K\)</span>、<span
+class="math inline">\(Q\)</span>。然后再将输入乘以 <span
+class="math inline">\(V\)</span>、<span
+class="math inline">\(K\)</span>、<span class="math inline">\(Q\)</span>
+的三个矩阵进行Dot-Product
+Attention操作，最后将多头的多个输出拼接起来(Concat)
+再乘以一个原始维度的矩阵进行一个线性变化（Linear)。</p>
+<p>Multi-head Attention的整个过程如下图所示：</p>
+<p><img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262133668.png" /></p>
+<p>前向传播层就是一个两层全连接的MLP模块，这里操作是将经过Attention之后维度最后一位为
+hh 的向量，先经过一层维度是 (h,4h)(h,4h)
+的线性变换层将向量最后一位的维度扩大4倍，然后再过一个 (4h, h)(4h, h)
+大小线性变换层进行映射将维度大小还原回 hh 。</p>
+<h3 id="parameters-分析">Parameters 分析</h3>
+<p>正如上面Transformers结构的简单分析，对于每一层attention
+layer中，参数量来自于 Multi-head Attention模块和 MLP模块。</p>
+<p>Multi-head Attention模块的模型参数有 <span
+class="math inline">\(Q\)</span>、<span
+class="math inline">\(K\)</span>、<span
+class="math inline">\(V\)</span>的权重矩阵 <span
+class="math inline">\(W_Q\)</span>、<span
+class="math inline">\(W_K\)</span>、<span
+class="math inline">\(W_V\)</span>和最后线性变换的矩阵 <span
+class="math inline">\(W_O\)</span> 以及偏置，4 个权重矩阵的形状为 <span
+class="math inline">\([h,h]\)</span>，4个偏置的形状为 <span
+class="math inline">\([h]\)</span>。因此Multi-head Attention的参数量是：
+<span
+class="math inline">\(4h^2+4h4h^2+4h\)</span>。MLP模块中两层线性变换层，第一层权重矩阵形状是
+<span class="math inline">\([h,4h]\)</span> ，偏置的形状为 <span
+class="math inline">\([4h]\)</span>。第二个线性层权重矩阵的形状为 <span
+class="math inline">\([4h,h]\)</span> ，偏置形状为 <span
+class="math inline">\([h]\)</span>。因此MLP模块的参数量是： <span
+class="math inline">\(8h^2+5h8h^2+5h\)</span>。</p>
+<p>如果考虑Multi-head attention块和MLP块各有一个layer
+normalization，其包含了 2 个可训练模型参数：缩放参数 <span
+class="math inline">\(\gamma\)</span> 和平移参数 <span
+class="math inline">\(\beta\)</span>，形状都是 <span
+class="math inline">\([h]\)</span>。这里2个layer normalization的参数量为
+<span class="math inline">\(4h\)</span>。</p>
+<p>因此Transformer每一层attention layer的总参数就是：<span
+class="math inline">\(12h^2+13h12h^2+13h\)</span></p>
+<p>另外Transformers模型的词嵌入矩阵的参数量是 VhVh，因此当模型的层数是
+<span class="math inline">\(l\)</span> 时，Transformers模型的总参数是：
+<span class="math display">\[
+l(12h^2+13h)+Vhl(12h^2+13h)+Vh
+\]</span> 在LLM 时代，模型的隐藏层的维度 hh
+通常较大时可以忽略掉较小的项，即<strong>模型参数量近似为</strong> <span
+class="math inline">\(12lh^2\)</span>（例如llama系列模型的隐藏层维度从
+7B 的 4096 到 70B的 8192，相比 Bert 的 768 增大不少）</p>
+<h3 id="flops-计算">FLOPs 计算</h3>
+<p>从上面Transformer结构的分析中看出其计算过程中计算量的大头基本来自<strong>矩阵相乘</strong>的形式。</p>
+<p>同时参考本文<strong>FC Layer 计算矩阵乘法在前向推理的FLOPs：</strong>
+<span class="math display">\[
+FLOPs = 2 \times Input\_size \times Parameter
+\]</span> <strong>根据</strong>反向传播的计算量是前向传播的 2
+倍的结论，假设模型整个训练过程语料Token数是 <span
+class="math inline">\(T\)</span> ，可以估算 Transfomer 的 FLOPs 约等于：
+<span class="math inline">\((1 + 2)* 2 \times T \times P = 6 \times T
+\times P\)</span></p>
+<p>这里我<strong>直接</strong>给出 LLM FLOPs 的计算公式，详细请参考 <a
+target="_blank" rel="noopener" href="https://j1dwlsm5xld.feishu.cn/wiki/NUL0wBppSi6AHYk7XBCcukainyf?fromScene=spaceOverview">‬⁠‍﻿⁠﻿‬⁠﻿⁠‬‬﻿﻿‌‬﻿‍﻿‍Transformer
+计算开销 - 飞书云文档</a>。公式中字母的含义如下： <span
+class="math inline">\(T\)</span> 是LLM模型的语料的总Token数，<span
+class="math inline">\(P\)</span> 是模型的参数数量，<span
+class="math inline">\(B\)</span> 是训练时batch size，<span
+class="math inline">\(Step\)</span> 是训练迭代的次数，<span
+class="math inline">\(V\)</span> 是模型总词表数，<span
+class="math inline">\(s\)</span> 是训练时序列的长度，<span
+class="math inline">\(l\)</span> 是模型中间隐藏层的大小，LLM FLOPs
+的计算公式如下： <span class="math display">\[
+\begin{aligned}
+    LLM\quad FLOPs&amp;=(72Bslh^2+12Bs^2lh+6BshV)\times Step\\
+    &amp;=72Bslh^2(1+\frac{s}{6h}+\frac{V}{12lh})\times Step\\
+    &amp;\gtrsim 72Bslh^2\times Step\\
+    &amp;=6Bs\times 12lh^2\times Step\\
+    &amp;\gtrsim 6Bs\times P\times Step\\
+    &amp;=6\times BsStep\times P\\
+    &amp;=6\times T\times P\\
+\end{aligned}
+\]</span> 简单解释一下，这里公式第 2 行到第 3 行的变化，公式第 1 行和第
+2 行都有三项，分别来自：</p>
+<ul>
+<li>第一项来自 attention layer 中的 QKV 和 FFN
+中的矩阵乘法，是整个模型权重矩阵的计算量的大头。</li>
+<li>第二项来自attention 矩阵的计算，当s &lt;&lt; 6h 时可以忽略，这里第 2
+行到第 3 行选择去掉。</li>
+<li>第三项来自 LM head，当V &lt;&lt; 12lh 时可以忽略，这里第 2 行到第 3
+行选择去掉。</li>
+</ul>
+<p>以 LLaMa-13B 举个例子，<span class="math inline">\(6 \times h = 6 *
+5120 = 307206\)</span>，通常序列长度 <span
+class="math inline">\(s\)</span> 为 1k 左右，30720 &gt;&gt; 1000。同时
+<span class="math inline">\(12lh = 12 * 50 * 5120 = 3072000 &gt;&gt;
+3200012\)</span>。因此公式第 2 行到第 3 行选择去掉后两项的计算量。</p>
+<p>在公式第 4 行，如上面所分析 Transformers&amp;&amp;LLM
+模型的参数量（不考虑词表、layer normalize的参数）， <span
+class="math inline">\(12lh^2\)</span> 带入到公式中。</p>
+<p>在公式第5行 <span class="math inline">\(Batch\_size \times seq\_len
+\times Step\_num\)</span> 就是整个训练语料的 Token 的数量 <span
+class="math inline">\(T\)</span> 进行替换带入。</p>
+<p><strong>最终，忽略掉计算量小的项目，Transforemers&amp;&amp;LLM 的
+FLOPs = 6TP，与上面估算结论一致。</strong></p>
+<h2 id="flops计算工具">FLOPs计算工具</h2>
+<p>上面是从理论角度分析模型的计算量，实操时可借助工具快速一键获取FLOPs值，目前已有很多FLOPs计算库，如<a
+href="https://link.zhihu.com/?target=https%3A//github.com/Lyken17/pytorch-OpCounter">thop</a>、<a
+href="https://link.zhihu.com/?target=https%3A//github.com/sovrasov/flops-counter.pytorch">ptflops</a>、<a
+href="https://link.zhihu.com/?target=https%3A//github.com/Swall0w/torchstat">torchstat</a>等，下面介绍
+ptflops 工具：</p>
+<h3 id="安装">安装</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install ptflops</span><br></pre></td></tr></table></figure>
+<h3 id="介绍">介绍</h3>
+<h3 id="实例">实例</h3>
+<p>示例代码如下，它求出了 VGG16 的 flops 和参数量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.models <span class="keyword">as</span> models</span><br><span class="line"><span class="keyword">from</span> ptflops <span class="keyword">import</span> get_model_complexity_info</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">net = models.vgg16()</span><br><span class="line">flops, params = get_model_complexity_info(net, (<span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>), as_strings=<span class="literal">True</span>, print_per_layer_stat=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Flops: <span class="subst">&#123;flops&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Params: <span class="subst">&#123;params&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import torchvision.models as models                                                                                                                                                                                [0/12461]</span><br><span class="line">&gt;&gt;&gt; from ptflops import get_model_complexity_info</span><br><span class="line">&gt;&gt;&gt; net = models.vgg16()</span><br><span class="line">&gt;&gt;&gt; flops, params = get_model_complexity_info(net, (3, 224, 224), as_strings=True, print_per_layer_stat=True)</span><br><span class="line">VGG(</span><br><span class="line">  138.36 M, 100.000% Params, 15.5 GMac, 99.873% MACs,</span><br><span class="line">  (features): Sequential(</span><br><span class="line">    14.71 M, 10.635% Params, 15.38 GMac, 99.076% MACs,</span><br><span class="line">    (0): Conv2d(1.79 k, 0.001% Params, 89.92 MMac, 0.579% MACs, 3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (1): ReLU(0, 0.000% Params, 3.21 MMac, 0.021% MACs, inplace=True)</span><br><span class="line">    (2): Conv2d(36.93 k, 0.027% Params, 1.85 GMac, 11.936% MACs, 64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (3): ReLU(0, 0.000% Params, 3.21 MMac, 0.021% MACs, inplace=True)</span><br><span class="line">    (4): MaxPool2d(0, 0.000% Params, 3.21 MMac, 0.021% MACs, kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (5): Conv2d(73.86 k, 0.053% Params, 926.45 MMac, 5.968% MACs, 64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (6): ReLU(0, 0.000% Params, 1.61 MMac, 0.010% MACs, inplace=True)</span><br><span class="line">    (7): Conv2d(147.58 k, 0.107% Params, 1.85 GMac, 11.926% MACs, 128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (8): ReLU(0, 0.000% Params, 1.61 MMac, 0.010% MACs, inplace=True)</span><br><span class="line">    (9): MaxPool2d(0, 0.000% Params, 1.61 MMac, 0.010% MACs, kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (10): Conv2d(295.17 k, 0.213% Params, 925.65 MMac, 5.963% MACs, 128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (11): ReLU(0, 0.000% Params, 802.82 KMac, 0.005% MACs, inplace=True)</span><br><span class="line">    (12): Conv2d(590.08 k, 0.426% Params, 1.85 GMac, 11.921% MACs, 256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (13): ReLU(0, 0.000% Params, 802.82 KMac, 0.005% MACs, inplace=True)</span><br><span class="line">    (14): Conv2d(590.08 k, 0.426% Params, 1.85 GMac, 11.921% MACs, 256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (15): ReLU(0, 0.000% Params, 802.82 KMac, 0.005% MACs, inplace=True)</span><br><span class="line">    (16): MaxPool2d(0, 0.000% Params, 802.82 KMac, 0.005% MACs, kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (17): Conv2d(1.18 M, 0.853% Params, 925.25 MMac, 5.960% MACs, 256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (18): ReLU(0, 0.000% Params, 401.41 KMac, 0.003% MACs, inplace=True)</span><br><span class="line">    (19): Conv2d(2.36 M, 1.706% Params, 1.85 GMac, 11.918% MACs, 512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (20): ReLU(0, 0.000% Params, 401.41 KMac, 0.003% MACs, inplace=True)</span><br><span class="line">    (21): Conv2d(2.36 M, 1.706% Params, 1.85 GMac, 11.918% MACs, 512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (22): ReLU(0, 0.000% Params, 401.41 KMac, 0.003% MACs, inplace=True)</span><br><span class="line">    (23): MaxPool2d(0, 0.000% Params, 401.41 KMac, 0.003% MACs, kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (24): Conv2d(2.36 M, 1.706% Params, 462.52 MMac, 2.980% MACs, 512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (25): ReLU(0, 0.000% Params, 100.35 KMac, 0.001% MACs, inplace=True)</span><br><span class="line">    (26): Conv2d(2.36 M, 1.706% Params, 462.52 MMac, 2.980% MACs, 512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (27): ReLU(0, 0.000% Params, 100.35 KMac, 0.001% MACs, inplace=True)</span><br><span class="line">    (28): Conv2d(2.36 M, 1.706% Params, 462.52 MMac, 2.980% MACs, 512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (29): ReLU(0, 0.000% Params, 100.35 KMac, 0.001% MACs, inplace=True)</span><br><span class="line">    (30): MaxPool2d(0, 0.000% Params, 100.35 KMac, 0.001% MACs, kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">  )</span><br><span class="line">  (avgpool): AdaptiveAvgPool2d(0, 0.000% Params, 25.09 KMac, 0.000% MACs, output_size=(7, 7))</span><br><span class="line">  (classifier): Sequential(</span><br><span class="line">    123.64 M, 89.365% Params, 123.65 MMac, 0.797% MACs,</span><br><span class="line">    (0): Linear(102.76 M, 74.275% Params, 102.76 MMac, 0.662% MACs, in_features=25088, out_features=4096, bias=True)</span><br><span class="line">    (1): ReLU(0, 0.000% Params, 4.1 KMac, 0.000% MACs, inplace=True)</span><br><span class="line">    (2): Dropout(0, 0.000% Params, 0.0 Mac, 0.000% MACs, p=0.5, inplace=False)</span><br><span class="line">    (3): Linear(16.78 M, 12.129% Params, 16.78 MMac, 0.108% MACs, in_features=4096, out_features=4096, bias=True)</span><br><span class="line">    (4): ReLU(0, 0.000% Params, 4.1 KMac, 0.000% MACs, inplace=True)</span><br><span class="line">    (5): Dropout(0, 0.000% Params, 0.0 Mac, 0.000% MACs, p=0.5, inplace=False)</span><br><span class="line">    (6): Linear(4.1 M, 2.961% Params, 4.1 MMac, 0.026% MACs, in_features=4096, out_features=1000, bias=True)</span><br><span class="line">  )</span><br><span class="line">)</span><br><span class="line">&gt;&gt;&gt; print(f&quot;Flops: &#123;flops&#125;&quot;)</span><br><span class="line">Flops: 15.52 GMac</span><br><span class="line">&gt;&gt;&gt; print(f&quot;Params: &#123;params&#125;&quot;)</span><br><span class="line">Params: 138.36 M</span><br></pre></td></tr></table></figure>
+<p>可以看到，算上 import 和 print（）也仅仅 6
+行代码！不仅输出了整个框架的复杂度，还能输出每一层的复杂度 以及
+该层占整个网络的比重</p>
+<p>最后贴出常见 backbone 的 flops：</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501262138444.webp"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h2 id="本文参考">本文参考</h2>
+<ul>
+<li><p>VASWANI A, SHAZEER N, PARMAR N, et al. Attention is All you
+Need[J]. Neural Information Processing Systems,Neural Information
+Processing Systems, 2017. <a
+href="https://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1706.03762.pdf">https://arxiv.org/pdf/1706.03762.pdf</a></p></li>
+<li><p>The Illustrated Transformer - Jay Alammar blog <a
+href="https://link.zhihu.com/?target=http%3A//jalammar.github.io/illustrated-transformer/">http://jalammar.github.io/illustrated-transformer/</a></p></li>
+<li><p>Marius Hobbhahn and Jaime Sevilla (2021), "What’s the
+backward-forward FLOP ratio for Neural Networks?". Published online at
+epochai.org. Retrieved from: '<a
+href="https://link.zhihu.com/?target=https%3A//epochai.org/blog/backward-forward-FLOP-ratio">https://epochai.org/blog/backward-forward-FLOP-ratio</a>'</p></li>
+<li><p>揭秘A100、A800、H800、V100在<a
+target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=232573014&amp;content_type=Article&amp;match_order=1&amp;q=%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97&amp;zhida_source=entity">高性能计算</a>与大模型训练中的霸主地位
+- 高性能服务器的文章 - 知乎 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/640432767">https://zhuanlan.zhihu.com/p/640432767</a></p></li>
+<li><p>CNN
+模型所需的计算力（flops）和参数（parameters）数量是怎么计算的？ -
+泓宇的回答 - 知乎 <a
+target="_blank" rel="noopener" href="https://www.zhihu.com/question/65305385/answer/451060549">https://www.zhihu.com/question/65305385/answer/451060549</a></p></li>
+<li><p>Transformer-based模型到底要训练多久 - OWNT的文章 - 知乎 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/456046786">https://zhuanlan.zhihu.com/p/456046786</a></p></li>
+<li><p>语言模型的训练时间：从估算到 FLOPs 推导 - Ethan Yan的文章 - 知乎
+<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/646905171">https://zhuanlan.zhihu.com/p/646905171</a></p></li>
+<li><p>深度学习模型参数量/计算量和推理速度计算 - 龟壳的文章 - 知乎 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/376925457">https://zhuanlan.zhihu.com/p/376925457</a></p></li>
+<li><p>分析transformer模型的参数量、计算量、中间激活、KV cache -
+回旋托马斯x的文章 - 知乎 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/624740065">https://zhuanlan.zhihu.com/p/624740065</a></p></li>
+<li><p>LLM训练指南(二):模型参数、计算量、显存、计算时间计算 -
+JMXGODLZ的文章 - 知乎 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/639872915">https://zhuanlan.zhihu.com/p/639872915</a></p></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">内存开销&计算开销</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/AI//" class="article-tag-list-link color3">AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%9E%8BFLOPs/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-AI/内存开销&amp;计算开销/算力单位" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -298,6 +777,139 @@ aria-hidden="true">v2-7d6fd729a973f681d9dc48d9f3416d5e_1440w_clear_compress</fig
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%AE%97%E5%8A%9B%E5%8D%95%E4%BD%8D/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-AI/内存开销&amp;计算开销/矩阵乘法复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/" target="_blank">矩阵乘法复杂度分析</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/" class="archive-article-date">
+        <time datetime="2024-04-06T05:59:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="矩阵运算复杂度分析">矩阵运算复杂度分析</h1>
+<p>矩阵运算主要包括矩阵乘法和矩阵加法，<strong>矩阵运算的复杂度主要集中在矩阵乘法运算</strong>，下面将逐个分析</p>
+<h2 id="矩阵乘法">矩阵乘法</h2>
+<p><strong>矩阵乘法（matrix multiplication）</strong>
+是一种根据两个矩阵得到 <strong>第三个矩阵</strong> 的
+<strong>二元运算</strong>（需要 2 个对象参与，这里指 2
+个矩阵），第三个矩阵即前两者的乘积，称为 <strong>矩阵积</strong></p>
+<p><strong>条件：</strong> 它只有在第一个矩阵的
+<strong>列数（column）</strong> 和第二个矩阵的
+<strong>行数（row）</strong> 相同时才有意义</p>
+<h3 id="个矩阵相乘">2 个矩阵相乘</h3>
+<p>对于矩阵 <span class="math inline">\(A_{a*b}\)</span>、<span
+class="math inline">\(B_{b*c}\)</span>，那么 <span
+class="math inline">\(A*B\)</span> 的复杂度为 <span
+class="math inline">\(O(a*b*c)\)</span>，准确是 <span
+class="math inline">\(2abc\)</span></p>
+<ul>
+<li>加法计算了 <span class="math inline">\(abc\)</span> 次（也可以认为是
+<span class="math inline">\(abc-1\)</span>
+次即减去第一次的初始化操作）</li>
+<li>乘法计算了 <span class="math inline">\(abc\)</span> 次</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; a; i ++)         <span class="comment">// A 矩阵中的 a 行</span></span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; c; j ++)     <span class="comment">// B 矩阵中的 c 列</span></span><br><span class="line">        <span class="keyword">for</span> (k = <span class="number">0</span>; k &lt; b; k++)  <span class="comment">// A 矩阵中的 b 或者 B 矩阵中的 b</span></span><br><span class="line">            C[i][j] = C[i][j] + A[i][k] * B[k][j];</span><br></pre></td></tr></table></figure>
+<p>一般来说，如果矩阵的形状均为 <span class="math inline">\(N\times
+N\)</span>，则使用 big O notation 来表示矩阵乘法的复杂度为 <span
+class="math inline">\(\mathcal{O}(n^3)\)</span>。当然这这个复杂度是按照<strong>矩阵乘法的定义</strong>来的，也即
+naive algorithm，实际计算中，可以用到某些更加高级的算法，比如“The Solvay
+Strassen Algorithm”，此法能将时间复杂度降低到 <span
+class="math inline">\(\mathcal{O}(n^{2.8074})\)</span>，更多细节，可参考
+<a
+target="_blank" rel="noopener" href="https://www.baeldung.com/cs/matrix-multiplication-algorithms">Matrix
+Multiplication Algorithm Time Complexity | Baeldung on Computer
+Science</a>。根据 wikipedia，目前已知的最高效的矩阵乘法算法能达到 <span
+class="math inline">\(\mathcal{O}(n^{2.3728596})\)</span> ，此算法由
+Josh Alman 等人于 2020 年发表。</p>
+    
+    <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">内存开销&计算开销</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/AI//" class="article-tag-list-link color3">AI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/06/%5Bobject%20Object%5D/AI/%E5%86%85%E5%AD%98%E5%BC%80%E9%94%80&%E8%AE%A1%E7%AE%97%E5%BC%80%E9%94%80/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/">展开全文 >></a>
     </p>
     
 
@@ -1059,507 +1671,6 @@ class="math inline">\(f(j)\)</span> 都已经计算过了</p>
 
 
   
-    <article id="post-【后端】/C++/算法/时空复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/17/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E6%97%B6%E7%A9%BA%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/" target="_blank">时空复杂度分析</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/17/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E6%97%B6%E7%A9%BA%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/" class="archive-article-date">
-        <time datetime="2024-03-17T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-17</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="时空复杂度分析">时空复杂度分析</h1>
-<h2 id="时间复杂度">时间复杂度</h2>
-<h3 id="时间分析">时间分析</h3>
-<ul>
-<li><p><strong>C++ 1s 的运行数量大概在 <span
-class="math inline">\(1*10^7\)</span> ~ <span
-class="math inline">\(10*10^7 =
-10^8\)</span></strong>，所以运算量要控制在 <span
-class="math inline">\(10^8\)</span> 以内</p></li>
-<li><p>一般 ACM 或者笔试题的 <strong>时间限制</strong> 是 <strong>1
-秒</strong> 或 <strong>2
-秒</strong>，在这种情况下，C++代码中的操作次数控制在 <span
-class="math inline">\(10^7\)</span>​~ <span
-class="math inline">\(10^8\)</span>​ 为最佳</p></li>
-</ul>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202403302109655.png"
-alt="aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy83MTg2OTc1LWQwNWViNjdlNTU4ZmU0MjUucG5n_clear_compress" />
-<figcaption
-aria-hidden="true">aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy83MTg2OTc1LWQwNWViNjdlNTU4ZmU0MjUucG5n_clear_compress</figcaption>
-</figure>
-<h3 id="主定理">主定理</h3>
-<figure>
-<img
-src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202408272051164.png"
-alt="image-20240827205131975" />
-<figcaption aria-hidden="true">image-20240827205131975</figcaption>
-</figure>
-<h3 id="常见算法的时间复杂度">常见算法的时间复杂度</h3>
-<p>一般来说，k 重循环，算法时间复杂度就是 <span
-class="math inline">\(n^k\)</span></p>
-<table>
-<thead>
-<tr class="header">
-<th>基础算法</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>快速排序 归并排序 二分</td>
-<td><span class="math inline">\(O(n\log n)\)</span></td>
-</tr>
-<tr class="even">
-<td>双指针 数组元素目标和</td>
-<td><span class="math inline">\(O(n)\)</span></td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr class="header">
-<th>数据结构</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>单链表 栈 (插入 删除操作)</td>
-<td><span class="math inline">\(O(1)\)</span></td>
-</tr>
-<tr class="even">
-<td>单调栈 单调队列</td>
-<td><span class="math inline">\(O(n)\)</span></td>
-</tr>
-<tr class="odd">
-<td>KMP</td>
-<td><span class="math inline">\(O(n)\)</span></td>
-</tr>
-<tr class="even">
-<td>Trie 字符串统计</td>
-<td><span class="math inline">\(O(n)\)</span></td>
-</tr>
-<tr class="odd">
-<td>并查集 (路径压缩)</td>
-<td><span class="math inline">\(O(n\log n)\)</span></td>
-</tr>
-<tr class="even">
-<td>堆排序</td>
-<td><span class="math inline">\(O(n\log n)\)</span></td>
-</tr>
-<tr class="odd">
-<td>模拟散列表</td>
-<td><span class="math inline">\(O(1)\)</span></td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr class="header">
-<th>搜索与图论</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>排列数字（全排列）</td>
-<td><span class="math inline">\(O(n*n!)\)</span></td>
-</tr>
-<tr class="even">
-<td>dfs bfs</td>
-<td><span class="math inline">\(O(n+m)\)</span></td>
-</tr>
-<tr class="odd">
-<td>Dijkstra</td>
-<td><span class="math inline">\(O(m\log m)\)</span></td>
-</tr>
-<tr class="even">
-<td>Bellman_ford</td>
-<td><span class="math inline">\(O(nm)\)</span></td>
-</tr>
-<tr class="odd">
-<td>spfa</td>
-<td><span class="math inline">\(O(nm)\)</span></td>
-</tr>
-<tr class="even">
-<td>Floyd</td>
-<td><span class="math inline">\(O(n^3)\)</span></td>
-</tr>
-<tr class="odd">
-<td>Prim</td>
-<td><span class="math inline">\(O(n^2)\)</span></td>
-</tr>
-<tr class="even">
-<td>Kruskal</td>
-<td><span class="math inline">\(O(m\log m)\)</span></td>
-</tr>
-<tr class="odd">
-<td>染色法判定二分图</td>
-<td><span class="math inline">\(O(m\log m)\)</span></td>
-</tr>
-<tr class="even">
-<td>匈牙利算法</td>
-<td><span class="math inline">\(O(nm)\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>spfa 算法， 匈牙利算法，
-最大流算法时间复杂度理论值很大，但是实际运行速度很快</p>
-<table>
-<thead>
-<tr class="header">
-<th>数学知识</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>试除法判定质数 分解质因数</td>
-<td><span class="math inline">\(sqrt(n)\)</span></td>
-</tr>
-<tr class="even">
-<td>筛质数</td>
-<td><span class="math inline">\(n\log n\)</span></td>
-</tr>
-<tr class="odd">
-<td>最大公约数</td>
-<td><span class="math inline">\(\log n\)</span></td>
-</tr>
-<tr class="even">
-<td>快速幂</td>
-<td><span class="math inline">\(\log n\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>动态规划问题的计算量 = <strong>状态数量*状态转移的计算量</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th>动态规划</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>背包问题</td>
-<td><span class="math inline">\(k\)</span> 重循环，算法时间复杂度就是
-<span class="math inline">\(n^k\)</span></td>
-</tr>
-<tr class="even">
-<td>最长上升子序列 II</td>
-<td><span class="math inline">\(n\log n\)</span></td>
-</tr>
-<tr class="odd">
-<td>蒙德里安的梦想</td>
-<td><span class="math inline">\(2^{2n}*n\)</span></td>
-</tr>
-<tr class="even">
-<td>没有上司的舞会</td>
-<td><span class="math inline">\(nm\)</span></td>
-</tr>
-</tbody>
-</table>
-    
-    <a class="article-more-a" href="/2024/03/17/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E6%97%B6%E7%A9%BA%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/17/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E6%97%B6%E7%A9%BA%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-others/生活/咖啡" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/17/%5Bobject%20Object%5D/others/%E7%94%9F%E6%B4%BB/%E5%92%96%E5%95%A1/" target="_blank">咖啡</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/17/%5Bobject%20Object%5D/others/%E7%94%9F%E6%B4%BB/%E5%92%96%E5%95%A1/" class="archive-article-date">
-        <time datetime="2024-03-17T01:46:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-17</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="有关咖啡">有关咖啡</h1>
-<h2
-id="咖啡因每日的安全使用量是多少">咖啡因每日的安全使用量是多少？</h2>
-<p>一杯咖啡 (大约150毫升) 中的咖啡因含量一般为:
-研磨咖啡约100毫克，速溶咖啡大约50-60毫克。每天适量摄取等同于4杯咖啡的咖啡因400-500毫克不会对人体健康有害。少量或适量的咖啡因（每天200-400毫克）摄入可提高人的敏捷度、注意力、记忆力，并有助于保持好心情。</p>
-    
-    <a class="article-more-a" href="/2024/03/17/%5Bobject%20Object%5D/others/%E7%94%9F%E6%B4%BB/%E5%92%96%E5%95%A1/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">生活</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/others//" class="article-tag-list-link color2">others</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/17/%5Bobject%20Object%5D/others/%E7%94%9F%E6%B4%BB/%E5%92%96%E5%95%A1/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/C++/算法/【数学知识】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/15/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E5%AD%A6%E7%9F%A5%E8%AF%86%E3%80%91/" target="_blank">【数学知识】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/15/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E5%AD%A6%E7%9F%A5%E8%AF%86%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-03-15T02:27:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-15</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="数学知识">数学知识</h1>
-<p>: smile: <strong>数论</strong> 经常会出现
-<strong>数的大小越界</strong> 情况：</p>
-<ul>
-<li>尤其是在做 <strong>乘法</strong>、其次是 <strong>加法</strong>
-的时候非常容易溢出，此时可以使用 <code>long long</code> 局部转换</li>
-<li>比较稳妥的、一劳永逸的办法是 <strong>变量类型</strong> 不使用
-int，<strong>全部使用</strong> <code>long long</code></li>
-<li>数论部分的题目通常需要对结果取模，以下统一使用 <code>mod</code>
-代表取模的数，具体何时取余需要根据 <code>mod</code> 范围进行确定</li>
-</ul>
-<h2 id="质数">质数</h2>
-<ul>
-<li><strong>质数</strong>：在大于 1 的整数中，如果只包含 1
-和本身这两个约数，就被成为质数，或者叫素数。</li>
-<li><strong>算术基本定理</strong>：任一大于 1 的整数 <span
-class="math inline">\(n\)</span>​ 能够唯一地表示成</li>
-</ul>
-<p><span class="math display">\[
-n ={p_1}^{\alpha _1}{p_1}^{\alpha _1}\cdots {p_s}^{\alpha _s},  \alpha
-_i &gt; 0,  i = 1,2,\cdots , s\left( * \right)
-\]</span></p>
-<p>​ 分解式 <span class="math inline">\((*)\)</span> 叫做 <span
-class="math inline">\(n\)</span> 的标准分解式</p>
-<p>注：有时为了应用方便，在分解式中插入若干素数的零次幂，而把 <span
-class="math inline">\(n\)</span> 表成下面形式： <span
-class="math display">\[
-n ={p_1}^{\alpha _1}{p_1}^{\alpha _1}\cdots {p_k}^{\alpha _k},  \alpha
-_i\geqslant 0,  i = 1,2,\cdots , k
-\]</span></p>
-    
-    <a class="article-more-a" href="/2024/03/15/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E5%AD%A6%E7%9F%A5%E8%AF%86%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/15/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E7%AE%97%E6%B3%95/%E3%80%90%E6%95%B0%E5%AD%A6%E7%9F%A5%E8%AF%86%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/21/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/23/">Next &amp;raquo;</a>
@@ -1726,10 +1837,6 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -1738,7 +1845,7 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1750,15 +1857,7 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1766,7 +1865,19 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1774,7 +1885,11 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1790,7 +1905,7 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1798,15 +1913,11 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1814,7 +1925,7 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1822,23 +1933,11 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1854,15 +1953,15 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1874,7 +1973,19 @@ _i\geqslant 0,  i = 1,2,\cdots , k
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

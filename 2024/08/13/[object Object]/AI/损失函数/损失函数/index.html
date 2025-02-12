@@ -18,7 +18,7 @@
 <meta property="og:description" content="损失函数 ​ 在 深度学习 和机器学习领域，损失函数（Loss Function）是优化问题的核心，决定了模型参数的调整方向和幅度。尽管损失函数种类繁多，但理解其起源和背后的理论有助于我们更好地选择和应用它们。 损失函数 的起源 所有的优化问题都需要确立一个目标函数，通过最小化（或最大化）该目标函数来求解。在 机器学习 中，损失函数衡量模型预测值与真实值之间的差异，是优化模型参数的重要">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-08-12T17:02:27.000Z">
-<meta property="article:modified_time" content="2025-01-18T16:14:18.058Z">
+<meta property="article:modified_time" content="2025-02-09T04:46:49.327Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="损失函数">
 <meta name="twitter:card" content="summary">
@@ -274,7 +274,7 @@ Function）是优化问题的核心，决定了模型参数的调整方向和幅
 <span class="math inline">\(\hat{y}_{i}\)</span>，真实值为 <span
 class="math inline">\(y_i\)</span>，则最小二乘误差为： <span
 class="math display">\[
-[\mathrm{MSE}=\frac{1}{n}\sum_{i = 1}^{n}(y_{i}-\hat{y}_{i})2]
+\mathrm{MSE}=\frac{1}{n}\sum_{i = 1}^{n}(y_{i}-\hat{y}_{i})2
 \]</span> 通过最小化 MSE，可以找到使损失函数最小的参数 <span
 class="math inline">\(\theta\)</span>。</p>
 <span id="more"></span>
@@ -291,20 +291,26 @@ class="math inline">\(P_{\text{data}}(x)\)</span>。我们假设另一个分布
 <p>最大似然估计的目标是找到参数 <span
 class="math inline">\(\theta\)</span>，使得在给定数据的情况下，模型的似然函数最大化。即：
 <span class="math display">\[
-[\hat{\theta}=\arg\max_{\theta}\prod_{i =
-1}^{m}P_{\mathrm{model}}(x_{i}|\theta)]
+\hat{\theta}=\arg\max_{\theta}\prod_{i =
+1}^{m}P_{\mathrm{model}}(x_{i}|\theta)
 \]</span> 为了简化计算，我们通常使用对数似然： <span
 class="math display">\[
-[\hat{\theta}=\arg\max_{\theta}\sum_{i = 1}^{m}\log
-P_{\mathrm{model}}(x_{i}|\theta)]
+\hat{\theta}=\arg\max_{\theta}\sum_{i = 1}^{m}\log
+P_{\mathrm{model}}(x_{i}|\theta)
 \]</span> 在假设数据符合 <strong>高斯分布</strong> 的情况下，MLE
 与最小化均方误差（MSE）等价。</p>
 <h2 id="交叉熵损失">交叉熵损失</h2>
-<p>​ 交叉熵损失（Cross-Entropy Loss）是 <strong>分类</strong>
-问题中常用的损失函数。假设数据符合伯努利分布或多项式分布，交叉熵损失用于衡量两个概率分布之间的差异。对于二分类问题，交叉熵损失定义为：</p>
-<p><span class="math display">\[
-[L =-\frac{1}{m}\sum_{i =
-1}^{m}[y_{i}\log\hat{y}_{i}+(1-y_{i})\log(1-\hat{y}_{i})]]
+<p>交叉熵损失（<strong>Cross-Entropy</strong> Loss）是
+<strong>分类</strong>
+问题中常用的损失函数。假设数据符合伯努利分布或多项式分布，交叉熵损失用于衡量两个概率分布之间的差异。对于多分类任务，交叉熵损失
+(<strong>Cross-Entropy</strong> Loss) 定义为： <span
+class="math display">\[
+H \left (P, Q\right) = -\sum \limits_{i = 1}^n P \left (x_{i}\right) log
+\left(Q \left (x_{i}\right)\right)
+\]</span> 对于二分类问题，交叉熵损失 <strong>BCE</strong> (Binary Cross
+Entropy Loss) Loss 定义为： <span class="math display">\[
+L =-\frac{1}{m}\sum_{i =
+1}^{m}[y_{i}\log\hat{y}_{i}+(1-y_{i})\log(1-\hat{y}_{i})]
 \]</span>
 交叉熵损失从概率分布角度来看，本质上也是最大似然估计的一种形式。</p>
 <h2 id="正则化与最大后验估计map">正则化与最大后验估计（MAP）</h2>
@@ -314,32 +320,31 @@ P_{\mathrm{model}}(x_{i}|\theta)]
 <strong>限制模型的复杂度</strong>，从而提高模型的
 <strong>泛化能力</strong>。正则化可以视作最大后验估计（Maximum A
 Posteriori Estimation, MAP）的特殊情况。</p>
+<h3 id="l1-正则化lasso-回归">L1 正则化（Lasso 回归）</h3>
+<p>L1 正则化 (<span class="math inline">\(l1-norm\)</span>)
+通过在损失函数中加入参数的绝对值和项来惩罚过大的参数。其目标函数为：</p>
+<p><span class="math display">\[
+\text{L1 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} |\theta_j|
+\]</span> L1
+正则化可以视为假设参数符合拉普拉斯分布时的最大后验估计。</p>
 <h3 id="l2-正则化ridge-回归">L2 正则化（Ridge 回归）</h3>
-<p>L2 正则化通过在损失函数中加入 <strong>参数的平方和项</strong>
+<p>L2 正则化 (<span class="math inline">\(l2-norm\)</span>)
+通过在损失函数中加入 <strong>参数的平方和项</strong>
 来惩罚过大的参数。其目标函数为：</p>
 <p><span class="math display">\[
-[ \text{L2 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} \theta
-_{j}^{2}]
+\text{L2 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} \theta _{j}^{2}
 \]</span></p>
 <p>其中，<span class="math inline">\(\lambda\)</span>
 是正则化参数，用于控制惩罚项的权重。<span
 class="math inline">\(L2\)</span>
 正则化可以视为假设参数符合高斯分布时的最大后验估计。</p>
-<h3 id="l1-正则化lasso-回归">L1 正则化（Lasso 回归）</h3>
-<p>L1
-正则化通过在损失函数中加入参数的绝对值和项来惩罚过大的参数。其目标函数为：</p>
-<p><span class="math display">\[
-[ \text{L1 正则化} = \text{MSE} + \lambda \sum_{j = 1}^{p} |\theta_j| ]
-\]</span> L1
-正则化可以视为假设参数符合拉普拉斯分布时的最大后验估计。</p>
 <h3 id="最大后验估计map">最大后验估计（MAP）</h3>
 <p>MAP 估计在 MLE 的基础上，考虑了参数的先验分布。其目标函数为： <span
 class="math display">\[
-[\hat{\theta}=\arg\max_{\theta}P(\theta|X)]
+\hat{\theta}=\arg\max_{\theta}P(\theta|X)
 \]</span> 利用贝叶斯定理可以展开为：</p>
 <p><span class="math display">\[
-[\hat{\theta}=\arg\max_\theta\left[\log P(X|\theta)+\log
-P(\theta)\right]]
+\hat{\theta}=\arg\max_\theta\left[\log P(X|\theta)+\log P(\theta)\right]
 \]</span> 前者是似然函数，后者是先验分布。通过对数变换和相加的方式，将
 <strong>最大化后验概率</strong> 的问题转化为
 <strong>最大化对数似然函数</strong> 与 <strong>对数先验分布之和</strong>
@@ -349,7 +354,7 @@ Estimation）</h2>
 <p>贝叶斯估计（Bayesian
 Estimation）与频率学派的视角不同。贝叶斯学派认为数据是固定的，但参数是随机的，并且参数的估计应基于其全分布而不是点估计。</p>
 <p>贝叶斯估计的核心在于求解后验分布： <span class="math display">\[
-[P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}]
+P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}
 \]</span> 其中，<span class="math inline">\(P(X)\)</span>
 是证据（evidence），用于归一化。</p>
 <p>在实际应用中，贝叶斯估计通常也会使用对数形式： <span
@@ -525,18 +530,18 @@ Estimation），我们能够更系统地理解损失函数及其背后的统计�
 
 <nav id="article-nav">
   
-    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E8%B6%85%E5%8F%82%E6%95%B0/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          信息熵、交叉熵、相对熵（KL散度）
+          优化算法超参数
         
       </div>
     </a>
   
   
-    <a href="/2024/08/11/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/C++/%E3%80%90%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E3%80%91/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">scanf()函数与printf()中的格式说明符</div>
+    <a href="/2024/08/13/%5Bobject%20Object%5D/AI/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/%E4%BF%A1%E6%81%AF%E7%86%B5%E3%80%81%E4%BA%A4%E5%8F%89%E7%86%B5%E3%80%81%E7%9B%B8%E5%AF%B9%E7%86%B5%EF%BC%88KL%E6%95%A3%E5%BA%A6%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">信息熵、交叉熵、相对熵（KL散度）</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -563,7 +568,7 @@ Estimation），我们能够更系统地理解损失函数及其背后的统计�
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">损失函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-%E7%9A%84%E8%B5%B7%E6%BA%90"><span class="toc-number">1.1.</span> <span class="toc-text">损失函数 的起源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95mse"><span class="toc-number">1.2.</span> <span class="toc-text">最小二乘法（MSE）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1mle"><span class="toc-number">1.3.</span> <span class="toc-text">最大似然估计（MLE）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="toc-number">1.4.</span> <span class="toc-text">交叉熵损失</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96%E4%B8%8E%E6%9C%80%E5%A4%A7%E5%90%8E%E9%AA%8C%E4%BC%B0%E8%AE%A1map"><span class="toc-number">1.5.</span> <span class="toc-text">正则化与最大后验估计（MAP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#l2-%E6%AD%A3%E5%88%99%E5%8C%96ridge-%E5%9B%9E%E5%BD%92"><span class="toc-number">1.5.1.</span> <span class="toc-text">L2 正则化（Ridge 回归）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#l1-%E6%AD%A3%E5%88%99%E5%8C%96lasso-%E5%9B%9E%E5%BD%92"><span class="toc-number">1.5.2.</span> <span class="toc-text">L1 正则化（Lasso 回归）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%90%8E%E9%AA%8C%E4%BC%B0%E8%AE%A1map"><span class="toc-number">1.5.3.</span> <span class="toc-text">最大后验估计（MAP）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%B0%E8%AE%A1bayesian-estimation"><span class="toc-number">1.6.</span> <span class="toc-text">贝叶斯估计（Bayesian
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">损失函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-%E7%9A%84%E8%B5%B7%E6%BA%90"><span class="toc-number">1.1.</span> <span class="toc-text">损失函数 的起源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95mse"><span class="toc-number">1.2.</span> <span class="toc-text">最小二乘法（MSE）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1mle"><span class="toc-number">1.3.</span> <span class="toc-text">最大似然估计（MLE）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E6%8D%9F%E5%A4%B1"><span class="toc-number">1.4.</span> <span class="toc-text">交叉熵损失</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96%E4%B8%8E%E6%9C%80%E5%A4%A7%E5%90%8E%E9%AA%8C%E4%BC%B0%E8%AE%A1map"><span class="toc-number">1.5.</span> <span class="toc-text">正则化与最大后验估计（MAP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#l1-%E6%AD%A3%E5%88%99%E5%8C%96lasso-%E5%9B%9E%E5%BD%92"><span class="toc-number">1.5.1.</span> <span class="toc-text">L1 正则化（Lasso 回归）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#l2-%E6%AD%A3%E5%88%99%E5%8C%96ridge-%E5%9B%9E%E5%BD%92"><span class="toc-number">1.5.2.</span> <span class="toc-text">L2 正则化（Ridge 回归）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%90%8E%E9%AA%8C%E4%BC%B0%E8%AE%A1map"><span class="toc-number">1.5.3.</span> <span class="toc-text">最大后验估计（MAP）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%B0%E8%AE%A1bayesian-estimation"><span class="toc-number">1.6.</span> <span class="toc-text">贝叶斯估计（Bayesian
 Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%9F%E4%B8%80%E7%90%86%E8%A7%A3"><span class="toc-number">1.7.</span> <span class="toc-text">统一理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E5%BD%92%E9%97%AE%E9%A2%98"><span class="toc-number">1.7.1.</span> <span class="toc-text">回归问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98"><span class="toc-number">1.7.2.</span> <span class="toc-text">分类问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96"><span class="toc-number">1.7.3.</span> <span class="toc-text">正则化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
@@ -755,10 +760,6 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -767,7 +768,7 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -779,15 +780,7 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -795,7 +788,19 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -803,7 +808,11 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -819,7 +828,7 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -827,15 +836,11 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -843,7 +848,7 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -851,23 +856,11 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,15 +876,15 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -903,7 +896,19 @@ Estimation）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

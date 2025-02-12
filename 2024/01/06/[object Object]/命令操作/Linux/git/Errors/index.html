@@ -10,15 +10,15 @@
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="Errors Failed to connect to github.com port 443 after 21090 ms: Couldn‘t connect to server  fatal: unable to access &#39;https:&#x2F;&#x2F;github.com&#x2F;xxx&#x2F;******.git&#x2F;&#39;: Failed to connect to github.com port 443">
+  <meta name="description" content="Errors git pull 分支报错 fatal: Need to specify how to reconcile divergent branches. 12345678910111213141516&gt; git pull --tags origin mainFrom github.com:cuiluyi&#x2F;open-r1 * branch            main">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Errors">
 <meta property="og:url" content="https://luyicui.github.io/2024/01/06/[object%20Object]/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/Errors/index.html">
 <meta property="og:site_name" content="弘毅 の blog">
-<meta property="og:description" content="Errors Failed to connect to github.com port 443 after 21090 ms: Couldn‘t connect to server  fatal: unable to access &#39;https:&#x2F;&#x2F;github.com&#x2F;xxx&#x2F;******.git&#x2F;&#39;: Failed to connect to github.com port 443">
+<meta property="og:description" content="Errors git pull 分支报错 fatal: Need to specify how to reconcile divergent branches. 12345678910111213141516&gt; git pull --tags origin mainFrom github.com:cuiluyi&#x2F;open-r1 * branch            main">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-06T10:36:45.000Z">
-<meta property="article:modified_time" content="2025-01-18T16:28:18.161Z">
+<meta property="article:modified_time" content="2025-02-11T18:41:27.630Z">
 <meta property="article:author" content="弘毅">
 <meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">722字</span>
+      <span class="post-count">1.6k字</span>
     </span>
   </span>
 
@@ -251,7 +251,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">3分</span>
+      <span class="post-count">6分</span>
     </span>
   </span>
 </div>
@@ -264,14 +264,98 @@
     
     <h1 id="errors">Errors</h1>
 <h2
+id="git-pull-分支报错-fatal-need-to-specify-how-to-reconcile-divergent-branches.">git
+pull 分支报错 fatal: Need to specify how to reconcile divergent
+branches.</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&gt; git pull --tags origin main</span><br><span class="line">From github.com:cuiluyi/open-r1</span><br><span class="line"> * branch            main       -&gt; FETCH_HEAD</span><br><span class="line">hint: You have divergent branches and need to specify how to reconcile them.</span><br><span class="line">hint: You can do so by running one of the following commands sometime before</span><br><span class="line">hint: your next pull:</span><br><span class="line">hint: </span><br><span class="line">hint:   git config pull.rebase false  # merge (the default strategy)</span><br><span class="line">hint:   git config pull.rebase true   # rebase</span><br><span class="line">hint:   git config pull.ff only       # fast-forward only</span><br><span class="line">hint: </span><br><span class="line">hint: You can replace &quot;git config&quot; with &quot;git config --global&quot; to set a default</span><br><span class="line">hint: preference for all repositories. You can also pass --rebase, --no-rebase,</span><br><span class="line">hint: or --ff-only on the command line to override the configured default per</span><br><span class="line">hint: invocation.</span><br><span class="line">fatal: Need to specify how to reconcile divergent branches.</span><br></pre></td></tr></table></figure>
+<p>你遇到的 <code>git pull</code>
+错误是因为本地分支和远程分支的历史出现了分叉（divergent），Git
+无法自动决定如何合并。以下是详细解释和解决方案：</p>
+<hr />
+<h3 id="错误原因"><strong>错误原因</strong></h3>
+<ul>
+<li><strong>分叉分支</strong>：本地分支和远程分支（<code>origin/main</code>）各自有对方没有的新提交，导致
+Git 无法自动合并。</li>
+<li><strong>Git 的默认行为不明确</strong>：Git
+需要你明确指定如何处理分叉的分支（合并、变基或仅允许快进）。</li>
+</ul>
+<hr />
+<h3
+id="合并merge变基rebase仅快进fast-forward-only的区别">合并（Merge）、变基（Rebase）、仅快进（Fast-Forward
+Only）的区别</h3>
+<h4 id="合并merge">合并（Merge）</h4>
+<ul>
+<li><strong>行为</strong>：将远程分支的提交和本地分支的提交合并，生成一个新的合并提交。</li>
+<li><strong>优点</strong>：保留完整历史，适合协作开发。</li>
+<li><strong>缺点</strong>：历史记录可能变得复杂（出现合并提交）。</li>
+<li><strong>适用场景</strong>：多人协作时，分支需要保留各自的开发痕迹。</li>
+<li><strong>命令</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --no-rebase  <span class="comment"># 默认行为（等同于 git pull）</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="变基rebase">变基（Rebase）</h4>
+<ul>
+<li><strong>行为</strong>：将本地提交“移动”到远程分支的最新提交之后，形成线性历史。</li>
+<li><strong>优点</strong>：历史记录更清晰（线性、无合并提交）。</li>
+<li><strong>缺点</strong>：会修改本地提交的哈希值，可能影响协作（已推送的分支慎用）。</li>
+<li><strong>适用场景</strong>：个人分支整理提交历史，或在协作中保持主分支干净。</li>
+<li><strong>命令</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="仅快进fast-forward-only">仅快进（Fast-Forward Only）</h4>
+<ul>
+<li><strong>行为</strong>：只有当本地分支可以<strong>直接快进</strong>到远程分支时（即没有分叉），才允许合并；否则拒绝操作。</li>
+<li><strong>优点</strong>：强制保持线性历史，避免意外合并。</li>
+<li><strong>缺点</strong>：如果存在分叉，必须手动处理（如合并或变基）。</li>
+<li><strong>适用场景</strong>：确保分支历史绝对线性（例如发布分支）。</li>
+<li><strong>命令</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --ff-only</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr />
+<h3 id="解决方案">解决方案</h3>
+<h4 id="临时指定合并策略">临时指定合并策略</h4>
+<ul>
+<li><strong>合并（默认）</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --no-rebase --tags origin main</span><br></pre></td></tr></table></figure></li>
+<li><strong>变基</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase --tags origin main</span><br></pre></td></tr></table></figure></li>
+<li><strong>仅快进</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --ff-only --tags origin main</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4
+id="配置默认策略避免每次手动指定">配置默认策略（避免每次手动指定）</h4>
+<ul>
+<li><strong>全局配置默认合并方式</strong>： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用合并（默认）</span></span><br><span class="line">git config --global pull.rebase <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用变基</span></span><br><span class="line">git config --global pull.rebase <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 仅允许快进</span></span><br><span class="line">git config --global pull.ff only</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr />
+<h3 id="操作建议"><strong>操作建议</strong></h3>
+<ol type="1">
+<li><strong>合并（Merge）</strong>：适合团队协作，保留所有提交记录。</li>
+<li><strong>变基（Rebase）</strong>：适合个人分支整理历史，保持主分支线性。</li>
+<li><strong>仅快进（Fast-Forward）</strong>：适合禁止分叉的场景（如发布分支）。</li>
+</ol>
+<p>如果本地有未推送的提交，推荐使用 <code>git pull --rebase</code>
+保持历史整洁；若分叉复杂且需要保留合并记录，则使用默认合并。</p>
+<hr />
+<h3 id="总结"><strong>总结</strong></h3>
+<ul>
+<li><strong>分叉问题</strong>：本地和远程分支都有新提交，Git
+无法自动处理。</li>
+<li><strong>解决关键</strong>：通过
+<code>--rebase</code>、<code>--no-rebase</code> 或
+<code>--ff-only</code> 明确合并策略。</li>
+<li><strong>长期配置</strong>：根据团队规范，用 <code>git config</code>
+设置默认行为。</li>
+</ul>
+<hr />
+<h2
+id="fatal-unable-to-access-httpsgithub.comxxx.git-failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server">fatal:
+unable to access 'https://github.com/xxx/******.git/': Failed to connect
+to github.com port 443 after 21090 ms: Couldn't connect to server</h2>
+<p>在 git clone 时不使用 HTTPS，反而使用 SSH</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202502101241775.png"
+alt="image-20250210124104559" />
+<figcaption aria-hidden="true">image-20250210124104559</figcaption>
+</figure>
+<h2
 id="failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server">Failed
 to connect to github.com port 443 after 21090 ms: Couldn‘t connect to
 server</h2>
-<blockquote>
-<p>fatal: unable to access 'https://github.com/xxx/******.git/': Failed
-to connect to github.com port 443 after 21090 ms: Couldn't connect to
-server</p>
-</blockquote>
 <figure>
 <img
 src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412061406741.png"
@@ -524,18 +608,18 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501062241398.png" /></p
 
 <nav id="article-nav">
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/css/tutorial/%E3%80%909.%E5%86%85%E8%BE%B9%E8%B7%9D%E4%B8%8E%E5%A4%96%E8%BE%B9%E8%B7%9D%E3%80%91/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/nvidia-smi%E5%91%BD%E4%BB%A4/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          【9. 内边距与外边距】
+          nvidia-smi命令
         
       </div>
     </a>
   
   
-    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/Git%20%E5%A6%82%E4%BD%95%E5%BF%BD%E7%95%A5%E5%A4%A7%E6%96%87%E4%BB%B6%E5%B9%B6%E6%8E%A8%E9%80%81%E8%87%B3Git%E4%BB%93%E5%BA%93/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Git 如何忽略大文件并推送至 Git 仓库</div>
+    <a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/command/pip%E5%91%BD%E4%BB%A4/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">pip命令</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -562,9 +646,14 @@ src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202501062241398.png" /></p
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#errors"><span class="toc-number">1.</span> <span class="toc-text">Errors</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server"><span class="toc-number">1.1.</span> <span class="toc-text">Failed
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#errors"><span class="toc-number">1.</span> <span class="toc-text">Errors</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#git-pull-%E5%88%86%E6%94%AF%E6%8A%A5%E9%94%99-fatal-need-to-specify-how-to-reconcile-divergent-branches."><span class="toc-number">1.1.</span> <span class="toc-text">git
+pull 分支报错 fatal: Need to specify how to reconcile divergent
+branches.</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.1.1.</span> <span class="toc-text">错误原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%88%E5%B9%B6merge%E5%8F%98%E5%9F%BArebase%E4%BB%85%E5%BF%AB%E8%BF%9Bfast-forward-only%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.2.</span> <span class="toc-text">合并（Merge）、变基（Rebase）、仅快进（Fast-Forward
+Only）的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%88%E5%B9%B6merge"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">合并（Merge）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E5%9F%BArebase"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">变基（Rebase）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%85%E5%BF%AB%E8%BF%9Bfast-forward-only"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">仅快进（Fast-Forward Only）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.3.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%B4%E6%97%B6%E6%8C%87%E5%AE%9A%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">临时指定合并策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E9%BB%98%E8%AE%A4%E7%AD%96%E7%95%A5%E9%81%BF%E5%85%8D%E6%AF%8F%E6%AC%A1%E6%89%8B%E5%8A%A8%E6%8C%87%E5%AE%9A"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">配置默认策略（避免每次手动指定）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.1.4.</span> <span class="toc-text">操作建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fatal-unable-to-access-httpsgithub.comxxx.git-failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server"><span class="toc-number">1.2.</span> <span class="toc-text">fatal:
+unable to access &#39;https:&#x2F;&#x2F;github.com&#x2F;xxx&#x2F;******.git&#x2F;&#39;: Failed to connect
+to github.com port 443 after 21090 ms: Couldn&#39;t connect to server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#failed-to-connect-to-github.com-port-443-after-21090-ms-couldnt-connect-to-server"><span class="toc-number">1.3.</span> <span class="toc-text">Failed
 to connect to github.com port 443 after 21090 ms: Couldn‘t connect to
-server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%98%AF%E5%9C%A8%E6%8C%82%E7%9D%80%E6%A2%AF%E5%AD%90%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E6%8B%89%E5%8F%96%E6%88%96%E8%80%85%E6%8E%A8%E9%80%81%E4%BB%A3%E7%A0%81%E7%9A%84%E6%97%B6%E5%80%99%E6%98%AF%E5%90%A6%E9%81%87%E5%88%B0%E4%BA%86%E6%8A%A5%E9%94%99"><span class="toc-number">1.1.1.</span> <span class="toc-text">如果是在挂着梯子的情况下拉取或者推送代码的时候是否遇到了报错？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89%E6%8C%82%E7%9D%80%E6%A2%AF%E5%AD%90%E4%BD%86%E6%98%AF%E8%BF%98%E6%98%AF%E9%81%87%E5%88%B0%E4%BA%86%E4%BB%A5%E4%B8%8A%E6%8A%A5%E9%94%99"><span class="toc-number">1.1.2.</span> <span class="toc-text">如果没有挂着梯子但是还是遇到了以上报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8A%A5%E9%94%99"><span class="toc-number">1.1.3.</span> <span class="toc-text">服务器报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%8E%AF%E5%A2%83%E9%80%9A%E8%BF%87ssh%E9%93%BE%E6%8E%A5github%E5%85%8D%E5%AF%86%E7%A0%81%E9%85%8D%E7%BD%AE%E4%BA%B2%E6%B5%8B%E6%9C%89%E6%95%88"><span class="toc-number">1.1.4.</span> <span class="toc-text">git环境通过ssh链接GitHub（免密码）配置，亲测有效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87ssh%E8%BF%9E%E6%8E%A5github"><span class="toc-number">1.1.5.</span> <span class="toc-text"> 通过ssh连接GitHub</span></a></li></ol></li></ol></li></ol>
+server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%98%AF%E5%9C%A8%E6%8C%82%E7%9D%80%E6%A2%AF%E5%AD%90%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E6%8B%89%E5%8F%96%E6%88%96%E8%80%85%E6%8E%A8%E9%80%81%E4%BB%A3%E7%A0%81%E7%9A%84%E6%97%B6%E5%80%99%E6%98%AF%E5%90%A6%E9%81%87%E5%88%B0%E4%BA%86%E6%8A%A5%E9%94%99"><span class="toc-number">1.3.1.</span> <span class="toc-text">如果是在挂着梯子的情况下拉取或者推送代码的时候是否遇到了报错？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89%E6%8C%82%E7%9D%80%E6%A2%AF%E5%AD%90%E4%BD%86%E6%98%AF%E8%BF%98%E6%98%AF%E9%81%87%E5%88%B0%E4%BA%86%E4%BB%A5%E4%B8%8A%E6%8A%A5%E9%94%99"><span class="toc-number">1.3.2.</span> <span class="toc-text">如果没有挂着梯子但是还是遇到了以上报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8A%A5%E9%94%99"><span class="toc-number">1.3.3.</span> <span class="toc-text">服务器报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%8E%AF%E5%A2%83%E9%80%9A%E8%BF%87ssh%E9%93%BE%E6%8E%A5github%E5%85%8D%E5%AF%86%E7%A0%81%E9%85%8D%E7%BD%AE%E4%BA%B2%E6%B5%8B%E6%9C%89%E6%95%88"><span class="toc-number">1.3.4.</span> <span class="toc-text">git环境通过ssh链接GitHub（免密码）配置，亲测有效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87ssh%E8%BF%9E%E6%8E%A5github"><span class="toc-number">1.3.5.</span> <span class="toc-text"> 通过ssh连接GitHub</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -755,10 +844,6 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -767,7 +852,7 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -779,15 +864,7 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -795,7 +872,19 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -803,7 +892,11 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color3">保研</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -819,7 +912,7 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -827,15 +920,11 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -843,7 +932,7 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">windows</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -851,23 +940,11 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color3">windows</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,15 +960,15 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -903,7 +980,19 @@ server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">

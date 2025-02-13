@@ -572,6 +572,133 @@ target="_blank" rel="noopener" href="https://babeljs.io/repl/">Babel</a>编译�
 
 
   
+    <article id="post-【前端】/react/2 ES6语法补充" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/" target="_blank">2 ES6语法补充</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="es6语法补充">2 ES6语法补充</h1>
+<h2
+id="使用bind函数绑定this取值">使用<code>bind()</code>函数绑定<code>this</code>取值</h2>
+<p>在JavaScript中，函数里的<code>this</code>指向的是执行时的调用者，而非定义时所在的对象。</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>,</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> talk = person.<span class="property">talk</span>;</span><br><span class="line"><span class="title function_">talk</span>();</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">name</span>: <span class="string">&#x27;yxc&#x27;</span>, <span class="attr">talk</span>: ƒ&#125;</span><br><span class="line"><span class="title class_">Window</span></span><br></pre></td></tr></table></figure>
+<p><code>bind()</code>函数，可以绑定<code>this</code>的取值。例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> talk = person.<span class="property">talk</span>.<span class="title function_">bind</span>(person);</span><br></pre></td></tr></table></figure>
+<h2 id="箭头函数的简写方式">箭头函数的简写方式</h2>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">f</span> = (<span class="params">x</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> x * x;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以简写为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">f</span> = x =&gt; x * x;</span><br></pre></td></tr></table></figure>
+<p><strong>箭头函数不重新绑定<code>this</code>的取值</strong></p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();  <span class="comment">// 输出Window</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();  <span class="comment">// 输出 &#123;talk: f&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="对象的解构">对象的解构</h2>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">18</span>,</span><br><span class="line">  <span class="attr">height</span>: <span class="number">180</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123;name : nm, age&#125; = person;  <span class="comment">// nm是name的别名</span></span><br></pre></td></tr></table></figure>
+<h2 id="数组和对象的展开">数组和对象的展开</h2>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> b = [...a];  <span class="comment">// b是a的复制</span></span><br><span class="line"><span class="keyword">let</span> c = [...a, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];</span><br><span class="line"><span class="keyword">const</span> a = &#123;<span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>&#125;;</span><br><span class="line"><span class="keyword">const</span> b = &#123;<span class="attr">age</span>: <span class="number">18</span>&#125;;</span><br><span class="line"><span class="keyword">const</span> c = &#123;...a, ...b, <span class="attr">height</span>: <span class="number">180</span>&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="named-与-default-exports">Named 与 Default exports</h2>
+<ul>
+<li>Named
+Export：可以export多个，import的时候需要加大括号，名称需要匹配</li>
+<li>Default
+Export：最多export一个，import的时候不需要加大括号，可以直接定义别名</li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/前端//" class="article-tag-list-link color3">前端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【前端】/react/3 Components" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -681,133 +808,6 @@ target="_blank" rel="noopener" href="https://babeljs.io/repl/">Babel</a>编译�
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/3%20Components/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【前端】/react/2 ES6语法补充" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/" target="_blank">2 ES6语法补充</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="es6语法补充">2 ES6语法补充</h1>
-<h2
-id="使用bind函数绑定this取值">使用<code>bind()</code>函数绑定<code>this</code>取值</h2>
-<p>在JavaScript中，函数里的<code>this</code>指向的是执行时的调用者，而非定义时所在的对象。</p>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>,</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> talk = person.<span class="property">talk</span>;</span><br><span class="line"><span class="title function_">talk</span>();</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">name</span>: <span class="string">&#x27;yxc&#x27;</span>, <span class="attr">talk</span>: ƒ&#125;</span><br><span class="line"><span class="title class_">Window</span></span><br></pre></td></tr></table></figure>
-<p><code>bind()</code>函数，可以绑定<code>this</code>的取值。例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> talk = person.<span class="property">talk</span>.<span class="title function_">bind</span>(person);</span><br></pre></td></tr></table></figure>
-<h2 id="箭头函数的简写方式">箭头函数的简写方式</h2>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">f</span> = (<span class="params">x</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> x * x;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>可以简写为：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">f</span> = x =&gt; x * x;</span><br></pre></td></tr></table></figure>
-<p><strong>箭头函数不重新绑定<code>this</code>的取值</strong></p>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();  <span class="comment">// 输出Window</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">talk</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">person.<span class="title function_">talk</span>();  <span class="comment">// 输出 &#123;talk: f&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="对象的解构">对象的解构</h2>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">18</span>,</span><br><span class="line">  <span class="attr">height</span>: <span class="number">180</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123;name : nm, age&#125; = person;  <span class="comment">// nm是name的别名</span></span><br></pre></td></tr></table></figure>
-<h2 id="数组和对象的展开">数组和对象的展开</h2>
-<p>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> b = [...a];  <span class="comment">// b是a的复制</span></span><br><span class="line"><span class="keyword">let</span> c = [...a, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];</span><br><span class="line"><span class="keyword">const</span> a = &#123;<span class="attr">name</span>: <span class="string">&quot;yxc&quot;</span>&#125;;</span><br><span class="line"><span class="keyword">const</span> b = &#123;<span class="attr">age</span>: <span class="number">18</span>&#125;;</span><br><span class="line"><span class="keyword">const</span> c = &#123;...a, ...b, <span class="attr">height</span>: <span class="number">180</span>&#125;;</span><br></pre></td></tr></table></figure>
-<h2 id="named-与-default-exports">Named 与 Default exports</h2>
-<ul>
-<li>Named
-Export：可以export多个，import的时候需要加大括号，名称需要匹配</li>
-<li>Default
-Export：最多export一个，import的时候不需要加大括号，可以直接定义别名</li>
-</ul>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/前端//" class="article-tag-list-link color3">前端</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/2%20ES6%E8%AF%AD%E6%B3%95%E8%A1%A5%E5%85%85/">展开全文 >></a>
     </p>
     
 
@@ -1104,6 +1104,125 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
 
 
   
+    <article id="post-【前端】/react/6 Redux" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/" target="_blank">6 Redux</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/" class="archive-article-date">
+        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="redux">6 Redux</h1>
+<p>redux将所有数据存储到树中，且树是唯一的。</p>
+<h2 id="redux基本概念">Redux基本概念</h2>
+<ul>
+<li><code>store</code>：存储树结构。</li>
+<li><code>state</code>：维护的数据，一般维护成树的结构。</li>
+<li><code>reducer</code>：对<code>state</code>进行更新的函数，每个<code>state</code>绑定一个<code>reducer</code>。传入两个参数：当前<code>state</code>和<code>action</code>，返回新<code>state</code>。</li>
+<li><code>action</code>：一个普通对象，存储<code>reducer</code>的传入参数，一般描述对<code>state</code>的更新类型。</li>
+<li><code>dispatch</code>：传入一个参数<code>action</code>，对整棵<code>state</code>树操作一遍。</li>
+</ul>
+<h2 id="react-redux基本概念">React-Redux基本概念</h2>
+<ul>
+<li><code>Provider</code>组件：用来包裹整个项目，其<code>store</code>属性用来存储<code>redux</code>的<code>store</code>对象。</li>
+<li><code>connect(mapStateToProps, mapDispatchToProps)</code>函数：用来将<code>store</code>与组件关联起来。
+<ul>
+<li><code>mapStateToProps</code>：每次<code>store</code>中的状态更新后调用一次，用来更新组件中的值。</li>
+<li><code>mapDispatchToProps</code>：组件创建时调用一次，用来将<code>store</code>的<code>dispatch</code>函数传入组件。</li>
+</ul></li>
+</ul>
+<h2 id="安装">安装</h2>
+<ul>
+<li><code>npm i redux react-redux @reduxjs/toolkit</code></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/前端//" class="article-tag-list-link color3">前端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【前端】/react/7 实战项目——计算器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1246,7 +1365,7 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
 
 
   
-    <article id="post-【前端】/react/6 Redux" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-【前端】/vue/1 配置环境" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -1254,7 +1373,7 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
   
     <h1 itemprop="name">
 	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/" target="_blank">6 Redux</a>
+	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/1%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83/" target="_blank">1 配置环境</a>
   
     </h1>
   
@@ -1262,7 +1381,7 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
 
   
   
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/" class="archive-article-date">
+<a href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/1%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83/" class="archive-article-date">
         <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
 </a>
 
@@ -1275,29 +1394,22 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
   
   <div class="article-entry" itemprop="articleBody">
     
-    <h1 id="redux">6 Redux</h1>
-<p>redux将所有数据存储到树中，且树是唯一的。</p>
-<h2 id="redux基本概念">Redux基本概念</h2>
-<ul>
-<li><code>store</code>：存储树结构。</li>
-<li><code>state</code>：维护的数据，一般维护成树的结构。</li>
-<li><code>reducer</code>：对<code>state</code>进行更新的函数，每个<code>state</code>绑定一个<code>reducer</code>。传入两个参数：当前<code>state</code>和<code>action</code>，返回新<code>state</code>。</li>
-<li><code>action</code>：一个普通对象，存储<code>reducer</code>的传入参数，一般描述对<code>state</code>的更新类型。</li>
-<li><code>dispatch</code>：传入一个参数<code>action</code>，对整棵<code>state</code>树操作一遍。</li>
-</ul>
-<h2 id="react-redux基本概念">React-Redux基本概念</h2>
-<ul>
-<li><code>Provider</code>组件：用来包裹整个项目，其<code>store</code>属性用来存储<code>redux</code>的<code>store</code>对象。</li>
-<li><code>connect(mapStateToProps, mapDispatchToProps)</code>函数：用来将<code>store</code>与组件关联起来。
-<ul>
-<li><code>mapStateToProps</code>：每次<code>store</code>中的状态更新后调用一次，用来更新组件中的值。</li>
-<li><code>mapDispatchToProps</code>：组件创建时调用一次，用来将<code>store</code>的<code>dispatch</code>函数传入组件。</li>
-</ul></li>
-</ul>
-<h2 id="安装">安装</h2>
-<ul>
-<li><code>npm i redux react-redux @reduxjs/toolkit</code></li>
-</ul>
+    <h1 id="配置环境">1 配置环境</h1>
+<p><a target="_blank" rel="noopener" href="https://vuejs.org/">Vue官网</a></p>
+<h2 id="终端">终端</h2>
+<p><code>Linux</code>和<code>Mac</code>上可以用自带的终端。</p>
+<p><code>Windows</code>上推荐用<code>powershell</code>或者<code>cmd</code>。<code>Git Bash</code>有些指令不兼容。</p>
+<h2 id="安装nodejs">安装<code>Nodejs</code></h2>
+<p><a target="_blank" rel="noopener" href="https://nodejs.org/en/">安装地址</a></p>
+<h2 id="安装vuecli">安装<code>@vue/cli</code></h2>
+<p>打开<code>Git Bash</code>，执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">npm i -g @vue/cli</span><br></pre></td></tr></table></figure>
+<p>如果执行后面的操作有bug，可能是最新版有问题，可以尝试安装早期版本，比如：<code>npm i -g @vue/cli@4</code></p>
+<h2
+id="启动vue自带的图形化项目管理界面">启动<code>vue</code>自带的图形化项目管理界面</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">vue ui</span><br></pre></td></tr></table></figure>
+<p>常见问题1：Windows上运行<code>vue</code>，提示无法加载文件，表示用户权限不足。</p>
+<p>解决方案：用管理员身份打开终端，输入<code>set-ExecutionPolicy RemoteSigned</code>，然后输入<code>y</code></p>
 
     
 
@@ -1314,7 +1426,7 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
         		</li>
       		
 		</ul>
@@ -1335,121 +1447,7 @@ id="每个维护的数据仅能保存在一个this.state中">每个维护的数�
 
     
     <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/react/6%20Redux/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-命令操作/Anaconda/Anaconda命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/Anaconda%E5%91%BD%E4%BB%A4/" target="_blank">Anaconda 命令</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/Anaconda%E5%91%BD%E4%BB%A4/" class="archive-article-date">
-        <time datetime="2024-01-06T10:36:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-06</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="anaconda-命令">Anaconda 命令</h1>
-<h2 id="前言">前言</h2>
-<p>Conda 是 Anaconda 中一个强大的包和环境管理工具，可以在 Windows 的
-Anaconda Prompt 命令行使用，也可以在 macOS 或者 Linux 系统的终端窗口
-(terminal window) 的命令行使用。</p>
-<p>本文简单介绍 conda
-的一些常用命令（对于大多数人来说掌握了这些就基本上能够‘生活自理’了吧）命令。当然，本文假定你已经安装了
-Anaconda，并且在 Windows 条件下使用 Anaconda Prompt 或者在 Linux 下使用
-terminal window。</p>
-<blockquote>
-<p>conda
-命令的一些选项开关有两种指定方式，一种两个连接号“--”后跟选项名全程，一种是一个连接号“-”后跟简称。比如说
-"-n" 和 "--name"
-是等价的。但是要注意有些例外，比如说，“--version”对应的是“-V”（大写的 V
-而不是小写的 v）</p>
-</blockquote>
-    
-    <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/Anaconda%E5%91%BD%E4%BB%A4/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Anaconda</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/命令操作//" class="article-tag-list-link color5">命令操作</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Anaconda/Anaconda%E5%91%BD%E4%BB%A4/">展开全文 >></a>
+      <a class="article-more-a" href="/2024/01/06/%5Bobject%20Object%5D/%E3%80%90%E5%89%8D%E7%AB%AF%E3%80%91/vue/1%20%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83/">展开全文 >></a>
     </p>
     
 
@@ -1649,11 +1647,11 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">命令操作</a>
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1665,6 +1663,10 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
               </li>
              
@@ -1673,19 +1675,11 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1697,11 +1691,15 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1709,11 +1707,11 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">html</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符集与编码解码</a>
+                <a href="javascript:void(0)" class="js-tag color5">html</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1721,19 +1719,19 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">OpenAI</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1765,19 +1763,11 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">shell</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ray</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1785,11 +1775,15 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ray</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">vllm</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+                <a href="javascript:void(0)" class="js-tag color3">transformers</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1797,15 +1791,19 @@ terminal window。</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
             
             <div class="clearfix"></div>

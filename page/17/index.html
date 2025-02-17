@@ -213,6 +213,344 @@
             
 
   
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/索引和切片" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87/" target="_blank">索引和切片</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="索引和切片">索引和切片</h1>
+<h2 id="前言">前言</h2>
+<p>切片其实也是索引操作，所以切片经常被称为切片索引，为了更方便叙述，本文将切片称为切片索引。索引和切片操作可以帮助我们快速提取张量中的部分数据。</p>
+<h2 id="基本索引">基本索引</h2>
+<p>PyTorch 支持与 Python 和 NumPy 类似的基本索引操作，PyTorch
+中的基本索引可以通过整数值来索引张量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> torch</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 构造形状为 3x3，元素值从 0 到 8 的 2D 张量</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.arange(<span class="number">0</span>, <span class="number">9</span>).view([<span class="number">3</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],</span><br><span class="line">        [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]]) </span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a[<span class="number">0</span>]) <span class="comment"># 索引张量 a 的第一行</span></span><br><span class="line"></span><br><span class="line">tensor([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a[<span class="number">0</span>][<span class="number">1</span>]) <span class="comment"># 索引张量 a 的第一行和第二列</span></span><br><span class="line"></span><br><span class="line">tensor(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>变量 a 是一个(3 x 3)的 2D 张量，即张量 a 包含两个维度：</p>
+<ul>
+<li>第一个维度，在 2D 张量中称为行维度；</li>
+<li>第二个维度，在 2D 张量中称为列维度；</li>
+</ul>
+<p><code>a[0]</code> 表示在张量 a 的行维度上取索引号为 0
+的元素（第一行）；<code>a[0][1]</code> 表示在张量 a 的行维度上取索引号为
+0 的元素（第一行）以及在列维度上取索引号为 1
+的元素（第二列），获取行维度和列维度上的元素集合的交集（位于第一行第二列上的元素集合）即为最终的索引结果。简单来说，<code>[i][j]...[k]</code>
+中的每一个 <code>[]</code>
+都表示张量的一个维度，从左边开始维度依次增加，而 <code>[]</code>
+中的元素值代表对应维度的索引号，<strong>「此时的索引号可以为负数，相当于从后向前索引。」</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> torch</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 构造形状为 3x3，元素值从 0 到 8 的 2D 张量</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.arange(<span class="number">0</span>, <span class="number">9</span>).view([<span class="number">3</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">        [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],</span><br><span class="line">        [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a[-<span class="number">1</span>]) <span class="comment"># 索引张量 a 的最后一行</span></span><br><span class="line"></span><br><span class="line">tensor([<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>「当张量的维度数较高的时候，使用 <code>[i][j]...[k]</code>
+的方式书写非常不方便，可以采用 <code>[i, j,...,k]</code>
+的方式，两种方式是等价的。」</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> torch</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 构造形状为 2x2x3，元素值从 0 到 11 的 3D 张量</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.arange(<span class="number">12</span>).view([<span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">tensor([[[ <span class="number">0</span>,  <span class="number">1</span>,  <span class="number">2</span>],</span><br><span class="line">         [ <span class="number">3</span>,  <span class="number">4</span>,  <span class="number">5</span>]],</span><br><span class="line"></span><br><span class="line">        [[ <span class="number">6</span>,  <span class="number">7</span>,  <span class="number">8</span>],</span><br><span class="line">         [ <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>]]])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 第一个维度取索引号为 0 的元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 第二个维度取索引号为 1 的元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 第三个维度取索引号为 2 的元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 满足这三个条件的元素即为索引结果</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">tensor(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 通过基本索引修改元素值</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>] = <span class="number">100</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">tensor([[[  <span class="number">0</span>,   <span class="number">1</span>,   <span class="number">2</span>],</span><br><span class="line">         [  <span class="number">3</span>,   <span class="number">4</span>, <span class="number">100</span>]],</span><br><span class="line"></span><br><span class="line">        [[  <span class="number">6</span>,   <span class="number">7</span>,   <span class="number">8</span>],</span><br><span class="line">         [  <span class="number">9</span>,  <span class="number">10</span>,  <span class="number">11</span>]]])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过对比原始张量 a 和通过基本索引的方式修改元素值之后的张量 a
+可以发现，<strong>「通过基本索引出来的结果与原始的张量共享内存，如果修改一个，另一个也会被修改。」</strong></p>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E7%B4%A2%E5%BC%95%E5%92%8C%E5%88%87%E7%89%87/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【pytorch】/Base/广播机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6/" target="_blank">广播机制</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="广播机制">广播机制</h1>
+<h2 id="定义">定义</h2>
+<p>如果一个 <code>PyTorch</code> 操作支持广播，则其 <code>Tensor</code>
+参数可以自动扩展为相等大小（不需要复制数据）。通常情况下，小一点的数组会被
+<code>broadcast</code> 到大一点的，这样才能保持大小一致。</p>
+<h2 id="规则">规则</h2>
+<ul>
+<li>如果遵守以下规则，则两个 <code>tensor</code> 是“可广播的”：
+<ul>
+<li>每个 <code>tensor</code> 至少有一个维度；</li>
+<li>从尾向前遍历 <code>tensor</code> 的<strong>所有</strong>维度，两个
+<code>tensor</code> 存在下列情况：
+<ul>
+<li><code>tensor</code> 维数相等</li>
+<li><code>tensor</code> 维数不等且 <strong>其中一个维数为 1 </strong> 或
+<strong>其中一个维数不存在</strong></li>
+</ul></li>
+</ul></li>
+<li>如果两个 <code>tensor</code> 是“可广播的”，则计算过程遵循下列规则：
+<ul>
+<li>如果两个 <code>tensor</code> 的维度不同，则在维度较小的
+<code>tensor</code> 的前面增加维度，使它们维度相等。</li>
+<li>对于每个维度，计算结果的维数取两个 <code>tensor</code>
+中较大的那个值。</li>
+<li>两个 <code>tensor</code> 扩展维度的过程是将数值进行复制。</li>
+</ul>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/Base/%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/Python_Data_Science/【pandas】/get_dummies" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90pandas%E3%80%91/get_dummies/" target="_blank">get_dummies</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90pandas%E3%80%91/get_dummies/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="get_dummies">get_dummies</h1>
+<h2 id="pandas.get_dummies-使用场景">pandas.get_dummies 使用场景</h2>
+<p>​ 在对变量进行 <strong>独热编码</strong>（<span
+class="math inline">\(one-hot\
+encoding\)</span>）时使用，例如：某一列类别型变量是季节，取值为春、夏、秋、冬，当我们对其进行建模时，需要将其进行独热编码，这时
+<code>pandas.get_dummies()</code> 便派上了用场。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202409302047605.png"
+alt="image-20240930204756529" />
+<figcaption aria-hidden="true">image-20240930204756529</figcaption>
+</figure>
+<h2 id="参数详解">参数详解</h2>
+<ul>
+<li><strong>data</strong> : array-like, Series, or DataFrame
+输入的数据</li>
+<li><strong>prefix</strong> : string, get_dummies
+转换后，列名的前缀，默认为 None</li>
+<li><strong>columns</strong> : 指定需要实现类别转换的列名
+否则转换所有类别性的列</li>
+<li><strong>dummy_na</strong> : bool, default False
+增加一列表示空缺值，如果 False 就忽略空缺值</li>
+<li><strong>drop_first</strong> : bool, default False 获得 k 中的 k-1
+个类别值，去除第一个, 防止出现多重共线性</li>
+</ul>
+    
+    <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90pandas%E3%80%91/get_dummies/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">pandas</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/Python_Data_Science/%E3%80%90pandas%E3%80%91/get_dummies/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【pytorch】/Base/自动微分" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -681,6 +1019,97 @@ epoch。</p>
 
 
   
+    <article id="post-【后端】/python/第三方库/【pytorch】/保存及加载模型/保存和加载完整模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/" target="_blank">保存和加载完整模型</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="保存和加载完整模型">保存和加载完整模型</h1>
+<p>上面存储模型权重的方式虽然可以节省空间，但是加载前需要构建一个结构完全相同的模型实例来承接权重。如果我们希望在存储权重的同时，也一起保存模型结构，就需要将整个模型传给
+<code>torch.save()</code> ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.models <span class="keyword">as</span> models</span><br><span class="line"></span><br><span class="line">model = models.vgg16(pretrained=<span class="literal">True</span>)</span><br><span class="line">torch.save(model, <span class="string">&#x27;model.pth&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>这样就可以直接从保存的文件中加载整个模型（包括权重和结构）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model = torch.load(<span class="string">&#x27;model.pth&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【pytorch】/加载数据/加载数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -744,347 +1173,6 @@ epoch。</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/model.eval()和model.train()" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/model.eval()%E5%92%8Cmodel.train()/" target="_blank">model.eval() 和 model.train()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/model.eval()%E5%92%8Cmodel.train()/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="model.eval-和-model.train">model.eval() 和 model.train()</h1>
-<h2 id="model.train-和-model.eval-用法和区别">model.train() 和
-model.eval() 用法和区别</h2>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 5%" />
-<col style="width: 5%" />
-<col style="width: 5%" />
-<col style="width: 25%" />
-<col style="width: 37%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">模式</th>
-<th style="text-align: center;">前向传播</th>
-<th style="text-align: center;">反向传播</th>
-<th style="text-align: center;">参数更新</th>
-<th style="text-align: center;">Dropout 层行为</th>
-<th style="text-align: center;">BatchNorm 层行为</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">训练模式（Training Mode）</td>
-<td style="text-align: center;">是</td>
-<td style="text-align: center;">是</td>
-<td style="text-align: center;">是</td>
-<td
-style="text-align: center;">随机将一部分神经元关闭，以防止过拟合</td>
-<td
-style="text-align: center;">使用每一批数据的均值和方差进行归一化处理</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">评估模式（Evaluation Mode）</td>
-<td style="text-align: center;">是</td>
-<td style="text-align: center;"><strong>否</strong></td>
-<td style="text-align: center;"><strong>否</strong></td>
-<td style="text-align: center;">关闭所有神经元，不再进行随机舍弃</td>
-<td
-style="text-align: center;">使用在训练阶段计算得到的全局统计数据进行归一化处理。</td>
-</tr>
-</tbody>
-</table>
-<h3 id="model.train">model.train()</h3>
-<p><code>model.train()</code> 的作用是<strong>启用 Batch Normalization
-和 Dropout。</strong></p>
-<p><strong>如果模型中有 BN 层和 Dropout 层，需要在训练时添加
-<code>model.train()</code>。</strong></p>
-<ul>
-<li><p>对于 Batch Normalization：<code>model.train()</code> 保证 BN
-层能够用到每一批数据的均值和方差。</p></li>
-<li><p>对于 Dropout：<code>model.train()</code>
-是随机取一部分网络连接来训练更新参数。</p></li>
-</ul>
-<h3 id="model.eval">model.eval()</h3>
-<p><code>model.eval()</code> 的作用是<strong>不启用 Batch Normalization
-和 Dropout。</strong></p>
-<p><strong>如果模型中有 BN 层 (Batch Normalization）和
-Dropout，在测试时添加 <code>model.eval()</code>。</strong></p>
-<ul>
-<li>对于 Batch Normalization：<code>model.eval()</code>是保证 BN
-层能够用全部训练数据的均值和方差，即测试过程中要保证 BN
-层的均值和方差不变。</li>
-<li>对于
-Dropout：<code>model.eval()</code>是利用到了所有网络连接，即不进行随机舍弃神经元。</li>
-</ul>
-<p>在深度学习中，当模型完成对训练集（train
-样本）的训练后，我们通常需要使用该模型来评估测试集（test
-样本）的性能。在将模型应用于测试集之前，必须调用 model.eval()
-方法将模型设置为评估模式。这样做是必要的，因为模型中可能包含 Batch
-Normalization（BN）层和 Dropout
-层，这些层在训练和评估时的行为有所不同：</p>
-<ol type="1">
-<li><strong>Batch Normalization（BN）层</strong>：在训练模式下，BN
-层会根据当前批次的数据动态计算均值和方差，并使用这些统计量来标准化输入数据。而在评估模式下，BN
-层则使用训练过程中累积的均值和方差的移动平均值来标准化输入数据，以保持模型在不同数据批次间的一致性。</li>
-<li><strong>Dropout 层</strong>：在训练模式下，Dropout
-层会随机地将一部分神经元的输出设置为零，以减少模型的过拟合。但在评估模式下，Dropout
-层不会随机丢弃任何神经元的输出，以确保模型能够充分利用所有神经元的信息。</li>
-</ol>
-<p>如果不将模型设置为评估模式，即使在没有梯度更新的情况下（即不进行训练），含有
-BN 层和 Dropout
-层的模型在处理输入数据时仍然可能会改变其内部参数或行为，这可能会导致模型的评估结果不准确。因此，为了确保模型在测试时能够提供准确的性能评估，必须在模型应用于测试数据之前，将其设置为评估模式。</p>
-<blockquote>
-<p>在做 one classification
-的时候，训练集和测试集的样本分布是不一样的，尤其需要注意这一点。</p>
-</blockquote>
-<h3 id="分析原因">分析原因</h3>
-<p>使用 PyTorch 进行训练和测试时一定注意要把实例化的 model 指定
-train/eval。<code>model.eval()</code> 时，框架会自动把 BN 和 Dropout
-固定住，不会取平均，而是用训练好的值，不然的话，一旦测试集的
-<code>batch_size</code> 过小，很容易就会被 BN
-层导致生成图片颜色失真极大！！！！！！</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"># 定义一个网络</span><br><span class="line">class Net(nn.Module):</span><br><span class="line">    def __init__(self, l1=120, l2=84):</span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(3, 6, 5)</span><br><span class="line">        self.pool = nn.MaxPool2d(2, 2)</span><br><span class="line">        self.conv2 = nn.Conv2d(6, 16, 5)</span><br><span class="line">        self.fc1 = nn.Linear(16 * 5 * 5, l1)</span><br><span class="line">        self.fc2 = nn.Linear(l1, l2)</span><br><span class="line">        self.fc3 = nn.Linear(l2, 10)</span><br><span class="line"></span><br><span class="line">    def forward(self, x):</span><br><span class="line">        x = self.pool(F.relu(self.conv1(x)))</span><br><span class="line">        x = self.pool(F.relu(self.conv2(x)))</span><br><span class="line">        x = x.view(-1, 16 * 5 * 5)</span><br><span class="line">        x = F.relu(self.fc1(x))</span><br><span class="line">        x = F.relu(self.fc2(x))</span><br><span class="line">        x = self.fc3(x)</span><br><span class="line">        return x</span><br><span class="line"></span><br><span class="line">    # 实例化这个网络</span><br><span class="line">    Model = Net()</span><br><span class="line">     </span><br><span class="line">    # 训练模式使用。train()</span><br><span class="line">    Model.train(mode=True)</span><br><span class="line">    </span><br><span class="line">    # 测试模型使用。eval()</span><br><span class="line">    Model.eval()</span><br></pre></td></tr></table></figure>
-<div style="text-align: center">
-<pre><code>&lt;img src=&quot;https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412220028888.png&quot;&gt;
-&lt;br&gt;
-dropout</code></pre>
-</div>
-<p><strong>下面我们看一个我们写代码的时候常遇见的错误写法：</strong></p>
-<p>在这个特定的例子中，似乎每 50 次迭代就会降低准确度。</p>
-<p>如果我们检查一下代码， 我们看到确实在 train
-函数中设置了训练模式。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">def train(model, optimizer, epoch, train_loader, validation_loader):</span><br><span class="line">    model.train() # ???????????? 错误的位置</span><br><span class="line">    for batch_idx, (data, target) in experiment.batch_loop(iterable=train_loader):</span><br><span class="line">    	# model.train() # 正确的位置，保证每一个 batch 都能进入 model.train() 的模式</span><br><span class="line">        data, target = Variable(data), Variable(target)</span><br><span class="line">        # Inference</span><br><span class="line">        output = model(data)</span><br><span class="line">        loss_t = F.nll_loss(output, target)</span><br><span class="line">        # The iconic grad-back-step trio</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss_t.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        if batch_idx % args.log_interval == 0:</span><br><span class="line">            train_loss = loss_t.item()</span><br><span class="line">            train_accuracy = get_correct_count(output, target) * 100.0 / len(target)</span><br><span class="line">            experiment.add_metric(LOSS_METRIC, train_loss)</span><br><span class="line">            experiment.add_metric(ACC_METRIC, train_accuracy)</span><br><span class="line">            print(&#x27;Train Epoch: &#123;&#125; [&#123;&#125;/&#123;&#125; (&#123;:.0f&#125;%)]\tLoss: &#123;:.6f&#125;&#x27;.format(</span><br><span class="line">                epoch, batch_idx, len(train_loader),</span><br><span class="line">                100. * batch_idx / len(train_loader), train_loss))</span><br><span class="line">            with experiment.validation():</span><br><span class="line">                val_loss, val_accuracy = test(model, validation_loader) # ????????????</span><br><span class="line">                experiment.add_metric(LOSS_METRIC, val_loss)</span><br><span class="line">                experiment.add_metric(ACC_METRIC, val_accuracy)</span><br></pre></td></tr></table></figure>
-<p>这个问题不太容易注意到，在循环中我们调用了 test 函数。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def test(model, test_loader):</span><br><span class="line">    model.eval()</span><br><span class="line">    # ...</span><br></pre></td></tr></table></figure>
-<p>在 <code>test()</code> 函数内部，我们将模式设置为
-<code>model.eval()</code>。这意味着，如果我们在训练过程中调用了
-<code>test()</code> 函数，我们就会进 eval 模式，直到下一次 train()
-函数被调用。这就导致了每一个 epoch 中只有一个 batch 使用了 dropout
-，这就导致了我们看到的性能下降。</p>
-<p>修复很简单我们将 <code>model.train()</code>
-向下移动一行，让其在训练循环中。理想的模式设置是尽可能接近推理步骤，以避免忘记设置它。修正后，我们的训练过程看起来更合理，没有中间的峰值出现。</p>
-<h2 id="在实战中使用-model.train-和-model.eval">在实战中使用
-model.train() 和 model.eval()</h2>
-<p>在 PyTorch
-实战中，你可以通过以下方式将模型设置为训练模式或评估模式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将模型设置为训练模式</span></span><br><span class="line">model.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将模型设置为评估模式</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br></pre></td></tr></table></figure>
-<p>需要注意的是，<strong>每当你开始一个新的训练或评估阶段时</strong>，你都应该明确地设置模型的模式。这是因为模型的模式不会随着你的操作自动切换。</p>
-<p><strong>示例代码</strong></p>
-<p>下面是一个简单的例子，展示了如何在训练和评估阶段使用<code>model.train()</code>和<code>model.eval()</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个简单的模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SimpleModel, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">10</span>, <span class="number">1</span>)</span><br><span class="line">        self.dropout = nn.Dropout(<span class="number">0.5</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = self.relu(x)</span><br><span class="line">        x = self.dropout(x)  <span class="comment"># 在训练和评估阶段行为不同</span></span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化模型、优化器和损失函数</span></span><br><span class="line">model = SimpleModel()</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些训练数据和测试数据</span></span><br><span class="line">train_data = torch.randn((<span class="number">100</span>, <span class="number">10</span>))  <span class="comment"># 训练数据，大小为 (100, 10)</span></span><br><span class="line">train_labels = torch.randn((<span class="number">100</span>, <span class="number">1</span>))  <span class="comment"># 训练标签，大小为 (100, 1)</span></span><br><span class="line">test_data = torch.randn((<span class="number">20</span>, <span class="number">10</span>))  <span class="comment"># 测试数据，大小为 (20, 10)</span></span><br><span class="line">test_labels = torch.randn((<span class="number">20</span>, <span class="number">1</span>))  <span class="comment"># 测试标签，大小为 (20, 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练阶段</span></span><br><span class="line">model.train()  <span class="comment"># 设置模型为训练模式</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):  <span class="comment"># 进行 10 个 epoch 的训练</span></span><br><span class="line">    optimizer.zero_grad()  <span class="comment"># 清空之前的梯度信息（如果有的话）</span></span><br><span class="line">    outputs = model(train_data)  <span class="comment"># 前向传播</span></span><br><span class="line">    loss = criterion(outputs, train_labels)  <span class="comment"># 计算损失</span></span><br><span class="line">    loss.backward()  <span class="comment"># 反向传播，计算梯度</span></span><br><span class="line">    optimizer.step()  <span class="comment"># 更新权重参数</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Epoch <span class="subst">&#123;epoch+<span class="number">1</span>&#125;</span>, Loss: <span class="subst">&#123;loss.item()&#125;</span>&#x27;</span>)  <span class="comment"># 打印损失信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 评估阶段</span></span><br><span class="line">model.<span class="built_in">eval</span>()  <span class="comment"># 设置模型为评估模式</span></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():  <span class="comment"># 确保不会进行反向传播计算梯度，节省内存和计算资源</span></span><br><span class="line">    test_outputs = model(test_data)  <span class="comment"># 前向传播获取测试集的预测结果</span></span><br><span class="line">    test_loss = criterion(test_outputs, test_labels)  <span class="comment"># 计算测试集上的损失值</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Test Loss: <span class="subst">&#123;test_loss.item()&#125;</span>&#x27;</span>)  <span class="comment"># 打印测试损失信息</span></span><br></pre></td></tr></table></figure>
-<p>在上述代码中，我们首先定义了一个简单的神经网络模型<code>SimpleModel</code>，并在训练和测试阶段分别使用<code>model.train()</code>和<code>model.eval()</code>来切换模型的模式。注意在评估阶段我们使用了<code>with torch.no_grad():</code>上下文管理器，以确保在评估阶段不会进行不必要的反向传播计算。</p>
-<h2 id="model.eval-和-torch.no_grad-的区别"><code>model.eval()</code> 和
-<code>torch.no_grad()</code> 的区别</h2>
-<p>在 PyTorch 中进行 validation/test 时，会使用
-<code>model.eval()</code> 切换到测试模式，在该模式下：</p>
-<ol type="1">
-<li>主要用于通知 dropout 层和 BN 层在 train 和 validation/test
-模式间切换：</li>
-</ol>
-<ul>
-<li>在 train 模式下，dropout 网络层会按照设定的参数 <span
-class="math inline">\(p\)</span> 设置保留激活单元的概率（保留概率=<span
-class="math inline">\(p\)</span>); BN 层会继续计算数据的 mean 和 var
-等参数并更新。</li>
-<li>在 eval 模式下，dropout 层会让所有的激活单元都通过，而 BN
-层会停止计算和更新 mean 和 var，直接使用在训练阶段已经学出的 mean 和 var
-值。</li>
-</ul>
-<ol start="2" type="1">
-<li>该模式不会影响各层的 gradient 计算行为，即 gradient 计算和存储与
-training 模式一样，只是不进行反向传播（back probagation)。</li>
-</ol>
-<p>而 <code>with torch.no_grad()</code> 则主要是用于停止 autograd
-模块的工作，以起到加速和节省显存的作用。它的作用是将该 with
-语句包裹起来的部分停止梯度的更新，从而节省了 GPU
-算力和显存，但是并不会影响 dropout 和 BN 层的行为。</p>
-<p>如果不在意显存大小和计算时间的话，仅仅使用 <code>model.eval()</code>
-已足够得到正确的 validation/test 的结果；而
-<code>with torch.no_grad()</code> 则是更进一步加速和节省 gpu
-空间（因为不用计算和存储梯度），从而可以更快计算，也可以跑更大的 batch
-来测试。</p>
-<h2 id="总结">总结</h2>
-<ol type="1">
-<li><strong>模式切换</strong>：每次开始训练或评估前，确保调用<code>model.train()</code>或<code>model.eval()</code>。不恰当的模式可能导致性能下降或错误的结果。</li>
-<li><strong>Batch Normalization</strong>：BatchNorm
-层在训练和评估模式下的行为不同。在训练模式下，它使用 mini-batch
-的统计数据进行标准化；在评估模式下，它使用在训练过程中计算得到的全局统计数据。</li>
-<li><strong>Dropout</strong>：Dropout
-层仅在训练期间随机将输入的一部分设置为 0。在评估模式下，它不会进行
-dropout。</li>
-<li><strong>不需要梯度</strong>：在评估模式下，通常使用<code>with torch.no_grad():</code>上下文管理器来确保不计算不必要的梯度，从而节省内存和计算资源。</li>
-</ol>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/model.eval()%E5%92%8Cmodel.train()/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/保存及加载模型/保存和加载完整模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/" target="_blank">保存和加载完整模型</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="保存和加载完整模型">保存和加载完整模型</h1>
-<p>上面存储模型权重的方式虽然可以节省空间，但是加载前需要构建一个结构完全相同的模型实例来承接权重。如果我们希望在存储权重的同时，也一起保存模型结构，就需要将整个模型传给
-<code>torch.save()</code> ：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.models <span class="keyword">as</span> models</span><br><span class="line"></span><br><span class="line">model = models.vgg16(pretrained=<span class="literal">True</span>)</span><br><span class="line">torch.save(model, <span class="string">&#x27;model.pth&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>这样就可以直接从保存的文件中加载整个模型（包括权重和结构）：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model = torch.load(<span class="string">&#x27;model.pth&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E4%BF%9D%E5%AD%98%E5%8F%8A%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B/%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
     </p>
     
 
@@ -1207,351 +1295,9 @@ dropout。</li>
 
 
   
-    <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/nn.module如何自动调用forward()方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/" target="_blank">nn.module 如何自动调用 forward() 方法</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="nn.module-如何自动调用-forward-方法">nn.module 如何自动调用
-forward() 方法</h1>
-<p>当我们在使用 pytorch 的时候，观察以下例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Net</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;init&#x27;</span>)</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        output = <span class="built_in">input</span> + <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;forward&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br><span class="line">net = Net()</span><br><span class="line">x = torch.tensor(<span class="number">1.0</span>)</span><br><span class="line">out = net(x)</span><br><span class="line"><span class="built_in">print</span>(out)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># init</span></span><br><span class="line"><span class="comment"># forward</span></span><br><span class="line"><span class="comment"># tensord(2.)</span></span><br></pre></td></tr></table></figure>
-<p>定义一个神经网络 Net 后实现 forward 方法，后续实例化为 net
-网络后直接传入 x 即可自动调用 forward 方法，可明明我们并未调用 forward()
-方法，具体如何实现的呢？</p>
-<h2 id="原因">原因</h2>
-<p><strong>原因在于 Net 继承于 nn.Module，而 nn.Module
-内部实现了、<em>_call</em>_() 方法</strong>，</p>
-<p>在 Python 中，__call__()
-是一个特殊方法（也称为魔术方法或魔法方法），用于使对象实例可以像函数一样被调用。当一个类定义了
-__call__()
-方法时，它的实例可以像调用函数一样被调用，而不仅仅是通过类中的其他方法来调用。如下例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;init&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self,a</span>):</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;call&#x27;</span>)</span><br><span class="line">      <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">test = Test()</span><br><span class="line"><span class="built_in">print</span>(test(<span class="string">&#x27;test&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># init</span></span><br><span class="line"><span class="comment"># call</span></span><br><span class="line"><span class="comment"># test</span></span><br></pre></td></tr></table></figure>
-<p>而在 pytorch 中，__call__() 方法会自动调用 forward() 方法。</p>
-<p>具体说：当你调用 net(x) 后，net 会自动调用、<em>_call__()
-方法，相当于 net.__call__(x), 而、</em>_call__() 又会自动调用 forward()
-方法。</p>
-<p>相当于：net(x) --&gt; net.__call__(x) --&gt;net.forward(x)</p>
-<p>了解到这里基本够了，后面是 pytorch 的源码分析，可以不看。</p>
-<h2 id="pytorch-源码分析">pytorch 源码分析</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Callable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Module</span>():</span><br><span class="line">  __call__ : <span class="type">Callable</span>[..., <span class="type">Any</span>] = _wrapped_call_impl</span><br></pre></td></tr></table></figure>
-<p>可以看到虽然有、__call__() 方法，但他并没有像我们上面写的那样定义一个
-def __call__() 方法，分析一下这句话：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__call__ : <span class="type">Callable</span>[..., <span class="type">Any</span>] = _wrapped_call_impl</span><br></pre></td></tr></table></figure>
-<p>这里 Callable[…, Any] 是一个<strong>类型提示</strong>，来源于 type
-库，用来表示一个可调用对象的类型。</p>
-<ol type="1">
-<li><p>[…]: 这个省略号 …
-表示可接受任意数量的参数，即函数或方法可以接受任意数量的参数，包括零个参数。</p></li>
-<li><p>Any: 这个关键字表示函数或方法可以返回任意类型的值。</p>
-<p>综合起来，<strong>__call__ : Callable[…, Any]
-表示这个类型可以是一个接受任意数量参数的可调用对象，并且可以返回任意类型的值。</strong>在类型提示中，这种方式用于表达灵活的函数签名，特别是当函数可能具有不固定参数数量或不确定返回类型时。</p></li>
-</ol>
-<p>而后面的 **= _wrapped_call_impl 相当于给这个、__call__()
-方法取了一个别名，** 接下来我们去找这个方法，源码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_wrapped_call_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">if</span> self._compiled_call_impl <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> self._compiled_call_impl(*args, **kwargs)  <span class="comment"># type: ignore[misc]</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> self._call_impl(*args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>可以看到这里根据对象实例中的 _compiled_call_impl 属性是否不为 None
-执行不同的方法，</p>
-<p>当 _compiled_call_impl 不为 None 时，执行
-self._compiled_call_impl(*args, **kwargs)</p>
-<p>否则执行 self._call_impl(*args, **kwargs)</p>
-<p>观看源码，可以发现 <strong>一般情况下，_compiled_call_impl 都是 None
-的，除非你调用了 Module 里的 compile 方法，否则都是执行
-self._call_impl(*args,**kwargs) 的</strong> ，先看看 Module 里的 compile
-方法是干嘛的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">compile</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Compile this Module&#x27;s forward using :func:`torch.compile`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    This Module&#x27;s `__call__` method is compiled and all arguments are passed as-is</span></span><br><span class="line"><span class="string">    to :func:`torch.compile`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    See :func:`torch.compile` for details on the arguments for this function.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    self._compiled_call_impl = torch.<span class="built_in">compile</span>(self._call_impl, *args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>根据源码的注释，可以看到这段代码使用 torch.compile
-编译模块的、__call__() 方法，其效果是将当前模块的 __call__
-方法进行编译或者优化，并将优化后的实现保存在 _compiled_call_impl
-属性中。编译后的实现可以提升执行效率或者改进其他方面的性能，具体取决于
-torch.compile 函数的实现和参数设置。</p>
-<p>如果你未调用过该 compile 方法，那么 _compiled_call_impl 就是 None
-的，那么 _wrapped_call_impl() 接下来就会执行 _call_impl()，_call_impl()
-的源码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_call_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    forward_call = (self._slow_forward <span class="keyword">if</span> torch._C._get_tracing_state() <span class="keyword">else</span> self.forward)</span><br><span class="line">    <span class="comment"># If we don&#x27;t have any hooks, we want to skip the rest of the logic in</span></span><br><span class="line">    <span class="comment"># this function, and just call forward.</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> (self._backward_hooks <span class="keyword">or</span> self._backward_pre_hooks <span class="keyword">or</span> self._forward_hooks <span class="keyword">or</span> self._forward_pre_hooks</span><br><span class="line">            <span class="keyword">or</span> _global_backward_pre_hooks <span class="keyword">or</span> _global_backward_hooks</span><br><span class="line">            <span class="keyword">or</span> _global_forward_hooks <span class="keyword">or</span> _global_forward_pre_hooks):</span><br><span class="line">        <span class="keyword">return</span> forward_call(*args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = <span class="literal">None</span></span><br><span class="line">    ... 后面的太长省略</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>可以看到，分析 forward_call = (self._slow_forward if
-torch._C._get_tracing_state() else self.forward)</p>
-<p><strong>torch._C._get_tracing_state()
-函数用来检查当前是否处于追踪状态（tracing state）</strong>：</p>
-<ul>
-<li><p>如果处于追踪状态，说明在进行模型的图形化表示（例如在 TorchScript
-中），此时使用 _slow_forward 方法</p></li>
-<li><p>**否则使用 self.forward 方法，至此终于知道、__call__是怎么调用
-self.forward 方法的了**</p></li>
-</ul>
-<p>至于后面的代码就是输出一些日志啥的。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> (self._backward_hooks <span class="keyword">or</span> self._backward_pre_hooks <span class="keyword">or</span> self._forward_hooks <span class="keyword">or</span> self._forward_pre_hooks</span><br><span class="line">        <span class="keyword">or</span> _global_backward_pre_hooks <span class="keyword">or</span> _global_backward_hooks</span><br><span class="line">        <span class="keyword">or</span> _global_forward_hooks <span class="keyword">or</span> _global_forward_pre_hooks):</span><br><span class="line">    <span class="keyword">return</span> forward_call(*args, **kwargs)</span><br></pre></td></tr></table></figure>
-<p>意思是：如果当前模块没有任何的钩子（hooks），则跳过此方法中的其他逻辑，直接调用
-forward_call 方法并返回其结果。</p>
-<blockquote>
-<p><strong>钩子（hooks）通常用于在模型运行过程中添加额外的操作或者记录信息，例如日志、梯度信息等。</strong></p>
-</blockquote>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/nn.module%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E8%B0%83%E7%94%A8forward()%E6%96%B9%E6%B3%95/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【pytorch】/训练模型/torch.set_grad_enabled(False) 与 torch.no_grad() " class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" target="_blank">torch.set_grad_enabled(False) 与 torch.no_grad()</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/" class="archive-article-date">
-        <time datetime="2024-04-26T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-26</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1
-id="torch.set_grad_enabledfalse-与-torch.no_grad">torch.set_grad_enabled(False)
-与 torch.no_grad()</h1>
-<p><code>torch.set_grad_enabled(False)</code> 和
-<code>torch.no_grad()</code> 都是 PyTorch
-中用于控制梯度计算行为的工具，但它们的适用范围和使用场景略有不同。</p>
-<h2 id="相同点">相同点</h2>
-<ol type="1">
-<li><strong>禁用梯度计算</strong>：
-<ul>
-<li>两者都会禁用梯度计算，确保前向传播过程中不记录计算图。</li>
-<li>主要用于推理或验证场景，以减少内存开销和加快运行速度。</li>
-</ul></li>
-<li><strong>性能优化</strong>：
-<ul>
-<li>两者都能有效地降低内存使用和提高运行效率。</li>
-</ul></li>
-</ol>
-<hr />
-<h2 id="不同点">不同点</h2>
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 47%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>特性</th>
-<th><code>torch.set_grad_enabled(False)</code></th>
-<th><code>torch.no_grad()</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>动态性</strong></td>
-<td>可以在代码中根据条件动态控制是否禁用梯度计算</td>
-<td>仅用于禁用梯度计算，不能动态切换</td>
-</tr>
-<tr class="even">
-<td><strong>功能范围</strong></td>
-<td>适用于既可以启用又可以禁用梯度计算的场景</td>
-<td>只能禁用梯度计算</td>
-</tr>
-<tr class="odd">
-<td><strong>典型用法</strong></td>
-<td>用于统一控制梯度计算状态的代码块</td>
-<td>用于明确需要禁用梯度计算的代码块</td>
-</tr>
-<tr class="even">
-<td><strong>显式表达意图</strong></td>
-<td>隐式表达梯度计算的控制逻辑</td>
-<td>明确表达禁用梯度计算的意图</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="代码对比">代码对比</h2>
-<h3
-id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
-<ul>
-<li><p>用于在动态控制代码中设置梯度计算状态。</p></li>
-<li><p>示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">training = <span class="literal">False</span>  <span class="comment"># training 是一个动态变量</span></span><br><span class="line">/*</span><br><span class="line">  .........</span><br><span class="line">*/</span><br><span class="line"><span class="keyword">with</span> torch.set_grad_enabled(training):</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 如果 training=True，则记录计算图；否则不记录。</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="torch.no_grad"><code>torch.no_grad()</code></h3>
-<ul>
-<li><p>直接明确禁用梯度计算，通常用于推理。</p></li>
-<li><p>示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    <span class="comment"># 始终禁用梯度计算。</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr />
-<h2 id="使用建议">使用建议</h2>
-<ol type="1">
-<li><p><strong>使用
-<code>torch.set_grad_enabled(False)</code></strong>：</p>
-<ul>
-<li><p>适合在包含训练和推理逻辑的统一代码中使用，特别是需要根据条件动态切换梯度计算状态的场景。</p></li>
-<li><p>示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> phase <span class="keyword">in</span> [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;val&#x27;</span>]:</span><br><span class="line">    <span class="keyword">with</span> torch.set_grad_enabled(phase == <span class="string">&#x27;train&#x27;</span>):</span><br><span class="line">        outputs = model(inputs)</span><br><span class="line">        <span class="keyword">if</span> phase == <span class="string">&#x27;train&#x27;</span>:</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><p><strong>使用 <code>torch.no_grad()</code></strong>：</p>
-<ul>
-<li><p>适合单纯的推理或测试阶段，不涉及任何动态条件。</p></li>
-<li><p>示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    outputs = model(inputs)</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-</ol>
-<hr />
-<h2 id="总结">总结</h2>
-<ul>
-<li><strong><code>torch.no_grad()</code></strong>
-更简洁明了，专门用于禁用梯度计算的场景。</li>
-<li><strong><code>torch.set_grad_enabled(False)</code></strong>
-提供了更多灵活性，适合动态控制梯度计算的复杂场景。</li>
-</ul>
-<p>如果仅仅是为了禁用梯度计算，建议使用
-<strong><code>torch.no_grad()</code></strong>，它语义更明确。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">pytorch</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/26/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90pytorch%E3%80%91/%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/torch.set_grad_enabled(False)%20%E4%B8%8E%20torch.no_grad()%20/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/16/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/18/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/16/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/45/">45</a><a class="extend next" rel="next" href="/page/18/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1707,11 +1453,11 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1727,35 +1473,15 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1767,19 +1493,31 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1791,11 +1529,15 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1807,6 +1549,10 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
@@ -1815,19 +1561,11 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">代理设置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1835,7 +1573,15 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1843,11 +1589,27 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">fastchat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1859,23 +1621,15 @@ id="torch.set_grad_enabledfalse"><code>torch.set_grad_enabled(False)</code></h3>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>

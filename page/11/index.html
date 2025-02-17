@@ -213,6 +213,384 @@
             
 
   
+    <article id="post-【后端】/python/装饰器/@staticmethod、@classmethod" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@staticmethod%E3%80%81@classmethod/" target="_blank">@staticmethod、@classmethod</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@staticmethod%E3%80%81@classmethod/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="staticmethodclassmethod"><span class="citation"
+data-cites="staticmethod">@staticmethod</span>、<span class="citation"
+data-cites="classmethod">@classmethod</span></h1>
+<p>Python 面向对象编程中，类中定义的方法可以是 <span class="citation"
+data-cites="classmethod">@classmethod</span>
+装饰的<strong>类方法</strong>，也可以是 <span class="citation"
+data-cites="staticmethod">@staticmethod</span>
+装饰的<strong>静态方法</strong>，用的最多的还是不带装饰器的<strong>实例方法</strong>，如果把这几个方法放一块，对初学者来说无疑是一头雾水，那我们该如何正确地使用它们呢？</p>
+<h2 id="装饰器是什么">装饰器是什么？</h2>
+<p>在 Python 中，<strong>装饰器</strong>
+是一种用于修改或增强函数、方法或类行为的特殊函数或语法糖。装饰器本质上是一个<strong>高阶函数</strong>，它接收一个函数或类作为输入，返回一个修改后的函数或类。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Before function call.&quot;</span>)</span><br><span class="line">        func()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;After function call.&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@decorator  </span><span class="comment"># 等价于 say_hello = decorator(say_hello)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">say_hello</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Hello!&quot;</span>)</span><br><span class="line"></span><br><span class="line">say_hello()</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Before function call.</span><br><span class="line">Hello!</span><br><span class="line">After function call.</span><br></pre></td></tr></table></figure>
+<h2 id="静态方法staticmethod">静态方法<code>@staticmethod</code></h2>
+<p><code>@staticmethod</code>
+将类中的方法定义为<strong>静态方法</strong>。静态方法既不依赖于实例，也不依赖于类本身，因此它既<strong>无法访问实例变量</strong>，也<strong>无法访问类变量</strong>（<strong>不需要接受实例
+<code>self</code> 或类 <code>cls</code> 作为第一个参数</strong>）</p>
+<h3 id="示例代码">示例代码</h3>
+<p>静态方法可以通过类或实例进行调用。无论是通过类还是实例，调用静态方法的语法是相同的，不需要传递
+<code>self</code> 参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MathUtils</span>:</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">        <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">mul</span>(<span class="params">x, y</span>):</span><br><span class="line">        <span class="keyword">return</span> x * y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过类调用</span></span><br><span class="line">MathUtils.add(<span class="number">10</span>, <span class="number">20</span>) <span class="comment"># 30</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过实例调用</span></span><br><span class="line">utils = MathUtils()</span><br><span class="line">utils.mul(<span class="number">3</span>, <span class="number">40</span>) <span class="comment"># 120</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>这里的 <code>add</code> 和 <code>mul</code>
+方法不需要访问实例或类属性，因此被定义为静态方法。</li>
+<li>调用时可以通过<strong>类名</strong>或<strong>实例名</strong>直接访问</li>
+</ul>
+<h3 id="应用场景">应用场景</h3>
+<p>静态方法通常用于：</p>
+<ol type="1">
+<li>逻辑相关，但<strong>不依赖类变量或实例变量的函数</strong></li>
+<li><strong>工具类方法</strong>，例如格式转换、数学计算等辅助函数</li>
+</ol>
+<h2 id="类方法classmethod">类方法<code>@classmethod</code></h2>
+<p><code>@classmethod</code>
+将方法定义为<strong>类方法</strong>，它的第一个参数是<strong>类本身
+(<code>cls</code>)</strong>，而不是实例
+(<code>self</code>)。因此，类方法可以访问或修改类属性，但不能直接访问实例属性。</p>
+<h3 id="示例代码-1">示例代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>:</span><br><span class="line">    count = <span class="number">0</span>  <span class="comment"># 类变量，记录人数</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        Person.count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_count</span>(<span class="params">cls</span>):</span><br><span class="line">        <span class="keyword">return</span> cls.count</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建实例</span></span><br><span class="line">p1 = Person(<span class="string">&quot;Alice&quot;</span>)</span><br><span class="line">p2 = Person(<span class="string">&quot;Bob&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Person.get_count())  <span class="comment"># 输出：2</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>get_count</code> 是类方法，使用 <code>cls</code> 访问类变量
+<code>count</code>。</li>
+<li>通过 <code>Person.get_count()</code>
+调用类方法，不需要创建实例。</li>
+</ul>
+<h3 id="应用场景-1">应用场景</h3>
+<ol type="1">
+<li><strong>访问类变量：</strong>
+用于统计类级别的数据，如计数器、共享配置等。</li>
+<li><strong>工厂方法：</strong> 根据不同的需求动态创建实例。例如：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, species</span>):</span><br><span class="line">        self.species = species</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_dog</span>(<span class="params">cls</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(<span class="string">&quot;Dog&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_cat</span>(<span class="params">cls</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(<span class="string">&quot;Cat&quot;</span>)</span><br><span class="line"></span><br><span class="line">dog = Animal.create_dog()</span><br><span class="line">cat = Animal.create_cat()</span><br><span class="line"><span class="built_in">print</span>(dog.species)  <span class="comment"># 输出：Dog</span></span><br><span class="line"><span class="built_in">print</span>(cat.species)  <span class="comment"># 输出：Cat</span></span><br></pre></td></tr></table></figure>
+<h2 id="对比">对比</h2>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 40%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>特点</th>
+<th><code>@staticmethod</code></th>
+<th><code>@classmethod</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>是否绑定实例或类</td>
+<td>不绑定实例或类</td>
+<td>绑定类 (<code>cls</code>)</td>
+</tr>
+<tr class="even">
+<td>能否访问实例属性</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr class="odd">
+<td>能否访问类变量</td>
+<td>否</td>
+<td>可以</td>
+</tr>
+<tr class="even">
+<td>参数中的特殊符号</td>
+<td>无特殊参数</td>
+<td>第一个参数是 <code>cls</code>，表示类本身</td>
+</tr>
+<tr class="odd">
+<td>适合的应用场景</td>
+<td>工具函数、辅助计算逻辑</td>
+<td>操作类变量、工厂方法、管理类注册等</td>
+</tr>
+<tr class="even">
+<td>调用方式</td>
+<td>类名或实例均可调用：<code>Class.method()</code></td>
+<td>类名或实例均可调用：<code>Class.method()</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="综合实例">综合实例</h2>
+<p>先来看一个简单示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">m1</span>(<span class="params">self, n</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;self:&quot;</span>, self)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">m2</span>(<span class="params">cls, n</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;cls:&quot;</span>, cls)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">m3</span>(<span class="params">n</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">a.m1(<span class="number">1</span>) <span class="comment"># self: &lt;__main__.A object at 0x000001E596E41A90&gt;</span></span><br><span class="line">A.m2(<span class="number">1</span>) <span class="comment"># cls: &lt;class &#x27;__main__.A&#x27;&gt;</span></span><br><span class="line">A.m3(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>我在类中一共定义了 3 个方法：</p>
+<ul>
+<li>m1 是实例方法，第一个参数必须是 self（约定俗成的）</li>
+<li>m2 是类方法，第一个参数必须是 cls（同样是约定俗成）</li>
+<li>m3 是静态方法，参数根据业务需求定，可有可无</li>
+</ul>
+<p>当程序运行时，大概发生了这么几件事（结合下面的图来看）</p>
+<ul>
+<li>第一步：代码从第一行开始执行 class 命令，此时会创建一个类 A
+对象（没错，类也是对象，一切皆对象嘛）同时初始化类里面的属性和方法，记住，此刻实例对象还没创建出来。</li>
+<li>第二、三步：接着执行
+<code>a=A()</code>，系统自动调用类的构造器，构造出实例对象 a</li>
+<li>第四步：接着调用 <code>a.m1(1)</code> ，m1
+是实例方法，内部会自动把实例对象传递给 self 参数进行绑定，也就是说，
+self 和 a 指向的都是同一个实例对象。</li>
+<li>第五步：调用 <code>A.m2(1)</code> 时，python
+内部隐式地把类对象传递给 cls 参数，cls 和 A 都指向类对象。</li>
+</ul>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202412272149618.jpeg"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>严格意义上来说，左边的都是变量名，是对象的引用，右边才是真正的对像，为了描述方便，我直接把
+a 称为对象，你应该明白我说对象其实是它所引用右边的那个真正的对象。</p>
+<p>再来看看每个方法各有什么特性</p>
+<h3 id="实例方法">实例方法</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">print(A.m1)</span><br><span class="line"># A.m1 在 py2 中显示为&lt;unbound method A.m1&gt;</span><br><span class="line">&lt;function A.m1 at 0x000002BF7FF9A488&gt;</span><br><span class="line"></span><br><span class="line">print(a.m1)</span><br><span class="line">&lt;bound method A.m1 of &lt;__main__.A object at 0x000002BF7FFA2BE0&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>A.m1 是一个还没有绑定实例对象的方法，对于未绑定方法，调用 A.m1
+时必须显示地传入一个实例对象进去，而 a.m1 是已经绑定了实例的方法，python
+隐式地把对象传递给了 self
+参数，所以不再手动传递参数，这是调用实例方法的过程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A.m1(a, 1)</span><br><span class="line"># 等价  </span><br><span class="line">a.m1(1)</span><br></pre></td></tr></table></figure>
+<p>如果未绑定的方法 A.m1 不传实例对象给 self 时，就会报参数缺失错误，在
+py3 与 py2 中，两者报的错误不一致，python2 要求第一个参数 self
+是实例对象，而 python3 中可以是任意对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A.m1(1)</span><br><span class="line">TypeError: m1() missing 1 required positional argument: &#x27;n&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="类方法">类方法</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">print(A.m2)</span><br><span class="line">&lt;bound method A.m2 of &lt;class &#x27;__main__.A&#x27;&gt;&gt;</span><br><span class="line"></span><br><span class="line">print(a.m2)</span><br><span class="line">&lt;bound method A.m2 of &lt;class &#x27;__main__.A&#x27;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>m2 是类方法，不管是 A.m2 还是 a.m2，都是已经自动绑定了类对象 A
+的方法，对于后者，因为 python 可以通过实例对象 a 找到它所属的类是
+A，找到 A 之后自动绑定到 cls。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A.m2(1) </span><br><span class="line"> # 等价</span><br><span class="line">a.m2(1)</span><br></pre></td></tr></table></figure>
+<p>这使得我们可以在实例方法中通过使用 self.m2()
+这种方式来调用类方法和静态方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def m1(self, n):</span><br><span class="line">    print(&quot;self:&quot;, self)</span><br><span class="line">    self.m2(n)</span><br></pre></td></tr></table></figure>
+<h3 id="静态方法">静态方法</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">print(A.m3)</span><br><span class="line">&lt;function A.m3 at 0x000002BF7FF9A840&gt;</span><br><span class="line"></span><br><span class="line">print(a.m3)</span><br><span class="line">&lt;function A.m3 at 0x000002BF7FF9A840&gt;</span><br></pre></td></tr></table></figure>
+<p>m3
+是类里面的一个静态方法，跟普通函数没什么区别，与类和实例都没有所谓的绑定关系，它只不过是碰巧存在类中的一个函数而已。不论是通过类还是实例都可以引用该方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A.m3(1) </span><br><span class="line"># 等价</span><br><span class="line">a.m3(1)</span><br></pre></td></tr></table></figure>
+<h2 id="应用场景-2">应用场景</h2>
+<p>以上就是几个方法的基本介绍。现在把几个基本的概念理清楚了，那么现在来说说几个方法之间的使用场景以及他们之间的优缺点。</p>
+<h3 id="静态方法的使用场景">静态方法的使用场景</h3>
+<p>如果在方法中不需要访问任何实例方法和属性，纯粹地通过传入参数并返回数据的功能性方法，那么它就适合用静态方法来定义，它节省了实例化对象的开销成本，往往静态方法放在类外面的模块层作为一个函数存在也是没问题的，而放在类中，仅为这个类服务。例如下面是微信公众号开发中验证微信签名的一个例子，它没有引用任何类或者实例相关的属性和方法。</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> sha1</span><br><span class="line"><span class="keyword">import</span> tornado.web</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SignatureHandler</span>(tornado.web.RequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">         根据签名判断请求是否来自微信</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        signature = self.get_query_argument(<span class="string">&quot;signature&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        echostr = self.get_query_argument(<span class="string">&quot;echostr&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        timestamp = self.get_query_argument(<span class="string">&quot;timestamp&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        nonce = self.get_query_argument(<span class="string">&quot;nonce&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> self._check_sign(TOKEN, timestamp, nonce, signature):</span><br><span class="line">            logger.info(<span class="string">&quot;微信签名校验成功&quot;</span>)</span><br><span class="line">            self.write(echostr)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.write(<span class="string">&quot;你不是微信发过来的请求&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_sign</span>(<span class="params">token, timestamp, nonce, signature</span>):</span><br><span class="line">        sign = [token, timestamp, nonce]</span><br><span class="line">        sign.sort()</span><br><span class="line">        sign = <span class="string">&quot;&quot;</span>.join(sign)</span><br><span class="line">        sign = sha1(sign).hexdigest()</span><br><span class="line">        <span class="keyword">return</span> sign == signature</span><br></pre></td></tr></table></figure></p>
+<h3 id="类方法的使用场景">类方法的使用场景</h3>
+<p>作为<strong>工厂方法</strong>创建<strong>实例对象</strong>，例如内置模块
+datetime.date 类中就有大量使用类方法作为工厂方法，以此来创建 date
+对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class date:</span><br><span class="line"></span><br><span class="line">    def __new__(cls, year, month=None, day=None):</span><br><span class="line">        self = object.__new__(cls)</span><br><span class="line">        self._year = year</span><br><span class="line">        self._month = month</span><br><span class="line">        self._day = day</span><br><span class="line">        return self</span><br><span class="line"></span><br><span class="line">    @classmethod</span><br><span class="line">    def fromtimestamp(cls, t):</span><br><span class="line">        y, m, d, hh, mm, ss, weekday, jday, dst = _time.localtime(t)</span><br><span class="line">        return cls(y, m, d)</span><br><span class="line"></span><br><span class="line">    @classmethod</span><br><span class="line">    def today(cls):</span><br><span class="line">        t = _time.time()</span><br><span class="line">        return cls.fromtimestamp(t)</span><br></pre></td></tr></table></figure>
+<p>如果希望在方法里面调用静态类，那么把方法定义成类方法是合适的，因为要是定义成静态方法，那么你就要显示地引用类
+A，这对继承来说可不是一件好事情。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class A:</span><br><span class="line"></span><br><span class="line">    @staticmethod</span><br><span class="line">    def m1()</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    @staticmethod</span><br><span class="line">    def m2():</span><br><span class="line">        A.m1() # bad</span><br><span class="line"></span><br><span class="line">    @classmethod</span><br><span class="line">    def m3(cls):</span><br><span class="line">        cls.m1() # good</span><br></pre></td></tr></table></figure>
+<p>其实也不算是什么深入理解吧，最多算是明白怎么用，真要深入理解恐怕还要另写一篇文章，有兴趣的可以去了解一下
+Python 的描述符。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E8%A3%85%E9%A5%B0%E5%99%A8/@staticmethod%E3%80%81@classmethod/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-命令操作/Linux/git/基于VScode的git使用指南" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_blank">基于VScode的git使用指南</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="基于-vscode-的-git-使用指南">基于 VScode 的 git 使用指南</h1>
+<p>git 是最为常用的
+<strong>分布式版本控制系统</strong>，它可以让你在本地和远程仓库之间同步你的代码变化。本教程将介绍基于
+VScode 的 git 的使用，包括以下内容：</p>
+<ol type="1">
+<li><strong>git 安装</strong></li>
+<li><strong>git 本地代码版本控制</strong></li>
+<li><strong>git 远程代码版本控制</strong></li>
+<li><strong>git 其他使用技巧</strong></li>
+</ol>
+<p>希望你看完本文，能够熟练利用 VScode + git
+进行代码版本控制，如果有任何问题，欢迎在评论区中提问。可以的话，点赞关注收藏呀，笔芯
+❤~</p>
+<h2 id="git-安装">git 安装</h2>
+<ol type="1">
+<li><p>git 下载</p>
+<p>通过 git 官网下载 git，选择自己的系统下载即可，链接如下 <a
+target="_blank" rel="noopener" href="https://git-scm.com/downloads">Git - Downloads
+(git-scm.com)</a>。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202411111426043.png"
+alt="image-20240202132631508" />
+<figcaption aria-hidden="true">image-20240202132631508</figcaption>
+</figure>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/命令操作//" class="article-tag-list-link color5">命令操作</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/Linux/git/%E5%9F%BA%E4%BA%8EVScode%E7%9A%84git%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【dataclasses模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -463,6 +841,364 @@ dataclass</a></li>
 
 
   
+    <article id="post-【后端】/python/第三方库/【collections模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【collections模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="collections模块">【collections模块】</h1>
+<p>在日常 Python
+开发中，我们经常需要处理各种<strong>数据结构</strong>。Python
+标准库自带的 <code>collections</code>
+模块，为我们提供了一系列高效且灵活的容器数据类型，比基础数据结构（如
+<code>list</code>, <code>dict</code>, <code>set</code>,
+<code>tuple</code>）功能更丰富，应用场景更广泛。本文将详解
+<code>collections</code>
+模块中的常用数据结构，并通过实例展示它们在项目中的具体应用。</p>
+<h2 id="概述">概述</h2>
+<p><code>collections</code> 模块提供了以下几种常用的容器数据类型：</p>
+<ol type="1">
+<li><strong>Counter</strong>：计数器，统计可哈希对象的出现次数。</li>
+<li><strong>deque</strong>：双端队列，支持高效的双向插入和删除操作。</li>
+<li><strong>namedtuple</strong>：命名元组，创建具名字段的元组。</li>
+<li><strong>OrderedDict</strong>：有序字典，按插入顺序维护键值对。</li>
+<li><strong>defaultdict</strong>：带默认值的字典，避免
+<code>KeyError</code>。</li>
+<li><strong>ChainMap</strong>：多个字典的组合视图，便于管理多个上下文。</li>
+</ol>
+<p>接下来，我们将逐一介绍这些数据类型的特点及其应用场景。</p>
+<hr />
+<h2 id="counter快速统计元素频率">Counter：快速统计元素频率</h2>
+<p><code>Counter</code>
+是一个简单却非常实用的工具，用于统计元素的频率。在数据分析、文本处理等场景中，<code>Counter</code>
+十分高效。</p>
+<h3 id="示例统计字符出现频率">示例：统计字符出现频率</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 字符串中字符频率统计</span></span><br><span class="line">text = <span class="string">&quot;collections module is very useful in Python&quot;</span></span><br><span class="line">char_count = Counter(text)</span><br><span class="line"><span class="built_in">print</span>(char_count)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找最常见的 3 个字符</span></span><br><span class="line"><span class="built_in">print</span>(char_count.most_common(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Counter(&#123;&#x27; &#x27;: 6, &#x27;o&#x27;: 4, &#x27;l&#x27;: 4, &#x27;e&#x27;: 4, &#x27;i&#x27;: 3, &#x27;n&#x27;: 3, &#x27;s&#x27;: 3, &#x27;u&#x27;: 3, &#x27;c&#x27;: 2, &#x27;t&#x27;: 2, &#x27;y&#x27;: 2, &#x27;m&#x27;: 1, &#x27;d&#x27;: 1, &#x27;v&#x27;: 1, &#x27;r&#x27;: 1, &#x27;f&#x27;: 1, &#x27;P&#x27;: 1, &#x27;h&#x27;: 1&#125;)</span><br><span class="line">[(&#x27; &#x27;, 6), (&#x27;o&#x27;, 4), (&#x27;l&#x27;, 4)]</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景">应用场景</h3>
+<ul>
+<li><strong>文本分析</strong>：如统计词频、字符频率。</li>
+<li><strong>数据清洗</strong>：用于去重或筛选高频数据。</li>
+</ul>
+<hr />
+<h2 id="deque高效的双端队列">deque：高效的双端队列</h2>
+<p><code>deque</code>
+提供了高效的双向插入和删除操作，非常适合实现队列和栈结构。此外，<code>deque</code>
+还支持旋转、批量删除等高级操作。</p>
+<h3 id="示例实现简单的队列和栈">示例：实现简单的队列和栈</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 deque</span></span><br><span class="line">d = deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加元素</span></span><br><span class="line">d.append(<span class="number">6</span>)         <span class="comment"># 右侧添加</span></span><br><span class="line">d.appendleft(<span class="number">0</span>)     <span class="comment"># 左侧添加</span></span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除元素</span></span><br><span class="line">d.pop()             <span class="comment"># 右侧删除</span></span><br><span class="line">d.popleft()         <span class="comment"># 左侧删除</span></span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 旋转</span></span><br><span class="line">d.rotate(<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(d)            <span class="comment"># 右旋 2 位</span></span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deque([0, 1, 2, 3, 4, 5, 6])</span><br><span class="line">deque([1, 2, 3, 4, 5])</span><br><span class="line">deque([4, 5, 1, 2, 3])</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-1">应用场景</h3>
+<ul>
+<li><strong>队列和栈</strong>：高效实现双端队列、FIFO 队列、LIFO
+栈等。</li>
+<li><strong>滑动窗口</strong>：在滑动窗口算法中应用广泛，例如移动平均值计算。</li>
+</ul>
+<hr />
+<h2 id="namedtuple可读性更高的元组">namedtuple：可读性更高的元组</h2>
+<p><code>namedtuple</code>
+允许你创建一个具名字段的元组，让元组像对象一样操作。这种结构可读性高、性能好，适合存储轻量级的数据。</p>
+<h3 id="示例定义一个二维点的坐标">示例：定义一个二维点的坐标</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 Point 类型的 namedtuple</span></span><br><span class="line">Point = namedtuple(<span class="string">&#x27;Point&#x27;</span>, [<span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建命名元组对象</span></span><br><span class="line">p = Point(<span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问命名元组字段</span></span><br><span class="line"><span class="built_in">print</span>(p.x, p.y)</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 20</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-2">应用场景</h3>
+<ul>
+<li><strong>轻量级数据对象</strong>：适用于只读数据结构，如几何点、数据库行、API
+返回值。</li>
+<li><strong>可读性增强</strong>：与普通元组相比，<code>namedtuple</code>
+的字段访问更直观。</li>
+</ul>
+<hr />
+<h2
+id="ordereddict保持键值对插入顺序的字典">OrderedDict：保持键值对插入顺序的字典</h2>
+<p>Python 3.7 之后，标准的 <code>dict</code>
+默认保持插入顺序。但在一些特定场景下，<code>OrderedDict</code>
+仍然有优势。例如，你可以根据访问顺序进行重新排序。</p>
+<h3
+id="示例按访问顺序重新排列键值对">示例：按访问顺序重新排列键值对</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 OrderedDict</span></span><br><span class="line">ordered_dict = OrderedDict()</span><br><span class="line">ordered_dict[<span class="string">&#x27;banana&#x27;</span>] = <span class="number">3</span></span><br><span class="line">ordered_dict[<span class="string">&#x27;apple&#x27;</span>] = <span class="number">4</span></span><br><span class="line">ordered_dict[<span class="string">&#x27;orange&#x27;</span>] = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ordered_dict)   <span class="comment"># 按插入顺序显示</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移动键值对到末尾</span></span><br><span class="line">ordered_dict.move_to_end(<span class="string">&#x27;banana&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(ordered_dict)</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">OrderedDict([(&#x27;banana&#x27;, 3), (&#x27;apple&#x27;, 4), (&#x27;orange&#x27;, 2)])</span><br><span class="line">OrderedDict([(&#x27;apple&#x27;, 4), (&#x27;orange&#x27;, 2), (&#x27;banana&#x27;, 3)])</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-3">应用场景</h3>
+<ul>
+<li><strong>缓存实现</strong>：LRU 缓存（Least Recently Used
+缓存）。</li>
+<li><strong>数据序列化</strong>：保持顺序的情况下进行序列化，方便处理和阅读。</li>
+</ul>
+<hr />
+<h2 id="defaultdict带默认值的字典">defaultdict：带默认值的字典</h2>
+<p><code>defaultdict</code> 是 <code>collections</code>
+模块中的一个特殊字典类型，它允许你为字典的键提供一个默认值生成函数（如
+<code>int</code>、<code>list</code>、<code>set</code>、匿名函数
+<code>lambda</code> 等）。当访问不存在的键时，<code>defaultdict</code>
+会<strong>调用这个函数</strong>来生成一个默认值，而不是抛出
+<code>KeyError</code></p>
+<h3 id="示例按字符分类存储单词">示例：按字符分类存储单词</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个以 list 作为默认值的 defaultdict</span></span><br><span class="line">word_dict = defaultdict(<span class="built_in">list</span>)</span><br><span class="line">words = [<span class="string">&#x27;apple&#x27;</span>, <span class="string">&#x27;banana&#x27;</span>, <span class="string">&#x27;cherry&#x27;</span>, <span class="string">&#x27;avocado&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">    first_letter = word[<span class="number">0</span>]</span><br><span class="line">    word_dict[first_letter].append(word)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(word_dict)   <span class="comment"># 输出按首字母分组的单词</span></span><br><span class="line"><span class="built_in">print</span>(word_dict[<span class="string">&#x27;a&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(word_dict[<span class="string">&#x27;apple&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>输出内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">defaultdict(&lt;class &#x27;list&#x27;&gt;, &#123;&#x27;a&#x27;: [&#x27;apple&#x27;, &#x27;avocado&#x27;], &#x27;b&#x27;: [&#x27;banana&#x27;], &#x27;c&#x27;: [&#x27;cherry&#x27;]&#125;)</span><br><span class="line">[&#x27;apple&#x27;, &#x27;avocado&#x27;]</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-4">应用场景</h3>
+<ul>
+<li><strong>计数</strong>：可将 <code>int</code>
+作为默认工厂，用于元素计数。</li>
+<li><strong>分组</strong>：在数据清洗和分析中，将 <code>list</code> 或
+<code>set</code> 作为默认工厂进行分组。</li>
+</ul>
+<hr />
+<h2 id="chainmap多个字典的组合视图">ChainMap：多个字典的组合视图</h2>
+<p><code>ChainMap</code>
+可以将多个字典合并为一个视图，方便在不同上下文中查询数据。它不会合并字典数据，而是为多个字典创建了一个链接，查询时按顺序搜索。</p>
+<h3 id="示例合并多个字典">示例：合并多个字典</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> ChainMap</span><br><span class="line"></span><br><span class="line">dict1 = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;</span><br><span class="line">dict2 = &#123;<span class="string">&#x27;b&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">4</span>&#125;</span><br><span class="line">combined = ChainMap(dict1, dict2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;a&#x27;</span>])   <span class="comment"># 输出 1（在 dict1 中找到）</span></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;b&#x27;</span>])   <span class="comment"># 输出 2（dict1 优先）</span></span><br><span class="line"><span class="built_in">print</span>(combined[<span class="string">&#x27;c&#x27;</span>])   <span class="comment"># 输出 4（在 dict2 中找到）</span></span><br></pre></td></tr></table></figure>
+<h3 id="应用场景-5">应用场景</h3>
+<ul>
+<li><strong>嵌套配置管理</strong>：合并多个配置文件或环境变量。</li>
+<li><strong>多级命名空间</strong>：在多级作用域中按优先级查找变量。</li>
+</ul>
+<hr />
+<h2 id="建议">建议</h2>
+<p><code>collections</code>
+模块提供了丰富且实用的容器数据结构，可以有效提升代码的简洁性和执行效率。在需要统计、存储、排序、分组等场景中，合理选用这些数据结构将极大简化代码逻辑，使代码更具可读性和效率。</p>
+<p>掌握 <code>collections</code>
+的这些数据结构，可以让你在实际项目中更加得心应手，也能进一步体会到
+Python 的灵活与强大。希望本文对你在 Python
+编程中使用高级数据结构有所帮助！</p>
+<h2 id="实战应用示例">实战应用示例</h2>
+<p>为了更好地展示 <code>collections</code>
+模块的实际用法，下面给出一个综合示例。假设我们有一个电商平台的用户购物记录，每个用户购买了不同类别的商品。我们需要完成以下任务：</p>
+<ol type="1">
+<li>统计每种商品类别的总购买量。</li>
+<li>找出购买最多的商品。</li>
+<li>按用户分组商品，并将数据存储为分组视图。</li>
+</ol>
+<h3 id="数据格式">数据格式</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Electronics&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Bob&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Books&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Books&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">5</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Electronics&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Bob&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Clothing&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">3</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;category&#x27;</span>: <span class="string">&#x27;Clothing&#x27;</span>, <span class="string">&#x27;quantity&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="解决方案">解决方案</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter, defaultdict, ChainMap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 统计每种商品类别的总购买量</span></span><br><span class="line">category_counter = Counter()</span><br><span class="line"><span class="keyword">for</span> entry <span class="keyword">in</span> data:</span><br><span class="line">    category_counter[entry[<span class="string">&#x27;category&#x27;</span>]] += entry[<span class="string">&#x27;quantity&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Category totals:&quot;</span>, category_counter)</span><br><span class="line"><span class="comment"># 输出：Category totals: Counter(&#123;&#x27;Books&#x27;: 6, &#x27;Electronics&#x27;: 3, &#x27;Clothing&#x27;: 4&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 找出购买最多的商品</span></span><br><span class="line">most_common_category = category_counter.most_common(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Most purchased category:&quot;</span>, most_common_category)</span><br><span class="line"><span class="comment"># 输出：Most purchased category: [(&#x27;Books&#x27;, 6)]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 按用户分组商品</span></span><br><span class="line">user_purchases = defaultdict(<span class="built_in">list</span>)</span><br><span class="line"><span class="keyword">for</span> entry <span class="keyword">in</span> data:</span><br><span class="line">    user_purchases[entry[<span class="string">&#x27;user&#x27;</span>]].append((entry[<span class="string">&#x27;category&#x27;</span>], entry[<span class="string">&#x27;quantity&#x27;</span>]))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;User purchases:&quot;</span>, user_purchases)</span><br><span class="line"><span class="comment"># 输出：User purchases: defaultdict(&lt;class &#x27;list&#x27;&gt;, &#123;</span></span><br><span class="line"><span class="comment">#     &#x27;Alice&#x27;: [(&#x27;Electronics&#x27;, 2), (&#x27;Books&#x27;, 5), (&#x27;Electronics&#x27;, 1), (&#x27;Clothing&#x27;, 1)],</span></span><br><span class="line"><span class="comment">#     &#x27;Bob&#x27;: [(&#x27;Books&#x27;, 1), (&#x27;Clothing&#x27;, 3)]</span></span><br><span class="line"><span class="comment"># &#125;)</span></span><br></pre></td></tr></table></figure>
+<h2 id="如何选择合适的数据结构">如何选择合适的数据结构</h2>
+<p>在实际编程中，不同的任务和数据需求决定了我们选择的数据结构。以下是一些选择建议：</p>
+<ol type="1">
+<li><strong>计数需求</strong>：如果需要统计或查找高频元素，优先选择
+<code>Counter</code>。</li>
+<li><strong>队列/栈操作</strong>：如果需要双端插入、删除的队列或滑动窗口操作，选择
+<code>deque</code>。</li>
+<li><strong>简单数据对象</strong>：<code>namedtuple</code>
+可以代替轻量级类定义，减少代码复杂性。</li>
+<li><strong>维护顺序</strong>：如果插入顺序非常重要，<code>OrderedDict</code>
+是不错的选择。</li>
+<li><strong>避免KeyError</strong>：处理可能出现缺失键的字典时，使用
+<code>defaultdict</code>。</li>
+<li><strong>多级命名空间</strong>：在多层字典合并、配置或上下文管理中，<code>ChainMap</code>
+是很好的选择。</li>
+</ol>
+<hr />
+<h2 id="collections-与性能优化"><code>collections</code> 与性能优化</h2>
+<p>除了代码的简洁性，<code>collections</code>
+中的数据结构在性能方面也有优势。以 <code>Counter</code> 和
+<code>deque</code> 为例，<code>Counter</code> 是基于 <code>dict</code>
+实现的计数器，但它的统计操作更加高效；而 <code>deque</code>
+在大规模数据的插入、删除上明显快于 <code>list</code>。</p>
+<p>在实际应用中，合理选用 <code>collections</code>
+中的数据结构，不仅可以让代码更清晰，还能显著提升程序的执行效率。在数据处理、文本分析、数据聚合等场景中，<code>collections</code>
+是性能优化的利器。</p>
+<hr />
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/collections.html#collections.Counter">官方文档-中文</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://docs.python.org/3/library/collections.html#defaultdict-objects">官方文档-英文</a></li>
+</ul>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90collections%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【argparse模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【argparse模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="argparse-模块">【argparse 模块】</h1>
+<p>当处理 <strong>命令行参数</strong> 时，Python 的
+<code>argparse</code> 模块是一个强大而 灵活的
+工具。它提供了一个简单且一致的方式来定义命令行参数、选项和子命令，并帮助你解析和验证用户提供的输入。本教程将详细介绍
+<code>argparse</code> 模块的使用方法和常见用例。</p>
+<blockquote>
+<p>本文收录于《<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_67276852/article/details/133901855">Python
+入门核心技术</a>》专栏</p>
+</blockquote>
+<hr />
+<h2 id="前言">前言</h2>
+<blockquote>
+<p>在开发命令行工具或需要从命令行接收用户输入的 Python
+程序中，处理命令行参数是一项常见任务。为了简化这一过程，Python 提供了
+<code>argparse</code>
+模块，它能够帮助我们定义和解析命令行参数，并提供用户友好的命令行界面。本教程将详细介绍
+<code>argparse</code>
+模块的使用方法和常见用例，帮助你轻松处理命令行参数，提升程序的灵活性和易用性。</p>
+</blockquote>
+    
+    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90argparse%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-【后端】/python/第三方库/【enum模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -510,7 +1246,19 @@ dataclass</a></li>
 <p>对于这种情况，在 Python3.4
 之后，给我们增加了枚举类，枚举类型可以看作是一种标签或是一系列常量的集合，通常用于表示某些特定的有限集合，例如星期、月份、状态等</p>
 <h2 id="常量">常量</h2>
-<p><strong>python中没有使用语法强制定义常量</strong>，也就是说，python中定义常量本质上就是变量。如果非要定义常量，<strong>变量名必须全大写</strong>。</p>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202502161541064.png"
+alt="image-20250216154107984" />
+<figcaption aria-hidden="true">image-20250216154107984</figcaption>
+</figure>
+<figure>
+<img
+src="https://tianchou.oss-cn-beijing.aliyuncs.com/img/202502161541855.png"
+alt="image-20250216154101674" />
+<figcaption aria-hidden="true">image-20250216154101674</figcaption>
+</figure>
+<p><strong>python中<font color='red'>没有</font>使用语法强制定义常量</strong>，也就是说，python中定义常量本质上就是变量。如果非要定义常量，<strong>变量名必须全大写</strong>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>AGE_OF_NICK = <span class="number">19</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(AGE_OF_NICK)</span><br><span class="line"><span class="number">19</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>AGE_OF_NICK = AGE_OF_NICK + <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(AGE_OF_NICK)</span><br><span class="line"><span class="number">20</span></span><br></pre></td></tr></table></figure>
 <p>如果是常量，那就没必要更改，所以python就只制定了一个规范，而没指定常量的语法，<strong>因此常量也是可以修改的，但不建议。</strong></p>
 <h2 id="枚举类">枚举类</h2>
@@ -631,6 +1379,159 @@ color.RED</p>
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90enum%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-【后端】/python/第三方库/【heapq模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【heapq模块】</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
+        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="heapq模块">【heapq模块】</h1>
+<p><code>heapq</code>是Python标准库中一个非常有用的模块，主要用于实现堆（Heap）数据结构，特别是最小堆（Min
+Heap）。在堆中，任何一个节点的值都小于或等于其任何子节点的值，因此堆的根节点始终是最小的元素，这使得堆特别适合用于优先队列的实现。能够在对数据进行优先级处理时提高效率，尤其在需要频繁访问最小或最大元素的情况下。</p>
+<h2 id="堆的基本概念">堆的基本概念</h2>
+<p>堆是一种特殊的树形数据结构。Python中的<code>heapq</code>模块实现的是<strong>最小堆</strong>，符合以下特征：</p>
+<ul>
+<li><p>每个父节点的值都小于或等于其子节点的值</p></li>
+<li><p>堆在内存中通常通过数组来实现，满足以下关系：</p>
+<ul>
+<li><p>对于任意一个节点 <code>k</code>，有
+<code>heap[k] &lt;= heap[2 * k + 1]</code> 和
+<code>heap[k] &lt;= heap[2 * k + 2]</code></p></li>
+<li><p>这样可以快速找到堆中的最小元素：总是在根节点
+<code>heap[0]</code></p></li>
+</ul></li>
+</ul>
+<p>由于使用数组实现，这样的设计使得堆的操作（如插入和删除）效率高，时间复杂度都为
+<span class="math inline">\(O(log n)\)</span>（其中 <span
+class="math inline">\(n\)</span> 是堆中元素的数量）</p>
+<h2 id="基本使用">基本使用</h2>
+<p>在使用<code>heapq</code>模块之前，我们先要了解一些核心函数和如何创建堆。</p>
+<h3 id="创建堆">创建堆</h3>
+<p>可以通过以下方式创建一个堆：</p>
+<ul>
+<li>使用空列表 <code>[]</code> 创建一个空堆</li>
+<li>直接将元素插入到堆中</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个空堆</span></span><br><span class="line">heap = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 插入元素</span></span><br><span class="line">heapq.heappush(heap, <span class="number">3</span>)</span><br><span class="line">heapq.heappush(heap, <span class="number">1</span>)</span><br><span class="line">heapq.heappush(heap, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [1, 3, 2]</span></span><br></pre></td></tr></table></figure>
+<h3 id="插入元素">插入元素</h3>
+<p>使用 <code>heappush(heap, item)</code> 函数将元素 <code>item</code>
+插入到堆中，保持堆的性质。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">heapq.heappush(heap, <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [1, 3, 2, 4]</span></span><br></pre></td></tr></table></figure>
+<h3 id="弹出元素">弹出元素</h3>
+<p>使用 <code>heappop(heap)</code>
+函数弹出并返回堆中最小的元素，同时保持堆的性质。如果堆为空会抛出
+<code>IndexError</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">min_element = heapq.heappop(heap)</span><br><span class="line"><span class="built_in">print</span>(min_element)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [2, 3, 4]</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他重要函数">其他重要函数</h2>
+<p>除了基本的插入和弹出操作，<code>heapq</code>
+还提供了一些其他常用的功能：</p>
+<h3 id="heappushpop"><code>heappushpop</code></h3>
+<p><code>heappushpop(heap, item)</code> 将元素 <code>item</code>
+插入堆中并弹出最小的元素。这个组合操作比先调用 <code>heappush</code>
+然后 <code>heappop</code> 更有效率。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = heapq.heappushpop(heap, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: 2</span></span><br><span class="line"><span class="built_in">print</span>(heap)    <span class="comment"># 输出: [3, 4, 0]</span></span><br></pre></td></tr></table></figure>
+<h3 id="heapreplace"><code>heapreplace</code></h3>
+<p><code>heapreplace(heap, item)</code> 在弹出最小元素的同时将
+<code>item</code> 插入堆中，堆的大小不变。此函数也是在堆为空时会引发
+<code>IndexError</code>。它的作用是将堆中最小的元素弹出，并将新元素
+<code>item</code> 添加到堆中。如果堆为空，无法执行此操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = heapq.heapreplace(heap, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: 3</span></span><br><span class="line"><span class="built_in">print</span>(heap)    <span class="comment"># 输出: [4, 5, 0]</span></span><br></pre></td></tr></table></figure>
+<h3 id="nlargest-和-nsmallest"><code>nlargest</code> 和
+<code>nsmallest</code></h3>
+<p>这两个函数可用于返回可迭代对象中最大的或最小的n个元素。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">largest_two: <span class="built_in">list</span> = heapq.nlargest(<span class="number">2</span>, heap)</span><br><span class="line">smallest_two: <span class="built_in">list</span> = heapq.nsmallest(<span class="number">2</span>, heap)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(largest_two)  <span class="comment"># 输出: [5, 4]</span></span><br><span class="line"><span class="built_in">print</span>(smallest_two)  <span class="comment"># 输出: [0, 4]</span></span><br></pre></td></tr></table></figure>
+<h3 id="merge"><code>merge</code></h3>
+<p><code>heapq.merge(*iterables)</code>
+用于合并多个已排序的输入为一个已排序的输出。它返回一个迭代器，适合于处理大量数据时节省内存。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iter1 = [<span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>]</span><br><span class="line">iter2 = [<span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>]</span><br><span class="line">merged = heapq.merge(iter1, iter2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">list</span>(merged))  <span class="comment"># 输出: [1, 2, 4, 5, 7, 8]</span></span><br></pre></td></tr></table></figure>
+<h2 id="堆的应用场景">堆的应用场景</h2>
+<h3 id="优先队列">优先队列</h3>
+<p>堆是一种常用的优先队列实现，能够在O(log
+n)时间复杂度内插入和删除最小元素。可以通过存储元组的方式来实现不同优先级的任务调度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tasks = [(<span class="number">1</span>, <span class="string">&#x27;task 1&#x27;</span>), (<span class="number">3</span>, <span class="string">&#x27;task 3&#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;task 2&#x27;</span>)]</span><br><span class="line">heapq.heapify(tasks)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> tasks:</span><br><span class="line">    priority, task = heapq.heappop(tasks)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Processing <span class="subst">&#123;task&#125;</span> with priority <span class="subst">&#123;priority&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="堆排序">堆排序</h3>
+<p>可以使用堆作为排序算法，在 <span class="math inline">\(O(n \log
+n)\)</span> 的时间复杂度内对数据进行排序。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">heapsort</span>(<span class="params">iterable</span>):</span><br><span class="line">    h = []</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> iterable:</span><br><span class="line">        heapq.heappush(h, value)</span><br><span class="line">    <span class="keyword">return</span> [heapq.heappop(h) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(h))]</span><br><span class="line"></span><br><span class="line">sorted_list = heapsort([<span class="number">5</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>])</span><br><span class="line"><span class="built_in">print</span>(sorted_list)  <span class="comment"># 输出: [2, 3, 4, 5, 6]</span></span><br></pre></td></tr></table></figure>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
     </p>
     
 
@@ -1290,159 +2191,6 @@ Web 框架 - 乐天笔记</a></li>
 
 
   
-    <article id="post-【后端】/python/第三方库/【heapq模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【heapq模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="heapq模块">【heapq模块】</h1>
-<p><code>heapq</code>是Python标准库中一个非常有用的模块，主要用于实现堆（Heap）数据结构，特别是最小堆（Min
-Heap）。在堆中，任何一个节点的值都小于或等于其任何子节点的值，因此堆的根节点始终是最小的元素，这使得堆特别适合用于优先队列的实现。能够在对数据进行优先级处理时提高效率，尤其在需要频繁访问最小或最大元素的情况下。</p>
-<h2 id="堆的基本概念">堆的基本概念</h2>
-<p>堆是一种特殊的树形数据结构。Python中的<code>heapq</code>模块实现的是<strong>最小堆</strong>，符合以下特征：</p>
-<ul>
-<li><p>每个父节点的值都小于或等于其子节点的值</p></li>
-<li><p>堆在内存中通常通过数组来实现，满足以下关系：</p>
-<ul>
-<li><p>对于任意一个节点 <code>k</code>，有
-<code>heap[k] &lt;= heap[2 * k + 1]</code> 和
-<code>heap[k] &lt;= heap[2 * k + 2]</code></p></li>
-<li><p>这样可以快速找到堆中的最小元素：总是在根节点
-<code>heap[0]</code></p></li>
-</ul></li>
-</ul>
-<p>由于使用数组实现，这样的设计使得堆的操作（如插入和删除）效率高，时间复杂度都为
-<span class="math inline">\(O(log n)\)</span>（其中 <span
-class="math inline">\(n\)</span> 是堆中元素的数量）</p>
-<h2 id="基本使用">基本使用</h2>
-<p>在使用<code>heapq</code>模块之前，我们先要了解一些核心函数和如何创建堆。</p>
-<h3 id="创建堆">创建堆</h3>
-<p>可以通过以下方式创建一个堆：</p>
-<ul>
-<li>使用空列表 <code>[]</code> 创建一个空堆</li>
-<li>直接将元素插入到堆中</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个空堆</span></span><br><span class="line">heap = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 插入元素</span></span><br><span class="line">heapq.heappush(heap, <span class="number">3</span>)</span><br><span class="line">heapq.heappush(heap, <span class="number">1</span>)</span><br><span class="line">heapq.heappush(heap, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [1, 3, 2]</span></span><br></pre></td></tr></table></figure>
-<h3 id="插入元素">插入元素</h3>
-<p>使用 <code>heappush(heap, item)</code> 函数将元素 <code>item</code>
-插入到堆中，保持堆的性质。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">heapq.heappush(heap, <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [1, 3, 2, 4]</span></span><br></pre></td></tr></table></figure>
-<h3 id="弹出元素">弹出元素</h3>
-<p>使用 <code>heappop(heap)</code>
-函数弹出并返回堆中最小的元素，同时保持堆的性质。如果堆为空会抛出
-<code>IndexError</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">min_element = heapq.heappop(heap)</span><br><span class="line"><span class="built_in">print</span>(min_element)  <span class="comment"># 输出: 1</span></span><br><span class="line"><span class="built_in">print</span>(heap)  <span class="comment"># 输出: [2, 3, 4]</span></span><br></pre></td></tr></table></figure>
-<h2 id="其他重要函数">其他重要函数</h2>
-<p>除了基本的插入和弹出操作，<code>heapq</code>
-还提供了一些其他常用的功能：</p>
-<h3 id="heappushpop"><code>heappushpop</code></h3>
-<p><code>heappushpop(heap, item)</code> 将元素 <code>item</code>
-插入堆中并弹出最小的元素。这个组合操作比先调用 <code>heappush</code>
-然后 <code>heappop</code> 更有效率。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = heapq.heappushpop(heap, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: 2</span></span><br><span class="line"><span class="built_in">print</span>(heap)    <span class="comment"># 输出: [3, 4, 0]</span></span><br></pre></td></tr></table></figure>
-<h3 id="heapreplace"><code>heapreplace</code></h3>
-<p><code>heapreplace(heap, item)</code> 在弹出最小元素的同时将
-<code>item</code> 插入堆中，堆的大小不变。此函数也是在堆为空时会引发
-<code>IndexError</code>。它的作用是将堆中最小的元素弹出，并将新元素
-<code>item</code> 添加到堆中。如果堆为空，无法执行此操作。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = heapq.heapreplace(heap, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: 3</span></span><br><span class="line"><span class="built_in">print</span>(heap)    <span class="comment"># 输出: [4, 5, 0]</span></span><br></pre></td></tr></table></figure>
-<h3 id="nlargest-和-nsmallest"><code>nlargest</code> 和
-<code>nsmallest</code></h3>
-<p>这两个函数可用于返回可迭代对象中最大的或最小的n个元素。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">largest_two: <span class="built_in">list</span> = heapq.nlargest(<span class="number">2</span>, heap)</span><br><span class="line">smallest_two: <span class="built_in">list</span> = heapq.nsmallest(<span class="number">2</span>, heap)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(largest_two)  <span class="comment"># 输出: [5, 4]</span></span><br><span class="line"><span class="built_in">print</span>(smallest_two)  <span class="comment"># 输出: [0, 4]</span></span><br></pre></td></tr></table></figure>
-<h3 id="merge"><code>merge</code></h3>
-<p><code>heapq.merge(*iterables)</code>
-用于合并多个已排序的输入为一个已排序的输出。它返回一个迭代器，适合于处理大量数据时节省内存。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iter1 = [<span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>]</span><br><span class="line">iter2 = [<span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>]</span><br><span class="line">merged = heapq.merge(iter1, iter2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">list</span>(merged))  <span class="comment"># 输出: [1, 2, 4, 5, 7, 8]</span></span><br></pre></td></tr></table></figure>
-<h2 id="堆的应用场景">堆的应用场景</h2>
-<h3 id="优先队列">优先队列</h3>
-<p>堆是一种常用的优先队列实现，能够在O(log
-n)时间复杂度内插入和删除最小元素。可以通过存储元组的方式来实现不同优先级的任务调度。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tasks = [(<span class="number">1</span>, <span class="string">&#x27;task 1&#x27;</span>), (<span class="number">3</span>, <span class="string">&#x27;task 3&#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;task 2&#x27;</span>)]</span><br><span class="line">heapq.heapify(tasks)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> tasks:</span><br><span class="line">    priority, task = heapq.heappop(tasks)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Processing <span class="subst">&#123;task&#125;</span> with priority <span class="subst">&#123;priority&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="堆排序">堆排序</h3>
-<p>可以使用堆作为排序算法，在 <span class="math inline">\(O(n \log
-n)\)</span> 的时间复杂度内对数据进行排序。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">heapsort</span>(<span class="params">iterable</span>):</span><br><span class="line">    h = []</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> iterable:</span><br><span class="line">        heapq.heappush(h, value)</span><br><span class="line">    <span class="keyword">return</span> [heapq.heappop(h) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(h))]</span><br><span class="line"></span><br><span class="line">sorted_list = heapsort([<span class="number">5</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>])</span><br><span class="line"><span class="built_in">print</span>(sorted_list)  <span class="comment"># 输出: [2, 3, 4, 5, 6]</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90heapq%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-【后端】/python/第三方库/【hydra-core库】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1982,598 +2730,9 @@ href="https://link.zhihu.com/?target=https%3A//docs.python.org/3/library/importl
 
 
   
-    <article id="post-【后端】/python/第三方库/【jsonlines模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【jsonlines模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="jsonlines模块">【jsonlines模块】</h1>
-<p><code>jsonlines</code> 是一个用于处理 <strong>JSON
-Lines</strong>（也称为 NDJSON，Newline Delimited JSON）格式文件的 Python
-库，提供了简单易用的接口，方便读写以行为单位存储的 JSON 数据。</p>
-<hr />
-<h2 id="json-lines-格式">JSON Lines 格式</h2>
-<ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li>每一行是一个独立的 JSON 对象。</li>
-<li>数据之间用<strong>换行符</strong>分隔。</li>
-</ul></li>
-<li><p><strong>适用情况</strong>：</p>
-<ul>
-<li><p><strong>当数据以行为单位独立存储，并且每行数据之间没有明确的分隔符时</strong></p></li>
-<li><p>当需要逐行处理数据，以节省内存和提高处理速度时。</p></li>
-<li><p>当数据量非常大，无法一次性加载到内存中时，JSONL
-格式提供了一种流式处理数据的方式。</p></li>
-</ul></li>
-<li><p><strong>示例内容</strong>：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr />
-<h2 id="安装"><strong>安装</strong></h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jsonlines</span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="常见用法"><strong>常见用法</strong></h2>
-<h3 id="读取-json-lines-文件">读取 JSON Lines 文件</h3>
-<p><code>jsonlines</code> 提供了简单的方式读取 JSON Lines
-格式的文件。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>假设文件 content.jsonl 内容如上，运行下面的代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;content.jsonl&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">type</span>(reader), reader)</span><br><span class="line">    <span class="keyword">for</span> obj <span class="keyword">in</span> reader:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">type</span>(obj), obj)  <span class="comment"># 每一行是一个字典</span></span><br></pre></td></tr></table></figure>
-<p><strong>输出</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;class &#x27;jsonlines.jsonlines.Reader&#x27;&gt; &lt;jsonlines.Reader at 0x2bac64fae50 wrapping &#x27;content.jsonl&#x27;&gt;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Alice&#x27;, &#x27;age&#x27;: 25&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Bob&#x27;, &#x27;age&#x27;: 30&#125;</span><br><span class="line">&lt;class &#x27;dict&#x27;&gt; &#123;&#x27;name&#x27;: &#x27;Charlie&#x27;, &#x27;age&#x27;: 35&#125;</span><br></pre></td></tr></table></figure>
-<hr />
-<h3 id="写入-json-lines-文件">写入 JSON Lines 文件</h3>
-<h4 id="一次性写入">一次性写入</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(data)  <span class="comment"># 一次性写入多个 JSON 对象</span></span><br></pre></td></tr></table></figure>
-<p><strong>生成的 <code>output.jsonl</code> 文件内容</strong>：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Charlie&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">35</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h4 id="逐行写入">逐行写入</h4>
-<p>如果数据量较大，可以逐行写入。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">25</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">30</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Charlie&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">35</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">        writer.write(item)  <span class="comment"># 写入一行并自动换行</span></span><br></pre></td></tr></table></figure>
-<p>通过 <code>mode='a'</code>，也可以在现有文件末尾追加内容。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line">new_data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;David&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">40</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Eve&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">45</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(<span class="string">&#x27;output.jsonl&#x27;</span>, mode=<span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">    writer.write_all(new_data)</span><br></pre></td></tr></table></figure>
-<p><strong><code>output.jsonl</code>
-文件内容</strong>（追加后的结果）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Charlie&quot;, &quot;age&quot;: 35&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;David&quot;, &quot;age&quot;: 40&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Eve&quot;, &quot;age&quot;: 45&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="json-文件转为-jsonlines">json 文件转为 jsonlines</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON 转为 JSON Lines</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">json_to_jsonl</span>(<span class="params">json_file, jsonl_file</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = json.load(f)  <span class="comment"># 加载 JSON 文件</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> writer:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(data, <span class="built_in">list</span>):  <span class="comment"># 如果是数组，逐行写入</span></span><br><span class="line">            <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">                writer.write(item)</span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 如果是单个对象，直接写入</span></span><br><span class="line">            writer.write(data)</span><br></pre></td></tr></table></figure>
-<h3 id="jsonlines-转为-json-文件">jsonlines 转为 json 文件</h3>
-<p>原因是 jsonlines 虽然好用，但并未通用，很多配置文件等都用的 json
-格式</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> jsonlines</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 JSON Lines 转为 JSON</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">jsonl_to_json</span>(<span class="params">jsonl_file, json_file</span>):</span><br><span class="line">    <span class="keyword">with</span> jsonlines.<span class="built_in">open</span>(jsonl_file, mode=<span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> reader:</span><br><span class="line">        data = [obj <span class="keyword">for</span> obj <span class="keyword">in</span> reader]  <span class="comment"># 逐行读取并存入列表</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(json_file, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        json.dump(data, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)  <span class="comment"># 保存为 JSON 文件</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="优点"><strong>优点</strong></h2>
-<ol type="1">
-<li><strong>流式处理</strong>：逐行读取和写入，适合大文件处理。</li>
-<li><strong>简洁高效</strong>：直接操作 JSON 对象，无需手动解析。</li>
-<li><strong>格式灵活</strong>：可以方便地追加数据或部分读取。</li>
-</ol>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90jsonlines%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【json模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【json模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="json模块">【json模块】</h1>
-<p><strong>JSON 文件是使用 JSON（JavaScript Object
-Notation）格式存储数据的文件。它是一种结构化的文本格式，使用键值对的方式表示数据。</strong>
-JSON
-文件通常包含一个根对象，可以包含多个嵌套的对象、数组和基本数据类型。</p>
-<h2 id="json-格式">JSON 格式</h2>
-<ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li><p><strong>使用大括号 {} 表示对象，使用方括号 [ ]
-表示数组。</strong></p></li>
-<li><p><strong>整个文件是一个有效的 JSON 对象或数组。</strong></p></li>
-<li><p>适合存储结构化的数据，如配置文件、API 响应等。</p></li>
-<li><p>一次性读取整个文件，解析成一个 JSON
-对象，可以随机访问其中的数据。</p></li>
-</ul></li>
-<li><p><strong>示例内容</strong>：</p></li>
-</ul>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;John&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jane&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">40</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
-<p>也可以是下面字典的形式</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yushifu&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">18</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;isStudent&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;hobbies&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;singing&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;jumping&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rapping&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;basketball&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123 Main Street&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;弗洛里达&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;country&quot;</span><span class="punctuation">:</span> <span class="string">&quot;USA&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;spouse&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="序列化">序列化</h2>
-<p>在序列化时，会将 Python 原始类型转化为 JSON
-类型，下面是序列化时数据类型转换的对照表：</p>
-<table>
-<thead>
-<tr class="header">
-<th>Python</th>
-<th>JSON</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>dict</td>
-<td>object – 对象</td>
-</tr>
-<tr class="even">
-<td>list, tuple</td>
-<td>array</td>
-</tr>
-<tr class="odd">
-<td>str</td>
-<td>string</td>
-</tr>
-<tr class="even">
-<td>int, float, int 和 float 派生的枚举</td>
-<td>number</td>
-</tr>
-<tr class="odd">
-<td>True</td>
-<td>true</td>
-</tr>
-<tr class="even">
-<td>False</td>
-<td>false</td>
-</tr>
-<tr class="odd">
-<td>None</td>
-<td>null</td>
-</tr>
-</tbody>
-</table>
-<h3
-id="json.loadjson-文件-转化为-python-对象"><code>json.load()</code>：json
-文件 转化为 python 对象</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;XXX.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br></pre></td></tr></table></figure>
-<h4 id="json-文件表示一个字典">JSON 文件表示一个字典</h4>
-<p>文件 <code>XXX.json</code> 内容：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hobbies&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;reading&quot;</span><span class="punctuation">,</span> <span class="string">&quot;cycling&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;is_student&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>运行代码后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data))  <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># &#123;</span></span><br><span class="line"><span class="comment">#     &quot;name&quot;: &quot;Alice&quot;,</span></span><br><span class="line"><span class="comment">#     &quot;age&quot;: 25,</span></span><br><span class="line"><span class="comment">#     &quot;hobbies&quot;: [&quot;reading&quot;, &quot;cycling&quot;],</span></span><br><span class="line"><span class="comment">#     &quot;is_student&quot;: False</span></span><br><span class="line"><span class="comment"># &#125;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>data</code> 是一个 Python 字典。</li>
-</ul>
-<hr />
-<h4 id="json-文件表示一个字典列表">JSON 文件表示一个字典列表</h4>
-<p>文件 <code>XXX.json</code> 内容：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Alice&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">25</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bob&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
-<p>运行代码后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data))  <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line"><span class="comment"># 输出：</span></span><br><span class="line"><span class="comment"># [</span></span><br><span class="line"><span class="comment">#     &#123;&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25&#125;,</span></span><br><span class="line"><span class="comment">#     &#123;&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30&#125;</span></span><br><span class="line"><span class="comment"># ]</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>data</code> 是一个 Python 列表，列表中的每一项是字典。</li>
-</ul>
-<h3
-id="json.loadsjson-格式的字符串转换为-python-对象"><code>json.loads()</code>：json
-格式的字符串转换为 python 对象</h3>
-<h4 id="json-字符串表示一个字典列表">JSON 字符串表示一个字典列表</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSON 字符串表示一个列表，列表中的每个元素是一个字典</span></span><br><span class="line">s = <span class="string">&#x27;[&#123;&quot;name&quot;: &quot;张大山&quot;, &quot;age&quot;: 11&#125;, &#123;&quot;name&quot;: &quot;王大锤&quot;, &quot;age&quot;: 13&#125;, &#123;&quot;name&quot;: &quot;赵小虎&quot;, &quot;age&quot;: 16&#125;]&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.loads 将 JSON 字符串解析为 Python 对象</span></span><br><span class="line">l = json.loads(s)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(l))</span><br><span class="line"><span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(l)</span><br><span class="line"><span class="comment"># [&#123;&#x27;name&#x27;: &#x27;张大山&#x27;, &#x27;age&#x27;: 11&#125;, &#123;&#x27;name&#x27;: &#x27;王大锤&#x27;, &#x27;age&#x27;: 13&#125;, &#123;&#x27;name&#x27;: &#x27;赵小虎&#x27;, &#x27;age&#x27;: 16&#125;]</span></span><br></pre></td></tr></table></figure>
-<h4 id="json-字符串表示一个字典">JSON 字符串表示一个字典</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># JSON 字符串表示一个对象，类似于键值对</span></span><br><span class="line">s = <span class="string">&#x27;&#123;&quot;name&quot;: &quot;周杰轮&quot;, &quot;addr&quot;: &quot;台北&quot;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.loads 将 JSON 字符串解析为 Python 字典</span></span><br><span class="line">my_dict = json.loads(s)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(my_dict))  <span class="comment"># &lt;class &#x27;dict&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(my_dict)        <span class="comment"># &#123;&#x27;name&#x27;: &#x27;周杰轮&#x27;, &#x27;addr&#x27;: &#x27;台北&#x27;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误示例：不能直接使用 dict() 强制转换</span></span><br><span class="line"><span class="comment"># my_dict = dict(s)  # 会报错，因为 `dict()` 需要一个可迭代的键值对序列</span></span><br></pre></td></tr></table></figure>
-<h2 id="反序列化">反序列化</h2>
-<p>在反序列化时，会将 JSON 类型转化为 Python
-原始类型，下面是反序列化时数据类型转换的对照表：</p>
-<table>
-<thead>
-<tr class="header">
-<th>JSON</th>
-<th>Python</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>object – 对象</td>
-<td>dict</td>
-</tr>
-<tr class="even">
-<td>array</td>
-<td>list – 列表</td>
-</tr>
-<tr class="odd">
-<td>string</td>
-<td>str</td>
-</tr>
-<tr class="even">
-<td>number (int)</td>
-<td>int</td>
-</tr>
-<tr class="odd">
-<td>number (real)</td>
-<td>float</td>
-</tr>
-<tr class="even">
-<td>true</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td>false</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td>null</td>
-<td>None</td>
-</tr>
-</tbody>
-</table>
-<h3
-id="json.dumppython-对象转化为-json-文件"><code>json.dump()</code>：python
-对象转化为 json 文件</h3>
-<h4 id="python-对象为字典列表">python 对象为字典列表</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;张大山&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">11</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;王大锤&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">13</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;赵小虎&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">16</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;XXX.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将 Python 的字典列表写入文件，格式化为 JSON 格式</span></span><br><span class="line">    json.dump(data, f, indent=<span class="number">4</span>, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
-<p>生成的 <code>XXX.json</code> 文件内容：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张大山&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">11</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;王大锤&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">13</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;赵小虎&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">16</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
-<h4 id="python-对象为字典">python 对象为字典</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span>,</span><br><span class="line">    <span class="string">&quot;songs&quot;</span>: [<span class="string">&quot;晴天&quot;</span>, <span class="string">&quot;青花瓷&quot;</span>, <span class="string">&quot;夜曲&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;person.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将 Python 字典写入文件</span></span><br><span class="line">    json.dump(data, f, indent=<span class="number">4</span>, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
-<p>生成的 <code>person.json</code> 文件内容：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span>,</span><br><span class="line">    <span class="string">&quot;songs&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;晴天&quot;</span>,</span><br><span class="line">        <span class="string">&quot;青花瓷&quot;</span>,</span><br><span class="line">        <span class="string">&quot;夜曲&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3
-id="json.dumps-将-python-对象转换为-json-格式的字符串"><code>json.dumps()</code>
-将 python 对象转换为 <strong>JSON </strong>格式的字符串</h3>
-<h4 id="python-对象为字典列表-1">python 对象为字典列表</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;张大山&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">11</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;王大锤&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">13</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;赵小虎&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">16</span>&#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 json.dumps 将 Python 对象转换为 JSON 字符串</span></span><br><span class="line">json_str = json.dumps(data, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line"><span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="comment"># [&#123;&quot;name&quot;: &quot;张大山&quot;, &quot;age&quot;: 11&#125;, &#123;&quot;name&quot;: &quot;王大锤&quot;, &quot;age&quot;: 13&#125;, &#123;&quot;name&quot;: &quot;赵小虎&quot;, &quot;age&quot;: 16&#125;]</span></span><br></pre></td></tr></table></figure>
-<h4 id="python-对象为字典-1">python 对象为字典</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">d = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;周杰轮&quot;</span>,</span><br><span class="line">    <span class="string">&quot;addr&quot;</span>: <span class="string">&quot;台北&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为 JSON 字符串</span></span><br><span class="line">json_str = json.dumps(d, ensure_ascii=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line"><span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="comment"># &#123;&quot;name&quot;: &quot;周杰轮&quot;, &quot;addr&quot;: &quot;台北&quot;&#125;</span></span><br></pre></td></tr></table></figure>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90json%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【logging模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【logging模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p># 【logging模块】</p>
-<p>Python
-日志输出是一种重要的工具，用于记录和跟踪应用程序的关键信息。本文将详细介绍
-Python
-中的日志输出，包括日志级别、日志记录器、日志处理器以及如何配置和定制日志输出。我们还将提供代码示例，帮助您快速上手并充分利用
-Python 日志输出功能。</p>
-<h2 id="前言">前言</h2>
-<ol type="1">
-<li>👻👻相信很多初学 Python
-的小伙伴们，在碰到自己辛辛苦苦码的代码报错的时候，你们自己动手解决 BUG
-的方法大多都是——通过加很多的 print() 函数，一点点缩小范围，直到找到 BUG
-所在位置并解决之！👻👻</li>
-</ol>
-<blockquote>
-<p>比如：下面通过 result1 到 result5
-模拟小伙伴们辛辛苦苦编写的五个函数，结果在最后调用实现终极功能的时候它报错了！这可怎么办——还好有
-print() 函数，一个个打印看看到哪打印不正常：</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">result1 = <span class="string">&#x27;第一个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result1)</span><br><span class="line">result2 = <span class="string">&#x27;第二个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result2)</span><br><span class="line">result3 = <span class="string">&#x27;第三个函数运行不 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result3)</span><br><span class="line">result4 = <span class="string">&#x27;第四个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result4)</span><br><span class="line">result5 = <span class="string">&#x27;第五个函数运行 OK&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(result5)</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90logging%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-【后端】/python/第三方库/【os模块】" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" target="_blank">【os模块】</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/" class="archive-article-date">
-        <time datetime="2024-05-05T06:33:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-05</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="os模块">【os模块】</h1>
-<p>大家好，我是水滴~~</p>
-<p>Python 的 <code>os</code> 模块是一个与 操作系统
-交互的模块，它提供了许多函数和方法，可以用于操作文件和目录。本教程将深入介绍
-<code>os</code> 模块的各种功能和用法。</p>
-<h2 id="文件和目录的基本操作">文件和目录的基本操作</h2>
-<h3 id="获取当前工作目录">获取当前工作目录</h3>
-<p><code>os.getcwd()</code> 方法可以获取当前工作目录的路径，即 Python
-解释器当前所在的目录。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前工作目录</span></span><br><span class="line">cwd = os.getcwd()</span><br><span class="line"><span class="built_in">print</span>(cwd)</span><br></pre></td></tr></table></figure>
-    
-    <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/#more">more >></a>
-    
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/05/05/%5Bobject%20Object%5D/%E3%80%90%E5%90%8E%E7%AB%AF%E3%80%91/python/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/%E3%80%90os%E6%A8%A1%E5%9D%97%E3%80%91/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/10/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/44/">44</a><a class="extend next" rel="next" href="/page/12/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/10/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/45/">45</a><a class="extend next" rel="next" href="/page/12/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -2729,11 +2888,11 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
+                <a href="javascript:void(0)" class="js-tag color2">others</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">others</a>
+                <a href="javascript:void(0)" class="js-tag color4">LLM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2749,35 +2908,15 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">优化算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">内存开销&计算开销</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">损失函数</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2789,19 +2928,31 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">生活</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Decoding</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">LLM Basic</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Fine-Tuning</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">LLM Metric</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">LLM Notation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2813,11 +2964,15 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2829,6 +2984,10 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Anaconda</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">huggingface</a>
               </li>
              
@@ -2837,19 +2996,11 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">代理设置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">ollama</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">STL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2857,7 +3008,15 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+                <a href="javascript:void(0)" class="js-tag color5">数据结构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">STL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2865,11 +3024,27 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+                <a href="javascript:void(0)" class="js-tag color1">shell</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ray</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">fastchat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">gradio</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2881,23 +3056,15 @@ print() 函数，一个个打印看看到哪打印不正常：</p>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">GitHub</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">pytorch</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">pandas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
+                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">numpy</a>
+                <a href="javascript:void(0)" class="js-tag color3">sklearn</a>
               </li>
             
             <div class="clearfix"></div>
